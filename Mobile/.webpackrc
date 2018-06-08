@@ -1,0 +1,12 @@
+{
+    "entry": "src/index.js",
+    "extraBabelPlugins": [
+        "transform-decorators-legacy", ["import", { "libraryName": "antd-mobile", "libraryDirectory": "es", "style": true }]
+    ],
+	"publicPath": "/",
+    "disableDynamicImport": true,
+    "html": {
+        "template": "./src/index.ejs"
+    },
+    "hash": true
+}
