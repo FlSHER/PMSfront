@@ -1,9 +1,11 @@
-import React from 'react'
+import React from 'react';
 // import { Icon } from 'antd'
-import styles from './index.less'
+import styles from './index.less';
 
-const Error = () => (<div className={styles.error}>
-  <h1>404 Not Found</h1>
-</div>)
+const Error = () => (
+  <div className={styles.error}>
+    <h1>404 Not Found</h1>
+  </div>
+);
 
-export default Error
+export default Error;

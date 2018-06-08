@@ -1,5 +1,4 @@
 .loader {
-  display: block;
   // background-color: ;
   width: 100%;
   position: absolute;
@@ -12,22 +11,18 @@
   align-items: center;
   opacity: 1;
   text-align: center;
-
   &.fullScreen {
     position: fixed;
   }
-
   .warpper {
     width: 100px;
     height: 100px;
     display: inline-flex;
     flex-direction: column;
     justify-content: space-around;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     border-radius: 6px;
-    justify-content: space-evenly;
   }
-
   .inner {
     width: 30px;
     height: 30px;
@@ -39,12 +34,10 @@
     border-left: 1px solid #40a9ff;
     border-radius: 50%;
     z-index: 100001;
-
     :local {
       animation: spinner 600ms infinite linear;
     }
   }
-
   .text {
     width: 100px;
     height: 20px;
@@ -53,18 +46,17 @@
     letter-spacing: 4px;
     color: #fff;
   }
-
   &.hidden {
     z-index: -1;
     opacity: 0;
     transition: opacity 1s ease 0.5s, z-index 0.1s ease 1.5s;
   }
 }
+
 @keyframes spinner {
   0% {
     transform: rotate(0deg);
   }
-
   100% {
     transform: rotate(360deg);
   }

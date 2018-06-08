@@ -1,10 +1,8 @@
 import {
-  getAccessToken
+  getAccessToken,
 } from '../services/oauth';
-import {
-  OA_CLIENT_ID,
-  OA_CLIENT_SECRET,
-} from '../utils/util'
+import { OA_CLIENT_ID, OA_CLIENT_SECRET } from '../utils/util';
+
 export default {
   namespace: 'oauth',
 
@@ -14,10 +12,10 @@ export default {
 
   effects: {
     * getAccessTokenByAuthCode({
-      payload
+      payload,
     }, {
       call,
-      put
+      put,
     }) {
       const params = {
         grant_type: 'authorization_code',
@@ -33,13 +31,12 @@ export default {
         });
         // payload.cb ? payload.cb() : ''
       }
-
     },
     * refreshAccessToken({
-      payload
+      payload,
     }, {
       call,
-      put
+      put,
     }) {
       const params = {
         grant_type: 'refresh_token',
@@ -57,7 +54,6 @@ export default {
           payload: response,
         });
       }
-
     },
   },
 

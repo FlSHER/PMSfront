@@ -1,41 +1,40 @@
 import React, { PureComponent } from 'react';
-import { List } from 'antd-mobile'
+import { List } from 'antd-mobile';
+
 export default function ListView(ListItem) {
   class NewItem extends PureComponent {
     state = {
       muti: [],
     }
-
-    UNSAFE_componentWillReceiveProps(nextProps) {
-      const { selected } = nextProps
+    componentWillReceiveProps(nextProps) {
+      const { selected } = nextProps;
       if (selected && JSON.stringify(selected) !== JSON.stringify(this.state.muti)) {
-        console.log(selected);
         this.setState({
           muti: [...nextProps.selected],
         });
       }
     }
 
-    handlesMultiple = (item) => {//多选
-      const { muti } = this.state
+    handlesMultiple = (item) => { // 多选
+      const { muti } = this.state;
       const { onChange, name } = this.props;
 
-      let muti_ = [...muti]
+      let newMuti = [...muti];
 
       const id = item[name];
       const dataId = muti.map(m => m[name]);
       const idIndex = dataId.indexOf(id);
       if (idIndex !== -1) {
-        muti_ = muti.filter((its, index) => index !== idIndex);
+        newMuti = muti.filter((its, index) => index !== idIndex);
       } else {
-        muti_.push(item);
+        newMuti.push(item);
       }
 
       this.setState({
-        muti: [...muti_]
+        muti: [...newMuti],
       }, () => {
         onChange(this.state.muti);
-      })
+      });
     }
 
     makeListItemProps = (item) => {
@@ -44,7 +43,7 @@ export default function ListView(ListItem) {
       const response = {
         ...this.props,
         value: item,
-      }
+      };
       if (!this.props.fetchDataSource) {
         response.onClick = multiple ? this.handlesMultiple : onChange;
         const dataId = muti.map(m => m[name]);
@@ -58,22 +57,21 @@ export default function ListView(ListItem) {
       return (
         <List>
           {dataSource.map((item, i) => {
+            const idx = i;
             return (
               <ListItem
-                key={i}
+                key={idx}
                 {...this.makeListItemProps(item)}
               />
             );
           })}
         </List>
-      )
+      );
     }
   }
   NewItem.defaultProps = {
-    onChange: () => { }
-  }
+    onChange: () => { },
+  };
   return NewItem;
 }
-
-
 

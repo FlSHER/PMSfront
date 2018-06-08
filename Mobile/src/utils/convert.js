@@ -2,21 +2,21 @@
 // 银行类型
 // 中国农业银行,中国工商银行,中国建设银行,中国银行,交通银行,招商银行,中国邮政储蓄银行,农村商业银行
 
-import stastic from '../assets/stastic.svg'
-import stastic_ from '../assets/stastic_.svg'
+import stastic from '../assets/stastic.svg';
+import stastic_ from '../assets/stastic_.svg';
 
-import home from '../assets/home.svg'
-import home_ from '../assets/home_.svg'
+import home from '../assets/home.svg';
+import home_ from '../assets/home_.svg';
 
-import my from '../assets/my.svg'
-import my_ from '../assets/my_.svg'
+import my from '../assets/my.svg';
+import my_ from '../assets/my_.svg';
 
-import appro from '../assets/appro.svg'
-import appro_ from '../assets/appro_.svg'
+import appro from '../assets/appro.svg';
+import appro_ from '../assets/appro_.svg';
 
-import list from '../assets/list.svg'
-import more from '../assets/more.svg'
-import application from '../assets/application.svg'
+import list from '../assets/list.svg';
+import more from '../assets/more.svg';
+import application from '../assets/application.svg';
 
 export const bankType = [
   { value: '1', label: '中国工商银行' },
@@ -27,33 +27,33 @@ export const bankType = [
   { value: '6', label: '招商银行' },
   { value: '7', label: '中国邮政储蓄银行' },
   { value: '8', label: '农村商业银行' },
-]
+];
 // 底部菜单
 export const tabbar = [{
   title: '申请',
-  key: "",
+  key: '',
   to: '/home',
   icon: home_,
-  selIcon: home
+  selIcon: home,
 }, {
   title: '审批',
-  key: "approval",
+  key: 'approval',
   to: '/approvelist',
   icon: appro_,
-  selIcon: appro
+  selIcon: appro,
 }, {
   title: '统计',
-  key: "statistics",
+  key: 'statistics',
   to: '/statistics',
   icon: stastic_,
-  selIcon: stastic
+  selIcon: stastic,
 }, {
   title: '我的',
-  key: "my",
+  key: 'my',
   to: '/my',
   icon: my_,
-  selIcon: my
-},]
+  selIcon: my,
+}];
 
 
 // 首页入口
@@ -69,15 +69,15 @@ export const indexMenu = [{
   src: more,
   title: '其他',
   to: '/add_reimbur',
-}]
-//报销单状态
+}];
+// 报销单状态
 export const startState = [
   { title: '全部', type: 'all' },
   { title: '已完成', type: 'finished' },
   { title: '处理中', type: 'processing' },
   { title: '被驳回', type: 'rejected' },
-  { title: '撤回', type: 'withdraw' }
-]
+  { title: '撤回', type: 'withdraw' },
+];
 
 
 export const approvalState = [
@@ -99,39 +99,26 @@ export const reverseState = (state) => {
     case 4:
       return '已驳回';
     default:
-      return '其他'
+      return '其他';
   }
-}
+};
 
 export function clearString(s) {
-  var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）&;|{}【】‘；：”“'。，、？]")
-  var rs = "";
-  for (var i = 0; i < s.length; i++) {
-    rs = rs + s.substr(i, 1).replace(pattern, '');
+  const pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）&;|{}【】‘；：”“'。，、？]");
+  let rs = '';
+  for (let i = 0; i < s.length; i += 1) {
+    rs += s.substr(i, 1).replace(pattern, '');
   }
   return rs;
 }
 
-export function getGridFilter(fields, name, step, flag) {
-  return fields.map(item => {
-    let str = ''
-    const fields_ = item.fields.filter(its => {
-      str = item.key + '.*.' + its.key
-      if (flag === 1 ? !step.hidden_fields.includes(str) && !step[name].includes(str) : !step.hidden_fields.includes(str) && step[name].includes(str)) {
-        return item
-      }
-    })
-    return { ...item, fields_ }
-  })
-}
-
 export function dealThumbImg(url, str) {
-  const i = url.lastIndexOf('.')
-  const newImg = url.slice(0, i) + str + url.slice(i)
-  return newImg
+  const i = url.lastIndexOf('.');
+  const newImg = url.slice(0, i) + str + url.slice(i);
+  return newImg;
 }
 export function reAgainImg(url, str) {
-  const i = url.lastIndexOf(str)
-  const newImg = url.slice(0, i) + url.slice(i + str.length)
-  return newImg
+  const i = url.lastIndexOf(str);
+  const newImg = url.slice(0, i) + url.slice(i + str.length);
+  return newImg;
 }

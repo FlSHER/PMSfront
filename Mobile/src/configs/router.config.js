@@ -41,40 +41,40 @@ module.exports = {
       model: 'class',
       folder: 'classes',
       lazy: true,
-      cus: 'ClassManage'
+      cus: 'ClassManage',
     },
     career: {
       model: 'career',
       noadd: true,
       lazy: true,
-      cus: 'CareerManage'
+      cus: 'CareerManage',
     },
     inlandSubject: {
       model: 'inlandSubject',
       folder: 'career',
       noadd: true,
       lazy: true,
-      cus: 'CareerManage'
+      cus: 'CareerManage',
     },
     foreignSubject: {
       model: 'foreignSubject',
       folder: 'career',
       noadd: true,
       lazy: true,
-      cus: 'CareerManage'
+      cus: 'CareerManage',
     },
     message: {
       model: 'message',
       noadd: true,
       lazy: true,
-      cus: 'MessageManage'
+      cus: 'MessageManage',
     },
     organ: {
       model: 'organ',
       noadd: true,
       nodetail: true,
       lazy: true,
-      cus: 'OrganManage'
-    }
+      cus: 'OrganManage',
+    },
   },
-}
+};

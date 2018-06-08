@@ -8,7 +8,7 @@ class RefreshAccessToken extends Component {
     });
   }
 
-  UNSAFE_componentWillUpdate(nextProps) {
+  componentWillUpdate(nextProps) {
     const { accessToken } = nextProps;
     if (accessToken && accessToken.length > 0) {
       window.location.href = '/';

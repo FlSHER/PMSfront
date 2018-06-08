@@ -1,4 +1,6 @@
-import Footer from './Footer'
+import Footer from './Footer';
+
 export {
-    Footer, // 底部菜单
-}
+  Footer, // 底部菜单
+};
+

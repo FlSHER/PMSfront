@@ -1,15 +1,7 @@
-import React, {
-  Component,
-} from 'react';
-
-import Animate from 'rc-animate'
-import velocity from 'velocity-animate'
-
-
-
-import style from './index.less'
-import styles from '../../routes/common.less'
-
+import React, { Component } from 'react';
+import Animate from 'rc-animate';
+import style from './index.less';
+import styles from '../../routes/common.less';
 
 class ListFilter extends Component {
   state = {
@@ -17,58 +9,8 @@ class ListFilter extends Component {
     destroyed: false,
     visible: false,
     exclusive: false,
-
   }
-
-  animateEnter = (node, done) => {
-    let ok = false;
-
-    function complete() {
-      if (!ok) {
-        ok = 1;
-        done();
-      }
-    }
-
-    node.style.display = 'none';
-
-    velocity(node, 'slideDown', {
-      duration: 1000,
-      complete,
-    });
-    return {
-      stop() {
-        velocity(node, 'finish');
-        // velocity complete is async
-        complete();
-      },
-    };
-  }
-
-  animateLeave = (node, done) => {
-    let ok = false;
-
-    function complete() {
-      if (!ok) {
-        ok = 1;
-        done();
-      }
-    }
-
-    node.style.display = 'block';
-
-    velocity(node, 'slideUp', {
-      duration: 1000,
-      complete,
-    });
-    return {
-      stop() {
-        velocity(node, 'finish');
-        complete();
-      },
-    };
-  }
-  selFilter = (feild) => { //筛选
+  selFilter = (feild) => { // 筛选
     this.setState({
       [feild]: !this.state[feild],
     });
@@ -80,15 +22,15 @@ class ListFilter extends Component {
       onCancel,
       visible,
       filterKey,
-      contentStyle
-    } = this.props
+      contentStyle,
+    } = this.props;
     // const anim = {
     //   enter: this.animateEnter,
     //   leave: this.animateLeave,
     // };
     const conStyle = {
       display: visible ? 'block' : 'none',
-      ...contentStyle
+      ...contentStyle,
     };
     return (
       <div>
@@ -98,9 +40,10 @@ class ListFilter extends Component {
           showProp="visible"
           transitionAppear
           transitionName="fade"
-        // animation={anim}    
+        // animation={anim}
         >
-          <div style={conStyle}
+          <div
+            style={conStyle}
             onClick={() => this.hideModel}
           >
             <div className={style.filter_con}>
@@ -111,14 +54,16 @@ class ListFilter extends Component {
                 <div className={styles.con_content}>
                   {children}
                 </div>
-                <div className={styles.footer}
+                <div
+                  className={styles.footer}
                   style={{ background: '#f8f6f6' }}
                 >
                   <a
                     onClick={() => {
-                      onOk(filterKey)
+                      onOk(filterKey);
                     }}
-                  ><span>确定</span></a>
+                  ><span>确定</span>
+                  </a>
                   <a onClick={onCancel}><span>取消</span></a>
                 </div>
               </div>
@@ -126,9 +71,8 @@ class ListFilter extends Component {
           </div>
         </Animate>
       </div>
-    )
-
+    );
   }
 }
 
-export default ListFilter
+export default ListFilter;

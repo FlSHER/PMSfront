@@ -1,14 +1,14 @@
 import dva from 'dva';
-import createLoading from 'dva-loading'
+import createLoading from 'dva-loading';
 import createHistory from 'history/createBrowserHistory';
 import './index.css';
 
 // 1. Initialize
 const app = dva({
-	...createLoading({
-		effects: true,
-	}),
-	history: createHistory(),
+  ...createLoading({
+    effects: true,
+  }),
+  history: createHistory(),
 });
 
 // 2. Plugins

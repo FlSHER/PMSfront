@@ -1,7 +1,7 @@
 module.exports = {
   develepDomain: '192.168.20.238:8003', // 生产环境域名
   testingDomain: 'localhost', // 测试环境域名
-  openPages: [ '/home','/approvelist'], // 单页路径（显示footer的页面）
+  openPages: ['/home', '/approvelist'], // 单页路径（显示footer的页面）
   apiPrefix: { // 不同环境api地址前缀
     production: 'http://192.168.20.238:8006',
     testing: 'http://192.168.20.238:8006',
@@ -30,4 +30,5 @@ module.exports = {
   },
   qiniuPrefix: 'http://ov2ek9bbx.bkt.clouddn.com/', // 七牛前缀
   leaveClean: true, // 离开模块是否清理数据
-}
+};
+

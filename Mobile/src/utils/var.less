@@ -1,31 +1,26 @@
 // 字体规范
-@title-size:18px;
-@tab-text-size:16px;
-@list-title-size:16px;
-@list-categray-size:14px;
-@list-text-size:12px;
-@detail-title-size:14px;
-@detail-describe-size:14px;
-
-@title-color:#fff;
-@tab-text-color:#fff;
-@tab-text-color-checked:#9b9b9b;
-@list-title-color:#000;
-@list-categray-color:#4a4a4a;
-@list-text-color:#9b9b9b;
-@detail-title-color:#000;
-@detail-describe-color:#9b9b9b;
-
-
-
-@content-padding:24/75rem;
-
-.base(@color,@size){
+@title-size: 18px;
+@tab-text-size: 16px;
+@list-title-size: 16px;
+@list-categray-size: 14px;
+@list-text-size: 12px;
+@detail-title-size: 14px;
+@detail-describe-size: 14px;
+@title-color: #fff;
+@tab-text-color: #fff;
+@tab-text-color-checked: #9b9b9b;
+@list-title-color: #000;
+@list-categray-color: #4a4a4a;
+@list-text-color: #9b9b9b;
+@detail-title-color: #000;
+@detail-describe-color: #9b9b9b;
+@content-padding: 24/75rem;
+.base(@color, @size) {
   font-size: @size;
-  color:@color
+  color: @color;
 }
 
-.stateLabel(@color,@size,@border,@r){
-  .base(@color,@size);
-  border-radius: 10px
+.stateLabel(@color, @size, @border, @r) {
+  .base(@color, @size);
+  border-radius: 10px;
 }

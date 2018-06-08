@@ -1,13 +1,13 @@
 import React from 'react';
 import {
-  connect
+  connect,
 } from 'dva';
 import styles from './common.less';
 
 function IndexPage() {
   return (
     <div className={styles.con}>
-        <div>首页</div>
+      <div>首页</div>
     </div>
   );
 }

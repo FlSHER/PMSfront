@@ -1,74 +1,66 @@
 import {
-  Toast
-} from 'antd-mobile'
-import config from '../configs/config.js'
-
+  Toast,
+} from 'antd-mobile';
+import config from '../configs/config.js';
 
 export function env() {
-  const host = window.location.hostname
+  const host = window.location.hostname;
   if (host.indexOf(config.develepDomain) >= 0) {
-    return 'development'
+    return 'development';
   } else if (host.indexOf(config.testingDomain) >= 0) {
-    return 'testing'
+    return 'testing';
   }
-  return 'production'
-}
-
-export function log(...m) {
-  // 只在开发环境写log
-  if (env() === 'development') {
-    console.log(...m)
-  }
+  return 'production';
 }
 
 export function apiPrefix() {
-  const myEnv = env()
+  const myEnv = env();
   if (myEnv === 'production') {
-    return config.apiPrefix.production
+    return config.apiPrefix.production;
   } else if (myEnv === 'testing') {
-    return config.apiPrefix.testing
+    return config.apiPrefix.testing;
   }
-  return config.apiPrefix.development
+  return config.apiPrefix.development;
 }
 
 export function OA_PATH() {
-  const myEnv = env()
+  const myEnv = env();
   if (myEnv === 'production') {
-    return config.OA_PATH.production
+    return config.OA_PATH.production;
   } else if (myEnv === 'testing') {
-    return config.OA_PATH.testing
+    return config.OA_PATH.testing;
   }
-  return config.OA_PATH.development
+  return config.OA_PATH.development;
 }
 
 export function OA_CLIENT_ID() {
-  const myEnv = env()
+  const myEnv = env();
   if (myEnv === 'production') {
-    return config.OA_CLIENT_ID.production
+    return config.OA_CLIENT_ID.production;
   } else if (myEnv === 'testing') {
-    return config.OA_CLIENT_ID.testing
+    return config.OA_CLIENT_ID.testing;
   }
-  return config.OA_CLIENT_ID.development
+  return config.OA_CLIENT_ID.development;
 }
 
 export function OA_CLIENT_SECRET() {
-  const myEnv = env()
+  const myEnv = env();
   if (myEnv === 'production') {
-    return config.OA_CLIENT_SECRET.production
+    return config.OA_CLIENT_SECRET.production;
   } else if (myEnv === 'testing') {
-    return config.OA_CLIENT_SECRET.testing
+    return config.OA_CLIENT_SECRET.testing;
   }
-  return config.OA_CLIENT_SECRET.development
+  return config.OA_CLIENT_SECRET.development;
 }
 
 export function domain() {
-  const myEnv = env()
+  const myEnv = env();
   if (myEnv === 'production') {
-    return config.domain.production
+    return config.domain.production;
   } else if (myEnv === 'testing') {
-    return config.domain.testing
+    return config.domain.testing;
   }
-  return config.domain.development
+  return config.domain.development;
 }
 
 
@@ -90,20 +82,22 @@ const codeMessage = {
   504: '网关超时',
 };
 export function dealErrorData(data, code) {
-  const errors = data.errors
-  let msg = '网络异常'
+  const { errors } = data;
+  let msg = '网络异常';
   if (code === 422) {
-    let errs = []
+    const errs = [];
     if (errors) {
-      for (var key in errors) {
-        errs.push(errors[key][0])
+      for (const key in errors) {
+        if (key === undefined) {
+          errs.push(errors[key][0]);
+        }
       }
-      msg = errs[0]
+      [msg] = errs;
     }
   } else {
-    msg = codeMessage[code]
+    msg = codeMessage[code];
   }
-  return msg
+  return msg;
 }
 
 /**
@@ -116,10 +110,10 @@ export function filterData(data, okMsg) {
     if (okMsg === true) {
       Toast.success('操作成功', 1);
     }
-    return data.results
+    return data.results;
   }
-  dealErrorData(data)
-  return false
+  dealErrorData(data);
+  return false;
 }
 
 /**
@@ -134,13 +128,12 @@ export function filterData(data, okMsg) {
  */
 
 
-
 export function analyzePath(pathname, i) {
-  let path = pathname
+  let path = pathname;
   if (pathname.indexOf('/') === 0) {
-    path = pathname.substr(1)
+    path = pathname.substr(1);
   }
-  const routes = path.split('/')
+  const routes = path.split('/');
 
-  return routes[i]
+  return routes[i];
 }

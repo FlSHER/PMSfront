@@ -1,20 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { List } from 'antd-mobile'
-import ListView from './ListView'
+import { List } from 'antd-mobile';
+import ListView from './ListView';
 
-const Item = List.Item;
+const { Item } = List;
 class Department extends Component {
-  UNSAFE_componentWillMount() {
-
-  }
-
-  
   render() {
-    const { value, name,fetchDataSource } = this.props
-    console.log('item', value)
+    const { value, name, fetchDataSource } = this.props;
     return (
-      <Item arrow="horizontal"
+      <Item
+        arrow="horizontal"
         onClick={fetchDataSource}
       >
         {value[name]}
@@ -24,5 +19,4 @@ class Department extends Component {
 }
 const EnhanceDemo = ListView(Department);
 export default connect(({ loading }) => ({ loading }))(EnhanceDemo);
-
 

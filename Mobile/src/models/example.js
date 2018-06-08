@@ -6,23 +6,23 @@ export default {
   state: {
     bread: [
       {
-        'id': 'all',
-        name: '全部'
+        id: 'all',
+        name: '全部',
       },
     ],
     department: [
       {
         name: 'weiy',
-        id: 1
+        id: 1,
       },
       {
         name: 'weiy',
-        id: 2
+        id: 2,
       },
     ],
-    staff:[
+    staff: [
 
-    ]
+    ],
   },
 
   subscriptions: {
@@ -37,7 +37,7 @@ export default {
   },
 
   reducers: {
-    
+
     save(state, action) {
       return { ...state, ...action.payload };
     },

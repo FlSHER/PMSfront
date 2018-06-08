@@ -1,8 +1,8 @@
 import React, {
-  Component
+  Component,
 } from 'react';
 import {
-  connect
+  connect,
 } from 'dva';
 
 class GetAccessToken extends Component {
@@ -22,7 +22,7 @@ class GetAccessToken extends Component {
   //     window.location.href = '/home';
   //   }
   // }
-  UNSAFE_componentWillUpdate(nextProps) {
+  componentWillUpdate(nextProps) {
     const { accessToken } = nextProps;
     if (accessToken && accessToken.length > 0) {
       window.location.href = '/home';
@@ -32,8 +32,8 @@ class GetAccessToken extends Component {
     const {
       location: {
         pathname,
-        search
-      }
+        search,
+      },
     } = this.props;
     const authCode = search.match(/code=(\w+)$/)[1];
     const params = {
@@ -42,7 +42,7 @@ class GetAccessToken extends Component {
     };
     this.props.dispatch({
       type: 'oauth/getAccessTokenByAuthCode',
-      payload: params
+      payload: params,
     });
   }
 
@@ -54,7 +54,7 @@ class GetAccessToken extends Component {
 }
 
 export default connect(({
-  oauth
+  oauth,
 }) => ({
   accessToken: oauth.accessToken,
 }))(GetAccessToken);

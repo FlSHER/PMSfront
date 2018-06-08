@@ -1,52 +1,44 @@
-import axios from 'axios'
-import {
-  Toast
-} from 'antd-mobile'
-import { dealErrorData } from './util'
-import {
-  log,
-  OA_PATH,
-  OA_CLIENT_ID,
-} from './util'
+import axios from 'axios';
+import { Toast } from 'antd-mobile';
+import { dealErrorData, OA_PATH, OA_CLIENT_ID } from './util';
 
 const fetch = (url, options) => {
-  let {
+  const {
     method,
     body,
-    headers
-  } = options
+    headers,
+  } = options;
   const axo = axios.create({
     timeout: 20000,
-    headers: headers
-  })
+    headers,
+  });
 
-  console.log('url', url, 'options', options)
-  const _method = method.toLowerCase()
+  const newMethod = method.toLowerCase();
   switch (true) {
-    case _method === 'get':
-      return axo.get(url)
-    case _method === 'post':
-      return axo.post(url, body)
-    case _method === 'put' && body == undefined:
-      return axo.put(url)
-    case _method === 'put':
-      return axo.put(url, body)
-    case _method === 'delete':
-      return axo.delete(url)
+    case newMethod === 'get':
+      return axo.get(url);
+    case newMethod === 'post':
+      return axo.post(url, body);
+    case newMethod === 'put' && body === undefined:
+      return axo.put(url);
+    case newMethod === 'put':
+      return axo.put(url, body);
+    case newMethod === 'delete':
+      return axo.delete(url);
     default:
-      return axo.get(url)
+      return axo.get(url);
   }
-}
+};
 
 function checkStatus(response) {
-  Toast.hide()
+  Toast.hide();
   // const {
   //   status
   // } = response;
   // if ((status >= 200 && status < 300) || status === 402) {
   //   return response;
   // }
-  return response
+  return response;
   // status === 422 表单验证
   // const errortext = codeMessage[status] || response.statusText;
   // Toast.fail(`请求错误 ${status}: ${response.url}`)
@@ -61,7 +53,7 @@ export default function request(uri, params) {
   const defaultOptions = {
     credentials: 'include',
   };
-  log('request:', params)
+  log('request:', params);
 
   if (uri.match(/\/api\//)) {
     if (localStorage.getItem('OA_access_token') &&
@@ -76,10 +68,9 @@ export default function request(uri, params) {
   const newOptions = {
     ...defaultOptions,
     ...params,
-    method: params ? params.method : 'GET'
+    method: params ? params.method : 'GET',
   };
   if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
-
     newOptions.headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json;charset=utf-8',
@@ -103,39 +94,38 @@ export default function request(uri, params) {
   return fetch(urlParam, newOptions)
     .then(checkStatus)
     .then((response) => {
-      console.log('response', response)
       if (newOptions.method === 'DELETE' && response.status === 204) {
-        var obj = { status: '204', message: '删除成功' }
+        const obj = { status: '204', message: '删除成功' };
         // return Promise.resolve({ ...obj });
-        return { ...obj }
+        return { ...obj };
       }
       const {
-        data
-      } = response
+        data,
+      } = response;
       // return Promise.resolve(data);
-      return data
+      return data;
     }).catch((error) => {
       const {
-        response
-      } = error
-      log('response exception', error, response)
+        response,
+      } = error;
+      log('response exception', error, response);
       if (response) {
         const {
           data,
-          status
-        } = response
+          status,
+        } = response;
         // return Promise.reject({ error: true, message: dealErrorData(data, status) });
         return {
-          error: true, message: dealErrorData(data, status)
-        }
-
+          error: true, message: dealErrorData(data, status),
+        };
       } else {
         // return Promise.reject({ error: true, message: '网络错误' });
         return {
-          error: true, message: '网络错误'
-        }
+          error: true, message: '网络错误',
+        };
       }
-    }).catch((error) => {//加上catch 
-      console.log(error);
     })
+    .catch((error) => { // 加上catch
+      return error;
+    });
 }

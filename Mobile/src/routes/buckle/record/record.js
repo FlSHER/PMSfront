@@ -1,13 +1,12 @@
 import React from 'react';
 import {
-  connect
-} from 'dva'
-import { List } from 'antd-mobile'
-import style from '../index.less'
-import styles from '../../common.less'
+  connect,
+} from 'dva';
+import { List } from 'antd-mobile';
+import style from '../index.less';
+import styles from '../../common.less';
 
 class BuckleRecord extends React.Component {
-
   render() {
     return (
       <div className={styles.con}>
@@ -16,7 +15,7 @@ class BuckleRecord extends React.Component {
             <List>
               <List.Item arrow="horizontal">
                 事件标题
-            </List.Item>
+              </List.Item>
             </List>
           </div>
         </div>
