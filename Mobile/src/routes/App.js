@@ -74,7 +74,7 @@ class App extends React.Component {
                 pathname={pathname}
               />
             </div>
-) : ''
+          ) : ''
         }
       </div>
     );

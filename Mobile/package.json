@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "start": "set PORT=8002&&roadhog server",
+    "start": "ESLINT=none set PORT=8002&&roadhog server",
     "build": "roadhog build",
     "prettier": "prettier --write ./src/**/**/**/*",
     "site": "roadhog-api-doc static && gh-pages -d dist",
@@ -12,7 +12,6 @@
     "lint-staged": "lint-staged",
     "lint-staged:js": "eslint --ext .js",
     "precommit": "npm run lint"
-    
   },
   "dependencies": {
     "antd-mobile": "^2.1.11",
