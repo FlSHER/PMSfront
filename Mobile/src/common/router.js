@@ -1,6 +1,5 @@
 import { createElement } from 'react';
 import dynamic from 'dva/dynamic';
-import { getMenuData } from './menu';
 
 let routerDataCache;
 
@@ -54,18 +53,6 @@ const dynamicWrapper = (app, models, component) => {
   });
 };
 
-function getFlatMenuData(menus) {
-  let keys = {};
-  menus.forEach((item) => {
-    if (item.children) {
-      keys[item.path] = { ...item };
-      keys = { ...keys, ...getFlatMenuData(item.children) };
-    } else {
-      keys[item.path] = { ...item };
-    }
-  });
-  return keys;
-}
 
 export const getRouterData = (app) => {
   const routerConfig = {
@@ -75,27 +62,34 @@ export const getRouterData = (app) => {
     '/home': {
       component: dynamicWrapper(app, [], () => import('../routes/IndexPage')),
     },
+    '/user': {
+      component: dynamicWrapper(app, [], () => import('../routes/IndexPage')),
+    },
     '/get_access_token': {
-      component: dynamicWrapper(app, ['oauth'], () => import('../routes/oauth/GetAccessToken')),
+      component: dynamicWrapper(app, ['oauth'], () => import('../routes/Oauth/GetAccessToken')),
     },
     '/refresh_access_token': {
-      component: dynamicWrapper(app, ['oauth'], () => import('../routes/oauth/RefreshAccessToken')),
+      component: dynamicWrapper(app, ['oauth'], () => import('../routes/Oauth/RefreshAccessToken')),
       authority: 'refresh-token',
       redirectPath: '/redirect_to_authorize',
     },
     '/redirect_to_authorize': {
-      component: dynamicWrapper(app, ['oauth'], () => import('../routes/oauth/RedirectToAuthorize')),
+      component: dynamicWrapper(app, ['oauth'], () => import('../routes/Oauth/RedirectToAuthorize')),
+    },
+    '/exception/403': {
+      component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
+    },
+    '/exception/404': {
+      component: dynamicWrapper(app, [], () => import('../routes/Exception/404')),
     },
   };
-  // Get name from ./menu.js or just set it in the router data.
-  const menuData = getFlatMenuData(getMenuData());
+
   const routerData = {};
   Object.keys(routerConfig).forEach((item) => {
-    const menuItem = menuData[item.replace(/^\//, '')] || {};
     routerData[item] = {
       ...routerConfig[item],
-      name: routerConfig[item].name || menuItem.name,
-      authority: routerConfig[item].authority || menuItem.authority,
+      name: routerConfig[item].name,
+      authority: routerConfig[item].authority,
     };
   });
   return routerData;

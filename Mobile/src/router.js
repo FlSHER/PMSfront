@@ -15,6 +15,7 @@ const { AuthorizedRoute } = Authorized;
 
 function RouterConfig({ history, app }) {
   const routerData = getRouterData(app);
+  // const UserLayout = routerData['/user'].component;
   const BasicLayout = routerData['/'].component;
   return (
     <ConnectedRouter history={history}>
@@ -23,7 +24,7 @@ function RouterConfig({ history, app }) {
           path="/"
           render={props => <BasicLayout {...props} />}
           // authority={['token']}
-          redirectPath="/refresh_access_token"
+          redirectPath="/user/login"
         />
       </Switch>
     </ConnectedRouter>

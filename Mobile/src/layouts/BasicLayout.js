@@ -2,7 +2,7 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 // import DocumentTitle from 'react-document-title';
 // import { connect } from 'dva';
-import { Redirect, Switch } from 'dva/router';
+import { Redirect, Switch, Route } from 'dva/router';
 // import { ContainerQuery } from 'react-container-query';
 // import classNames from 'classnames';
 // import { enquireScreen } from 'enquire-js';
@@ -10,10 +10,10 @@ import { Redirect, Switch } from 'dva/router';
 // import GlobalFooter from '../components/GlobalFooter';
 // import LoginLoading from '../components/Loading';
 // import SiderMenu from '../components/SiderMenu';
-// import NotFound from '../routes/Exception/404';
+import NotFound from '../routes/Exception/404';
 import { getRoutes } from '../utils/util';
 import Authorized from '../utils/Authorized';
-import { getMenuData } from '../common/menu';
+// import { getMenuData } from '../common/menu';
 // import logo from '../assets/logo.svg';
 import App from '../routes/App';
 // const { Content } = Layout;
@@ -36,7 +36,7 @@ const getRedirect = (item) => {
     }
   }
 };
-getMenuData().forEach(getRedirect);
+// getMenuData().forEach(getRedirect);
 
 export default class BasicLayout extends React.PureComponent {
   render() {
@@ -64,6 +64,7 @@ export default class BasicLayout extends React.PureComponent {
             )
           }
           <Redirect exact from="/" to="/home" />
+          <Route render={NotFound} />
         </Switch>
       </App>
     );

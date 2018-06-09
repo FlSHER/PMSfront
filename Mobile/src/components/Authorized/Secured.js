@@ -1,12 +1,12 @@
 import React from 'react';
-// import Exception from '../Exception/index';
+import Exception from '../../routes/Exception/403';
 import CheckPermissions from './CheckPermissions';
 /**
  * 默认不能访问任何页面
  * default is "NULL"
  */
 const Exception403 = () => (
-  <div>404</div>
+  <Exception />
 );
 
 /**
