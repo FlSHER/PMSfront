@@ -65,6 +65,9 @@ export const getRouterData = (app) => {
     '/user': {
       component: dynamicWrapper(app, [], () => import('../routes/IndexPage')),
     },
+    '/testView': {
+      component: dynamicWrapper(app, ['example'], () => import('../routes/test/SelPerson')),
+    },
     '/get_access_token': {
       component: dynamicWrapper(app, ['oauth'], () => import('../routes/Oauth/GetAccessToken')),
     },

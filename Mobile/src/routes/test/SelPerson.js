@@ -6,8 +6,10 @@ import { SearchList } from '../../components/index';
 import { Department, Staff } from '../../components/ListView/index.js';
 import styles from '../common.less';
 import style from './index.less';
-
-class SelPerson extends Component {
+@connect(({ example }) => ({
+  example,
+}))
+export default class SelPerson extends Component {
   state = {
     selected: {
       data: [],
@@ -87,12 +89,7 @@ class SelPerson extends Component {
         department: [{ name: new Date().getTime(), id: new Date().getTime() }],
       },
     });
-    dispatch({
-      type: 'example/save',
-      payload: {
-        bread: bread_,
-      },
-    });
+
     dispatch({
       type: 'example/save',
       payload: {
@@ -166,6 +163,3 @@ class SelPerson extends Component {
     );
   }
 }
-
-
-export default connect(({ example }) => ({ example }))(SelPerson);

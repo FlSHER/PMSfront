@@ -1,8 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "start": "ESLINT=none set PORT=8002&&roadhog server",
-    "build": "roadhog build",
+    "start": "cross-env ESLINT=none set PORT=8002&&roadhog server",
+    "build": "cross-env roadhog build",
     "prettier": "prettier --write ./src/**/**/**/*",
     "site": "roadhog-api-doc static && gh-pages -d dist",
     "analyze": "cross-env ANALYZE=true roadhog build",
@@ -20,8 +20,11 @@
     "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "babel-plugin-transform-runtime": "^6.23.0",
     "classnames": "^2.2.5",
+    "cross-env": "^5.1.6",
     "dva": "^2.3.0",
     "dva-loading": "^2.0.2",
+    "lodash": "^4.17.10",
+    "lodash-decorators": "^5.0.0",
     "rc-animate": "^2.4.4",
     "rc-queue-anim": "^1.5.0",
     "react": "^16.2.0",
@@ -29,8 +32,10 @@
     "velocity-animate": "^1.5.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-eslint": "^8.1.2",
     "babel-plugin-dva-hmr": "^0.3.2",
+    "babel-preset-env": "^1.7.0",
     "eslint": "^4.14.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-config-umi": "^0.1.1",
@@ -39,14 +44,14 @@
     "eslint-plugin-import": "^2.6.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.1.0",
-    "stylelint": "^8.4.0",
-    "stylelint-config-prettier": "^3.0.4",
-    "stylelint-config-standard": "^18.0.0",
     "g": "^2.0.1",
     "husky": "^0.12.0",
     "lint-staged": "^7.1.3",
     "redbox-react": "^1.4.3",
-    "roadhog": "^2.0.0"
+    "roadhog": "^2.0.0",
+    "stylelint": "^8.4.0",
+    "stylelint-config-prettier": "^3.0.4",
+    "stylelint-config-standard": "^18.0.0"
   },
   "lint-staged": {
     "**/*.{js,jsx}": "lint-staged:js",
