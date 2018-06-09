@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { List } from 'antd-mobile';
+import QueueAnim from 'rc-queue-anim';
 
 export default function ListView(ListItem) {
   class NewItem extends PureComponent {
@@ -29,7 +30,6 @@ export default function ListView(ListItem) {
       } else {
         newMuti.push(item);
       }
-
       this.setState({
         muti: [...newMuti],
       }, () => {
@@ -55,17 +55,19 @@ export default function ListView(ListItem) {
     render() {
       const { dataSource } = this.props;
       return (
-        <List>
-          {dataSource.map((item, i) => {
-            const idx = i;
-            return (
-              <ListItem
-                key={idx}
-                {...this.makeListItemProps(item)}
-              />
-            );
-          })}
-        </List>
+        <QueueAnim>
+          <List key="list">
+            {dataSource.map((item, i) => {
+              const idx = i;
+              return (
+                <ListItem
+                  key={idx}
+                  {...this.makeListItemProps(item)}
+                />
+              );
+            })}
+          </List>
+        </QueueAnim>
       );
     }
   }

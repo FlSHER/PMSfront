@@ -31,7 +31,7 @@ export default {
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {  // eslint-disable-line
+    *fetch(_, { put }) {
       yield put({ type: 'save' });
     },
   },

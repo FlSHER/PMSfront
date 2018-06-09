@@ -1,22 +1,19 @@
 import React, { Component } from 'react';
-import { connect } from 'dva';
 import { List } from 'antd-mobile';
 import ListView from './ListView';
 
 const { Item } = List;
-class Department extends Component {
+@ListView
+export default class Department extends Component {
   render() {
-    const { value, name, fetchDataSource } = this.props;
+    const { value, fetchDataSource } = this.props;
     return (
       <Item
         arrow="horizontal"
-        onClick={fetchDataSource}
+        onClick={() => fetchDataSource(value)}
       >
-        {value[name]}
+        {value.name}
       </Item>
     );
   }
 }
-const EnhanceDemo = ListView(Department);
-export default connect(({ loading }) => ({ loading }))(EnhanceDemo);
-

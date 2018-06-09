@@ -53,8 +53,6 @@ export default function request(uri, params) {
   const defaultOptions = {
     credentials: 'include',
   };
-  log('request:', params);
-
   if (uri.match(/\/api\//)) {
     if (localStorage.getItem('OA_access_token') &&
       localStorage.getItem('OA_access_token_expires_in') > new Date().getTime()) {
@@ -99,16 +97,13 @@ export default function request(uri, params) {
         // return Promise.resolve({ ...obj });
         return { ...obj };
       }
-      const {
-        data,
-      } = response;
+      const { data } = response;
       // return Promise.resolve(data);
       return data;
     }).catch((error) => {
       const {
         response,
       } = error;
-      log('response exception', error, response);
       if (response) {
         const {
           data,

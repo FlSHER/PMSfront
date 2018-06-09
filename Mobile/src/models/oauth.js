@@ -11,12 +11,7 @@ export default {
   },
 
   effects: {
-    * getAccessTokenByAuthCode({
-      payload,
-    }, {
-      call,
-      put,
-    }) {
+    * getAccessTokenByAuthCode({ payload }, { call, put }) {
       const params = {
         grant_type: 'authorization_code',
         client_id: OA_CLIENT_ID(),

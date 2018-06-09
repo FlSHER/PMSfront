@@ -16,7 +16,11 @@ import {
 } from '../utils/util';
 import style from './app.less';
 
-class App extends React.Component {
+@withRouter
+@connect(({ loading }) => ({
+  loading,
+}))
+export default class App extends React.Component {
   componentWillMount() {
     // if (localStorage.getItem('OA_access_token') &&
     //   localStorage.getItem('OA_access_token_expires_in') > new Date().getTime()) {
@@ -41,7 +45,6 @@ class App extends React.Component {
     let {
       pathname,
     } = location;
-
 
     pathname = pathname.startsWith('/') ? pathname : `/ ${pathname} `;
     return (
@@ -81,8 +84,3 @@ class App extends React.Component {
   }
 }
 
-export default withRouter(connect(({
-  loading,
-}) => ({
-  loading,
-}))(App));

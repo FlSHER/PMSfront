@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import {
-  connect,
-} from 'dva';
 import { SearchBar, Button } from 'antd-mobile';
 import style from './index.less';
 
-class SearchList extends Component {
+
+export default class SearchList extends Component {
   state = {
     value: '美食',
   };
+
   onChange = (value) => {
     const { handleSearch } = this.props;
     this.setState({ value }, () => {
@@ -17,7 +16,16 @@ class SearchList extends Component {
   };
 
   render() {
-    const { bread, children, multiple, selected, checkedAll, count, handleBread } = this.props;
+    const {
+      bread,
+      children,
+      multiple,
+      name,
+      selected,
+      checkedAll,
+      count,
+      handleBread,
+    } = this.props;
     return (
       <div className={style.con}>
         <div className={style.header}>
@@ -68,7 +76,7 @@ class SearchList extends Component {
                 </div>
               </div>
             </div>
-) : null}
+          ) : null}
         </div>
         <div className={style.con_content}>
           {children}
@@ -78,13 +86,14 @@ class SearchList extends Component {
             <div className={style.footer}>
               <div className={style.sel_result}>
                 <div className={style.person_list}>
-                  {selected.data.map((its, i) => {
+                  {selected.data.map((item, i) => {
                     const idx = i;
                     return (
                       <div
                         key={idx}
                         className={style.person_item}
-                      >魏颖
+                      >
+                        {item[name]}
                       </div>
                     );
                   })}
@@ -100,7 +109,7 @@ class SearchList extends Component {
                 </div>
               </div>
             </div>
-                ) : null
+          ) : null
         }
 
       </div>
@@ -110,6 +119,5 @@ class SearchList extends Component {
 
 SearchList.defaultProps = {
   multiple: false,
+  name: 'name',
 };
-
-export default connect()(SearchList);
