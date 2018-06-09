@@ -48,7 +48,7 @@ export default class SearchList extends Component {
                     >
                       <a>{item.name}
                       </a>
-                      <span className={style.arrow}>to</span>
+                      <span className={style.arrow}>{'>'}</span>
                     </div>
                   );
                 } else {

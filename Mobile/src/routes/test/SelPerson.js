@@ -3,7 +3,7 @@ import {
   connect,
 } from 'dva';
 import { SearchList } from '../../components/index';
-import { Department, Staff } from '../../components/ListView/index.js';
+import { Department, Staff } from '../../common/ListView/index.js';
 import styles from '../common.less';
 import style from './index.less';
 @connect(({ example, searchStaff, loading }) => ({
@@ -24,7 +24,7 @@ export default class SelPerson extends Component {
   };
 
   componentDidMount() {
-    this.fetchSearchStaff({ parentId: 0, breadCrumb: [] });
+    this.fetchSearchStaff({ parentId: 0, breadCrumb: [{ name: '联系人', id: 0 }] });
   }
 
 
@@ -40,30 +40,6 @@ export default class SelPerson extends Component {
       },
     });
     return search;
-  }
-
-  onChangeBread = (item) => {
-    const { example: { bread }, dispatch } = this.props;
-    let index = 0;
-    bread.forEach((its, i) => {
-      if (its.id === item.id) {
-        index = i;
-      }
-    });
-
-    const newBread = bread.filter((its, i) => index > i - 1);
-    dispatch({
-      type: 'example/save',
-      payload: {
-        bread: [...newBread],
-      },
-    });
-    dispatch({
-      type: 'example/save',
-      payload: {
-        department: [{ name: new Date().getTime(), id: new Date().getTime() }],
-      },
-    });
   }
 
 
@@ -87,14 +63,29 @@ export default class SelPerson extends Component {
     });
   }
 
-  selDepartment = (params) => {
+  makeBreadCrumbData = (params) => {
     const { breadCrumb } = this.props;
-    const newBread = [...breadCrumb];
-    newBread.push({ name: new Date().getTime(), id: new Date().getTime() });
+    let newBread = [...breadCrumb];
+    let splitIndex = null;
+    newBread.forEach((item, index) => {
+      if (item.id === params.id) {
+        splitIndex = index + 1;
+      }
+    });
+    if (splitIndex !== null) {
+      newBread = newBread.slice(0, splitIndex);
+    } else {
+      newBread.push(params);
+    }
+    return newBread;
+  }
+
+  selDepartment = (params) => {
+    const newBread = this.makeBreadCrumbData(params);
     const parentId = params.id;
     this.fetchSearchStaff({
       parentId,
-      breadCrumb,
+      breadCrumb: newBread,
     });
   }
 
@@ -121,9 +112,7 @@ export default class SelPerson extends Component {
 
   render() {
     const { department, staff, breadCrumb, loading } = this.props;
-
     const { selected } = this.state;
-
     return (
       <div className={styles.con}>
         <div className={styles.con_content}>
@@ -135,7 +124,7 @@ export default class SelPerson extends Component {
             selected={selected}
             checkedAll={this.checkedAll}
             handleSearch={this.onSearch}
-            handleBread={this.onChangeBread}
+            handleBread={this.selDepartment}
           >
             {!loading ? (
               <div className={style.child}>

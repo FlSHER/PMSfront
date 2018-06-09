@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { List } from 'antd-mobile';
-import ListView from './ListView';
+import ListView from '../../components/ListView';
 
 const { Item } = List;
 @ListView

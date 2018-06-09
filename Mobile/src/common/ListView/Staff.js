@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ListView from './ListView';
+import ListView from '../../components/ListView';
 import style from './index.less';
 
 @ListView
