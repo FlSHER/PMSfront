@@ -1,27 +1,31 @@
-.container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  .content {
-    flex-grow: 1;
-    overflow: auto;
+:global {
+  .container {
+    height: 100%;
     display: flex;
     flex-direction: column;
+    .content {
+      flex-grow: 1;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .footer {
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
   }
-  .footer {
-    flex-grow: 0;
-    flex-shrink: 0;
+  .textOver {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
-}
-
-.textOver {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.demo_content {
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
+  .demo_content {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+  }
+  .am-wingblank.am-wingblank-lg {
+    margin-left: 24/75rem !important;
+    margin-right: 24/75rem !important;
+  }
 }
