@@ -5,9 +5,6 @@ import QueueAnim from 'rc-queue-anim';
 import {
   withRouter,
 } from 'dva/router';
-// import {
-//   Flex,
-// } from 'antd-mobile';
 import { FooterBar } from '../components/Footer';
 import Loader from '../components/General/Loader/Loader';
 import {
