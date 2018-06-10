@@ -23,7 +23,7 @@ export default class SearchList extends Component {
       name,
       selected,
       checkedAll,
-      count,
+      checkAble,
       handleBread,
     } = this.props;
     return (
@@ -69,7 +69,7 @@ export default class SearchList extends Component {
             <div className={style.action}>
               <div className={style.action_item}>
                 <div
-                  className={[style.item, selected.num === count ? style.checked : null].join(' ')}
+                  className={[style.item, checkAble ? style.checked : null].join(' ')}
                   onClick={checkedAll}
                 >
                   <span>全选</span>
@@ -120,4 +120,5 @@ export default class SearchList extends Component {
 SearchList.defaultProps = {
   multiple: false,
   name: 'name',
+  checkAble: false,
 };

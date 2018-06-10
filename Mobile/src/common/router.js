@@ -66,7 +66,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, [], () => import('../routes/IndexPage')),
     },
     '/testView': {
-      component: dynamicWrapper(app, ['searchStaff', 'example'], () => import('../routes/test/SelPerson')),
+      component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/test/SelPerson')),
     },
     '/get_access_token': {
       component: dynamicWrapper(app, ['oauth'], () => import('../routes/Oauth/GetAccessToken')),

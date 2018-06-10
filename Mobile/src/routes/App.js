@@ -48,7 +48,7 @@ export default class App extends React.Component {
 
     pathname = pathname.startsWith('/') ? pathname : `/ ${pathname} `;
     return (
-      <div className={style.container}>
+      <div className={style.container} >
         <Loader
           fullScreen
           spinning={loading.global}

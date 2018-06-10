@@ -23,7 +23,7 @@ export default class SelPerson extends Component {
     selectAll: false,
   };
 
-  componentDidMount() {
+  componentWillMount() {
     this.fetchSearchStaff({ parentId: 0, breadCrumb: [{ name: '联系人', id: 0 }] });
   }
 
@@ -120,7 +120,7 @@ export default class SelPerson extends Component {
             multiple
             name="realname"
             bread={breadCrumb}
-            count={staff.length}
+            checkAble={staff.length && (selected.num === staff.length)}
             selected={selected}
             checkedAll={this.checkedAll}
             handleSearch={this.onSearch}
