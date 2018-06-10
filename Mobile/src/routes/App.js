@@ -5,7 +5,7 @@ import QueueAnim from 'rc-queue-anim';
 import {
   withRouter,
 } from 'dva/router';
-import Footer from '../components/Footer/Footer';
+import { FooterBar } from '../components/Footer';
 import Loader from '../components/General/Loader/Loader';
 import {
   openPages,
@@ -48,38 +48,35 @@ export default class App extends React.Component {
 
     pathname = pathname.startsWith('/') ? pathname : `/ ${pathname} `;
     return (
-      <div className={style.container} >
-        <Loader
-          fullScreen
-          spinning={loading.global}
-        />
-        <div
-          className={style.content}
-          key={pathname}
-        >
-          <QueueAnim
-            className={style.demo_content}
-            type={['left', 'right']}
+      <React.Fragment>
+        <div className={style.container} >
+          <div
+            className={style.content}
+            key={pathname}
           >
-            <div
-              key={pathname}
-              style={{ display: 'flex', flexGrow: 1, flexDirection: 'column' }}
+            <QueueAnim
+              className={style.demo_content}
+              type={['left', 'right']}
             >
-              {children}
-            </div>
-          </QueueAnim>
+              <div
+                key={pathname}
+                style={{ display: 'flex', flexGrow: 1, flexDirection: 'column' }}
+              >
+                {children}
+              </div>
+            </QueueAnim>
+          </div>
         </div>
+        <Loader fullScreen spinning={loading.global} />
         {
           openPages && openPages.includes(pathname) ? (
-            <div className={style.footer}>
-              <Footer
-                history={this.props.history}
-                pathname={pathname}
-              />
-            </div>
+            <FooterBar
+              history={this.props.history}
+              pathname={pathname}
+            />
           ) : ''
         }
-      </div>
+      </React.Fragment>
     );
   }
 }

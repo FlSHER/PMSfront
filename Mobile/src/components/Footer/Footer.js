@@ -2,12 +2,12 @@ import React from 'react';
 import { TabBar } from 'antd-mobile';
 import { tabbar } from '../../utils/convert';
 
-export default class Footer extends React.Component {
+export default class FooterBar extends React.Component {
   render() {
     const { pathname } = this.props;
 
     return (
-      <div>
+      <div style={{ position: 'fixed', width: '100%', bottom: 0 }}>
         <TabBar
           unselectedTintColor="#949494"
           tintColor="#33A3F4"

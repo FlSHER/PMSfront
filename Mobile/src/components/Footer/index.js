@@ -1,6 +1,6 @@
-import Footer from './Footer';
+import FooterBar from './Footer';
 
 export {
-  Footer, // 底部菜单
+  FooterBar, // 底部菜单
 };
 

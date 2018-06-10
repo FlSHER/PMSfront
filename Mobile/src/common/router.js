@@ -66,7 +66,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, [], () => import('../routes/IndexPage')),
     },
     '/buckle_record': {
-      component: dynamicWrapper(app, [], () => import('../routes/Buckle/record/Record')),
+      component: dynamicWrapper(app, [], () => import('../routes/Buckle/record/record')),
     },
     '/testView': {
       component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/test/SelPerson')),

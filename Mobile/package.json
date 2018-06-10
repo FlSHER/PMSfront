@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "start": "cross-env && ESLINT=none && set PORT=8002 && roadhog server",
+    "start": "cross-env && set PORT=8002 && roadhog server",
     "start:no-proxy": "cross-env && NO_PROXY=true && ESLINT=none roadhog dev",
     "build": "cross-env roadhog build",
     "prettier": "prettier --write ./src/**/**/**/*",
