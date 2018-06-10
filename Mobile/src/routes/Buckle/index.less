@@ -1,0 +1,14 @@
+@import '../../utils/var';
+.parcel {
+  padding: 0 @content-padding;
+  :global {
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+      .am-list-body::before {
+        background-color: #fff !important;
+      }
+      .am-list-body::after {
+        background-color: rgb(250, 250, 250) !important;
+      }
+    }
+  }
+}
