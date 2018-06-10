@@ -68,8 +68,11 @@ export const getRouterData = (app) => {
     '/buckle_record': {
       component: dynamicWrapper(app, [], () => import('../routes/Buckle/record/record')),
     },
-    '/testView': {
+    '/testView2': {
       component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/test/SelPerson')),
+    },
+    '/testView': {
+      component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/test')),
     },
     '/get_access_token': {
       component: dynamicWrapper(app, ['oauth'], () => import('../routes/Oauth/GetAccessToken')),

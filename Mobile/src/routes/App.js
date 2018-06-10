@@ -5,6 +5,9 @@ import QueueAnim from 'rc-queue-anim';
 import {
   withRouter,
 } from 'dva/router';
+// import {
+//   Flex,
+// } from 'antd-mobile';
 import { FooterBar } from '../components/Footer';
 import Loader from '../components/General/Loader/Loader';
 import {
@@ -14,7 +17,7 @@ import {
   OA_PATH,
   OA_CLIENT_ID,
 } from '../utils/util';
-import style from './app.less';
+import './app.less';
 
 @withRouter
 @connect(({ loading }) => ({
@@ -49,23 +52,12 @@ export default class App extends React.Component {
     pathname = pathname.startsWith('/') ? pathname : `/ ${pathname} `;
     return (
       <React.Fragment>
-        <div className={style.container} >
-          <div
-            className={style.content}
-            key={pathname}
-          >
-            <QueueAnim
-              className={style.demo_content}
-              type={['left', 'right']}
-            >
-              <div
-                key={pathname}
-                style={{ display: 'flex', flexGrow: 1, flexDirection: 'column' }}
-              >
-                {children}
-              </div>
-            </QueueAnim>
-          </div>
+        <div key={pathname}>
+          <QueueAnim>
+            <div key={pathname} className="container">
+              {children}
+            </div>
+          </QueueAnim>
         </div>
         <Loader fullScreen spinning={loading.global} />
         {
@@ -80,4 +72,3 @@ export default class App extends React.Component {
     );
   }
 }
-
