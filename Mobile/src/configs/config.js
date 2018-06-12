@@ -19,9 +19,9 @@ module.exports = {
     development: 'http://192.168.20.238:8003',
   },
   OA_CLIENT_ID: {
-    production: '6',
-    testing: '6',
-    development: '6',
+    production: '7',
+    testing: '7',
+    development: '7',
   },
   OA_CLIENT_SECRET: {
     production: 'lcBIS0l1eW038wqUgDf6qsNyUl3L69Ck8YxHXKGi',
