@@ -24,7 +24,7 @@ function RouterConfig({ history, app }) {
           path="/"
           render={props => <BasicLayout {...props} />}
           // authority={['token']}
-          redirectPath="/user/login"
+          redirectPath="/home"
         />
       </Switch>
     </ConnectedRouter>

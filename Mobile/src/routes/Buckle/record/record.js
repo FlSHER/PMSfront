@@ -2,7 +2,7 @@ import React from 'react';
 import {
   connect,
 } from 'dva';
-import { List, TextareaItem, Flex, WingBlank, WhiteSpace, InputItem } from 'antd-mobile';
+import { List, TextareaItem, Flex, WingBlank, WhiteSpace, InputItem, Button, DatePicker } from 'antd-mobile';
 import defaultAvatar from '../../../assets/default_avatar.png';
 import style from '../index.less';
 import styles from '../../common.less';
@@ -10,7 +10,7 @@ import styles from '../../common.less';
 class BuckleRecord extends React.Component {
   render() {
     return (
-      <Flex
+      <div
         className={styles.con}
         direction="column"
       >
@@ -33,46 +33,100 @@ class BuckleRecord extends React.Component {
             </List>
           </WingBlank>
           <WhiteSpace size="sm" />
+
           <WingBlank className={style.parcel}>
-            <div
-              className={style.players}
+            <DatePicker
+              mode="date"
             >
+              <List.Item arrow="horizontal">事件时间</List.Item>
+            </DatePicker>
+
+          </WingBlank>
+          <WhiteSpace size="sm" />
+          <WingBlank className={style.parcel}>
+            <div className={style.players}>
               <Flex className={style.title}> 参与人</Flex>
               <Flex
                 className={style.person_list}
                 wrap="wrap"
               >
                 <div className={style.person_item}>
-                  <div className={style.name}>
-                    魏颖
-                    <span />
+                  <div className={style.person_icon}>
+                    <div className={style.name}>
+                      魏颖
+                      <span />
+                    </div>
                   </div>
+                  <div className={style.user_info}>魏颖</div>
                 </div>
                 <div className={style.person_item}>
-                  <div className={style.name}>
-                    魏颖
-                    <span />
+                  <div className={style.person_icon}>
+                    <div className={style.name}>
+                      魏颖
+                      <span />
+                    </div>
                   </div>
+                  <div className={style.user_info}>魏颖</div>
                 </div>
-                <div className={[style.person_item, style.spe].join(' ')}>
-                  <img
-                    src={defaultAvatar}
-                    alt="添加"
-                  />
+                <div className={style.person_item}>
+                  <div className={style.person_icon}>
+                    <div className={style.name}>
+                      魏颖
+                      <span />
+                    </div>
+                  </div>
+                  <div className={style.user_info}>魏颖</div>
+                </div>
+                <div className={style.person_item}>
+                  <div className={style.person_icon}>
+                    <div className={style.name}>
+                      魏颖
+                      <span />
+                    </div>
+                  </div>
+                  <div className={style.user_info}>魏颖</div>
+                </div>
+                <div className={style.person_item}>
+                  <div className={style.person_icon}>
+                    <div className={style.name}>
+                      魏颖
+                      <span />
+                    </div>
+                  </div>
+                  <div className={style.user_info}>魏颖</div>
+                </div>
+                <div className={style.person_item}>
+                  <div className={style.person_icon}>
+                    <div className={style.name}>
+                      魏颖
+                      <span />
+                    </div>
+                  </div>
+                  <div className={style.user_info}>魏颖</div>
+                </div>
+                <div className={style.person_item}>
+                  <div className={[style.person_icon, style.spe].join(' ')}>
+                    <div className={style.name}>
+                      <img
+                        src={defaultAvatar}
+                        alt="添加"
+                      />
+                    </div>
+                  </div>
+                  <div className={style.user_info}>&nbsp;</div>
                 </div>
               </Flex>
             </div>
           </WingBlank>
           <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
-            <div
-              className={style.players}
-            >
+            <div className={style.players}>
               <Flex className={style.title}> 参与人列表</Flex>
               <Flex className={style.table_head}>
                 <Flex.Item className={style.table_item}>姓名</Flex.Item>
                 <Flex.Item className={style.table_item}>A分</Flex.Item>
                 <Flex.Item className={style.table_item}>B分</Flex.Item>
+                <Flex.Item className={style.table_item}>计件</Flex.Item>
               </Flex>
               <div className={style.table_body}>
                 {[1, 2, 3].map((item, i) => {
@@ -86,14 +140,117 @@ class BuckleRecord extends React.Component {
                       <Flex.Item className={style.table_item}>
                         <InputItem />
                       </Flex.Item>
+                      <Flex.Item className={style.table_item}>
+                        <InputItem />
+                      </Flex.Item>
                     </Flex>);
                 })
                 }
               </div>
             </div>
           </WingBlank>
+          <WhiteSpace size="sm" />
+          <WingBlank className={style.parcel}>
+            <div className={style.players}>
+              <Flex className={style.title}> 初审人</Flex>
+              <Flex
+                className={style.person_list}
+                wrap="wrap"
+              >
+                <div className={style.person_item}>
+                  <div className={style.person_icon}>
+                    <div className={style.name}>
+                      魏颖
+                      <span />
+                    </div>
+                  </div>
+                  <div className={style.user_info}>魏颖</div>
+                </div>
+                <div className={style.person_item}>
+                  <div className={[style.person_icon, style.spe].join(' ')}>
+                    <div className={style.name}>
+                      <img
+                        src={defaultAvatar}
+                        alt="添加"
+                      />
+                    </div>
+                  </div>
+                  <div className={style.user_info}>&nbsp;</div>
+                </div>
+              </Flex>
+            </div>
+          </WingBlank>
+          <WhiteSpace size="sm" />
+          <WingBlank className={style.parcel}>
+            <div className={style.players}>
+              <Flex className={style.title}> 终审人</Flex>
+              <Flex
+                className={style.person_list}
+                wrap="wrap"
+              >
+                <div className={style.person_item}>
+                  <div className={style.person_icon}>
+                    <div className={style.name}>
+                      魏颖
+                      <span />
+                    </div>
+                  </div>
+                  <div className={style.user_info}>魏颖</div>
+                </div>
+                <div className={style.person_item}>
+                  <div className={[style.person_icon, style.spe].join(' ')}>
+                    <div className={style.name}>
+                      <img
+                        src={defaultAvatar}
+                        alt="添加"
+                      />
+                    </div>
+                  </div>
+                  <div className={style.user_info}>&nbsp;</div>
+                </div>
+              </Flex>
+            </div>
+          </WingBlank>
+          <WhiteSpace size="sm" />
+          <WingBlank className={style.parcel}>
+            <div className={style.players}>
+              <Flex className={style.title}> 抄送人</Flex>
+              <Flex
+                className={style.person_list}
+                wrap="wrap"
+              >
+                <div className={style.person_item}>
+                  <div className={style.person_icon}>
+                    <div className={style.name}>
+                      魏颖
+                      <span />
+                    </div>
+                  </div>
+                  <div className={style.user_info}>魏颖</div>
+                </div>
+                <div className={style.person_item}>
+                  <div className={[style.person_icon, style.spe].join(' ')}>
+                    <div className={style.name}>
+                      <img
+                        src={defaultAvatar}
+                        alt="添加"
+                      />
+                    </div>
+                  </div>
+                  <div className={style.user_info}>&nbsp;</div>
+                </div>
+              </Flex>
+            </div>
+          </WingBlank>
         </div>
-      </Flex>
+        <div className={styles.footer}>
+          <WingBlank>
+            <div className={style.opt}>
+              <Button type="primary">提交</Button>
+            </div>
+          </WingBlank>
+        </div>
+      </div>
     );
   }
 }

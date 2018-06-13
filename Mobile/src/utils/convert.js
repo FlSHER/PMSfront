@@ -14,10 +14,6 @@ import my_ from '../assets/my_.svg';
 import appro from '../assets/appro.svg';
 import appro_ from '../assets/appro_.svg';
 
-import list from '../assets/list.svg';
-import more from '../assets/more.svg';
-import application from '../assets/application.svg';
-
 export const bankType = [
   { value: '1', label: '中国工商银行' },
   { value: '2', label: '中国农业银行' },
@@ -57,19 +53,41 @@ export const tabbar = [{
 
 
 // 首页入口
-export const indexMenu = [{
-  src: application,
-  title: '申请',
-  to: '/add_reimbur',
-}, {
-  src: list,
-  title: '报销单',
-  to: '/my_reimbur',
-}, {
-  src: more,
-  title: '其他',
-  to: '/add_reimbur',
-}];
+export const indexMenu = [
+  {
+    name: '任务中心',
+    key: '1',
+    children: [
+      { text: '当前任务', to: '', icon: import('../assets/jobstation/积分制-icon-当前任务.png') },
+      { text: '任务审核', to: '', icon: import('../assets/jobstation/积分制-icon-任务管理.png') },
+      { text: '任务管理', to: '', icon: import('../assets/jobstation/积分制-icon-任务管理.png') },
+      { text: '任务统计', to: '', icon: import('../assets/jobstation/积分制-icon-任务统计.png') },
+      { text: '特殊任务', to: '', icon: import('../assets/jobstation/积分制-icon-特殊任务.png') },
+      { text: '周期任务', to: '', icon: import('../assets/jobstation/积分制-icon-周期任务.png') },
+      { text: '悬赏任务', to: '', icon: import('../assets/jobstation/积分制-icon-悬赏任务.png') },
+    ],
+  },
+  {
+    name: '奖扣',
+    key: '2',
+    children: [
+      { text: '记录奖扣', to: '/buckle_record', icon: import('../assets/jobstation/积分制-icon-记录奖扣.png') },
+      { text: '奖扣审核', to: '', icon: import('../assets/jobstation/积分制-icon-奖扣审核.png') },
+      { text: '我的奖扣', to: '', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
+      { text: '奖扣指标', to: '', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
+    ],
+  },
+  {
+    name: '积分',
+    key: '3',
+    children: [
+      { text: '我的积分', to: '', icon: import('../assets/jobstation/积分制-icon-我的积分.png') },
+      { text: '全员统计', to: '', icon: import('../assets/jobstation/积分制-icon-全员统计.png') },
+      { text: '积分排名', to: '', icon: import('../assets/jobstation/积分制-icon-积分排名.png') },
+      { text: '投诉受理', to: '', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },
+    ],
+  },
+];
 // 报销单状态
 export const startState = [
   { title: '全部', type: 'all' },

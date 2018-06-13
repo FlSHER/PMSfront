@@ -1,0 +1,27 @@
+@import '../utils/var';
+.title {
+  height: 70/75rem;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #000;
+  border-bottom: 2px solid rgb(245, 245, 245);
+}
+
+.entrance {
+  background: #fff;
+  padding: 0 22/75rem;
+  .base(#000, 16px);
+  :global {
+    .am-grid .am-flexbox .am-flexbox-item .am-grid-item-content .am-grid-item-inner-content .am-grid-text {
+      .base(rgb(10, 10, 10), 14px);
+    }
+    .am-grid .am-flexbox .am-flexbox-item .am-grid-item-content .am-grid-item-inner-content .am-grid-icon {
+      width: 80/75rem !important;
+      height: 80/75rem;
+    }
+    .am-grid.am-grid-square {
+      padding-bottom: 32/75rem;
+    }
+  }
+}

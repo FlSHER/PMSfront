@@ -1,7 +1,7 @@
 @import '../../utils/var';
 .parcel {
   :global {
-    .am-list-content {
+    .am-list-item .am-list-line .am-list-content {
       font-size: 16px;
     }
     @media (-webkit-min-device-pixel-ratio: 2),
@@ -50,10 +50,22 @@
       padding-top: 26/75rem;
       overflow: auto;
       .person_item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 126/75rem;
+        margin-bottom: 32/75rem;
+      }
+      .user_info {
+        margin-top: 10/75rem;
+        text-align: center;
+        font-size: 12px;
+      }
+      .person_icon {
         width: 100/75rem;
         height: 100/75rem;
-        margin-right: 32/75rem;
-        margin-bottom: 32/75rem;
+        // margin-right: 26/75rem;
+        // margin-bottom: 32/75rem;
         border-radius: 50%;
         border: 1px solid rgb(24, 116, 207);
         flex-shrink: 0;
@@ -80,7 +92,7 @@
     }
     .table_head {
       height: 60/75rem;
-      background: rgb(24, 116, 207);
+      background: @base-color;
       font-size: 14px;
       color: #fff;
       border-top-left-radius: 6px;
@@ -102,6 +114,14 @@
     }
     .table_item {
       text-align: center;
+    }
+  }
+}
+.opt {
+  padding: 40/75rem 0 48/75rem 0;
+  :global {
+    .am-button-primary {
+      background-color: @base-color;
     }
   }
 }
