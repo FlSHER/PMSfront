@@ -12,15 +12,47 @@
   padding-left: 20/75rem;
 }
 
+.header,
 .footer {
-  background: #f8f6f6;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.con_content {
+  flex-grow: 1;
+  flex-shrink: 0;
+  overflow: auto;
 }
 
 .filter_con {
   height: 100%;
   position: absolute;
-  width: 8rem;
-  right: -8rem;
+  width: 5.8rem;
+  right: -5.8rem;
   background: #f8f6f6;
   animation: mymove 1s forwards;
+  display: flex;
+  flex-direction: column;
+}
+
+.footer_opt {
+  border-radius: 80/75rem;
+  border: 1px solid rgb(24, 116, 207);
+  display: flex;
+  margin: 40/75rem 40/75rem 80/75rem;
+  a {
+    text-align: center;
+    width: 50%;
+    height: 80/75rem;
+    line-height: 80/75rem;
+    &:first-child {
+      border-top-left-radius: 80/75rem;
+      border-bottom-left-radius: 80/75rem;
+    }
+    &:last-child {
+      border-top-right-radius: 80/75rem;
+      border-bottom-right-radius: 80/75rem;
+      background: rgb(24, 116, 207);
+    }
+  }
 }

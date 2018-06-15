@@ -72,7 +72,7 @@ export const indexMenu = [
     key: '2',
     children: [
       { text: '记录奖扣', to: '/buckle_record', icon: import('../assets/jobstation/积分制-icon-记录奖扣.png') },
-      { text: '奖扣审核', to: '', icon: import('../assets/jobstation/积分制-icon-奖扣审核.png') },
+      { text: '奖扣审核', to: '/buckle_audit', icon: import('../assets/jobstation/积分制-icon-奖扣审核.png') },
       { text: '我的奖扣', to: '', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
       { text: '奖扣指标', to: '', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
     ],

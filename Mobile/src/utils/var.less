@@ -8,20 +8,41 @@
 @detail-describe-size: 14px;
 @title-color: #fff;
 @tab-text-color: #fff;
-@tab-text-color-checked: #9b9b9b;
+@tab-text-color-unchecked: #9b9b9b;
 @list-title-color: #000;
 @list-categray-color: #4a4a4a;
 @list-text-color: #9b9b9b;
 @detail-title-color: #000;
 @detail-describe-color: #9b9b9b;
 @content-padding: 24/75rem;
-@base-color:rgb(24, 116, 207);
+@base-color: rgb(24, 116, 207);
+@base-bg-color: rgb(240, 240, 240);
 .base(@color, @size) {
   font-size: @size;
   color: @color;
 }
 
-.stateLabel(@color, @size, @border, @r) {
+.stateLabel(@color, @size, @r, @bg, ) {
   .base(@color, @size);
-  border-radius: 10px;
+  border-radius: @r;
+  background-color: @bg;
+}
+.label(@color, @size, @r, @bg, ) {
+  .base(@color, @size);
+  border-radius: @r;
+  border: 1px solid @color;
+  background-color: @bg;
+}
+
+.textLineOverFlow() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.textOverFlow() {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }

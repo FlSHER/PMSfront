@@ -1,7 +1,9 @@
-import React, { Component } from 'react';
+import React, {
+  Component,
+} from 'react';
 import Animate from 'rc-animate';
 import style from './index.less';
-import styles from '../../routes/common.less';
+// import styles from '../../routes/common.less';
 
 class ListFilter extends Component {
   state = {
@@ -9,7 +11,9 @@ class ListFilter extends Component {
     destroyed: false,
     visible: false,
     exclusive: false,
+
   }
+
   selFilter = (feild) => { // 筛选
     this.setState({
       [feild]: !this.state[feild],
@@ -20,59 +24,57 @@ class ListFilter extends Component {
       children,
       onOk,
       onCancel,
+      onResetForm,
       visible,
       filterKey,
       contentStyle,
     } = this.props;
-    // const anim = {
-    //   enter: this.animateEnter,
-    //   leave: this.animateLeave,
-    // };
     const conStyle = {
       display: visible ? 'block' : 'none',
       ...contentStyle,
     };
     return (
-      <div>
-        <Animate
-          component=""
-          exclusive={this.state.exclusive}
-          showProp="visible"
-          transitionAppear
-          transitionName="fade"
-        // animation={anim}
+      <Animate
+        component=""
+        exclusive={this.state.exclusive}
+        showProp="visible"
+        transitionAppear
+        transitionName="fade"
+      >
+        <div
+          style={conStyle}
+          onClick={e => onCancel(e, filterKey)}
         >
-          <div
-            style={conStyle}
-            onClick={() => this.hideModel}
-          >
-            <div className={style.filter_con}>
-              <div className={styles.con}>
-                <div className={styles.header}>
-                  <p className={style.title}>筛选</p>
-                </div>
-                <div className={styles.con_content}>
-                  {children}
-                </div>
-                <div
-                  className={styles.footer}
-                  style={{ background: '#f8f6f6' }}
-                >
-                  <a
-                    onClick={() => {
-                      onOk(filterKey);
-                    }}
-                  ><span>确定</span>
-                  </a>
-                  <a onClick={onCancel}><span>取消</span></a>
-                </div>
+          <div className={style.filter_con}>
+            <div className={style.header}>
+              <p className={style.title}>筛选</p>
+            </div>
+            <div
+              className={style.con_content}
+              onClick={(e) => { e.stopPropagation(); return false; }}
+            >
+              {children}
+            </div>
+            <div
+              className={style.footer}
+              style={{ background: '#f8f6f6' }}
+            >
+              <div className={style.footer_opt}>
+                <a onClick={() => { onResetForm(); }}> 重置</a>
+                <a
+                  onClick={() => {
+                    onOk(filterKey);
+                  }}
+                >确定
+                </a>
               </div>
             </div>
           </div>
-        </Animate>
-      </div>
+        </div>
+      </Animate>
     );
   }
 }
 
 export default ListFilter;
+

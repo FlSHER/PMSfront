@@ -1,3 +1,5 @@
+@import '../../utils/var.less';
+
 .title {
   display: flex;
   height: 100/75rem;
@@ -167,6 +169,64 @@
     &.checked {
       background: url(../../assets/select_icon/selected.png) no-repeat right center;
       background-size: 44/75rem;
+    }
+  }
+}
+// 事件列表样式
+.event_item {
+  padding: 30/75rem 36/75rem;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgb(240, 240, 240);
+  .main_info {
+    flex-grow: 1;
+    margin-right: 40/75rem;
+  }
+  .event_title {
+    display: flex;
+    align-items: center;
+    .base(@list-title-color,
+    @list-title-size);
+    .label_state_1 {
+      margin-left: 20/75rem;
+      padding: 6/75rem 16/75rem;
+      .label(rgb(229,
+      27,
+      35),
+      12px,
+      20/75rem,
+      #fff);
+    }
+    .label_state_2 {
+      margin-left: 20/75rem;
+      padding: 6/75rem 16/75rem;
+      .label(rgb(0,150,136),
+      12px,
+      20/75rem,
+      #fff);
+    }
+  }
+  .time {
+    margin: 20/75rem 0 10/75rem;
+    height: 36/75rem;
+    .base(rgb(155,
+    155,
+    155),
+    @list-text-size);
+  }
+  .desc {
+    width: 540/75rem;
+    height: 36/75rem;
+    .base(rgb(155,
+    155,
+    155),
+    @list-text-size);
+    .textLineOverFlow();
+  }
+  .aside {
+    width: 50/75rem;
+    img {
+      padding: 10/75rem;
     }
   }
 }
