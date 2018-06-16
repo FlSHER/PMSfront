@@ -1,6 +1,13 @@
+@import '../../utils/var';
 @keyframes mymove {
   to {
     right: 0;
+  }
+}
+
+@keyframes mysort {
+  to {
+    opacity: 1;
   }
 }
 
@@ -55,4 +62,22 @@
       background: rgb(24, 116, 207);
     }
   }
+}
+
+.some_sort {
+  position: fixed;
+  z-index: 99;
+  left: 0;
+  top: 2.3733333rem;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.sort_con {
+  background: #fff;
+  width: 100%;
+  opacity: 0;
+  padding: 0 1.68rem;
+  animation: mysort 1s forwards;
 }

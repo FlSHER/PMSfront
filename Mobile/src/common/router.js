@@ -68,8 +68,23 @@ export const getRouterData = (app) => {
     '/buckle_record': {
       component: dynamicWrapper(app, [], () => import('../routes/Buckle/record/record')),
     },
-    '/buckle_audit': {
-      component: dynamicWrapper(app, [], () => import('../routes/Buckle/audit/audit')),
+    '/audit_list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Buckle/audit/auditList')),
+    },
+    '/audit_reason': {
+      component: dynamicWrapper(app, [], () => import('../routes/Buckle/audit/auditReason')),
+    },
+    '/audit_detail': {
+      component: dynamicWrapper(app, [], () => import('../routes/Buckle/audit/auditDetail')),
+    },
+    '/point_detail': {
+      component: dynamicWrapper(app, [], () => import('../routes/Point/survey/pointDetail')),
+    },
+    '/point_survey': {
+      component: dynamicWrapper(app, [], () => import('../routes/Point/survey/pointSurvey')),
+    },
+    '/point_list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Point/survey/pointList')),
     },
     '/testView2': {
       component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/test/SelPerson')),

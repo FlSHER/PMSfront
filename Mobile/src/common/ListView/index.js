@@ -2,9 +2,11 @@
 import Department from './Department';
 import Staff from './Staff';
 import Buckle from './Buckle';
+import Point from './Point';
 
 export {
   Department,
   Staff,
   Buckle,
+  Point,
 };

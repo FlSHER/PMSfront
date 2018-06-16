@@ -1,0 +1,87 @@
+@import '../../utils/var';
+.survey {
+  padding: 42/75rem 46/75rem;
+  background: #fff;
+}
+.players {
+  background: #fff;
+  padding: 0 22/75rem;
+  font-size: 14px;
+  color: #000;
+  .title {
+    height: 70/75rem;
+    border-bottom: 2px solid rgb(245, 245, 245);
+  }
+}
+.header {
+  flex: 0 !important;
+  // width: 100%;
+  .state_tab {
+    background: @base-bg-color;
+    :global {
+      .am-flexbox .am-flexbox-item {
+        flex: none;
+      }
+    }
+  }
+  .filter_con {
+    border-bottom: 1px solid #dcdcdc;
+    :global {
+      .am-flexbox .am-flexbox-item {
+        flex: none;
+      }
+    }
+    .dosort,
+    .filter {
+      height: 88/75rem;
+      padding-right: 50/75rem;
+      line-height: 88/75rem;
+      .base(12px, rgb(0, 0, 0));
+      &.active {
+        color: rgb(24, 116, 208);
+      }
+    }
+    .dosort {
+      background: url('../../assets/filter/sort.png') no-repeat right center;
+      background-size: 30/75rem;
+    }
+    .filter {
+      cursor: pointer;
+      background: url('../../assets/filter/screen.png') no-repeat right center;
+      background-size: 30/75rem;
+    }
+  }
+  .state {
+    .base(rgb(137,
+    137,
+    137),
+    16px);
+    &.active {
+      .stateLabel(@tab-text-color,
+      @tab-text-size,
+      30/75rem,
+      @base-color);
+    }
+    padding: 8/75rem 30/75rem;
+  }
+  .sort_item {
+    padding: 26/75rem 0;
+    .base(#000,
+    12px);
+  }
+}
+.content {
+  width: 100%;
+  flex: 1 1 auto !important;
+  overflow: auto;
+}
+.filter_item {
+  border-bottom: 1px solid #eee;
+  padding: 0 40/75rem;
+  .title {
+    font-size: 12px;
+    color: rgb(150, 150, 150);
+    height: 80/75rem;
+    line-height: 80/75rem;
+  }
+}

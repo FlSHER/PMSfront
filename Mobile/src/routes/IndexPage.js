@@ -18,7 +18,7 @@ function IndexPage({ history }) {
           <WhiteSpace size="sm" />
           <WingBlank>
             <div className={style.entrance}>
-              <Flex className={style.title}> 参与人列表</Flex>
+              <Flex className={style.title}> {item.name}</Flex>
               <Grid
                 hasLine={false}
                 data={item.children}
