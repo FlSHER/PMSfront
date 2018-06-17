@@ -5,8 +5,8 @@ import {
 import { List, TextareaItem, WingBlank, WhiteSpace, Button, Flex, InputItem } from 'antd-mobile';
 import style from '../index.less';
 import styles from '../../common.less';
-
-class BuckleRecord extends React.Component {
+@connect()
+export default class BuckleRecord extends React.Component {
   render() {
     return (
       <div
@@ -71,6 +71,3 @@ class BuckleRecord extends React.Component {
   }
 }
 
-BuckleRecord.propTypes = {};
-
-export default connect()(BuckleRecord);

@@ -11,7 +11,8 @@ import style from './index.less';
   department: searchStaff.department,
   staff: searchStaff.staff,
   breadCrumb: searchStaff.breadCrumb,
-  loading: loading.effects['searchStaff/fetchSearchStaff'],
+  pageInfo: searchStaff.pageInfo,
+  loading: loading.effects['searchStaff/fetchSelfDepStaff'],
 }))
 export default class SelPerson extends Component {
   state = {
@@ -24,21 +25,22 @@ export default class SelPerson extends Component {
   };
 
   componentWillMount() {
-    this.fetchSearchStaff({ parentId: 0, breadCrumb: [{ name: '联系人', id: 0 }] });
+    // this.fetchSearchStaff({ parentId: 7, breadCrumb: [{ name: '联系人', id: 0 }] });
+    this.fetchSelfDepStaff();
   }
 
 
   onSearch = (search) => {
+    // const newSearch = search;
     const { dispatch } = this.props;
+    // this.setState({
+    //   search: newSearch,
+    // });
     dispatch({
-      type: 'example/save',
-      payload: {
-        staff: [
-          { name: new Date().getTime(), id: 1 },
-          { name: new Date().getTime(), id: 2 },
-        ],
-      },
+      type: 'searchStaff/serachStaff',
+      payload: `filters=realname~${search}&page=1&pagesize=15`,
     });
+
     return search;
   }
 
@@ -53,7 +55,13 @@ export default class SelPerson extends Component {
       },
     });
   }
-
+  fetchSelfDepStaff =() => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'searchStaff/fetchSelfDepStaff',
+      payload: { departmentId: 7 },
+    });
+  }
 
   fetchSearchStaff = (params) => {
     const { dispatch } = this.props;
@@ -108,47 +116,54 @@ export default class SelPerson extends Component {
       selectAll: !selectAll,
     });
   }
-
+  firstDepartment = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'searchStaff/fetchFirstDepartment',
+    });
+  }
 
   render() {
-    const { department, staff, breadCrumb, loading } = this.props;
+    const { department, staff, breadCrumb, loading, pageInfo } = this.props;
     const { selected } = this.state;
     return (
       <div className={styles.con}>
-        <div className={styles.con_content}>
-          <SearchList
-            multiple
-            name="realname"
-            bread={breadCrumb}
-            checkAble={staff.length && (selected.num === staff.length)}
-            selected={selected}
-            checkedAll={this.checkedAll}
-            handleSearch={this.onSearch}
-            handleBread={this.selDepartment}
-          >
-            {!loading ? (
-              <div className={style.child}>
-                {department.length ? (
-                  <Department
-                    dataSource={department}
-                    fetchDataSource={this.selDepartment}
-                    name="id"
-                  />
-                ) : null}
-                {staff.length ? (
-                  <Staff
-                    link=""
-                    name="staff_sn"
-                    multiple
-                    selected={selected.data}
-                    dataSource={staff}
-                    onChange={this.getSelectResult}
-                  />
-                ) : null}
-              </div>
-            ) : null}
-          </SearchList>
-        </div>
+        <SearchList
+          multiple
+          name="realname"
+          bread={breadCrumb}
+          checkAble={staff.length && (selected.num === staff.length)}
+          selected={selected}
+          checkedAll={this.checkedAll}
+          handleSearch={this.onSearch}
+          handleBread={this.selDepartment}
+          firstDepartment={this.firstDepartment}
+        >
+          {!loading ? (
+            <div className={style.child}>
+              {department.length ? (
+                <Department
+                  dataSource={department}
+                  fetchDataSource={this.selDepartment}
+                  name="id"
+                />
+              ) : null}
+              {staff.length ? (
+                <Staff
+                  link=""
+                  name="staff_sn"
+                  page={pageInfo.page}
+                  totalpage={pageInfo.totalpage}
+                  dispatch={this.props.dispatch}
+                  multiple
+                  selected={selected.data}
+                  dataSource={staff}
+                  onChange={this.getSelectResult}
+                />
+              ) : null}
+            </div>
+          ) : null}
+        </SearchList>
       </div>
     );
   }

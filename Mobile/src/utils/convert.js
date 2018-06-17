@@ -73,7 +73,7 @@ export const indexMenu = [
     children: [
       { text: '记录奖扣', to: '/buckle_record', icon: import('../assets/jobstation/积分制-icon-记录奖扣.png') },
       { text: '奖扣审核', to: '/audit_list', icon: import('../assets/jobstation/积分制-icon-奖扣审核.png') },
-      { text: '我的奖扣', to: '', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
+      { text: '我的奖扣', to: '/buckle_list', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
       { text: '奖扣指标', to: '', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
     ],
   },
@@ -82,7 +82,7 @@ export const indexMenu = [
     key: '3',
     children: [
       { text: '我的积分', to: '', icon: import('../assets/jobstation/积分制-icon-我的积分.png') },
-      { text: '积分明细', to: '', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },
+      { text: '积分明细', to: '/point_survey', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },
       { text: '全员统计', to: '', icon: import('../assets/jobstation/积分制-icon-全员统计.png') },
       { text: '积分排名', to: '', icon: import('../assets/jobstation/积分制-icon-积分排名.png') },
       { text: '投诉受理', to: '', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },

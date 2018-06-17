@@ -3,12 +3,18 @@ import {
   connect,
 } from 'dva';
 import { List, TextareaItem, Flex, WingBlank, WhiteSpace, InputItem, Button, DatePicker } from 'antd-mobile';
-import defaultAvatar from '../../../assets/default_avatar.png';
+import { PersonIcon, PersonAdd } from '../../../components/index.js';
 import style from '../index.less';
 import styles from '../../common.less';
 
 @connect()
 export default class BuckleRecord extends React.Component {
+  remove = () => {
+    // console.log(item);
+  }
+  addMore = () => {
+    this.props.history.push('/testView2');
+  }
   render() {
     return (
       <div
@@ -51,71 +57,18 @@ export default class BuckleRecord extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                      <span />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>魏颖</div>
-                </div>
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                      <span />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>魏颖</div>
-                </div>
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                      <span />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>魏颖</div>
-                </div>
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                      <span />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>魏颖</div>
-                </div>
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                      <span />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>魏颖</div>
-                </div>
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                      <span />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>魏颖</div>
-                </div>
-                <div className={style.person_item}>
-                  <div className={[style.person_icon, style.spe].join(' ')}>
-                    <div className={style.name}>
-                      <img
-                        src={defaultAvatar}
-                        alt="添加"
-                      />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>&nbsp;</div>
-                </div>
+                {[1, 2, 3].map((item, i) => {
+                  const idx = i;
+                  return (
+                    <PersonIcon
+                      key={idx}
+                      name="魏颖"
+                      showNum={2}
+                      handleClick={this.remove}
+                    />
+              );
+                })}
+                <PersonAdd handleClick={this.addMore} />
               </Flex>
             </div>
           </WingBlank>
@@ -158,26 +111,12 @@ export default class BuckleRecord extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                      <span />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>魏颖</div>
-                </div>
-                <div className={style.person_item}>
-                  <div className={[style.person_icon, style.spe].join(' ')}>
-                    <div className={style.name}>
-                      <img
-                        src={defaultAvatar}
-                        alt="添加"
-                      />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>&nbsp;</div>
-                </div>
+                <PersonIcon
+                  name="魏颖"
+                  showNum={2}
+                  handleClick={this.remove}
+                />
+                <PersonAdd handleClick={this.addMore} />
               </Flex>
             </div>
           </WingBlank>
@@ -189,26 +128,12 @@ export default class BuckleRecord extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                      <span />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>魏颖</div>
-                </div>
-                <div className={style.person_item}>
-                  <div className={[style.person_icon, style.spe].join(' ')}>
-                    <div className={style.name}>
-                      <img
-                        src={defaultAvatar}
-                        alt="添加"
-                      />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>&nbsp;</div>
-                </div>
+                <PersonIcon
+                  name="魏颖"
+                  showNum={2}
+                  handleClick={this.remove}
+                />
+                <PersonAdd handleClick={this.addMore} />
               </Flex>
             </div>
           </WingBlank>
@@ -220,26 +145,12 @@ export default class BuckleRecord extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                      <span />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>魏颖</div>
-                </div>
-                <div className={style.person_item}>
-                  <div className={[style.person_icon, style.spe].join(' ')}>
-                    <div className={style.name}>
-                      <img
-                        src={defaultAvatar}
-                        alt="添加"
-                      />
-                    </div>
-                  </div>
-                  <div className={style.user_info}>&nbsp;</div>
-                </div>
+                <PersonIcon
+                  name="魏颖"
+                  showNum={2}
+                  handleClick={this.remove}
+                />
+                <PersonAdd handleClick={this.addMore} />
               </Flex>
             </div>
           </WingBlank>

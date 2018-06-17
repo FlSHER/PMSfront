@@ -7,10 +7,10 @@ import style from './index.less';
 @ListView
 export default class Buckle extends Component {
   render() {
-    const { onClick, onShortcut } = this.props;
+    const { handleClick, onShortcut, hasShortcut = true } = this.props;
     return (
       <div className={style.event_item}>
-        <div className={style.main_info} onClick={onClick}>
+        <div className={style.main_info} onClick={() => handleClick()}>
           <div className={style.event_title}>
             <span>事件标题</span>
             <div className={style.label_state_2}>终审</div>
@@ -20,13 +20,17 @@ export default class Buckle extends Component {
         今天天气好晴朗，处处好风光。可是就是有时冷，有时热，温度变化多端，让人感到烦恼
           </div>
         </div>
-        <div className={style.aside}>
-          <img
-            src={shortcut}
-            alt="快捷操作"
-            onClick={onShortcut}
-          />
-        </div>
+        {hasShortcut ?
+          (
+            <div className={style.aside}>
+              <img
+                src={shortcut}
+                alt="快捷操作"
+                onClick={onShortcut}
+              />
+            </div>
+) : null}
+
       </div>
     );
   }

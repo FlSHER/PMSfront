@@ -97,6 +97,9 @@ export default class PointList extends React.Component {
   tabChange = (item) => {
     this.setNewState('checkState', item);
   }
+  toLookDetail = () => {
+    this.props.history.push('/point_detail/1');
+  }
   render() {
     return (
       <Flex direction="column" style={{ height: '100%' }}>
@@ -163,7 +166,10 @@ export default class PointList extends React.Component {
         </Flex.Item>
         <Flex.Item className={style.content}>
           <WingBlank>
-            <Point dataSource={[1, 2, 6, 6, 6, 6, 6, 6, 6, 6, 6]} />
+            <Point
+              dataSource={[1, 2, 6, 6, 6, 6, 6, 6, 6, 6, 6]}
+              handleClick={this.toLookDetail}
+            />
           </WingBlank>
         </Flex.Item>
         <ListFilter
@@ -193,6 +199,8 @@ export default class PointList extends React.Component {
               checkStatus={(i, v) => this.checkItem(i, v, 'approType')}
               value={[this.state.filter.approType ? this.state.filter.approType : '']}
             />
+            <div className={style.title}>分值区间</div>
+            <div className={style.title}>生效时间</div>
           </div>
 
         </ListFilter>

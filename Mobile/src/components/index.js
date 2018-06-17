@@ -6,7 +6,8 @@ import StateTabs from './check/Tabs.js';
 import Nothing from './Nothing/Nothing';
 import ListFilter from './Filter/ListFilter';
 import ListSort from './Filter/ListSort';
-
+import PersonIcon from './PeronIcon/PersonIcon';
+import PersonAdd from './PeronIcon/PersonAdd';
 import SearchList from './Search/SeachList.js';
 
 export {
@@ -19,4 +20,6 @@ export {
   SearchList,
   ListSort,
   StateTabs,
+  PersonIcon,
+  PersonAdd,
 };

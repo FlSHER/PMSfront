@@ -38,7 +38,9 @@ export default class PointSurvey extends React.Component {
                 align="center"
               >
                 <div>积分明细</div>
-                <div><a style={{ color: 'rgb(24,116,208)' }}>查看更多</a></div>
+                <div>
+                  <a href="/point_list" style={{ color: 'rgb(24,116,208)' }}>查看更多</a>
+                </div>
               </Flex>
               <Point dataSource={[1, 2]} />
             </div>

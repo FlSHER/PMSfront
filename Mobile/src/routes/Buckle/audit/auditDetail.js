@@ -3,6 +3,8 @@ import {
   connect,
 } from 'dva';
 import { List, Flex, WingBlank, WhiteSpace, InputItem, Button } from 'antd-mobile';
+import { PersonIcon } from '../../../components/index.js';
+
 import style from '../index.less';
 import styles from '../../common.less';
 
@@ -48,14 +50,16 @@ export default class AuditDetail extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                    </div>
-                  </div>
-                  <div className={style.user_info}>魏颖</div>
-                </div>
+                {[1, 2, 3].map((item, i) => {
+                const idx = i;
+                return (
+                  <PersonIcon
+                    key={idx}
+                    name="魏颖"
+                    showNum={2}
+                  />
+            );
+              })}
               </Flex>
             </div>
           </WingBlank>
@@ -104,26 +108,17 @@ export default class AuditDetail extends React.Component {
                 style={{ paddingTop: '0.4rem', paddingBottom: '0.4rem' }}
               >
                 <div style={{ marginRight: '0.64rem' }}>
-                  <div
-                    className={style.person_item}
-                    style={{ marginBottom: '0' }}
-                  >
-                    <div className={style.person_icon}>
-                      <div className={style.name}>
-                        魏颖
-                      </div>
-                    </div>
-                    <div className={style.user_info}>魏颖</div>
-                  </div>
+                  <PersonIcon
+                    name="魏颖"
+                    showNum={2}
+                    itemStyle={{ marginBottom: 0 }}
+                  />
                 </div>
                 <div
                   className={style.describe}
                 >
                   <span />
                   加你的讲课费就是你大家
-                  好就的举报的举报是奖扣DVD是否能对健康加
-                  你的讲课费就是你大家好就的举报的举报是奖扣DVD是否能对健康
-                加你的讲课费就是你大家好就的举报的举报是奖扣DVD是否能对健康
                 </div>
               </Flex>
             </div>
@@ -138,17 +133,11 @@ export default class AuditDetail extends React.Component {
                 style={{ paddingTop: '0.4rem', paddingBottom: '0.4rem' }}
               >
                 <div style={{ marginRight: '0.64rem' }}>
-                  <div
-                    className={style.person_item}
-                    style={{ marginBottom: '0' }}
-                  >
-                    <div className={style.person_icon}>
-                      <div className={style.name}>
-                        魏颖
-                      </div>
-                    </div>
-                    <div className={style.user_info}>魏颖</div>
-                  </div>
+                  <PersonIcon
+                    itemStyle={{ marginBottom: 0 }}
+                    name="魏颖"
+                    showNum={2}
+                  />
                 </div>
                 <div
                   className={style.describe}
@@ -199,22 +188,10 @@ export default class AuditDetail extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                    </div>
-                  </div>
-                  <div className={style.user_info}>魏颖</div>
-                </div>
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                    </div>
-                  </div>
-                  <div className={style.user_info}>魏颖好好说说</div>
-                </div>
+                <PersonIcon
+                  name="魏颖"
+                  showNum={2}
+                />
               </Flex>
             </div>
           </WingBlank>
@@ -226,14 +203,10 @@ export default class AuditDetail extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                <div className={style.person_item}>
-                  <div className={style.person_icon}>
-                    <div className={style.name}>
-                      魏颖
-                    </div>
-                  </div>
-                  <div className={style.user_info}>张博涵呀</div>
-                </div>
+                <PersonIcon
+                  name="魏颖"
+                  showNum={2}
+                />
               </Flex>
             </div>
           </WingBlank>

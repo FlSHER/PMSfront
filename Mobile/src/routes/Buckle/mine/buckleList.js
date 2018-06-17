@@ -3,26 +3,24 @@ import {
   connect,
 } from 'dva';
 import { WingBlank, WhiteSpace, Flex } from 'antd-mobile';
-// import defaultAvatar from '../../../assets/default_avatar.png';
-// import style from '../index.less';
-// import styles from '../../common.less';
 import { Buckle } from '../../../common/ListView/index';
 import { ListFilter, CheckBoxs, ListSort, StateTabs } from '../../../components/index';
 import style from '../index.less';
-// import shortcut from '../../../assets/shortcuts.png';
 
 const sortList = [
   { name: '默认排序', value: -1 },
   { name: '时间升序', value: 1 },
   { name: '时间降序', value: 2 },
 ];
-const auditState = [
-  { name: '待审核', value: 1 },
-  { name: '已审核', value: 2 },
+const buckleState = [
+  { name: '我参与的', value: 1 },
+  { name: '我记录的', value: 2 },
+  { name: '抄送我的', value: 3 },
+  { name: '我审核的', value: 4 },
 ];
 
 @connect()
-export default class AuditList extends React.Component {
+export default class BuckleList extends React.Component {
   state = {
     filter: {// 筛选结果
     },
@@ -31,7 +29,7 @@ export default class AuditList extends React.Component {
       sortModal: false,
     },
     sortItem: { name: '默认排序', value: -1 },
-    checkState: { name: '待审核', value: 1 },
+    checkState: { name: '我参与的', value: 1 },
   }
   onClose = key => () => {
     this.setState({
@@ -104,7 +102,11 @@ export default class AuditList extends React.Component {
             <WhiteSpace size="md" />
             <WingBlank size="lg">
               <WingBlank size="lg">
-                <StateTabs option={auditState} checkItem={this.state.checkState} justify="around" handleClick={this.tabChange} />
+                <StateTabs
+                  option={buckleState}
+                  checkItem={this.state.checkState}
+                  handleClick={this.tabChange}
+                />
               </WingBlank>
             </WingBlank>
             <WhiteSpace size="md" />
@@ -161,6 +163,7 @@ export default class AuditList extends React.Component {
             <Buckle
               dataSource={[1, 2, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]}
               handleClick={this.toLookDetail}
+              hasShortcut={false}
             />
           </WingBlank>
         </Flex.Item>

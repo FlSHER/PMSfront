@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
-import { SearchBar, Button } from 'antd-mobile';
+import { SearchBar, Button, List } from 'antd-mobile';
+import { PersonIcon } from '../../components/index.js';
 import style from './index.less';
 
 
 export default class SearchList extends Component {
   state = {
-    value: '美食',
+    value: '',
   };
 
   onChange = (value) => {
-    const { handleSearch } = this.props;
-    this.setState({ value }, () => {
-      handleSearch(value);
-    });
+    this.setState({ value });
   };
-
+  onSubmit = () => {
+    const { handleSearch } = this.props;
+    handleSearch(this.state.value);
+  }
   render() {
     const {
       bread,
@@ -25,6 +26,7 @@ export default class SearchList extends Component {
       checkedAll,
       checkAble,
       handleBread,
+      firstDepartment,
     } = this.props;
     return (
       <div className={style.con}>
@@ -34,10 +36,12 @@ export default class SearchList extends Component {
             placeholder="Search"
             showCancelButton
             onChange={this.onChange}
+            onSubmit={this.onSubmit}
           />
-          <div className={style.bread}>
-            <div className={style.bread_title}>
-              {bread.map((item, i) => {
+          {this.state.value ? null : (
+            <div className={style.bread}>
+              <div className={style.bread_title}>
+                {bread.map((item, i) => {
                 const idx = i;
                 if (i !== bread.length - 1) {
                   return (
@@ -62,10 +66,23 @@ export default class SearchList extends Component {
                   );
                 }
               })}
-            </div>
+              </div>
 
-          </div>
-          {multiple ? (
+            </div>
+)}
+          { this.state.value ? null : (
+            <div style={{ padding: '0 0.32rem' }} >
+              <List >
+                <List.Item
+                  arrow="horizontal"
+                  onClick={firstDepartment}
+                >全部
+                </List.Item>
+              </List>
+            </div>
+) }
+
+          {multiple && !this.state.value ? (
             <div className={style.action}>
               <div className={style.action_item}>
                 <div
@@ -89,12 +106,13 @@ export default class SearchList extends Component {
                   {selected.data.map((item, i) => {
                     const idx = i;
                     return (
-                      <div
+                      <PersonIcon
                         key={idx}
-                        className={style.person_item}
-                      >
-                        {item[name]}
-                      </div>
+                        name={item[name]}
+                        showNum={2}
+                        itemStyle={{ marginBottom: 0 }}
+                        footer={false}
+                      />
                     );
                   })}
                 </div>

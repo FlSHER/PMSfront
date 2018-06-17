@@ -6,10 +6,10 @@ import style from './index.less';
 @ListView
 export default class Point extends Component {
   render() {
-    const { onClick } = this.props;
+    const { handleClick } = this.props;
     return (
       <div className={style.event_item}>
-        <div className={style.main_info} onClick={onClick}>
+        <div className={style.main_info} onClick={() => handleClick()}>
           <div className={style.event_title}>
             <span>事件标题</span>
           </div>
