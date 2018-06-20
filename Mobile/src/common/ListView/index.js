@@ -3,10 +3,14 @@ import Department from './Department';
 import Staff from './Staff';
 import Buckle from './Buckle';
 import Point from './Point';
+// import EventList from './EventList';
+import EventType from './EventType';
 
 export {
   Department,
   Staff,
   Buckle,
   Point,
+  EventType,
+  // EventList,
 };

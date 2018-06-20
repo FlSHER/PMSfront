@@ -4,14 +4,21 @@ import style from './index.less';
 
 class PersonIcon extends React.Component {
   render() {
-    const { name = '', showNum = 2, handleClick, footer = true, itemStyle = {} } = this.props;
+    const {
+      showNum = 2, handleClick, footer = true, itemStyle = {}, value, nameKey, type,
+    } = this.props;
+    const name = value[nameKey];
     const newName = name.slice(name.length - (name.length < showNum ? name.length : showNum));
     return (
-      <div className={style.person_item} style={itemStyle}>
+      <div
+        className={style.person_item}
+        style={itemStyle}
+        onClick={type === '1' ? () => handleClick(value) : () => {}}
+      >
         <div className={style.person_icon}>
           <div className={style.name}>
             {newName}
-            {handleClick ? <span onClick={() => handleClick(name)} /> : null}
+            {type === '2' ? <span onClick={() => handleClick(value)} /> : null}
           </div>
         </div>
         {footer ? <div className={style.user_info}>{name}</div> : null}

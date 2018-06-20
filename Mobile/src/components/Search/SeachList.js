@@ -27,6 +27,7 @@ export default class SearchList extends Component {
       checkAble,
       handleBread,
       firstDepartment,
+      selectOk,
     } = this.props;
     return (
       <div className={style.con}>
@@ -108,7 +109,8 @@ export default class SearchList extends Component {
                     return (
                       <PersonIcon
                         key={idx}
-                        name={item[name]}
+                        value={item}
+                        nameKey={name}
                         showNum={2}
                         itemStyle={{ marginBottom: 0 }}
                         footer={false}
@@ -121,6 +123,7 @@ export default class SearchList extends Component {
                     size="small"
                     type={selected.num > selected.total ? 'dashed' : 'primary'}
                     disabled={selected.num > selected.total}
+                    onClick={selectOk}
                   >
                     {selected.num}/{selected.total}确认
                   </Button>

@@ -7,15 +7,46 @@ import { PersonIcon, PersonAdd } from '../../../components/index.js';
 import style from '../index.less';
 import styles from '../../common.less';
 
-@connect()
+@connect(({ buckle, searchStaff, loading, event }) => ({
+  buckle,
+  loading,
+  searchStaff,
+  event: event.event,
+}))
 export default class BuckleRecord extends React.Component {
-  remove = () => {
-    // console.log(item);
+  state={
+    executed_at: new Date(),
+    description: '',
   }
-  addMore = () => {
-    this.props.history.push('/testView2');
+  remove = (item, name) => {
+    const { searchStaff: { selectStaff }, dispatch } = this.props;
+    const newSelectStaff = { ...selectStaff };
+    newSelectStaff[name] = selectStaff[name].filter(its => its.staff_sn !== item.staff_sn);
+    dispatch({
+      type: 'searchStaff/saveSelectStaff',
+      payload: {
+        key: 'selectStaff',
+        value: newSelectStaff,
+      },
+    });
+  }
+  changePerson = (name, type) => {
+    this.props.history.push(`/testView2/${name}/${type}`);
+  }
+  addMore = (name = 'first', type) => {
+    this.props.history.push(`/testView2/${name}/${type}`);
+  }
+  pointChange = () => {
+
+  }
+  stateChange = (v, key) => {
+    this.setState({
+      [key]: v,
+    });
   }
   render() {
+    const { searchStaff: { selectStaff }, event } = this.props;
+    const { first, final, participant, copy } = selectStaff;
     return (
       <div
         className={styles.con}
@@ -26,13 +57,15 @@ export default class BuckleRecord extends React.Component {
 
           <WingBlank className={style.parcel}>
             <List>
-              <List.Item arrow="horizontal">
-                事件标题
+              <List.Item arrow="horizontal" onClick={() => this.props.history.push('/sel_event')}>
+                {event && event.name ? event.name : '事件标题'}
               </List.Item>
               <TextareaItem
                 placeholder="输入事件描述"
                 rows={5}
                 labelNumber={5}
+                value={this.state.description}
+                onChange={e => this.stateChange(e, 'description')}
               />
               <div className={style.textinfo}>
                 还可输入0字
@@ -44,6 +77,8 @@ export default class BuckleRecord extends React.Component {
           <WingBlank className={style.parcel}>
             <DatePicker
               mode="date"
+              value={this.state.executed_at}
+              onChange={e => this.stateChange(e, 'executed_at')}
             >
               <List.Item arrow="horizontal">事件时间</List.Item>
             </DatePicker>
@@ -57,18 +92,20 @@ export default class BuckleRecord extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                {[1, 2, 3].map((item, i) => {
+                {(participant || []).map((item, i) => {
                   const idx = i;
                   return (
                     <PersonIcon
                       key={idx}
-                      name="魏颖"
+                      value={item}
+                      type="2"
+                      nameKey="realname"
                       showNum={2}
-                      handleClick={this.remove}
+                      handleClick={v => this.remove(v, 'participant')}
                     />
               );
                 })}
-                <PersonAdd handleClick={this.addMore} />
+                <PersonAdd handleClick={() => this.addMore('participant', 2)} />
               </Flex>
             </div>
           </WingBlank>
@@ -83,19 +120,31 @@ export default class BuckleRecord extends React.Component {
                 <Flex.Item className={style.table_item}>计件</Flex.Item>
               </Flex>
               <div className={style.table_body}>
-                {[1, 2, 3].map((item, i) => {
+                <Flex>
+                  <Flex.Item className={style.table_item}>全部操作</Flex.Item>
+                  <Flex.Item className={style.table_item}>
+                    <InputItem onChange={() => this.pointChange('all', 'point_a')} />
+                  </Flex.Item>
+                  <Flex.Item className={style.table_item}>
+                    <InputItem onChange={() => this.pointChange('all', 'point_b')} />
+                  </Flex.Item>
+                  <Flex.Item className={style.table_item}>
+                    <InputItem onChange={() => this.pointChange('all', 'count')} />
+                  </Flex.Item>
+                </Flex>
+                {(participant || []).map((item, i) => {
                   const idx = i;
                   return (
                     <Flex key={idx}>
-                      <Flex.Item className={style.table_item}>全部操作</Flex.Item>
+                      <Flex.Item className={style.table_item}>{item.realname}</Flex.Item>
                       <Flex.Item className={style.table_item}>
-                        <InputItem />
+                        <InputItem onChange={() => this.pointChange('all', 'point_a', item)} />
                       </Flex.Item>
                       <Flex.Item className={style.table_item}>
-                        <InputItem />
+                        <InputItem onChange={() => this.pointChange('all', 'point_b', item)} />
                       </Flex.Item>
                       <Flex.Item className={style.table_item}>
-                        <InputItem />
+                        <InputItem onChange={() => this.pointChange('all', 'count', item)} />
                       </Flex.Item>
                     </Flex>);
                 })
@@ -111,12 +160,20 @@ export default class BuckleRecord extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                <PersonIcon
-                  name="魏颖"
-                  showNum={2}
-                  handleClick={this.remove}
-                />
-                <PersonAdd handleClick={this.addMore} />
+                {(first || []).map((item, i) => {
+                const idx = i;
+                return (
+                  <PersonIcon
+                    key={idx}
+                    value={item}
+                    nameKey="realname"
+                    showNum={2}
+                    type="1"
+                    handleClick={() => this.changePerson('first', 1)}
+                  />
+            );
+              })}
+                {!first.length ? <PersonAdd handleClick={() => this.addMore('first', 1)} /> : null}
               </Flex>
             </div>
           </WingBlank>
@@ -128,12 +185,21 @@ export default class BuckleRecord extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                <PersonIcon
-                  name="魏颖"
-                  showNum={2}
-                  handleClick={this.remove}
-                />
-                <PersonAdd handleClick={this.addMore} />
+                {(final || []).map((item, i) => {
+                const idx = i;
+                return (
+                  <PersonIcon
+                    key={idx}
+                    value={item}
+                    nameKey="realname"
+                    showNum={2}
+                    type="1"
+                    handleClick={() => this.changePerson('final', 1)}
+
+                  />
+            );
+              })}
+                {!final.length ? <PersonAdd handleClick={() => this.addMore('final', 1)} /> : null}
               </Flex>
             </div>
           </WingBlank>
@@ -145,12 +211,20 @@ export default class BuckleRecord extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                <PersonIcon
-                  name="魏颖"
-                  showNum={2}
-                  handleClick={this.remove}
-                />
-                <PersonAdd handleClick={this.addMore} />
+                {(copy || []).map((item, i) => {
+                const idx = i;
+                return (
+                  <PersonIcon
+                    key={idx}
+                    value={item}
+                    nameKey="realname"
+                    showNum={2}
+                    type="2"
+                    handleClick={v => this.remove(v, 'copy')}
+                  />
+            );
+              })}
+                <PersonAdd handleClick={() => this.addMore('copy', 2)} />
               </Flex>
             </div>
           </WingBlank>

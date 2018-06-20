@@ -16,6 +16,12 @@ export default {
       page: '',
       totalpage: '',
     },
+    selectStaff: {
+      first: [],
+      final: [],
+      participant: [],
+      copy: [],
+    },
   },
   effects: {
     * fetchSearchStaff({ payload }, { put, call }) {
@@ -72,9 +78,17 @@ export default {
         },
       });
     },
-    *serachStaff({ payload }, { put, call }) { // 一级部门列表
+    *serachStaff({ payload }, { put, call, select }) { // 一级部门列表
+      const { staff } = yield select(_ => _.searchStaff);
       const response = yield call(serachStaff, payload);
       const { data, page, totalpage } = response;
+      let newStaff = [];
+      if (page !== 1) {
+        newStaff = [...staff];
+        newStaff = staff.concat(data);
+      } else {
+        newStaff = [...data];
+      }
       yield put({
         type: 'save',
         payload: {
@@ -86,7 +100,7 @@ export default {
         type: 'save',
         payload: {
           store: 'staff',
-          data,
+          data: newStaff,
         },
       });
       yield put({
@@ -100,5 +114,12 @@ export default {
   },
   reducers: {
     ...defaultReducers,
+    saveSelectStaff(state, action) {
+      const newState = { ...state };
+      newState[action.payload.key] = action.payload.value;
+      return {
+        ...state, ...newState,
+      };
+    },
   },
 };

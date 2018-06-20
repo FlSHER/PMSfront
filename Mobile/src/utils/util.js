@@ -137,7 +137,17 @@ export function analyzePath(pathname, i) {
 
   return routes[i];
 }
-
+export function unique(arr, name) {
+  const res = [];
+  const obj = {};
+  for (let i = 0; i < arr.length; i += 1) {
+    if (!obj[arr[i][name]]) {
+      obj[arr[i][name]] = 1;
+      res.push(arr[i]);
+    }
+  }
+  return res;
+}
 function getRelation(str1, str2) {
   if (str1 === str2) {
     console.warn('Two path are equal!');  // eslint-disable-line
@@ -176,4 +186,22 @@ export function getRoutes(path, routerData) {
     };
   });
   return renderRoutes;
+}
+
+export function markTreeData(data, pid = null, { parentId, key }) {
+  const tree = [];
+  data.forEach((item) => {
+    if (item[parentId] === pid) {
+      const temp = {
+        ...item,
+        key: `${item[key]}`,
+      };
+      const children = markTreeData(data, item[key], { parentId, key });
+      if (children.length > 0) {
+        temp.children = children;
+      }
+      tree.push(temp);
+    }
+  });
+  return tree;
 }

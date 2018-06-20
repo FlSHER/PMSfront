@@ -50,13 +50,14 @@ export default function ListView(ListItem) {
       return result;
     }
     doLoadMore = (str) => {
-      const { page, totalpage } = this.props;
+      const { page, totalpage, onPageChange } = this.props;
       if (page === totalpage) {
         // console.log('已加载完');
         return false;
       }
       if (str === 'up') {
         // console.log('加载更多');
+        onPageChange();
       }
     }
     handleStart = (ev) => {

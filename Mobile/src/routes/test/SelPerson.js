@@ -4,6 +4,7 @@ import {
 } from 'dva';
 import { SearchList } from '../../components/index';
 import { Department, Staff } from '../../common/ListView/index.js';
+import { analyzePath, unique } from '../../utils/util';
 import styles from '../common.less';
 import style from './index.less';
 @connect(({ example, searchStaff, loading }) => ({
@@ -12,6 +13,7 @@ import style from './index.less';
   staff: searchStaff.staff,
   breadCrumb: searchStaff.breadCrumb,
   pageInfo: searchStaff.pageInfo,
+  selectStaff: searchStaff.selectStaff,
   loading: loading.effects['searchStaff/fetchSelfDepStaff'],
 }))
 export default class SelPerson extends Component {
@@ -22,38 +24,71 @@ export default class SelPerson extends Component {
       num: 0,
     },
     selectAll: false,
+    search: '',
+    key: '',
+    type: 2,
   };
 
   componentWillMount() {
-    // this.fetchSearchStaff({ parentId: 7, breadCrumb: [{ name: '联系人', id: 0 }] });
+    const key = analyzePath(this.props.location.pathname, 1);
+    const type = analyzePath(this.props.location.pathname, 2);
+
+    this.setState({
+      key,
+      type,
+    });
     this.fetchSelfDepStaff();
   }
 
 
   onSearch = (search) => {
-    // const newSearch = search;
     const { dispatch } = this.props;
-    // this.setState({
-    //   search: newSearch,
-    // });
-    dispatch({
-      type: 'searchStaff/serachStaff',
-      payload: `filters=realname~${search}&page=1&pagesize=15`,
+    this.setState({
+      search,
+    }, () => {
+      dispatch({
+        type: 'searchStaff/serachStaff',
+        payload: `filters=realname~${search}&page=1&pagesize=15`,
+      });
     });
-
-    return search;
   }
 
+  onPageChange = () => {
+    const { dispatch, pageInfo } = this.props;
+    const { search } = this.state;
+    dispatch({
+      type: 'searchStaff/serachStaff',
+      payload: `filters=realname~${search}&page=${pageInfo.page + 1}&pagesize=15`,
+    });
+  }
 
   getSelectResult = (result) => {
-    const { selected } = this.state;
-    this.setState({
-      selected: {
-        ...selected,
-        data: result,
-        num: result.length,
+    const { selected, type } = this.state;
+    if (type === '1') {
+      this.getSingleSelect(result);
+    } else {
+      this.setState({
+        selected: {
+          ...selected,
+          data: result,
+          num: result.length,
+        },
+      });
+    }
+  }
+  getSingleSelect = (result) => {
+    const { history, selectStaff, dispatch } = this.props;
+    const { key } = this.state;
+    const newSelectstaff = { ...selectStaff };
+    newSelectstaff[key] = [result];
+    dispatch({
+      type: 'searchStaff/saveSelectStaff',
+      payload: {
+        key: 'selectStaff',
+        value: newSelectstaff,
       },
     });
+    history.goBack(-1);
   }
   fetchSelfDepStaff =() => {
     const { dispatch } = this.props;
@@ -122,14 +157,28 @@ export default class SelPerson extends Component {
       type: 'searchStaff/fetchFirstDepartment',
     });
   }
-
+  selectOk = () => {
+    const { history, selectStaff, dispatch } = this.props;
+    const { selected, key } = this.state;
+    const newSelectstaff = { ...selectStaff };
+    const tmpSelected = selectStaff[key].concat(selected.data);
+    newSelectstaff[key] = unique(tmpSelected, 'staff_sn');
+    dispatch({
+      type: 'searchStaff/saveSelectStaff',
+      payload: {
+        key: 'selectStaff',
+        value: newSelectstaff,
+      },
+    });
+    history.goBack(-1);
+  }
   render() {
     const { department, staff, breadCrumb, loading, pageInfo } = this.props;
-    const { selected } = this.state;
+    const { selected, type } = this.state;
     return (
       <div className={styles.con}>
         <SearchList
-          multiple
+          multiple={type !== '1'}
           name="realname"
           bread={breadCrumb}
           checkAble={staff.length && (selected.num === staff.length)}
@@ -138,6 +187,7 @@ export default class SelPerson extends Component {
           handleSearch={this.onSearch}
           handleBread={this.selDepartment}
           firstDepartment={this.firstDepartment}
+          selectOk={this.selectOk}
         >
           {!loading ? (
             <div className={style.child}>
@@ -154,8 +204,9 @@ export default class SelPerson extends Component {
                   name="staff_sn"
                   page={pageInfo.page}
                   totalpage={pageInfo.totalpage}
+                  onPageChange={this.onPageChange}
                   dispatch={this.props.dispatch}
-                  multiple
+                  multiple={type !== '1'}
                   selected={selected.data}
                   dataSource={staff}
                   onChange={this.getSelectResult}
