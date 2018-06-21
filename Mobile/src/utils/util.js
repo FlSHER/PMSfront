@@ -97,6 +97,7 @@ export function dealErrorData(data, code) {
   } else {
     msg = codeMessage[code];
   }
+  Toast.fail(msg);
   return msg;
 }
 
@@ -204,4 +205,43 @@ export function markTreeData(data, pid = null, { parentId, key }) {
     }
   });
   return tree;
+}
+
+const whereConfig = {
+  in: '=',
+  like: '~',
+  min: '>=',
+  max: '<=',
+  lt: '<',
+  gt: '>',
+};
+
+export function dotWheresValue(fields) {
+  let fieldsWhere = '';
+  Object.keys(fields || {}).forEach((key) => {
+    const name = key;
+    if (typeof fields[key] === 'object') {
+      Object.keys(fields[key]).forEach((i) => {
+        let value = fields[key][i];
+        if (Array.isArray(value) && value.length > 0) {
+          value = value.length > 1 ? `[${value}]` : value[0];
+        }
+        fieldsWhere += `${name}${whereConfig[i]}${value};`;
+      });
+    } else {
+      fieldsWhere += `${name}=${fields[key]};`;
+    }
+  });
+
+  return fieldsWhere;
+}
+
+export function makerFilters(params) {
+  const { filters } = { ...params };
+  let newFilters = '';
+  newFilters = dotWheresValue(filters);
+  return {
+    ...params,
+    filters: newFilters,
+  };
 }

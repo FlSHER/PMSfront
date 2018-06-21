@@ -1,23 +1,39 @@
 import React, { Component } from 'react';
-// import { List } from 'antd-mobile';
 import ListView from '../../routes/Buckle/ListView';
 import shortcut from '../../assets/shortcuts.png';
+import { buckleState } from '../../utils/convert.js';
+
 import style from './index.less';
-// const { Item } = List;
+
+
 @ListView
 export default class Buckle extends Component {
+  convertStyle = (status) => {
+    switch (status) {
+      case -1: return 'label_state_1';
+      case 0: return 'label_state_3';
+      case 1:
+      case 2: return 'label_state_2';
+
+      default: return '';
+    }
+  }
   render() {
-    const { handleClick, onShortcut, hasShortcut = true } = this.props;
+    const { handleClick, onShortcut, hasShortcut = true, value } = this.props;
     return (
       <div className={style.event_item}>
         <div className={style.main_info} onClick={() => handleClick()}>
           <div className={style.event_title}>
-            <span>事件标题</span>
-            <div className={style.label_state_2}>终审</div>
+            <span>{value.event_name}</span>
+            <div
+              className={style[this.convertStyle(value.status_id)]}
+            >
+              {buckleState(value.status_id)}
+            </div>
           </div>
-          <div className={style.time}>2018.6.11</div>
+          <div className={style.time}>{value.created_at}</div>
           <div className={style.desc}>
-        今天天气好晴朗，处处好风光。可是就是有时冷，有时热，温度变化多端，让人感到烦恼
+            {value.description}
           </div>
         </div>
         {hasShortcut ?

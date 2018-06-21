@@ -33,6 +33,21 @@ export default class AuditList extends React.Component {
     sortItem: { name: '默认排序', value: -1 },
     checkState: { name: '待审核', value: 1 },
   }
+  componentWillMount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'buckle/getAuditList',
+      payload: 'pagesize=15&type=participant',
+    });
+  }
+  onPageChange = () => {
+    const { dispatch, pageInfo } = this.props;
+    const { search } = this.state;
+    dispatch({
+      type: 'searchStaff/serachStaff',
+      payload: `filters=realname~${search}&page=${pageInfo.page + 1}&pagesize=15`,
+    });
+  }
   onClose = key => () => {
     this.setState({
       [key]: false,
@@ -161,6 +176,9 @@ export default class AuditList extends React.Component {
             <Buckle
               dataSource={[1, 2, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]}
               handleClick={this.toLookDetail}
+              onPageChange={this.onPageChange}
+              page={1}
+              totalpage={1}
             />
           </WingBlank>
         </Flex.Item>

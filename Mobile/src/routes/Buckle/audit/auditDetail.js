@@ -8,9 +8,20 @@ import { PersonIcon } from '../../../components/index.js';
 import style from '../index.less';
 import styles from '../../common.less';
 
-@connect()
+@connect(({ buckle }) => ({
+  detail: buckle.detail,
+}))
 export default class AuditDetail extends React.Component {
+  componentWillMount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'buckle/getBuckleDetail',
+      payload: 1,
+    });
+  }
   render() {
+    const { detail } = this.props;
+    // console.log(detail);
     return (
       <div
         className={styles.con}
@@ -18,18 +29,17 @@ export default class AuditDetail extends React.Component {
       >
         <div className={styles.con_content}>
           <WhiteSpace size="sm" />
-
           <WingBlank className={style.parcel}>
             <List>
               <List.Item>
                 事件标题
               </List.Item>
               <div style={{ padding: '0.4rem 15px' }}>
-              ssss觉得今
-              天天气好晴朗，处处好风光
-              ，才怪，天天下雨，不喜欢下雨
-              ，风扇的风太大了，没有小风，吹
-              着又觉得冷飕飕
+                  ssss觉得今
+                  天天气好晴朗，处处好风光
+                  ，才怪，天天下雨，不喜欢下雨
+                  ，风扇的风太大了，没有小风，吹
+                  着又觉得冷飕飕
               </div>
             </List>
           </WingBlank>
@@ -50,12 +60,14 @@ export default class AuditDetail extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                {[1, 2, 3].map((item, i) => {
+                {(detail.participant || []).map((item, i) => {
                 const idx = i;
                 return (
                   <PersonIcon
                     key={idx}
-                    name="魏颖"
+                    value={item}
+                    type="2"
+                    nameKey="staff_name"
                     showNum={2}
                   />
             );
@@ -78,19 +90,25 @@ export default class AuditDetail extends React.Component {
                 <Flex.Item className={style.table_item}>计件</Flex.Item>
               </Flex>
               <div className={style.table_body}>
-                {[1, 2, 3].map((item, i) => {
+                {(detail.participant || []).map((item, i) => {
                   const idx = i;
                   return (
-                    <Flex key={idx} align="center">
-                      <Flex.Item className={style.table_item}>全部操作</Flex.Item>
+                    <Flex key={idx}>
+                      <Flex.Item className={style.table_item}>{item.realname}</Flex.Item>
                       <Flex.Item className={style.table_item}>
-                        1
+                        <InputItem
+                          value={item.point_a}
+                        />
                       </Flex.Item>
                       <Flex.Item className={style.table_item}>
-                        1
+                        <InputItem
+                          value={item.point_b}
+                        />
                       </Flex.Item>
                       <Flex.Item className={style.table_item}>
-                        1
+                        <InputItem
+                          value={item.count}
+                        />
                       </Flex.Item>
                     </Flex>);
                 })
@@ -109,7 +127,9 @@ export default class AuditDetail extends React.Component {
               >
                 <div style={{ marginRight: '0.64rem' }}>
                   <PersonIcon
-                    name="魏颖"
+                    value={detail}
+                    type="2"
+                    nameKey="first_approver_name"
                     showNum={2}
                     itemStyle={{ marginBottom: 0 }}
                   />
@@ -134,9 +154,11 @@ export default class AuditDetail extends React.Component {
               >
                 <div style={{ marginRight: '0.64rem' }}>
                   <PersonIcon
-                    itemStyle={{ marginBottom: 0 }}
-                    name="魏颖"
+                    value={detail}
+                    type="1"
+                    nameKey="final_approver_name"
                     showNum={2}
+                    itemStyle={{ marginBottom: 0 }}
                   />
                 </div>
                 <div
@@ -189,8 +211,11 @@ export default class AuditDetail extends React.Component {
                 wrap="wrap"
               >
                 <PersonIcon
-                  name="魏颖"
+                  value={detail.addressee}
+                  type="2"
+                  nameKey="staff_name"
                   showNum={2}
+                  itemStyle={{ marginBottom: 0 }}
                 />
               </Flex>
             </div>
@@ -204,8 +229,11 @@ export default class AuditDetail extends React.Component {
                 wrap="wrap"
               >
                 <PersonIcon
-                  name="魏颖"
+                  value={detail.addressee}
+                  type="1"
+                  nameKey="staff_name"
                   showNum={2}
+                  itemStyle={{ marginBottom: 0 }}
                 />
               </Flex>
             </div>

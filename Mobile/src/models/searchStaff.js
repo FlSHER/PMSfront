@@ -19,7 +19,7 @@ export default {
     selectStaff: {
       first: [],
       final: [],
-      participant: [],
+      participants: [],
       copy: [],
     },
   },

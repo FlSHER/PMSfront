@@ -1,8 +1,9 @@
 import React from 'react';
+import moment from 'moment';
 import {
   connect,
 } from 'dva';
-import { List, TextareaItem, Flex, WingBlank, WhiteSpace, InputItem, Button, DatePicker } from 'antd-mobile';
+import { List, TextareaItem, Flex, WingBlank, WhiteSpace, InputItem, Button, DatePicker, Toast } from 'antd-mobile';
 import { PersonIcon, PersonAdd } from '../../../components/index.js';
 import style from '../index.less';
 import styles from '../../common.less';
@@ -15,8 +16,35 @@ import styles from '../../common.less';
 }))
 export default class BuckleRecord extends React.Component {
   state={
-    executed_at: new Date(),
     description: '',
+    init: false,
+    optAll: {
+      pointA: '',
+      pointB: '',
+      count: '',
+    },
+    info: {
+      executedAt: new Date(),
+      description: '',
+      participants: [],
+    },
+  }
+  componentWillMount() {
+    this.props.dispatch({
+      type: 'buckle/updateModal',
+    });
+  }
+  componentWillReceiveProps(nextProps) {
+    if (!this.state.init) {
+      const { searchStaff: { selectStaff }, buckle: { info } } = nextProps;
+      const { participants } = selectStaff;
+      this.setState({
+        info: {
+          ...info,
+          participants,
+        },
+      });
+    }
   }
   remove = (item, name) => {
     const { searchStaff: { selectStaff }, dispatch } = this.props;
@@ -36,17 +64,119 @@ export default class BuckleRecord extends React.Component {
   addMore = (name = 'first', type) => {
     this.props.history.push(`/testView2/${name}/${type}`);
   }
-  pointChange = () => {
-
+  pointChange = (point, kind, el) => {
+    const { optAll, info } = this.state;
+    const newOpt = { ...optAll };
+    const tempKey = kind === 'point_a' ?
+      'pointA' : kind === 'point_b' ?
+        'pointB' : kind === 'count' ?
+          'count' : '';
+    if (el === undefined) {
+      newOpt[tempKey] = point;
+    } else {
+      newOpt[tempKey] = '';
+    }
+    const newParticipant = info.participants.map((item) => {
+      const tmpItem = { ...item };
+      if (el === undefined) {
+        tmpItem[kind] = point;
+      } else
+      if (item.staff_sn === el.staff_sn) {
+        tmpItem[kind] = point;
+      }
+      return tmpItem;
+    });
+    this.setState({
+      info: { ...info, participants: newParticipant },
+      optAll: newOpt,
+    });
   }
   stateChange = (v, key) => {
+    const { info } = this.state;
+    if (key === 'description') {
+      if (v.length > 100) {
+        return;
+      }
+    }
+    const newInfo = { ...info };
+    newInfo[key] = v;
     this.setState({
-      [key]: v,
+      info: newInfo,
     });
+  }
+  record = () => {
+    const { info } = this.state;
+    const { searchStaff: { selectStaff }, event, dispatch } = this.props;
+    const { first, final, copy } = selectStaff;
+    const newCopy = copy.map((item) => {
+      const obj = {};
+      obj.staff_sn = item.staff_sn;
+      obj.staff_name = item.realname;
+      return obj;
+    });
+    const newParticipant = info.participants.map((item) => {
+      const obj = {};
+      obj.staff_sn = item.staff_sn;
+      obj.staff_name = item.realname;
+      obj.point_a = item.point_a;
+      obj.point_b = item.point_a;
+      obj.count = item.count;
+      return obj;
+    });
+    let msg = '';
+    msg = event.id === undefined ?
+      '请选择事件' : !info.participants.length ?
+        '请选择参与人' : !first.length ?
+          '请选择初审人' : !final.length ?
+            '请选择终审人' : !copy.length ?
+              '请选择抄送人' : '';
+    if (msg) {
+      Toast.fail(msg);
+      return;
+    }
+    dispatch({
+      type: 'buckle/recordBuckle',
+      payload: {
+        event_id: event.id,
+        participants: newParticipant,
+        description: info.description,
+        first_approver_sn: first[0].staff_sn,
+        first_approver_name: first[0].realname,
+        final_approver_sn: final[0].staff_sn,
+        final_approver_name: final[0].realname,
+        executed_at: moment(info.executedAt).format('YYYY-MM-DD'),
+        addressees: newCopy,
+      },
+    });
+  }
+  selEvent = () => {
+    const { history, dispatch } = this.props;
+    const { info } = this.state;
+
+    // dispatch({
+    //   type: 'searchStaff/saveSelectStaff',
+    //   payload: {
+    //     key: 'selectStaff',
+    //     value: newSearchStaff,
+    //   },
+    // });
+    dispatch({
+      type: 'buckle/saveData',
+      payload: {
+        key: 'info',
+        value: { ...info },
+      },
+    });
+
+    history.push('/sel_event');
   }
   render() {
     const { searchStaff: { selectStaff }, event } = this.props;
-    const { first, final, participant, copy } = selectStaff;
+    const { first, final, copy } = selectStaff;
+    const {
+      info: { participants, description, executedAt },
+      optAll: { pointA, pointB, count },
+    } = this.state;
     return (
       <div
         className={styles.con}
@@ -57,18 +187,18 @@ export default class BuckleRecord extends React.Component {
 
           <WingBlank className={style.parcel}>
             <List>
-              <List.Item arrow="horizontal" onClick={() => this.props.history.push('/sel_event')}>
+              <List.Item arrow="horizontal" onClick={this.selEvent}>
                 {event && event.name ? event.name : '事件标题'}
               </List.Item>
               <TextareaItem
                 placeholder="输入事件描述"
                 rows={5}
                 labelNumber={5}
-                value={this.state.description}
+                value={description}
                 onChange={e => this.stateChange(e, 'description')}
               />
               <div className={style.textinfo}>
-                还可输入0字
+                还可输入{100 - this.state.description.length}字
               </div>
             </List>
           </WingBlank>
@@ -77,8 +207,8 @@ export default class BuckleRecord extends React.Component {
           <WingBlank className={style.parcel}>
             <DatePicker
               mode="date"
-              value={this.state.executed_at}
-              onChange={e => this.stateChange(e, 'executed_at')}
+              value={executedAt}
+              onChange={e => this.stateChange(e, 'executedAt')}
             >
               <List.Item arrow="horizontal">事件时间</List.Item>
             </DatePicker>
@@ -92,7 +222,7 @@ export default class BuckleRecord extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                {(participant || []).map((item, i) => {
+                {(participants || []).map((item, i) => {
                   const idx = i;
                   return (
                     <PersonIcon
@@ -101,11 +231,11 @@ export default class BuckleRecord extends React.Component {
                       type="2"
                       nameKey="realname"
                       showNum={2}
-                      handleClick={v => this.remove(v, 'participant')}
+                      handleClick={v => this.remove(v, 'participants')}
                     />
               );
                 })}
-                <PersonAdd handleClick={() => this.addMore('participant', 2)} />
+                <PersonAdd handleClick={() => this.addMore('participants', 2)} />
               </Flex>
             </div>
           </WingBlank>
@@ -123,28 +253,46 @@ export default class BuckleRecord extends React.Component {
                 <Flex>
                   <Flex.Item className={style.table_item}>全部操作</Flex.Item>
                   <Flex.Item className={style.table_item}>
-                    <InputItem onChange={() => this.pointChange('all', 'point_a')} />
+                    <InputItem
+                      value={pointA}
+                      onChange={e => this.pointChange(e, 'point_a')}
+                    />
                   </Flex.Item>
                   <Flex.Item className={style.table_item}>
-                    <InputItem onChange={() => this.pointChange('all', 'point_b')} />
+                    <InputItem
+                      value={pointB}
+                      onChange={e => this.pointChange(e, 'point_b')}
+                    />
                   </Flex.Item>
                   <Flex.Item className={style.table_item}>
-                    <InputItem onChange={() => this.pointChange('all', 'count')} />
+                    <InputItem
+                      value={count}
+                      onChange={e => this.pointChange(e, 'count')}
+                    />
                   </Flex.Item>
                 </Flex>
-                {(participant || []).map((item, i) => {
+                {(participants || []).map((item, i) => {
                   const idx = i;
                   return (
                     <Flex key={idx}>
                       <Flex.Item className={style.table_item}>{item.realname}</Flex.Item>
                       <Flex.Item className={style.table_item}>
-                        <InputItem onChange={() => this.pointChange('all', 'point_a', item)} />
+                        <InputItem
+                          value={item.point_a}
+                          onChange={e => this.pointChange(e, 'point_a', item)}
+                        />
                       </Flex.Item>
                       <Flex.Item className={style.table_item}>
-                        <InputItem onChange={() => this.pointChange('all', 'point_b', item)} />
+                        <InputItem
+                          value={item.point_b}
+                          onChange={e => this.pointChange(e, 'point_b', item)}
+                        />
                       </Flex.Item>
                       <Flex.Item className={style.table_item}>
-                        <InputItem onChange={() => this.pointChange('all', 'count', item)} />
+                        <InputItem
+                          value={item.count}
+                          onChange={e => this.pointChange(e, 'count', item)}
+                        />
                       </Flex.Item>
                     </Flex>);
                 })
@@ -173,7 +321,7 @@ export default class BuckleRecord extends React.Component {
                   />
             );
               })}
-                {!first.length ? <PersonAdd handleClick={() => this.addMore('first', 1)} /> : null}
+                {first && (!first.length) ? <PersonAdd handleClick={() => this.addMore('first', 1)} /> : null}
               </Flex>
             </div>
           </WingBlank>
@@ -199,7 +347,7 @@ export default class BuckleRecord extends React.Component {
                   />
             );
               })}
-                {!final.length ? <PersonAdd handleClick={() => this.addMore('final', 1)} /> : null}
+                {final && (!final.length) ? <PersonAdd handleClick={() => this.addMore('final', 1)} /> : null}
               </Flex>
             </div>
           </WingBlank>
@@ -232,7 +380,11 @@ export default class BuckleRecord extends React.Component {
         <div className={styles.footer}>
           <WingBlank>
             <div className={style.opt}>
-              <Button type="primary">提交</Button>
+              <Button
+                type="primary"
+                onClick={this.record}
+              >提交
+              </Button>
             </div>
           </WingBlank>
         </div>

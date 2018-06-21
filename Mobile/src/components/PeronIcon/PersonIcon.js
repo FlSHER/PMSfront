@@ -5,9 +5,9 @@ import style from './index.less';
 class PersonIcon extends React.Component {
   render() {
     const {
-      showNum = 2, handleClick, footer = true, itemStyle = {}, value, nameKey, type,
+      showNum = 2, handleClick, footer = true, itemStyle = {}, value = {}, nameKey, type,
     } = this.props;
-    const name = value[nameKey];
+    const name = value[nameKey] ? value[nameKey] : '';
     const newName = name.slice(name.length - (name.length < showNum ? name.length : showNum));
     return (
       <div

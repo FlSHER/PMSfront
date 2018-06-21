@@ -77,4 +77,9 @@ export default {
       [`${store}Details`]: originalStore,
     };
   },
+  updateModal(state) {
+    return {
+      ...state,
+    };
+  },
 };

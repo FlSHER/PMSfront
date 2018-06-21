@@ -3,6 +3,9 @@ import {
   connect,
 } from 'dva';
 import { WingBlank, WhiteSpace, Flex } from 'antd-mobile';
+// import defaultAvatar from '../../../assets/default_avatar.png';
+// import style from '../index.less';
+// import styles from '../../common.less';
 import { Buckle } from '../../../common/ListView/index';
 import { ListFilter, CheckBoxs, ListSort, StateTabs } from '../../../components/index';
 import style from '../index.less';
@@ -12,14 +15,17 @@ const sortList = [
   { name: '时间升序', value: 1 },
   { name: '时间降序', value: 2 },
 ];
-const buckleState = [
-  { name: '我参与的', value: 1 },
-  { name: '我记录的', value: 2 },
-  { name: '抄送我的', value: 3 },
-  { name: '我审核的', value: 4 },
+const auditState = [
+  { name: '全部', value: 'all' },
+  { name: '我参与的', value: 'participant' },
+  { name: '我记录的', value: 'recorded' },
+  { name: '我审核的', value: 'approved' },
+  { name: '抄送我的', value: 'addressee' },
 ];
 
-@connect()
+@connect(({ buckle }) => ({
+  logList: buckle.logList,
+}))
 export default class BuckleList extends React.Component {
   state = {
     filter: {// 筛选结果
@@ -29,7 +35,30 @@ export default class BuckleList extends React.Component {
       sortModal: false,
     },
     sortItem: { name: '默认排序', value: -1 },
-    checkState: { name: '我参与的', value: 1 },
+    checkState: { name: '全部', value: 'all' },
+  }
+  componentWillMount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'buckle/getLogsList',
+      payload: {
+        pagesize: 10,
+        type: 'all',
+        page: 1,
+      },
+    });
+  }
+  onPageChange = () => {
+    const { dispatch, buckleList } = this.props;
+    const { checkState } = this.state;
+    dispatch({
+      type: 'buckle/getLogsList',
+      payload: {
+        pagesize: 10,
+        type: checkState.value,
+        page: buckleList[checkState.value].page + 1,
+      },
+    });
   }
   onClose = key => () => {
     this.setState({
@@ -95,6 +124,8 @@ export default class BuckleList extends React.Component {
     this.props.history.push('/audit_detail/1');
   }
   render() {
+    const { logList } = this.props;
+    const { checkState } = this.state;
     return (
       <Flex direction="column" style={{ height: '100%' }}>
         <Flex.Item className={style.header}>
@@ -103,8 +134,8 @@ export default class BuckleList extends React.Component {
             <WingBlank size="lg">
               <WingBlank size="lg">
                 <StateTabs
-                  option={buckleState}
-                  checkItem={this.state.checkState}
+                  option={auditState}
+                  checkItem={checkState}
                   handleClick={this.tabChange}
                 />
               </WingBlank>
@@ -161,9 +192,12 @@ export default class BuckleList extends React.Component {
         <Flex.Item className={style.content}>
           <WingBlank>
             <Buckle
-              dataSource={[1, 2, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]}
+              dataSource={logList[checkState.value] ? logList[checkState.value].data : []}
               handleClick={this.toLookDetail}
               hasShortcut={false}
+              onPageChange={this.onPageChange}
+              page={logList[checkState.value] ? logList[checkState.value].page : 1}
+              totalpage={logList[checkState.value] ? logList[checkState.value].totalpage : 10}
             />
           </WingBlank>
         </Flex.Item>

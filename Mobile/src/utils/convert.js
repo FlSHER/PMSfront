@@ -89,33 +89,16 @@ export const indexMenu = [
     ],
   },
 ];
-// 报销单状态
-export const startState = [
-  { title: '全部', type: 'all' },
-  { title: '已完成', type: 'finished' },
-  { title: '处理中', type: 'processing' },
-  { title: '被驳回', type: 'rejected' },
-  { title: '撤回', type: 'withdraw' },
-];
 
-
-export const approvalState = [
-  { title: '全部', type: 'all' },
-  { title: '待审批', type: 'processing' },
-  { title: '已通过', type: 'approved' },
-  { title: '已转交', type: 'deliver' },
-  { title: '已驳回', type: 'rejected' },
-];
-
-export const reverseState = (state) => {
+export const buckleState = (state) => {
   switch (state) {
+    case 0:
+      return '待审核';
     case 1:
-      return '未提交';
+      return '初审通过';
     case 2:
-      return '处理中';
-    case 3:
-      return '已完成';
-    case 4:
+      return '终审通过';
+    case -1:
       return '已驳回';
     default:
       return '其他';
