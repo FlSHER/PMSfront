@@ -4,24 +4,54 @@ import {
 } from 'dva';
 import { List, Flex, WingBlank, WhiteSpace, InputItem, Button } from 'antd-mobile';
 import { PersonIcon } from '../../../components/index.js';
-
+import { analyzePath } from '../../../utils/util';
 import style from '../index.less';
 import styles from '../../common.less';
 
-@connect(({ buckle }) => ({
+@connect(({ buckle, oauth }) => ({
   detail: buckle.detail,
+  userInfo: oauth.userInfo,
 }))
 export default class AuditDetail extends React.Component {
+  state={
+    eventId: '',
+  }
   componentWillMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'buckle/getBuckleDetail',
-      payload: 1,
+    const { dispatch, location } = this.props;
+    const eventId = analyzePath(location.pathname, 1);
+    this.setState({
+      eventId,
+    }, () => {
+      dispatch({
+        type: 'buckle/getBuckleDetail',
+        payload: eventId,
+      });
     });
   }
+  withDraw =() => {
+    const { dispatch, history } = this.props;
+    const { eventId } = this.state;
+    dispatch({
+      type: 'buckle/withdrawBuckle',
+      payload: {
+        id: eventId,
+        cb: () => {
+          history.push('/buckle_list');
+        },
+      },
+    });
+  }
+  submitAgain =() => {
+    const { history } = this.props;
+    history.push('/record_buckle');
+  }
+  doAudit = (type, state) => {
+    const { history } = this.props;
+    const { eventId } = this.state;
+    history.push(`/audit_reason/${type}/${state}/${eventId}`);
+  }
   render() {
-    const { detail } = this.props;
-    // console.log(detail);
+    const { detail, userInfo } = this.props;
     return (
       <div
         className={styles.con}
@@ -32,14 +62,10 @@ export default class AuditDetail extends React.Component {
           <WingBlank className={style.parcel}>
             <List>
               <List.Item>
-                事件标题
+                {detail.event_name}
               </List.Item>
               <div style={{ padding: '0.4rem 15px' }}>
-                  ssss觉得今
-                  天天气好晴朗，处处好风光
-                  ，才怪，天天下雨，不喜欢下雨
-                  ，风扇的风太大了，没有小风，吹
-                  着又觉得冷飕飕
+                {detail.description ? detail.description : '暂无'}
               </div>
             </List>
           </WingBlank>
@@ -47,8 +73,8 @@ export default class AuditDetail extends React.Component {
 
           <WingBlank className={style.parcel}>
             <List>
-              <List.Item extra="2018.12.09">
-                事件事件
+              <List.Item extra={detail.executed_at}>
+                事件时间
               </List.Item>
             </List>
           </WingBlank>
@@ -66,7 +92,7 @@ export default class AuditDetail extends React.Component {
                   <PersonIcon
                     key={idx}
                     value={item}
-                    type="2"
+                    type="1"
                     nameKey="staff_name"
                     showNum={2}
                   />
@@ -94,7 +120,7 @@ export default class AuditDetail extends React.Component {
                   const idx = i;
                   return (
                     <Flex key={idx}>
-                      <Flex.Item className={style.table_item}>{item.realname}</Flex.Item>
+                      <Flex.Item className={style.table_item}>{item.staff_name}</Flex.Item>
                       <Flex.Item className={style.table_item}>
                         <InputItem
                           value={item.point_a}
@@ -128,7 +154,7 @@ export default class AuditDetail extends React.Component {
                 <div style={{ marginRight: '0.64rem' }}>
                   <PersonIcon
                     value={detail}
-                    type="2"
+                    type="1"
                     nameKey="first_approver_name"
                     showNum={2}
                     itemStyle={{ marginBottom: 0 }}
@@ -138,7 +164,7 @@ export default class AuditDetail extends React.Component {
                   className={style.describe}
                 >
                   <span />
-                  加你的讲课费就是你大家
+                  {detail.first_approve_remark}
                 </div>
               </Flex>
             </div>
@@ -165,10 +191,7 @@ export default class AuditDetail extends React.Component {
                   className={style.describe}
                 >
                   <span />
-                  加你的讲课费就是你大家
-                  好就的举报的举报是奖扣DVD是否能对健康加
-                  你的讲课费就是你大家好就的举报的举报是奖扣DVD是否能对健康
-                加你的讲课费就是你大家好就的举报的举报是奖扣DVD是否能对健康
+                  {detail.final_approve_remark}
                 </div>
               </Flex>
             </div>
@@ -210,13 +233,18 @@ export default class AuditDetail extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                <PersonIcon
-                  value={detail.addressee}
-                  type="2"
-                  nameKey="staff_name"
-                  showNum={2}
-                  itemStyle={{ marginBottom: 0 }}
-                />
+                {(detail.addressee || []).map((item, i) => {
+                const idx = i;
+                return (
+                  <PersonIcon
+                    key={idx}
+                    value={item}
+                    type="1"
+                    nameKey="staff_name"
+                    showNum={2}
+                  />);
+                })
+              }
               </Flex>
             </div>
           </WingBlank>
@@ -229,21 +257,37 @@ export default class AuditDetail extends React.Component {
                 wrap="wrap"
               >
                 <PersonIcon
-                  value={detail.addressee}
+                  value={detail}
                   type="1"
-                  nameKey="staff_name"
+                  nameKey="recorder_name"
                   showNum={2}
-                  itemStyle={{ marginBottom: 0 }}
                 />
               </Flex>
             </div>
           </WingBlank>
+          <WhiteSpace size="lg" />
         </div>
+
         <div className={styles.footer}>
           <WingBlank>
             <Flex className={style.opt}>
-              <Flex.Item><Button type="ghost">驳回</Button></Flex.Item>
-              <Flex.Item><Button type="primary">通过</Button></Flex.Item>
+              {detail.first_approver_sn === userInfo.staff_sn && detail.status_id === 0 ?
+                <Flex.Item><Button type="ghost" onClick={() => this.doAudit('1', 'no')}>初审驳回</Button></Flex.Item> : null}
+              {detail.first_approver_sn === userInfo.staff_sn && detail.status_id === 0 ?
+                <Flex.Item><Button type="primary" onClick={() => this.doAudit('1', 'yes')}>初审通过</Button></Flex.Item> : null}
+
+              {detail.final_approver_sn === userInfo.staff_sn && detail.status_id === 1 ?
+                <Flex.Item><Button type="ghost" onClick={() => this.doAudit('2', 'no')}>终审驳回</Button></Flex.Item> : null}
+              {detail.final_approver_sn === userInfo.staff_sn && detail.status_id === 1 ?
+                <Flex.Item><Button type="primary" onClick={() => this.doAudit('2', 'yes')}>终审通过</Button></Flex.Item> : null}
+
+              { detail.recorder_sn === userInfo.staff_sn &&
+                (detail.status_id === 0 || detail.status_id === 1) ?
+                  <Flex.Item><Button type="primary" onClick={this.withDraw}>撤回</Button></Flex.Item> : null}
+              { detail.recorder_sn === userInfo.staff_sn &&
+                (detail.status_id === -1 || detail.status_id === -2) ?
+                  <Flex.Item><Button type="primary" onClick={this.submitAgain}>再次提交</Button></Flex.Item> : null}
+
             </Flex>
           </WingBlank>
         </div>

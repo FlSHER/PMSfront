@@ -7,9 +7,10 @@ let startX;
 let startY;
 export default function ListView(ListItem) {
   class NewItem extends PureComponent {
-    state={
+    state = {
       shortModal: false,
       refreshing: false,
+      el: {},
     }
 
     onClose = () => {
@@ -95,10 +96,11 @@ export default function ListView(ListItem) {
         default:
       }
     }
-    showModal = (e) => {
+    showModal = (e, item) => {
       e.preventDefault(); // 修复 Android 上点击穿透
       this.setState({
         shortModal: true,
+        el: item,
       });
     }
     makeListItemProps = (item) => {
@@ -109,19 +111,21 @@ export default function ListView(ListItem) {
       response.onShortcut = this.showModal;
       return response;
     }
+    doAudit = (type, state) => {
+      const { history } = this.props;
+      const { el } = this.state;
+      history.push(`/audit_reason/${type}/${state}/${el.id}`);
+    }
     render() {
       const { dataSource } = this.props;
       return (
         <PullToRefresh
           ref={(el) => { this.ptr = el; }}
-          style={{
-          height: '100%',
-          overflow: 'auto',
-        }}
+          style={{ height: '100%', overflow: 'auto' }}
           refreshing={this.state.refreshing}
           onRefresh={
-          this.onRefresh
-        }
+            this.onRefresh
+          }
         >
           <QueueAnim>
             <div
@@ -129,14 +133,14 @@ export default function ListView(ListItem) {
               onTouchEnd={this.handleEnd}
             >
               {(dataSource || []).map((item, i) => {
-              const idx = i;
-              return (
-                <ListItem
-                  {...this.makeListItemProps(item)}
-                  key={idx}
-                />
-              );
-            })}
+                const idx = i;
+                return (
+                  <ListItem
+                    {...this.makeListItemProps(item)}
+                    key={idx}
+                  />
+                );
+              })}
             </div>
           </QueueAnim>
           <Modal
@@ -151,8 +155,16 @@ export default function ListView(ListItem) {
                   direction="column"
                 >
                   <Flex.Item className={style.base_opt}>
-                    <div className={[style.opt_item, style.agree].join(' ')}>驳回</div>
-                    <div className={[style.opt_item, style.reject].join(' ')}>通过</div>
+                    <div
+                      className={[style.opt_item, style.agree].join(' ')}
+                      onClick={() => this.doAudit('1', 'no')}
+                    >驳回
+                    </div>
+                    <div
+                      className={[style.opt_item, style.reject].join(' ')}
+                      onClick={() => this.doAudit('1', 'yes')}
+                    >通过
+                    </div>
                   </Flex.Item>
                   <Flex.Item className={[style.opt_item, style.cancel].join(' ')}>取消</Flex.Item>
                 </Flex>

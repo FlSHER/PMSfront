@@ -3,49 +3,60 @@ import {
   connect,
 } from 'dva';
 import { WingBlank, WhiteSpace, Flex } from 'antd-mobile';
-// import defaultAvatar from '../../../assets/default_avatar.png';
-// import style from '../index.less';
-// import styles from '../../common.less';
+import nothing from '../../../assets/nothing.png';
 import { Buckle } from '../../../common/ListView/index';
-import { ListFilter, CheckBoxs, ListSort, StateTabs } from '../../../components/index';
+import { ListFilter, CheckBoxs, ListSort, StateTabs, Nothing } from '../../../components/index';
 import style from '../index.less';
 // import shortcut from '../../../assets/shortcuts.png';
 
 const sortList = [
-  { name: '默认排序', value: -1 },
-  { name: '时间升序', value: 1 },
-  { name: '时间降序', value: 2 },
+  { name: '默认排序', value: 'created_at-asc' },
+  { name: '时间升序', value: 'created_at-asc' },
+  { name: '时间降序', value: 'created_at-desc' },
 ];
 const auditState = [
-  { name: '待审核', value: 1 },
-  { name: '已审核', value: 2 },
+  { name: '待审核', value: 'procesing' },
+  { name: '已审核', value: 'dealt' },
 ];
-
-@connect()
+const dealtOption = [{ name: '通过', value: 2 }, { name: '驳回', value: -1 }];
+const procesingOption = [{ name: '初审', value: 1 }, { name: '待审核', value: 0 }];
+@connect(({ buckle }) => ({
+  auditList: buckle.auditList,
+}))
 export default class AuditList extends React.Component {
   state = {
     filter: {// 筛选结果
+      statusId: '',
     },
     modal: {// 模态框
       filterModal: false,
       sortModal: false,
     },
-    sortItem: { name: '默认排序', value: -1 },
-    checkState: { name: '待审核', value: 1 },
+    sortItem: { name: '默认排序', value: 'created_at-asc' },
+    checkState: { name: '待审核', value: 'procesing' },
   }
   componentWillMount() {
     const { dispatch } = this.props;
+    const { checkState } = this.state;
     dispatch({
       type: 'buckle/getAuditList',
-      payload: 'pagesize=15&type=participant',
+      payload: {
+        pagesize: 10,
+        page: 1,
+        type: checkState.value,
+      },
     });
   }
   onPageChange = () => {
-    const { dispatch, pageInfo } = this.props;
-    const { search } = this.state;
+    const { dispatch, buckleList } = this.props;
+    const { checkState } = this.state;
     dispatch({
-      type: 'searchStaff/serachStaff',
-      payload: `filters=realname~${search}&page=${pageInfo.page + 1}&pagesize=15`,
+      type: 'buckle/getAuditList',
+      payload: {
+        pagesize: 10,
+        type: checkState.value,
+        page: buckleList[checkState.value].page + 1,
+      },
     });
   }
   onClose = key => () => {
@@ -70,6 +81,22 @@ export default class AuditList extends React.Component {
     this.setNewState('filter', {});
   }
   onFilterOk = () => {
+    const { filter, checkState, sortItem } = this.state;
+    const { dispatch } = this.props;
+    const search = {
+      status_id: filter.statusId,
+    };
+    dispatch({
+      type: 'buckle/getAuditList',
+      payload: {
+        pagesize: 10,
+        type: checkState.value,
+        page: 1,
+        sort: sortItem.value,
+        filters: search,
+      },
+    });
+    this.onCancel('', 'filterModal');
     this.onCancel('', 'filterModal');
   }
   setNewState = (key, newValue) => {
@@ -106,12 +133,30 @@ export default class AuditList extends React.Component {
     this.setNewState('filter', newFilter);
   }
   tabChange = (item) => {
-    this.setNewState('checkState', item);
+    const { dispatch, auditList } = this.props;
+    this.setState({
+      checkState: item,
+    }, () => {
+      if (auditList[item.value]) {
+        return;
+      }
+      dispatch({
+        type: 'buckle/getAuditList',
+        payload: {
+          pagesize: 10,
+          type: item.value,
+          page: 1,
+        },
+      });
+    });
   }
-  toLookDetail = () => {
-    this.props.history.push('/audit_detail/1');
+
+  toLookDetail = (item) => {
+    this.props.history.push(`/audit_detail/${item.id}`);
   }
   render() {
+    const { auditList } = this.props;
+    const { checkState, filter } = this.state;
     return (
       <Flex direction="column" style={{ height: '100%' }}>
         <Flex.Item className={style.header}>
@@ -119,7 +164,7 @@ export default class AuditList extends React.Component {
             <WhiteSpace size="md" />
             <WingBlank size="lg">
               <WingBlank size="lg">
-                <StateTabs option={auditState} checkItem={this.state.checkState} justify="around" handleClick={this.tabChange} />
+                <StateTabs option={auditState} checkItem={checkState} justify="around" handleClick={this.tabChange} />
               </WingBlank>
             </WingBlank>
             <WhiteSpace size="md" />
@@ -163,7 +208,7 @@ export default class AuditList extends React.Component {
               {sortList.map(item => (
                 <div
                   className={style.sort_item}
-                  key={item.value}
+                  key={item.name}
                   onClick={() => this.sortReasult(item)}
                 >{item.name}
                 </div>
@@ -172,15 +217,23 @@ export default class AuditList extends React.Component {
           </div>
         </Flex.Item>
         <Flex.Item className={style.content}>
-          <WingBlank>
-            <Buckle
-              dataSource={[1, 2, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]}
-              handleClick={this.toLookDetail}
-              onPageChange={this.onPageChange}
-              page={1}
-              totalpage={1}
-            />
-          </WingBlank>
+          {auditList[checkState.value] && !auditList[checkState.value].data.length ?
+          (
+            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
+              <Nothing src={nothing} />
+            </div>
+          ) : (
+            <WingBlank>
+              <Buckle
+                dataSource={auditList[checkState.value] ? auditList[checkState.value].data : []}
+                handleClick={this.toLookDetail}
+                onPageChange={this.onPageChange}
+                page={auditList[checkState.value] ? auditList[checkState.value].page : 1}
+                totalpage={auditList[checkState.value] ? auditList[checkState.value].totalpage : 10}
+              />
+            </WingBlank>
+)}
+
         </Flex.Item>
         <ListFilter
           onOk={this.onFilterOk}
@@ -205,9 +258,9 @@ export default class AuditList extends React.Component {
           <div className={style.filter_item}>
             <div className={style.title}>流程</div>
             <CheckBoxs
-              option={[{ name: 1, value: '1' }, { name: 'xxx', value: '2' }]}
-              checkStatus={(i, v) => this.checkItem(i, v, 'approType')}
-              value={[this.state.filter.approType ? this.state.filter.approType : '']}
+              option={checkState.value === 'procesing' ? procesingOption : dealtOption}
+              checkStatus={(i, v) => this.checkItem(i, v, 'statusId')}
+              value={[filter.statusId]}
             />
           </div>
 

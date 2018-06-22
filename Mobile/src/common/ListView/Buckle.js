@@ -10,19 +10,20 @@ import style from './index.less';
 export default class Buckle extends Component {
   convertStyle = (status) => {
     switch (status) {
+      case -2: return 'label_state_0';
       case -1: return 'label_state_1';
       case 0: return 'label_state_3';
       case 1:
       case 2: return 'label_state_2';
 
-      default: return '';
+      default: return 'label_state_default';
     }
   }
   render() {
     const { handleClick, onShortcut, hasShortcut = true, value } = this.props;
     return (
       <div className={style.event_item}>
-        <div className={style.main_info} onClick={() => handleClick()}>
+        <div className={style.main_info} onClick={() => handleClick(value)}>
           <div className={style.event_title}>
             <span>{value.event_name}</span>
             <div
@@ -42,7 +43,7 @@ export default class Buckle extends Component {
               <img
                 src={shortcut}
                 alt="快捷操作"
-                onClick={onShortcut}
+                onClick={e => onShortcut(e, value)}
               />
             </div>
 ) : null}

@@ -100,6 +100,8 @@ export const buckleState = (state) => {
       return '终审通过';
     case -1:
       return '已驳回';
+    case -2:
+      return '已撤回';
     default:
       return '其他';
   }

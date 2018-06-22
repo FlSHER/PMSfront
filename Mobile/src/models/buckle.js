@@ -1,6 +1,7 @@
 import { Toast } from 'antd-mobile';
 import {
-  recordBuckle, getAuditList, getBuckleDetail,
+  recordBuckle, getAuditList,
+  getBuckleDetail, withdrawBuckle, firstApprove, finalApprove,
 } from '../services/buckle';
 import defaultReducers from './reducers/default';
 import { makerFilters } from '../utils/util.js';
@@ -14,20 +15,50 @@ export default {
     logList: {
 
     },
+    auditList: {},
     detail: {},
   },
   effects: {
+
+    *finalApprove({ payload }, { call }) {
+      const response = yield call(finalApprove, payload.data);
+      if (response && !response.error) {
+        Toast.success(response.message);
+        payload.cb();
+      }
+    },
+    *firstApprove({ payload }, { call }) {
+      const response = yield call(firstApprove, payload.data);
+      if (response && !response.error) {
+        Toast.success(response.message);
+        payload.cb();
+      }
+    },
+    *withdrawBuckle({ payload }, { call }) {
+      const response = yield call(withdrawBuckle, payload.id);
+      if (response && !response.error) {
+        Toast.success(response.message);
+        payload.cb();
+      }
+    },
     *recordBuckle({ payload }, { call }) {
       const response = yield call(recordBuckle, payload);
       if (response && !response.error) {
         Toast.success(response.message);
       }
     },
-    *getAuditList({ payload }, { call }) {
+    *getAuditList({ payload }, { call, put }) {
       const newPayload = makerFilters(payload);
       const response = yield call(getAuditList, newPayload);
       if (response && !response.error) {
-        Toast.success(response.message);
+        yield put({
+          type: 'saveList',
+          payload: {
+            key: 'auditList',
+            type: payload.type,
+            value: response,
+          },
+        });
       }
     },
     *getLogsList({ payload }, { call, put }) {
@@ -70,12 +101,11 @@ export default {
       const info = action.payload.value;
       const newList = { ...state[action.payload.key] };
       newList[action.payload.type] = { ...info };
-      if (info.page !== 1) {
+      if (info.page !== 1) { // 多页
         const oldData = [...newList[action.payload.type].data];
         oldData.push(info);
         newList[action.payload.type].data = [...oldData];
       }
-      // console.log(newList);
       return {
         ...state,
         [action.payload.key]: newList,

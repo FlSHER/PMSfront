@@ -94,11 +94,13 @@ export default function request(uri, params) {
     .then((response) => {
       if (newOptions.method === 'DELETE' && response.status === 204) {
         const obj = { status: '204', message: '删除成功' };
-        // return Promise.resolve({ ...obj });
+        return { ...obj };
+      }
+      if (newOptions.method === 'PUT' && response.status === 201) {
+        const obj = { status: '201', message: '操作成功' };
         return { ...obj };
       }
       const { data } = response;
-      // return Promise.resolve(data);
       return data;
     }).catch((error) => {
       const {

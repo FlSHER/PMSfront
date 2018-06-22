@@ -8,6 +8,43 @@ export default {
 
   state: {
     accessToken: '',
+    userInfo: {
+      staff_sn: 119401,
+      realname: '魏颖',
+      mobile: '18281208081',
+      brand_id: 1,
+      brand: {
+        id: 1,
+        name: '集团公司',
+      },
+      department_id: 7,
+      department: {
+        id: 7,
+        full_name: 'IT部',
+        manager_sn: '110096',
+        manager_name: '沈勇',
+      },
+      position_id: 24,
+      position: {
+        id: 24,
+        name: '初级专员',
+        level: 16,
+      },
+      shop_sn: '',
+      shop: null,
+      status_id: 1,
+      status: {
+        id: 1,
+        name: '试用期',
+      },
+      hired_at: '2018-04-16',
+      employed_at: null,
+      left_at: null,
+      gender_id: 2,
+      birthday: '1994-06-14',
+      property: 0,
+      education: '',
+    },
   },
 
   effects: {

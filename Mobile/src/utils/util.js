@@ -226,9 +226,11 @@ export function dotWheresValue(fields) {
         if (Array.isArray(value) && value.length > 0) {
           value = value.length > 1 ? `[${value}]` : value[0];
         }
-        fieldsWhere += `${name}${whereConfig[i]}${value};`;
+        if (value) {
+          fieldsWhere += `${name}${whereConfig[i]}${value};`;
+        }
       });
-    } else {
+    } else if (fields[key]) {
       fieldsWhere += `${name}=${fields[key]};`;
     }
   });
