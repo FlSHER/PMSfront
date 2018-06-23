@@ -259,7 +259,6 @@ export default class BuckleRecord extends React.Component {
         cb: () => {
           history.push('/buckle_list');
         },
-
       },
     });
   }

@@ -82,7 +82,7 @@ export const indexMenu = [
     key: '3',
     children: [
       { text: '我的积分', to: '', icon: import('../assets/jobstation/积分制-icon-我的积分.png') },
-      { text: '积分明细', to: '/point_survey', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },
+      { text: '积分明细', to: '/point_list', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },
       { text: '全员统计', to: '', icon: import('../assets/jobstation/积分制-icon-全员统计.png') },
       { text: '积分排名', to: '', icon: import('../assets/jobstation/积分制-icon-积分排名.png') },
       { text: '投诉受理', to: '', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },
