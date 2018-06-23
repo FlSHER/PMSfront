@@ -88,7 +88,7 @@ export function dealErrorData(data, code) {
     const errs = [];
     if (errors) {
       for (const key in errors) {
-        if (key === undefined) {
+        if (key !== undefined) {
           errs.push(errors[key][0]);
         }
       }

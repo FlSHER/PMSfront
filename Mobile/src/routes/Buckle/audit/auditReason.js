@@ -27,7 +27,6 @@ const person = [
 }))
 export default class BuckleRecord extends React.Component {
   state = {
-    eventId: '',
     remark: '',
     point: {
       recorder_point: '',
@@ -38,11 +37,9 @@ export default class BuckleRecord extends React.Component {
     const { location } = this.props;
     const type = analyzePath(location.pathname, 1);
     const state = analyzePath(location.pathname, 2);
-    const eventId = analyzePath(location.pathname, 3);
     this.setState({
       type,
       state,
-      eventId,
     });
   }
   setIntegral = (v, key) => {
@@ -63,15 +60,15 @@ export default class BuckleRecord extends React.Component {
     });
   }
   doAudit = () => {
-    const { eventId, type, state, remark, point } = this.state;
-    const { dispatch, history } = this.props;
+    const { type, state, remark, point } = this.state;
+    const { dispatch, history, detail } = this.props;
     if (state === 'no') {
       dispatch({
         type: 'buckle/buckleReject',
         payload: {
           data: {
             param: { remark },
-            event_id: eventId,
+            event_id: detail.id,
           },
           cb: () => {
             history.replace('/audit_list');
@@ -84,7 +81,7 @@ export default class BuckleRecord extends React.Component {
         payload: {
           data: {
             param: { remark },
-            event_id: eventId,
+            event_id: detail.id,
           },
           cb: () => {
             history.replace('/audit_list');
@@ -101,7 +98,7 @@ export default class BuckleRecord extends React.Component {
               first_approver_point: point.first_approver_point,
               recorder_point: point.recorder_point,
             },
-            event_id: eventId,
+            event_id: detail.id,
           },
           cb: () => {
             history.replace('/audit_list');

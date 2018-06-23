@@ -72,11 +72,16 @@ export default class BuckleList extends React.Component {
     });
   }
   onRefresh = () => {
-    setTimeout(() => {
-      this.setState({
-
-      });
-    }, 1000);
+    const { dispatch } = this.props;
+    const { checkState } = this.state;
+    dispatch({
+      type: 'buckle/getBuckleList',
+      payload: {
+        pagesize: 10,
+        page: 1,
+        type: checkState.value,
+      },
+    });
   }
   onCancel = (e, feild) => {
     const { modal } = this.state;
@@ -310,6 +315,7 @@ export default class BuckleList extends React.Component {
                   dataSource={logList[checkState.value] ? logList[checkState.value].data : []}
                   handleClick={this.toLookDetail}
                   hasShortcut={false}
+                  onRefresh={this.onRefresh}
                   onPageChange={this.onPageChange}
                   page={logList[checkState.value] ? logList[checkState.value].page : 1}
                   totalpage={logList[checkState.value] ? logList[checkState.value].totalpage : 10}

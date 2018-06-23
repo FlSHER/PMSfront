@@ -103,7 +103,6 @@ export const buckleState = (state) => {
     case -2:
       return '已撤回';
     default:
-      return '其他';
   }
 };
 

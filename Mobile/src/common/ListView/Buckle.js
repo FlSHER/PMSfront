@@ -37,13 +37,13 @@ export default class Buckle extends Component {
             {value.description}
           </div>
         </div>
-        {hasShortcut ?
+        {hasShortcut && (value.status_id === 0 || value.status_id === 1) ?
           (
             <div className={style.aside}>
               <img
                 src={shortcut}
                 alt="快捷操作"
-                onClick={e => onShortcut(e, value)}
+                onClick={() => onShortcut(value)}
               />
             </div>
 ) : null}

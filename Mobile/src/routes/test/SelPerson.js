@@ -20,7 +20,7 @@ export default class SelPerson extends Component {
   state = {
     selected: {
       data: [],
-      total: 3,
+      total: 50,
       num: 0,
     },
     selectAll: false,
@@ -144,7 +144,7 @@ export default class SelPerson extends Component {
       selected.data = [...staff];
       selected.num = staff.length;
     }
-    selected.total = 3;
+    selected.total = 50;
 
     this.setState({
       selected,

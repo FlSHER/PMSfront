@@ -2,7 +2,7 @@ import React from 'react';
 import {
   connect,
 } from 'dva';
-import { WingBlank, WhiteSpace, Flex } from 'antd-mobile';
+import { WingBlank, WhiteSpace, Flex, Modal } from 'antd-mobile';
 import nothing from '../../../assets/nothing.png';
 import { Buckle } from '../../../common/ListView/index';
 import { ListFilter, CheckBoxs, ListSort, StateTabs, Nothing } from '../../../components/index';
@@ -15,13 +15,14 @@ const sortList = [
   { name: '时间降序', value: 'created_at-desc' },
 ];
 const auditState = [
-  { name: '待审核', value: 'procesing' },
+  { name: '待审核', value: 'processing' },
   { name: '已审核', value: 'dealt' },
 ];
 const dealtOption = [{ name: '通过', value: 2 }, { name: '驳回', value: -1 }];
 const procesingOption = [{ name: '初审', value: 1 }, { name: '待审核', value: 0 }];
-@connect(({ buckle }) => ({
+@connect(({ buckle, oauth }) => ({
   auditList: buckle.auditList,
+  userInfo: oauth.userInfo,
 }))
 export default class AuditList extends React.Component {
   state = {
@@ -33,7 +34,9 @@ export default class AuditList extends React.Component {
       sortModal: false,
     },
     sortItem: { name: '默认排序', value: 'created_at-asc' },
-    checkState: { name: '待审核', value: 'procesing' },
+    checkState: { name: '待审核', value: 'processing' },
+    el: {},
+    shortModal: false,
   }
   componentWillMount() {
     const { dispatch } = this.props;
@@ -59,17 +62,22 @@ export default class AuditList extends React.Component {
       },
     });
   }
-  onClose = key => () => {
+  onClose = (key) => {
     this.setState({
       [key]: false,
     });
   }
   onRefresh = () => {
-    setTimeout(() => {
-      this.setState({
-
-      });
-    }, 1000);
+    const { dispatch } = this.props;
+    const { checkState } = this.state;
+    dispatch({
+      type: 'buckle/getAuditList',
+      payload: {
+        pagesize: 10,
+        page: 1,
+        type: checkState.value,
+      },
+    });
   }
   onCancel = (e, feild) => {
     const { modal } = this.state;
@@ -97,12 +105,30 @@ export default class AuditList extends React.Component {
       },
     });
     this.onCancel('', 'filterModal');
-    this.onCancel('', 'filterModal');
   }
+  onShortcut = (el) => {
+    this.setState({
+      el,
+      shortModal: true,
+    });
+  }
+
   setNewState = (key, newValue) => {
     this.setState({
       [key]: newValue,
     });
+  }
+  doAudit = (type, state) => {
+    const { el } = this.state;
+    const { dispatch, history } = this.props;
+    dispatch({
+      type: 'buckle/saveData',
+      payload: {
+        key: 'detail',
+        value: el,
+      },
+    });
+    history.push(`/audit_reason/${type}/${state}`);
   }
   sortReasult = (item) => {
     const { modal } = this.state;
@@ -150,13 +176,33 @@ export default class AuditList extends React.Component {
       });
     });
   }
-
+  sortReasult = (item) => {
+    const { dispatch } = this.props;
+    const { modal, checkState } = this.state;
+    const newModal = { ...modal };
+    newModal.sortModal = false;
+    this.setState({
+      modal: { ...newModal },
+      sortItem: item,
+    }, () => {
+      dispatch({
+        type: 'buckle/getAuditList',
+        payload: {
+          pagesize: 10,
+          type: checkState.value,
+          page: 1,
+          sort: item.value,
+        },
+      });
+    });
+  }
   toLookDetail = (item) => {
     this.props.history.push(`/audit_detail/${item.id}`);
   }
+
   render() {
-    const { auditList } = this.props;
-    const { checkState, filter } = this.state;
+    const { auditList, userInfo } = this.props;
+    const { checkState, filter, el, shortModal } = this.state;
     return (
       <Flex direction="column" style={{ height: '100%' }}>
         <Flex.Item className={style.header}>
@@ -227,12 +273,77 @@ export default class AuditList extends React.Component {
               <Buckle
                 dataSource={auditList[checkState.value] ? auditList[checkState.value].data : []}
                 handleClick={this.toLookDetail}
+                onRefresh={this.onRefresh}
                 onPageChange={this.onPageChange}
+                onShortcut={this.onShortcut}
                 page={auditList[checkState.value] ? auditList[checkState.value].page : 1}
                 totalpage={auditList[checkState.value] ? auditList[checkState.value].totalpage : 10}
-              />
+              >
+                <Modal
+                  popup
+                  visible={shortModal}
+                  onClose={() => this.onClose('shortModal')}
+                  animationType="slide-up"
+                >
+                  <div
+                    style={{ background: 'rgba(0, 0, 0, 0.4)' }}
+                    onClick={(e) => {
+                       e.stopPropagation(); return false;
+                  }}
+                  >
+                    <WingBlank>
+                      <Flex
+                        direction="column"
+                      >
+                        <Flex.Item className={style.base_opt}>
+                          {el.first_approver_sn === userInfo.staff_sn && el.status_id === 0 ?
+                    (
+                      <div
+                        className={[style.opt_item, style.reject].join(' ')}
+                        onClick={() => this.doAudit('1', 'no')}
+                      >初审驳回
+                      </div>
+                    ) : null}
+                          {el.first_approver_sn === userInfo.staff_sn && el.status_id === 0 ?
+                      (
+                        <div
+                          className={[style.opt_item, style.agree].join(' ')}
+                          onClick={() => this.doAudit('1', 'yes')}
+                        >初审通过
+                        </div>
+                      ) : null}
+                          {el.final_approver_sn === userInfo.staff_sn && el.status_id === 1 ?
+                        (
+                          <div
+                            className={[style.opt_item, style.reject].join(' ')}
+                            onClick={() => this.doAudit('2', 'no')}
+                          >终审驳回
+                          </div>
+                        ) : null}
+                          {el.final_approver_sn === userInfo.staff_sn && el.status_id === 1 ?
+                      (
+                        <div
+                          className={[style.opt_item, style.agree].join(' ')}
+                          onClick={() => this.doAudit('2', 'yes')}
+                        >终审通过
+                        </div>
+                      ) : null}
+
+                        </Flex.Item>
+                        <Flex.Item
+                          onClick={() => this.onClose('shortModal')}
+                          className={[style.opt_item, style.cancel].join(' ')}
+                        >取消
+                        </Flex.Item>
+                      </Flex>
+
+                    </WingBlank>
+                  </div>
+                </Modal>
+
+              </Buckle>
             </WingBlank>
-)}
+          )}
 
         </Flex.Item>
         <ListFilter
@@ -258,7 +369,7 @@ export default class AuditList extends React.Component {
           <div className={style.filter_item}>
             <div className={style.title}>流程</div>
             <CheckBoxs
-              option={checkState.value === 'procesing' ? procesingOption : dealtOption}
+              option={checkState.value === 'processing' ? procesingOption : dealtOption}
               checkStatus={(i, v) => this.checkItem(i, v, 'statusId')}
               value={[filter.statusId]}
             />

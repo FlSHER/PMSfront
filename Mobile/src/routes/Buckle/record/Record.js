@@ -5,6 +5,8 @@ import {
 } from 'dva';
 import { List, TextareaItem, Flex, WingBlank, WhiteSpace, InputItem, Button, DatePicker, Toast } from 'antd-mobile';
 import { PersonIcon, PersonAdd } from '../../../components/index.js';
+import { analyzePath } from '../../../utils/util';
+
 import style from '../index.less';
 import styles from '../../common.less';
 
@@ -30,26 +32,107 @@ export default class BuckleRecord extends React.Component {
     },
   }
   componentWillMount() {
-    this.props.dispatch({
-      type: 'buckle/updateModal',
-    });
+    const { dispatch, location, event } = this.props;
+    const eventId = analyzePath(location.pathname, 1);
+    if (eventId && event && !Object.keys(event).length) { // 没有赋值过
+      dispatch({
+        type: 'buckle/getBuckleDetail',
+        payload: {
+          eventId,
+          cb: (data) => {
+            dispatch({
+              type: 'buckle/saveData',
+              payload: {
+                key: 'info',
+                used: false,
+                value: {
+                  executedAt: new Date(data.executed_at),
+                  description: data.description,
+                  participants: data.participant.map((item) => {
+                    const obj = { ...item };
+                    obj.realname = item.staff_name;
+                    return obj;
+                  }),
+                },
+              },
+            });
+            const selectStaff = {
+              first: [{ realname: data.first_approver_name, staff_sn: data.first_approver_sn }],
+              final: [{ realname: data.final_approver_name, staff_sn: data.final_approver_sn }],
+              participants: data.participant,
+              copy: data.addressee.map((item) => {
+                const obj = { ...item };
+                obj.realname = item.staff_name;
+                return obj;
+              }),
+            };
+            dispatch({
+              type: 'searchStaff/saveSelectStaff',
+              payload: {
+                key: 'selectStaff',
+                value: selectStaff,
+              },
+            });
+            dispatch({
+              type: 'event/saveSelectEvent',
+              payload: {
+                key: 'event',
+                value: {
+                  id: data.event_id,
+                  name: data.event_name,
+                },
+              },
+            });
+          } },
+      });
+    } else {
+      dispatch({
+        type: 'buckle/updateModal',
+      });
+    }
   }
   componentWillReceiveProps(nextProps) {
+    // console.log(nextProps);
     if (!this.state.init) {
       const { searchStaff: { selectStaff }, buckle: { info } } = nextProps;
+      console.log(33333333, info);
       const { participants } = selectStaff;
+      const newParti = participants.map((item) => {
+        const obj = { ...item };
+        obj.realname = item.staff_name || item.realname;
+        return obj;
+      });
+      console.log('newParti', newParti);
+
       this.setState({
         info: {
           ...info,
-          participants,
+          participants: newParti,
         },
+        // init: true,
       });
     }
   }
   remove = (item, name) => {
     const { searchStaff: { selectStaff }, dispatch } = this.props;
+    const { info } = this.state;
+    const { participants } = info;
+    let newParti = [...participants];
+    if (name === 'participants') {
+      newParti = participants.filter(its => its.staff_sn !== item.staff_sn);
+    }
     const newSelectStaff = { ...selectStaff };
     newSelectStaff[name] = selectStaff[name].filter(its => its.staff_sn !== item.staff_sn);
+    dispatch({
+      type: 'buckle/saveData',
+      payload: {
+        key: 'info',
+        value: {
+          ...info,
+          participants: newParti,
+        },
+      },
+    });
     dispatch({
       type: 'searchStaff/saveSelectStaff',
       payload: {
@@ -59,12 +142,17 @@ export default class BuckleRecord extends React.Component {
     });
   }
   changePerson = (name, type) => {
-    this.props.history.push(`/testView2/${name}/${type}`);
+    const { history } = this.props;
+    this.saveAllData();
+    history.push(`/testView2/${name}/${type}`);
   }
   addMore = (name = 'first', type) => {
-    this.props.history.push(`/testView2/${name}/${type}`);
+    const { history } = this.props;
+    this.saveAllData();
+    history.push(`/testView2/${name}/${type}`);
   }
   pointChange = (point, kind, el) => {
+    console.log(kind, point);
     const { optAll, info } = this.state;
     const newOpt = { ...optAll };
     const tempKey = kind === 'point_a' ?
@@ -104,9 +192,29 @@ export default class BuckleRecord extends React.Component {
       info: newInfo,
     });
   }
+  saveAllData =() => {
+    const { dispatch, searchStaff: { selectStaff } } = this.props;
+    const { info } = this.state;
+    const newSelectStaff = { ...selectStaff };
+    newSelectStaff.participants = info.participants;
+    dispatch({
+      type: 'searchStaff/saveSelectStaff',
+      payload: {
+        key: 'selectStaff',
+        value: newSelectStaff,
+      },
+    });
+    dispatch({
+      type: 'buckle/saveData',
+      payload: {
+        key: 'info',
+        value: { ...info },
+      },
+    });
+  }
   record = () => {
     const { info } = this.state;
-    const { searchStaff: { selectStaff }, event, dispatch } = this.props;
+    const { searchStaff: { selectStaff }, event, dispatch, history } = this.props;
     const { first, final, copy } = selectStaff;
     const newCopy = copy.map((item) => {
       const obj = {};
@@ -119,7 +227,7 @@ export default class BuckleRecord extends React.Component {
       obj.staff_sn = item.staff_sn;
       obj.staff_name = item.realname;
       obj.point_a = item.point_a;
-      obj.point_b = item.point_a;
+      obj.point_b = item.point_b;
       obj.count = item.count;
       return obj;
     });
@@ -137,29 +245,36 @@ export default class BuckleRecord extends React.Component {
     dispatch({
       type: 'buckle/recordBuckle',
       payload: {
-        event_id: event.id,
-        participants: newParticipant,
-        description: info.description,
-        first_approver_sn: first[0].staff_sn,
-        first_approver_name: first[0].realname,
-        final_approver_sn: final[0].staff_sn,
-        final_approver_name: final[0].realname,
-        executed_at: moment(info.executedAt).format('YYYY-MM-DD'),
-        addressees: newCopy,
+        data: {
+          event_id: event.id,
+          participants: newParticipant,
+          description: info.description,
+          first_approver_sn: first[0].staff_sn,
+          first_approver_name: first[0].realname,
+          final_approver_sn: final[0].staff_sn,
+          final_approver_name: final[0].realname,
+          executed_at: moment(info.executedAt).format('YYYY-MM-DD'),
+          addressees: newCopy,
+        },
+        cb: () => {
+          history.push('/buckle_list');
+        },
+
       },
     });
   }
   selEvent = () => {
-    const { history, dispatch } = this.props;
+    const { history, dispatch, searchStaff: { selectStaff } } = this.props;
     const { info } = this.state;
-
-    // dispatch({
-    //   type: 'searchStaff/saveSelectStaff',
-    //   payload: {
-    //     key: 'selectStaff',
-    //     value: newSearchStaff,
-    //   },
-    // });
+    const newSelectStaff = { ...selectStaff };
+    newSelectStaff.participants = info.participants;
+    dispatch({
+      type: 'searchStaff/saveSelectStaff',
+      payload: {
+        key: 'selectStaff',
+        value: newSelectStaff,
+      },
+    });
     dispatch({
       type: 'buckle/saveData',
       payload: {
@@ -177,6 +292,7 @@ export default class BuckleRecord extends React.Component {
       info: { participants, description, executedAt },
       optAll: { pointA, pointB, count },
     } = this.state;
+    console.log(participants);
     return (
       <div
         className={styles.con}

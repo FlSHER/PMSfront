@@ -1,6 +1,7 @@
 import { Toast } from 'antd-mobile';
 import {
   recordBuckle, getAuditList,
+  buckleReject,
   getBuckleDetail, withdrawBuckle, firstApprove, finalApprove,
 } from '../services/buckle';
 import defaultReducers from './reducers/default';
@@ -11,12 +12,17 @@ export default {
   namespace: 'buckle',
   state: {
     selectStaff: [],
-    info: {},
+    info: {
+      executedAt: new Date(),
+      description: '',
+      participants: [],
+    },
     logList: {
 
     },
     auditList: {},
     detail: {},
+    used: false,
   },
   effects: {
 
@@ -41,10 +47,21 @@ export default {
         payload.cb();
       }
     },
-    *recordBuckle({ payload }, { call }) {
-      const response = yield call(recordBuckle, payload);
+    *buckleReject({ payload }, { call }) {
+      const response = yield call(buckleReject, payload.id);
       if (response && !response.error) {
         Toast.success(response.message);
+        payload.cb();
+      }
+    },
+
+    *recordBuckle({ payload }, { call }) {
+      const response = yield call(recordBuckle, payload.data);
+      if (response && !response.error) {
+        Toast.success(response.message);
+        if (payload.cb) {
+          payload();
+        }
       }
     },
     *getAuditList({ payload }, { call, put }) {
@@ -76,7 +93,7 @@ export default {
       }
     },
     *getBuckleDetail({ payload }, { call, put }) {
-      const response = yield call(getBuckleDetail, payload);
+      const response = yield call(getBuckleDetail, payload.eventId);
       if (response && !response.error) {
         yield put({
           type: 'saveData',
@@ -85,6 +102,9 @@ export default {
             value: response,
           },
         });
+        if (payload.cb) {
+          payload.cb(response);
+        }
       }
     },
   },

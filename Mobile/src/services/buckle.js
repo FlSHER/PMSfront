@@ -50,3 +50,12 @@ export async function finalApprove(data) {
     method: 'PUT',
   });
 }
+
+export async function buckleReject(data) {
+  return request(`/api/event-logs/${data.event_id}/reject`, {
+    body: data.param,
+    json: true,
+    method: 'PUT',
+  });
+}
+
