@@ -60,7 +60,7 @@ export default {
       if (response && !response.error) {
         Toast.success(response.message);
         if (payload.cb) {
-          payload();
+          payload.cb();
         }
       }
     },
