@@ -7,13 +7,13 @@ import { Department, Staff } from '../../common/ListView/index.js';
 import { analyzePath, unique } from '../../utils/util';
 import styles from '../common.less';
 import style from './index.less';
-@connect(({ example, searchStaff, loading }) => ({
-  example,
+@connect(({ searchStaff, loading, oauth }) => ({
   department: searchStaff.department,
   staff: searchStaff.staff,
   breadCrumb: searchStaff.breadCrumb,
   pageInfo: searchStaff.pageInfo,
   selectStaff: searchStaff.selectStaff,
+  userInfo: oauth.userInfo,
   loading: loading.effects['searchStaff/fetchSelfDepStaff'],
 }))
 export default class SelPerson extends Component {
@@ -61,7 +61,6 @@ export default class SelPerson extends Component {
       payload: `filters=realname~${search}&page=${pageInfo.page + 1}&pagesize=15`,
     });
   }
-
   getSelectResult = (result) => {
     const { selected, type } = this.state;
     if (type === '1') {
@@ -91,10 +90,10 @@ export default class SelPerson extends Component {
     history.goBack(-1);
   }
   fetchSelfDepStaff =() => {
-    const { dispatch } = this.props;
+    const { dispatch, userInfo } = this.props;
     dispatch({
       type: 'searchStaff/fetchSelfDepStaff',
-      payload: { departmentId: 7 },
+      payload: { departmentId: userInfo.department_id },
     });
   }
 
@@ -126,10 +125,14 @@ export default class SelPerson extends Component {
   selDepartment = (params) => {
     const newBread = this.makeBreadCrumbData(params);
     const parentId = params.id;
-    this.fetchSearchStaff({
-      parentId,
-      breadCrumb: newBread,
-    });
+    if (parentId === '-1') {
+      this.firstDepartment();
+    } else {
+      this.fetchSearchStaff({
+        parentId,
+        breadCrumb: newBread,
+      });
+    }
   }
 
   checkedAll = () => { // 全选
@@ -155,6 +158,9 @@ export default class SelPerson extends Component {
     const { dispatch } = this.props;
     dispatch({
       type: 'searchStaff/fetchFirstDepartment',
+      payload: {
+        breadCrumb: [{ name: '联系人', id: '-1' }],
+      },
     });
   }
   selectOk = () => {
@@ -188,6 +194,7 @@ export default class SelPerson extends Component {
           handleBread={this.selDepartment}
           firstDepartment={this.firstDepartment}
           selectOk={this.selectOk}
+          searchOncancel={this.fetchSelfDepStaff}
         >
           {!loading ? (
             <div className={style.child}>

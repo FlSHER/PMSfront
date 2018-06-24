@@ -125,7 +125,6 @@ export default class AuditDetail extends React.Component {
         }
         return false;
       });
-      console.log('temp', temp);
       approvers = [...temp];
     }
     return (

@@ -61,20 +61,30 @@ export default {
         },
       });
     },
-    *fetchFirstDepartment(payload, { put, call }) { // 一级部门列表
+    *fetchFirstDepartment({ payload }, { put, call }) { // 一级部门列表
+      const { breadCrumb } = payload;
       const response = yield call(firstDepartment);
+      if (response && !response.error) {
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'department',
+            data: response || [],
+          },
+        });
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'staff',
+            data: [],
+          },
+        });
+      }
       yield put({
         type: 'save',
         payload: {
-          store: 'department',
-          data: response || [],
-        },
-      });
-      yield put({
-        type: 'save',
-        payload: {
-          store: 'staff',
-          data: [],
+          store: 'breadCrumb',
+          data: breadCrumb,
         },
       });
     },

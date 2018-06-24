@@ -18,7 +18,6 @@ import styles from '../../common.less';
 }))
 export default class BuckleRecord extends React.Component {
   state={
-    description: '',
     init: false,
     optAll: {
       pointA: '',
@@ -74,7 +73,7 @@ export default class BuckleRecord extends React.Component {
               },
             });
             dispatch({
-              type: 'event/saveSelectEvent',
+              type: 'event/saveData',
               payload: {
                 key: 'event',
                 value: {
@@ -92,24 +91,20 @@ export default class BuckleRecord extends React.Component {
     }
   }
   componentWillReceiveProps(nextProps) {
-    // console.log(nextProps);
     if (!this.state.init) {
       const { searchStaff: { selectStaff }, buckle: { info } } = nextProps;
-      console.log(33333333, info);
       const { participants } = selectStaff;
       const newParti = participants.map((item) => {
         const obj = { ...item };
         obj.realname = item.staff_name || item.realname;
         return obj;
       });
-      console.log('newParti', newParti);
 
       this.setState({
         info: {
           ...info,
           participants: newParti,
         },
-        // init: true,
       });
     }
   }
@@ -152,7 +147,6 @@ export default class BuckleRecord extends React.Component {
     history.push(`/testView2/${name}/${type}`);
   }
   pointChange = (point, kind, el) => {
-    console.log(kind, point);
     const { optAll, info } = this.state;
     const newOpt = { ...optAll };
     const tempKey = kind === 'point_a' ?
@@ -291,7 +285,6 @@ export default class BuckleRecord extends React.Component {
       info: { participants, description, executedAt },
       optAll: { pointA, pointB, count },
     } = this.state;
-    console.log(participants);
     return (
       <div
         className={styles.con}
@@ -313,7 +306,7 @@ export default class BuckleRecord extends React.Component {
                 onChange={e => this.stateChange(e, 'description')}
               />
               <div className={style.textinfo}>
-                还可输入{100 - this.state.description.length}字
+                还可输入{100 - description.length}字
               </div>
             </List>
           </WingBlank>

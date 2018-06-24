@@ -3,12 +3,13 @@ import {
   connect,
 } from 'dva';
 import { EventType } from '../../common/ListView/index.js';
+import { Bread } from '../../components/General/index';
 import { markTreeData } from '../../utils/util';
 import styles from '../common.less';
 
-@connect(({ example, event, loading }) => ({
-  example,
+@connect(({ event, loading }) => ({
   evtAll: event.evtAll,
+  breadCrumb: event.breadCrumb,
   loading: loading.effects['event/getEvent'],
 }))
 export default class SelEvent extends Component {
@@ -19,6 +20,9 @@ export default class SelEvent extends Component {
   componentWillMount() {
     this.props.dispatch({
       type: 'event/getEvent',
+      payload: {
+        breadCrumb: [{ name: '选择事件', id: -1 }],
+      },
     });
   }
   componentWillReceiveProps(nextProps) {
@@ -31,9 +35,25 @@ export default class SelEvent extends Component {
       });
     }
   }
+  makeBreadCrumbData = (params) => {
+    const { breadCrumb } = this.props;
+    let newBread = [...breadCrumb];
+    let splitIndex = null;
+    newBread.forEach((item, index) => {
+      if (item.id === params.id) {
+        splitIndex = index + 1;
+      }
+    });
+    if (splitIndex !== null) {
+      newBread = newBread.slice(0, splitIndex);
+    } else {
+      newBread.push(params);
+    }
+    return newBread;
+  }
   selEventName= (item) => {
     this.props.dispatch({
-      type: 'event/saveSelectEvent',
+      type: 'event/saveData',
       payload: {
         key: 'event',
         value: item,
@@ -42,15 +62,45 @@ export default class SelEvent extends Component {
     this.props.history.goBack(-1);
   }
   selEvent = (item) => {
-    const newEventList = item.children;
-    this.setState({
-      eventList: newEventList,
-    });
+    const { dispatch, evtAll } = this.props;
+    if (item.id === -1) {
+      const tree = markTreeData(evtAll, null, { parentId: 'parent_id', key: 'id' });
+      this.setState({
+        eventList: tree,
+      }, () => {
+        dispatch({
+          type: 'event/saveData',
+          payload: {
+            key: 'breadCrumb',
+            value: [{ name: '选择事件', id: -1 }],
+          },
+        });
+      });
+    } else {
+      const newEventList = item.children;
+      const breadCrumb = this.makeBreadCrumbData(item);
+      this.setState({
+        eventList: newEventList,
+      }, () => {
+        dispatch({
+          type: 'event/saveData',
+          payload: {
+            key: 'breadCrumb',
+            value: breadCrumb,
+          },
+        });
+      });
+    }
   }
   render() {
     const { eventList } = this.state;
+    const { breadCrumb } = this.props;
     return (
       <div className={styles.con}>
+        <Bread
+          bread={breadCrumb}
+          handleBread={this.selEvent}
+        />
         <EventType
           dataSource={eventList || []}
           fetchDataSource={this.selEvent}

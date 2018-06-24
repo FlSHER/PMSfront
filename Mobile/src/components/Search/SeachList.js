@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { SearchBar, Button, List } from 'antd-mobile';
+import { Button, List } from 'antd-mobile';
 import { PersonIcon } from '../../components/index.js';
+import { Search, Bread } from '../../components/General/index';
 import style from './index.less';
-
 
 export default class SearchList extends Component {
   state = {
@@ -15,6 +15,14 @@ export default class SearchList extends Component {
   onSubmit = () => {
     const { handleSearch } = this.props;
     handleSearch(this.state.value);
+  }
+  onCancel = () => {
+    const { handleBread, bread } = this.props;
+    this.setState({
+      value: '',
+    }, () => {
+      handleBread(bread[bread.length - 1]);
+    });
   }
   render() {
     const {
@@ -32,44 +40,22 @@ export default class SearchList extends Component {
     return (
       <div className={style.con}>
         <div className={style.header}>
-          <SearchBar
+          <Search
             value={this.state.value}
-            placeholder="Search"
-            showCancelButton
+            placeholder="请输入员工姓名"
+            showCancelButton={this.state.value}
             onChange={this.onChange}
+            onCancel={
+              this.state.value ? this.onCancel :
+              () => {}
+            }
             onSubmit={this.onSubmit}
           />
           {this.state.value ? null : (
-            <div className={style.bread}>
-              <div className={style.bread_title}>
-                {bread.map((item, i) => {
-                const idx = i;
-                if (i !== bread.length - 1) {
-                  return (
-                    <div
-                      className={style.bread_item}
-                      onClick={() => handleBread(item)}
-                      key={idx}
-                    >
-                      <a>{item.name}
-                      </a>
-                      <span className={style.arrow}>{'>'}</span>
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div
-                      className={style.bread_item}
-                      key={idx}
-                    >
-                      <span>{item.name}</span>
-                    </div>
-                  );
-                }
-              })}
-              </div>
-
-            </div>
+            <Bread
+              bread={bread}
+              handleBread={handleBread}
+            />
 )}
           { this.state.value ? null : (
             <div style={{ padding: '0 0.32rem' }} >
