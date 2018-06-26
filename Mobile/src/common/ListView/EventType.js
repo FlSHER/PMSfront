@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { List } from 'antd-mobile';
-import ListView from '../../components/ListView/event.js';
-import style from './index.less';
+import ListView from '../../components/ListView';
 
 const { Item } = List;
 @ListView
 export default class EventType extends Component {
   render() {
-    const { value, fetchDataSource, name, onSelect } = this.props;
-    if (value.children) {
+    const { value, fetchDataSource, name } = this.props;
+    if (value) {
       return (
         <Item
           arrow="horizontal"
@@ -18,16 +17,6 @@ export default class EventType extends Component {
         </Item>
       );
     }
-    return (
-      <div className={style.action_item}>
-        <div
-          onClick={() => onSelect(value)}
-        >
-          <span>{value[name]}</span>
-        </div>
-      </div>
-
-    );
   }
 }
 EventType.defaultProps = {

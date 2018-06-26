@@ -29,10 +29,7 @@ class ListFilter extends Component {
       filterKey,
       contentStyle,
     } = this.props;
-    const conStyle = {
-      display: visible ? 'block' : 'none',
-      ...contentStyle,
-    };
+    const conStyle = { display: visible ? 'block' : 'none', ...contentStyle };
     return (
       <Animate
         component=""
@@ -60,8 +57,14 @@ class ListFilter extends Component {
               style={{ background: '#f8f6f6' }}
             >
               <div className={style.footer_opt}>
-                <a onClick={() => { onResetForm(); }}> 重置</a>
                 <a
+                  onClick={() => () => onResetForm}
+                  style={{ color: 'rgb(24,116,208)' }}
+                >
+                重置
+                </a>
+                <a
+                  style={{ color: '#fff' }}
                   onClick={() => {
                     onOk(filterKey);
                   }}

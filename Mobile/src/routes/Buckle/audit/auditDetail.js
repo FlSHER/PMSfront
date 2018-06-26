@@ -4,6 +4,9 @@ import {
 } from 'dva';
 import { List, Flex, WingBlank, WhiteSpace, Button } from 'antd-mobile';
 import { PersonIcon } from '../../../components/index.js';
+import { Label } from '../../../components/General/index';
+
+import { buckleState } from '../../../utils/convert.js';
 import { analyzePath } from '../../../utils/util';
 import style from '../index.less';
 import styles from '../../common.less';
@@ -50,14 +53,15 @@ export default class AuditDetail extends React.Component {
       payload: {
         id: eventId,
         cb: () => {
-          history.push('/buckle_list');
+          // history.push('/buckle_list');
+          history.goBack(-1);
         },
       },
     });
   }
   submitAgain = (item) => {
     const { history } = this.props;
-    history.push(`/record_buckle/${item.id}`);
+    history.push(`/buckle_record/${item.id}`);
   }
   doAudit = (type, state) => {
     const { history } = this.props;
@@ -136,9 +140,12 @@ export default class AuditDetail extends React.Component {
           <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
             <List>
-              <List.Item>
-                {detail.event_name}
-              </List.Item>
+              <div style={{ padding: '0.4rem 15px' }}>
+                <div className={style.event_title}>
+                  {detail.event_name}
+                  <Label value={detail} content={buckleState(detail.status_id)} />
+                </div>
+              </div>
               <div style={{ padding: '0.4rem 15px' }}>
                 {detail.description ? detail.description : '暂无'}
               </div>
@@ -167,7 +174,6 @@ export default class AuditDetail extends React.Component {
                     <PersonIcon
                       key={idx}
                       value={item}
-                      type="1"
                       nameKey="staff_name"
                       showNum={2}
                     />
@@ -178,7 +184,7 @@ export default class AuditDetail extends React.Component {
           </WingBlank>
           <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
-            <div className={style.players}>
+            <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
               <Flex className={style.title}> 参与人列表</Flex>
               <Flex
                 className={style.table_head}
@@ -218,31 +224,63 @@ export default class AuditDetail extends React.Component {
           {approvers.map(item => this.makeApprover(item))}
           <WhiteSpace size="sm" />
           <WhiteSpace size="sm" />
+          {detail.status_id === 2 ? (
+            <WingBlank className={style.parcel}>
+              <div className={style.players}>
+                <Flex className={style.title}> 配置分值</Flex>
+                <Flex
+                  className={style.table_head}
+                  align="center"
+                  justify="center"
+                >
+                  <Flex.Item className={style.table_item}>名称</Flex.Item>
+                  <Flex.Item className={style.table_item}>姓名</Flex.Item>
+                  <Flex.Item className={style.table_item}>B分</Flex.Item>
+                </Flex>
+                <div className={style.table_body}>
+                  {person.map((item, i) => {
+                    const idx = i;
+                    return (
+                      <Flex key={idx}>
+                        <Flex.Item className={style.table_item}>{item.name}</Flex.Item>
+                        <Flex.Item className={style.table_item}>{detail[item.value]}</Flex.Item>
+                        <Flex.Item className={style.table_item}>{detail[item.key]}</Flex.Item>
+
+                      </Flex>);
+                  })
+                  }
+                </div>
+              </div>
+            </WingBlank>
+          ) : null}
+          <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
             <div className={style.players}>
-              <Flex className={style.title}> 配置分值</Flex>
+              <Flex className={style.title}> 初审人</Flex>
               <Flex
-                className={style.table_head}
-                align="center"
-                justify="center"
+                className={style.person_list}
+                wrap="wrap"
               >
-                <Flex.Item className={style.table_item}>名称</Flex.Item>
-                <Flex.Item className={style.table_item}>姓名</Flex.Item>
-                <Flex.Item className={style.table_item}>B分</Flex.Item>
+                <PersonIcon
+                  value={detail}
+                  nameKey="first_approver_name"
+                />
               </Flex>
-              <div className={style.table_body}>
-                {person.map((item, i) => {
-                  const idx = i;
-                  return (
-                    <Flex key={idx}>
-                      <Flex.Item className={style.table_item}>{item.name}</Flex.Item>
-                      <Flex.Item className={style.table_item}>{detail[item.value]}</Flex.Item>
-                      <Flex.Item className={style.table_item}>{detail[item.key]}</Flex.Item>
-
-                    </Flex>);
-                })
-                }
-              </div>
+            </div>
+          </WingBlank>
+          <WhiteSpace size="sm" />
+          <WingBlank className={style.parcel}>
+            <div className={style.players}>
+              <Flex className={style.title}> 终审人</Flex>
+              <Flex
+                className={style.person_list}
+                wrap="wrap"
+              >
+                <PersonIcon
+                  value={detail}
+                  nameKey="final_approver_name"
+                />
+              </Flex>
             </div>
           </WingBlank>
           <WhiteSpace size="sm" />
@@ -261,7 +299,6 @@ export default class AuditDetail extends React.Component {
                       value={item}
                       type="1"
                       nameKey="staff_name"
-                      showNum={2}
                     />);
                 })
                 }
@@ -280,7 +317,6 @@ export default class AuditDetail extends React.Component {
                   value={detail}
                   type="1"
                   nameKey="recorder_name"
-                  showNum={2}
                 />
               </Flex>
             </div>

@@ -95,14 +95,32 @@ export const buckleState = (state) => {
     case 0:
       return '待审核';
     case 1:
-      return '初审通过';
+      return '通过';
     case 2:
-      return '终审通过';
+      return '通过';
     case -1:
       return '已驳回';
     case -2:
       return '已撤回';
     default:
+  }
+};
+// 待审核的列表需要操作的状态
+export const auditState = (state) => {
+  switch (state) {
+    case 0:
+      return '初审';
+    case 1:
+      return '终审';
+    default:
+  }
+};
+// 已审核的列表已操作的状态
+export const auditFinishedState = (item) => {
+  if (item.status_id === 1 || (item.first_approved_at && item.status_id === -2)) {
+    return '初审';
+  } else if (item.status_id === 2 || (item.status_id === -2 && !item.final_approved_at)) {
+    return '终审';
   }
 };
 

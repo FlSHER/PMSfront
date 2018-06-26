@@ -3,9 +3,12 @@
 import Loader from './Loader/Loader';
 import Bread from './Bread/bread';
 import Search from './Search/search';
+import Label from './Label/label';
+
 
 export {
   Loader, // 加载动画,
   Bread,
   Search,
+  Label,
 };

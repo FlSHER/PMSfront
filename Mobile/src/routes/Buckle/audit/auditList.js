@@ -5,18 +5,20 @@ import {
 import { WingBlank, WhiteSpace, Flex, Modal } from 'antd-mobile';
 import nothing from '../../../assets/nothing.png';
 import { Buckle } from '../../../common/ListView/index';
+import { auditState, auditFinishedState, buckleState } from '../../../utils/convert.js';
+
 import { ListFilter, CheckBoxs, ListSort, StateTabs, Nothing } from '../../../components/index';
 import style from '../index.less';
 // import shortcut from '../../../assets/shortcuts.png';
 
 const sortList = [
-  { name: '默认排序', value: 'created_at-asc' },
-  { name: '时间升序', value: 'created_at-asc' },
-  { name: '时间降序', value: 'created_at-desc' },
+  { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
+  { name: '时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
+  { name: '时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
-const auditState = [
+const auditStates = [
   { name: '待审核', value: 'processing' },
-  { name: '已审核', value: 'dealt' },
+  { name: '已审核', value: 'approved' },
 ];
 const dealtOption = [{ name: '通过', value: 2 }, { name: '驳回', value: -1 }];
 const procesingOption = [{ name: '初审', value: 1 }, { name: '待审核', value: 0 }];
@@ -51,14 +53,14 @@ export default class AuditList extends React.Component {
     });
   }
   onPageChange = () => {
-    const { dispatch, buckleList } = this.props;
+    const { dispatch, auditList } = this.props;
     const { checkState } = this.state;
     dispatch({
       type: 'buckle/getAuditList',
       payload: {
         pagesize: 10,
         type: checkState.value,
-        page: buckleList[checkState.value].page + 1,
+        page: auditList[checkState.value].page + 1,
       },
     });
   }
@@ -199,7 +201,23 @@ export default class AuditList extends React.Component {
   toLookDetail = (item) => {
     this.props.history.push(`/audit_detail/${item.id}`);
   }
-
+  renderLalbel = () => {
+    const { checkState } = this.state;
+    let labelArr = [];
+    if (checkState.value === 'processing') {
+      const obj = {};
+      obj.evt = value => auditState(value.status_id);
+      labelArr.push(obj);
+    }
+    if (checkState.value === 'approved') {
+      const newObj = [
+        { evt: value => auditFinishedState(value) },
+        { evt: value => buckleState(value.status_id) },
+      ];
+      labelArr = [...newObj];
+    }
+    return labelArr;
+  }
   render() {
     const { auditList, userInfo } = this.props;
     const { checkState, filter, el, shortModal } = this.state;
@@ -210,7 +228,7 @@ export default class AuditList extends React.Component {
             <WhiteSpace size="md" />
             <WingBlank size="lg">
               <WingBlank size="lg">
-                <StateTabs option={auditState} checkItem={checkState} justify="around" handleClick={this.tabChange} />
+                <StateTabs option={auditStates} checkItem={checkState} justify="around" handleClick={this.tabChange} />
               </WingBlank>
             </WingBlank>
             <WhiteSpace size="md" />
@@ -222,8 +240,13 @@ export default class AuditList extends React.Component {
             >
               <Flex.Item>
                 <div
-                  className={[style.dosort, this.state.sortItem.value === -1 ?
-                    null : style.active].join(' ')}
+                  className={[style.dosort].join(' ')}
+                  style={{
+                    backgroundImage: `url(${this.state.sortItem.icon})`,
+                    backgroundPosition: 'right center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '0.4rem',
+                   }}
                   onClick={() => this.selFilter('sortModal')}
                 >
                   {this.state.sortItem.name}
@@ -255,6 +278,7 @@ export default class AuditList extends React.Component {
                 <div
                   className={style.sort_item}
                   key={item.name}
+                  style={{ backgroundImage: `url(${item.icon}) no-repeat right center` }}
                   onClick={() => this.sortReasult(item)}
                 >{item.name}
                 </div>
@@ -264,86 +288,89 @@ export default class AuditList extends React.Component {
         </Flex.Item>
         <Flex.Item className={style.content}>
           {auditList[checkState.value] && !auditList[checkState.value].data.length ?
-          (
-            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
-              <Nothing src={nothing} />
-            </div>
-          ) : (
-            <WingBlank>
-              <Buckle
-                dataSource={auditList[checkState.value] ? auditList[checkState.value].data : []}
-                handleClick={this.toLookDetail}
-                onRefresh={this.onRefresh}
-                onPageChange={this.onPageChange}
-                onShortcut={this.onShortcut}
-                page={auditList[checkState.value] ? auditList[checkState.value].page : 1}
-                totalpage={auditList[checkState.value] ? auditList[checkState.value].totalpage : 10}
-              >
-                <Modal
-                  popup
-                  visible={shortModal}
-                  onClose={() => this.onClose('shortModal')}
-                  animationType="slide-up"
+            (
+              <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
+                <Nothing src={nothing} />
+              </div>
+            ) : (
+              <WingBlank>
+                <Buckle
+                  dataSource={auditList[checkState.value] ? auditList[checkState.value].data : []}
+                  handleClick={this.toLookDetail}
+                  onRefresh={this.onRefresh}
+                  onPageChange={this.onPageChange}
+                  onShortcut={this.onShortcut}
+                  label={this.renderLalbel()}
+                  page={auditList[checkState.value] ?
+                     auditList[checkState.value].page : 1}
+                  totalpage={auditList[checkState.value] ?
+                     auditList[checkState.value].totalpage : 10}
                 >
-                  <div
-                    style={{ background: 'rgba(0, 0, 0, 0.4)' }}
-                    onClick={(e) => {
-                       e.stopPropagation(); return false;
-                  }}
+                  <Modal
+                    popup
+                    visible={shortModal}
+                    onClose={() => this.onClose('shortModal')}
+                    animationType="slide-up"
                   >
-                    <WingBlank>
-                      <Flex
-                        direction="column"
-                      >
-                        <Flex.Item className={style.base_opt}>
-                          {el.first_approver_sn === userInfo.staff_sn && el.status_id === 0 ?
-                    (
-                      <div
-                        className={[style.opt_item, style.reject].join(' ')}
-                        onClick={() => this.doAudit('1', 'no')}
-                      >初审驳回
-                      </div>
-                    ) : null}
-                          {el.first_approver_sn === userInfo.staff_sn && el.status_id === 0 ?
-                      (
-                        <div
-                          className={[style.opt_item, style.agree].join(' ')}
-                          onClick={() => this.doAudit('1', 'yes')}
-                        >初审通过
-                        </div>
-                      ) : null}
-                          {el.final_approver_sn === userInfo.staff_sn && el.status_id === 1 ?
-                        (
-                          <div
-                            className={[style.opt_item, style.reject].join(' ')}
-                            onClick={() => this.doAudit('2', 'no')}
-                          >终审驳回
-                          </div>
-                        ) : null}
-                          {el.final_approver_sn === userInfo.staff_sn && el.status_id === 1 ?
-                      (
-                        <div
-                          className={[style.opt_item, style.agree].join(' ')}
-                          onClick={() => this.doAudit('2', 'yes')}
-                        >终审通过
-                        </div>
-                      ) : null}
+                    <div
+                      style={{ background: 'rgba(0, 0, 0, 0.4)' }}
+                      onClick={(e) => {
+                        e.stopPropagation(); return false;
+                      }}
+                    >
+                      <WingBlank>
+                        <Flex
+                          direction="column"
+                        >
+                          <Flex.Item className={style.base_opt}>
+                            {el.first_approver_sn === userInfo.staff_sn && el.status_id === 0 ?
+                              (
+                                <div
+                                  className={[style.opt_item, style.reject].join(' ')}
+                                  onClick={() => this.doAudit('1', 'no')}
+                                >初审驳回
+                                </div>
+                              ) : null}
+                            {el.first_approver_sn === userInfo.staff_sn && el.status_id === 0 ?
+                              (
+                                <div
+                                  className={[style.opt_item, style.agree].join(' ')}
+                                  onClick={() => this.doAudit('1', 'yes')}
+                                >初审通过
+                                </div>
+                              ) : null}
+                            {el.final_approver_sn === userInfo.staff_sn && el.status_id === 1 ?
+                              (
+                                <div
+                                  className={[style.opt_item, style.reject].join(' ')}
+                                  onClick={() => this.doAudit('2', 'no')}
+                                >终审驳回
+                                </div>
+                              ) : null}
+                            {el.final_approver_sn === userInfo.staff_sn && el.status_id === 1 ?
+                              (
+                                <div
+                                  className={[style.opt_item, style.agree].join(' ')}
+                                  onClick={() => this.doAudit('2', 'yes')}
+                                >终审通过
+                                </div>
+                              ) : null}
 
-                        </Flex.Item>
-                        <Flex.Item
-                          onClick={() => this.onClose('shortModal')}
-                          className={[style.opt_item, style.cancel].join(' ')}
-                        >取消
-                        </Flex.Item>
-                      </Flex>
+                          </Flex.Item>
+                          <Flex.Item
+                            onClick={() => this.onClose('shortModal')}
+                            className={[style.opt_item, style.cancel].join(' ')}
+                          >取消
+                          </Flex.Item>
+                        </Flex>
 
-                    </WingBlank>
-                  </div>
-                </Modal>
+                      </WingBlank>
+                    </div>
+                  </Modal>
 
-              </Buckle>
-            </WingBlank>
-          )}
+                </Buckle>
+              </WingBlank>
+            )}
 
         </Flex.Item>
         <ListFilter

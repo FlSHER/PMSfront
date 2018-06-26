@@ -9,7 +9,7 @@ import { analyzePath } from '../../../utils/util';
 
 import style from '../index.less';
 import styles from '../../common.less';
-
+import prompt from '../../../assets/prompt.svg';
 @connect(({ buckle, searchStaff, loading, event }) => ({
   buckle,
   loading,
@@ -17,7 +17,7 @@ import styles from '../../common.less';
   event: event.event,
 }))
 export default class BuckleRecord extends React.Component {
-  state={
+  state = {
     init: false,
     optAll: {
       pointA: '',
@@ -33,7 +33,7 @@ export default class BuckleRecord extends React.Component {
   componentWillMount() {
     const { dispatch, location, event } = this.props;
     const eventId = analyzePath(location.pathname, 1);
-    if (eventId && event && !Object.keys(event).length) { // 没有赋值过
+    if (eventId && event && !Object.keys(event)) { // 没有赋值过
       dispatch({
         type: 'buckle/getBuckleDetail',
         payload: {
@@ -82,7 +82,8 @@ export default class BuckleRecord extends React.Component {
                 },
               },
             });
-          } },
+          },
+        },
       });
     } else {
       dispatch({
@@ -108,7 +109,8 @@ export default class BuckleRecord extends React.Component {
       });
     }
   }
-  remove = (item, name) => {
+  remove = (e, item, name) => {
+    e.stopPropagation();
     const { searchStaff: { selectStaff }, dispatch } = this.props;
     const { info } = this.state;
     const { participants } = info;
@@ -118,6 +120,7 @@ export default class BuckleRecord extends React.Component {
     }
     const newSelectStaff = { ...selectStaff };
     newSelectStaff[name] = selectStaff[name].filter(its => its.staff_sn !== item.staff_sn);
+
     dispatch({
       type: 'buckle/saveData',
       payload: {
@@ -142,6 +145,12 @@ export default class BuckleRecord extends React.Component {
     history.push(`/testView2/${name}/${type}`);
   }
   addMore = (name = 'first', type) => {
+    const { event } = this.props;
+    if (name === 'final') {
+      if (!Objecy.keys(event || {}).length) {
+        Toast.info('请选择事件，记录分值');
+      }
+    }
     const { history } = this.props;
     this.saveAllData();
     history.push(`/testView2/${name}/${type}`);
@@ -186,7 +195,7 @@ export default class BuckleRecord extends React.Component {
       info: newInfo,
     });
   }
-  saveAllData =() => {
+  saveAllData = () => {
     const { dispatch, searchStaff: { selectStaff } } = this.props;
     const { info } = this.state;
     const newSelectStaff = { ...selectStaff };
@@ -278,6 +287,9 @@ export default class BuckleRecord extends React.Component {
 
     history.push('/sel_event');
   }
+  infoToast = () => {
+    Toast.info('A分范围：0-20,B分范围：0-30');
+  }
   render() {
     const { searchStaff: { selectStaff }, event } = this.props;
     const { first, final, copy } = selectStaff;
@@ -316,6 +328,7 @@ export default class BuckleRecord extends React.Component {
             <DatePicker
               mode="date"
               value={executedAt}
+              maxDate={new Date()}
               onChange={e => this.stateChange(e, 'executedAt')}
             >
               <List.Item arrow="horizontal">事件时间</List.Item>
@@ -339,9 +352,9 @@ export default class BuckleRecord extends React.Component {
                       type="2"
                       nameKey="realname"
                       showNum={2}
-                      handleClick={v => this.remove(v, 'participants')}
+                      handleDelClick={(e, v) => this.remove(e, v, 'participants')}
                     />
-              );
+                  );
                 })}
                 <PersonAdd handleClick={() => this.addMore('participants', 2)} />
               </Flex>
@@ -350,7 +363,23 @@ export default class BuckleRecord extends React.Component {
           <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
             <div className={style.players}>
-              <Flex className={style.title}> 参与人列表</Flex>
+              <Flex className={style.title}>
+                <Flex.Item>参与人列表</Flex.Item>
+                <Flex.Item
+                  style={{
+                    textAlign: 'right',
+                    fontSize: '12px',
+                    color: '#9b9b9b',
+                    paddingRight: '0.48rem',
+                    backgroundImage: `url(${prompt})`,
+                    backgroundPosition: 'right center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '0.32rem',
+                  }}
+                  onClick={this.infoToast}
+                >分值范围
+                </Flex.Item>
+              </Flex>
               <Flex className={style.table_head}>
                 <Flex.Item className={style.table_item}>姓名</Flex.Item>
                 <Flex.Item className={style.table_item}>A分</Flex.Item>
@@ -417,18 +446,18 @@ export default class BuckleRecord extends React.Component {
                 wrap="wrap"
               >
                 {(first || []).map((item, i) => {
-                const idx = i;
-                return (
-                  <PersonIcon
-                    key={idx}
-                    value={item}
-                    nameKey="realname"
-                    showNum={2}
-                    type="1"
-                    handleClick={() => this.changePerson('first', 1)}
-                  />
-            );
-              })}
+                  const idx = i;
+                  return (
+                    <PersonIcon
+                      key={idx}
+                      value={item}
+                      nameKey="realname"
+                      showNum={2}
+                      handleClick={() => this.changePerson('first', 1)}
+                      handleDelClick={(e, v) => this.remove(e, v, 'first')}
+                    />
+                  );
+                })}
                 {first && (!first.length) ? <PersonAdd handleClick={() => this.addMore('first', 1)} /> : null}
               </Flex>
             </div>
@@ -442,19 +471,18 @@ export default class BuckleRecord extends React.Component {
                 wrap="wrap"
               >
                 {(final || []).map((item, i) => {
-                const idx = i;
-                return (
-                  <PersonIcon
-                    key={idx}
-                    value={item}
-                    nameKey="realname"
-                    showNum={2}
-                    type="1"
-                    handleClick={() => this.changePerson('final', 1)}
-
-                  />
-            );
-              })}
+                  const idx = i;
+                  return (
+                    <PersonIcon
+                      key={idx}
+                      value={item}
+                      nameKey="realname"
+                      showNum={2}
+                      handleClick={() => this.changePerson('final', 1)}
+                      handleDelClick={(e, v) => this.remove(e, v, 'final')}
+                    />
+                  );
+                })}
                 {final && (!final.length) ? <PersonAdd handleClick={() => this.addMore('final', 1)} /> : null}
               </Flex>
             </div>
@@ -468,18 +496,18 @@ export default class BuckleRecord extends React.Component {
                 wrap="wrap"
               >
                 {(copy || []).map((item, i) => {
-                const idx = i;
-                return (
-                  <PersonIcon
-                    key={idx}
-                    value={item}
-                    nameKey="realname"
-                    showNum={2}
-                    type="2"
-                    handleClick={v => this.remove(v, 'copy')}
-                  />
-            );
-              })}
+                  const idx = i;
+                  return (
+                    <PersonIcon
+                      key={idx}
+                      value={item}
+                      nameKey="realname"
+                      showNum={2}
+                      type="2"
+                      handleDelClick={(e, v) => this.remove(e, v, 'copy')}
+                    />
+                  );
+                })}
                 <PersonAdd handleClick={() => this.addMore('copy', 2)} />
               </Flex>
             </div>

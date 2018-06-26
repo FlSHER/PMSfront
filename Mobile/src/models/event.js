@@ -1,5 +1,6 @@
 import {
   getEvent,
+  getEventName,
 } from '../services/event';
 import defaultReducers from './reducers/default';
 
@@ -7,6 +8,7 @@ export default {
   namespace: 'event',
   state: {
     evtAll: [],
+    evtName: [],
     event: {},
     breadCrumb: [],
   },
@@ -34,6 +36,21 @@ export default {
             data: breadCrumb,
           },
         });
+      }
+    },
+    *getEventName({ payload }, { put, call }) {
+      const response = yield call(getEventName, payload.id);
+      if (response && !response.error) {
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'evtName',
+            data: response || [],
+          },
+        });
+        if (payload.cb) {
+          payload.cb();
+        }
       }
     },
   },

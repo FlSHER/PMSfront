@@ -5,15 +5,17 @@ import {
 import { WingBlank, WhiteSpace, Flex, InputItem } from 'antd-mobile';
 import nothing from '../../../assets/nothing.png';
 import { Buckle } from '../../../common/ListView/index';
+import { buckleState } from '../../../utils/convert.js';
+
 import { ListFilter, CheckBoxs, ListSort, StateTabs, Nothing } from '../../../components/index';
 import style from '../index.less';
 
 const sortList = [
-  { name: '默认排序', value: 'created_at-asc' },
-  { name: '时间升序', value: 'created_at-asc' },
-  { name: '时间降序', value: 'created_at-desc' },
+  { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
+  { name: '时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
+  { name: '时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
-const auditState = [
+const auditStates = [
   { name: '全部', value: 'all' },
   { name: '我参与的', value: 'participant' },
   { name: '我记录的', value: 'recorded' },
@@ -40,7 +42,7 @@ export default class BuckleList extends React.Component {
       filterModal: false,
       sortModal: false,
     },
-    sortItem: { name: '默认排序', value: 'created_at-asc' },
+    sortItem: { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
     checkState: { name: '全部', value: 'all' },
   }
   componentWillMount() {
@@ -55,14 +57,14 @@ export default class BuckleList extends React.Component {
     });
   }
   onPageChange = () => {
-    const { dispatch, buckleList } = this.props;
+    const { dispatch, logList } = this.props;
     const { checkState } = this.state;
     dispatch({
       type: 'buckle/getLogsList',
       payload: {
         pagesize: 10,
         type: checkState.value,
-        page: buckleList[checkState.value].page + 1,
+        page: logList[checkState.value].page + 1,
       },
     });
   }
@@ -237,6 +239,13 @@ export default class BuckleList extends React.Component {
       },
     });
   }
+  renderLalbel = () => {
+    const labelArr = [];
+    const obj = {};
+    obj.evt = value => buckleState(value.status_id);
+    labelArr.push(obj);
+    return labelArr;
+  }
   render() {
     const { logList } = this.props;
     const { checkState, filter } = this.state;
@@ -248,7 +257,7 @@ export default class BuckleList extends React.Component {
             <WingBlank size="lg">
               <WingBlank size="lg">
                 <StateTabs
-                  option={auditState}
+                  option={auditStates}
                   checkItem={checkState}
                   handleClick={this.tabChange}
                 />
@@ -263,8 +272,13 @@ export default class BuckleList extends React.Component {
             >
               <Flex.Item>
                 <div
-                  className={[style.dosort, this.state.sortItem.value === -1 ?
-                    null : style.active].join(' ')}
+                  className={[style.dosort].join(' ')}
+                  style={{
+                    backgroundImage: `url(${this.state.sortItem.icon})`,
+                    backgroundPosition: 'right center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '0.4rem',
+                   }}
                   onClick={() => this.selFilter('sortModal')}
                 >
                   {this.state.sortItem.name}
@@ -316,6 +330,7 @@ export default class BuckleList extends React.Component {
                   handleClick={this.toLookDetail}
                   hasShortcut={false}
                   onRefresh={this.onRefresh}
+                  label={this.renderLalbel()}
                   onPageChange={this.onPageChange}
                   page={logList[checkState.value] ? logList[checkState.value].page : 1}
                   totalpage={logList[checkState.value] ? logList[checkState.value].totalpage : 10}

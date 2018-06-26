@@ -91,6 +91,9 @@
       margin-left: 0 !important;
       border-right: 1px solid rgb(240, 240, 240);
       border-bottom: 1px solid rgb(240, 240, 240);
+      &:first-child {
+        border-left: 1px solid rgb(240, 240, 240);
+      }
     }
   }
   .describe {
@@ -160,7 +163,7 @@
       }
     }
     .dosort {
-      background: url('../../assets/filter/sort.png') no-repeat right center;
+      // background: url('../../assets/filter/sort.png') no-repeat right center;
       background-size: 30/75rem;
     }
     .filter {
@@ -170,9 +173,7 @@
     }
   }
   .state {
-    .base(rgb(137,
-    137,
-    137),
+    .base(rgb(137, 137, 137),
     16px);
     &.active {
       .stateLabel(@tab-text-color,
@@ -195,6 +196,13 @@
   overflow: auto;
 }
 
+.event_title {
+  // display: flex;
+  // align-items: center;
+  .base(@list-title-color,
+  @list-title-size);
+}
+
 .event_item {
   padding: 30/75rem 36/75rem;
   display: flex;
@@ -212,9 +220,7 @@
     .label_state {
       margin-left: 20/75rem;
       padding: 6/75rem 16/75rem;
-      .label(rgb(229,
-      27,
-      35),
+      .label(rgb(229, 27, 35),
       12px,
       20/75rem,
       #fff);
@@ -223,17 +229,13 @@
   .time {
     margin: 20/75rem 0 10/75rem;
     height: 36/75rem;
-    .base(rgb(155,
-    155,
-    155),
+    .base(rgb(155, 155, 155),
     @list-text-size);
   }
   .desc {
     width: 540/75rem;
     height: 36/75rem;
-    .base(rgb(155,
-    155,
-    155),
+    .base(rgb(155, 155, 155),
     @list-text-size);
     .textLineOverFlow();
   }

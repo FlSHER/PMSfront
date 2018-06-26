@@ -71,7 +71,7 @@ export default class BuckleRecord extends React.Component {
             event_id: detail.id,
           },
           cb: () => {
-            history.replace('/audit_list');
+            history.goBack(-3);
           },
         },
       });
@@ -84,7 +84,7 @@ export default class BuckleRecord extends React.Component {
             event_id: detail.id,
           },
           cb: () => {
-            history.replace('/audit_list');
+            history.goBack(-2);
           },
         },
       });
@@ -101,7 +101,8 @@ export default class BuckleRecord extends React.Component {
             event_id: detail.id,
           },
           cb: () => {
-            history.replace('/audit_list');
+            // history.replace('/audit_list');
+            history.goBack(-2);
           },
         },
       });

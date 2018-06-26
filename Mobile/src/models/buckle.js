@@ -2,7 +2,11 @@ import { Toast } from 'antd-mobile';
 import {
   recordBuckle, getAuditList,
   buckleReject,
-  getBuckleDetail, withdrawBuckle, firstApprove, finalApprove,
+  getBuckleDetail,
+  withdrawBuckle,
+  firstApprove,
+  finalApprove,
+  getLogsList,
 } from '../services/buckle';
 import defaultReducers from './reducers/default';
 import { makerFilters } from '../utils/util.js';
@@ -48,7 +52,7 @@ export default {
       }
     },
     *buckleReject({ payload }, { call }) {
-      const response = yield call(buckleReject, payload.id);
+      const response = yield call(buckleReject, payload.data);
       if (response && !response.error) {
         Toast.success(response.message);
         payload.cb();
@@ -80,7 +84,7 @@ export default {
     },
     *getLogsList({ payload }, { call, put }) {
       const newPayload = makerFilters(payload);
-      const response = yield call(getAuditList, newPayload);
+      const response = yield call(getLogsList, newPayload);
       if (response && !response.error) {
         yield put({
           type: 'saveList',
@@ -120,11 +124,12 @@ export default {
     saveList(state, action) {
       const info = action.payload.value;
       const newList = { ...state[action.payload.key] };
-      newList[action.payload.type] = { ...info };
       if (info.page !== 1) { // 多页
-        const oldData = [...newList[action.payload.type].data];
-        oldData.push(info);
-        newList[action.payload.type].data = [...oldData];
+        let newData = [...newList[action.payload.type].data];
+        newData = newData.concat(info.data);
+        newList[action.payload.type].data = [...newData];
+      } else {
+        newList[action.payload.type] = { ...info };
       }
       return {
         ...state,

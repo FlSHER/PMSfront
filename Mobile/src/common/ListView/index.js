@@ -5,6 +5,7 @@ import Buckle from './Buckle';
 import Point from './Point';
 // import EventList from './EventList';
 import EventType from './EventType';
+import EventName from './EventName';
 
 export {
   Department,
@@ -12,5 +13,6 @@ export {
   Buckle,
   Point,
   EventType,
+  EventName,
   // EventList,
 };

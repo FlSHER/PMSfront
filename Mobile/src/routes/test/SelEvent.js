@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import {
   connect,
 } from 'dva';
-import { EventType } from '../../common/ListView/index.js';
+import { EventType, EventName } from '../../common/ListView/index.js';
 import { Bread } from '../../components/General/index';
 import { markTreeData } from '../../utils/util';
 import styles from '../common.less';
 
 @connect(({ event, loading }) => ({
   evtAll: event.evtAll,
+  evtName: event.evtName,
   breadCrumb: event.breadCrumb,
   loading: loading.effects['event/getEvent'],
 }))
@@ -16,6 +17,12 @@ export default class SelEvent extends Component {
   state={
     eventList: [],
     init: false,
+    type: '1',
+    selected: {
+      data: [],
+      total: 50,
+      num: 0,
+    },
   }
   componentWillMount() {
     this.props.dispatch({
@@ -35,6 +42,31 @@ export default class SelEvent extends Component {
       });
     }
   }
+  getSelectResult = (result) => {
+    const { selected, type } = this.state;
+    if (type === '1') {
+      this.getSingleSelect(result);
+    } else {
+      this.setState({
+        selected: {
+          ...selected,
+          data: result,
+          num: result.length,
+        },
+      });
+    }
+  }
+  getSingleSelect = (result) => {
+    const { history, dispatch } = this.props;
+    dispatch({
+      type: 'event/saveSelectEvent',
+      payload: {
+        key: 'evtName',
+        value: result,
+      },
+    });
+    history.goBack(-1);
+  }
   makeBreadCrumbData = (params) => {
     const { breadCrumb } = this.props;
     let newBread = [...breadCrumb];
@@ -52,14 +84,20 @@ export default class SelEvent extends Component {
     return newBread;
   }
   selEventName= (item) => {
-    this.props.dispatch({
-      type: 'event/saveData',
+    const { dispatch } = this.props;
+    // dispatch({
+    //   type: 'event/save',
+    //   payload: {
+    //     store: 'evtAll',
+    //     data: [],
+    //   },
+    // });
+    dispatch({
+      type: 'event/getEventName',
       payload: {
-        key: 'event',
-        value: item,
+        id: item.id,
       },
     });
-    this.props.history.goBack(-1);
   }
   selEvent = (item) => {
     const { dispatch, evtAll } = this.props;
@@ -69,10 +107,10 @@ export default class SelEvent extends Component {
         eventList: tree,
       }, () => {
         dispatch({
-          type: 'event/saveData',
+          type: 'event/save',
           payload: {
-            key: 'breadCrumb',
-            value: [{ name: '选择事件', id: -1 }],
+            store: 'breadCrumb',
+            data: [{ name: '选择事件', id: -1 }],
           },
         });
       });
@@ -80,21 +118,26 @@ export default class SelEvent extends Component {
       const newEventList = item.children;
       const breadCrumb = this.makeBreadCrumbData(item);
       this.setState({
-        eventList: newEventList,
+        eventList: newEventList || [],
       }, () => {
         dispatch({
-          type: 'event/saveData',
+          type: 'event/save',
           payload: {
-            key: 'breadCrumb',
-            value: breadCrumb,
+            store: 'breadCrumb',
+            data: breadCrumb,
           },
         });
       });
+      if (!newEventList) {
+        this.selEventName(item);
+      }
     }
   }
+
+
   render() {
-    const { eventList } = this.state;
-    const { breadCrumb } = this.props;
+    const { eventList, type, selected } = this.state;
+    const { breadCrumb, evtName } = this.props;
     return (
       <div className={styles.con}>
         <Bread
@@ -104,8 +147,16 @@ export default class SelEvent extends Component {
         <EventType
           dataSource={eventList || []}
           fetchDataSource={this.selEvent}
-          onSelect={this.selEventName}
           name="name"
+        />
+        <EventName
+          link=""
+          name="name"
+          dispatch={this.props.dispatch}
+          multiple={type !== '1'}
+          selected={selected.data}
+          dataSource={evtName || []}
+          onChange={this.getSelectResult}
         />
       </div>
     );

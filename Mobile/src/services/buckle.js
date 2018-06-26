@@ -9,7 +9,7 @@ export async function recordBuckle(params) {
   });
 }
 export async function getAuditList(params) {
-  return request('/api/event-logs/audit', {
+  return request('/api/event-logs', {
     method: 'GET',
     body: params,
     json: true,
@@ -18,7 +18,7 @@ export async function getAuditList(params) {
 
 export async function getLogsList(params) {
   return request('/api/event-logs', {
-    method: 'POST',
+    method: 'GET',
     body: params,
     json: true,
   });

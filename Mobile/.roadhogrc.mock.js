@@ -10520,10 +10520,15 @@ const proxy = {
 export default !noProxy ? {
   'GET /api/departments(.*)': 'http://192.168.20.238:8003/api/departments',
   'GET /api/staff(.*)': 'http://192.168.20.238:8003/api/staff',
-  'GET /api/(.*)': 'http://192.168.20.238:8007/api/',
-  'POST /api/(.*)': 'http://192.168.20.238:8007/api/',
-  'PUT /api/(.*)': 'http://192.168.20.238:8007/api/',
-  'DELETE /api/(.*)': 'http://192.168.20.238:8007/api/',
+  // 'GET /api/(.*)': 'http://192.168.20.238:8007/api/',
+  // 'POST /api/(.*)': 'http://192.168.20.238:8007/api/',
+  // 'PUT /api/(.*)': 'http://192.168.20.238:8007/api/',
+  // 'DELETE /api/(.*)': 'http://192.168.20.238:8007/api/',
+
+  'GET /api/(.*)': 'http://PMS.test/api/',
+  'POST /api/(.*)': 'http://PMS.test/api/',
+  'PUT /api/(.*)': 'http://PMS.test/api/',
+  'DELETE /api/(.*)': 'http://PMS.test/api/',
   // 'POST /oauth/(.*)': 'http://localhost.oaupdate.org/oauth/',
   'POST /oauth/(.*)': 'http://192.168.20.238:8003/oauth/'
 } : delay(proxy, 100);
