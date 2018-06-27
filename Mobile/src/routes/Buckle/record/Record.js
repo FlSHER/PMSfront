@@ -18,7 +18,6 @@ import prompt from '../../../assets/prompt.svg';
 }))
 export default class BuckleRecord extends React.Component {
   state = {
-    init: false,
     optAll: {
       pointA: '',
       pointB: '',
@@ -92,22 +91,22 @@ export default class BuckleRecord extends React.Component {
     }
   }
   componentWillReceiveProps(nextProps) {
-    if (!this.state.init) {
-      const { searchStaff: { selectStaff }, buckle: { info } } = nextProps;
-      const { participants } = selectStaff;
-      const newParti = participants.map((item) => {
-        const obj = { ...item };
-        obj.realname = item.staff_name || item.realname;
-        return obj;
-      });
+    // if (JSON.stringify(nextProps.event) !== JSON.stringify(lastProps.event)) { // 如果事件变了
+    const { searchStaff: { selectStaff }, buckle: { info } } = nextProps;
+    const { participants } = selectStaff;
+    const newParti = participants.map((item) => {
+      const obj = { ...item };
+      obj.realname = item.staff_name || item.realname;
+      return obj;
+    });
 
-      this.setState({
-        info: {
-          ...info,
-          participants: newParti,
-        },
-      });
-    }
+    this.setState({
+      info: {
+        ...info,
+        participants: newParti,
+      },
+    });
+    // }
   }
   remove = (e, item, name) => {
     e.stopPropagation();
@@ -147,8 +146,9 @@ export default class BuckleRecord extends React.Component {
   addMore = (name = 'first', type) => {
     const { event } = this.props;
     if (name === 'final') {
-      if (!Objecy.keys(event || {}).length) {
+      if (!Object.keys(event || {}).length) {
         Toast.info('请选择事件，记录分值');
+        return;
       }
     }
     const { history } = this.props;
@@ -156,12 +156,31 @@ export default class BuckleRecord extends React.Component {
     history.push(`/testView2/${name}/${type}`);
   }
   pointChange = (point, kind, el) => {
+    // const { event } = this.props;
+
+    // 验证整数
+    if (point && point !== '-' && !/^-?\d+$/.test(point)) {
+      return;
+    }
+    // 验证分值范围
+    // const pointAMin = event.point_a_min;
+    // const pointAMax = event.point_a_max;
+    // const pointBMin = event.point_b_min;
+    // const pointBMax = event.point_b_max;
+    // const min = event[`${kind}_min`];
+    // const max = event[`${kind}_max`];
+    // if (point < min || point > max) {
+    //   // Toast.info(`${event.name}事件的${kind === 'point_a' ? 'A' : 'B'}:分必须在${min}-${max}之间`);
+    //   Toast.info(`A分范围：${event.point_a_min}-${event.point_a_max},
+    // B分范围：${event.point_b_min}-${event.point_b_max}`);
+    // }
     const { optAll, info } = this.state;
     const newOpt = { ...optAll };
     const tempKey = kind === 'point_a' ?
       'pointA' : kind === 'point_b' ?
         'pointB' : kind === 'count' ?
           'count' : '';
+
     if (el === undefined) {
       newOpt[tempKey] = point;
     } else {
@@ -245,6 +264,7 @@ export default class BuckleRecord extends React.Component {
       Toast.fail(msg);
       return;
     }
+    // console.log('final', final);
     dispatch({
       type: 'buckle/recordBuckle',
       payload: {
@@ -255,7 +275,7 @@ export default class BuckleRecord extends React.Component {
           first_approver_sn: first[0].staff_sn,
           first_approver_name: first[0].realname,
           final_approver_sn: final[0].staff_sn,
-          final_approver_name: final[0].realname,
+          final_approver_name: final[0].staff_name,
           executed_at: moment(info.executedAt).format('YYYY-MM-DD'),
           addressees: newCopy,
         },
@@ -288,7 +308,12 @@ export default class BuckleRecord extends React.Component {
     history.push('/sel_event');
   }
   infoToast = () => {
-    Toast.info('A分范围：0-20,B分范围：0-30');
+    const { event } = this.props;
+    if (event.id) {
+      Toast.info(`A分范围：${event.point_a_min}-${event.point_a_max},B分范围：${event.point_b_min}-${event.point_b_max}`);
+    } else {
+      Toast.info('请先选择事件');
+    }
   }
   render() {
     const { searchStaff: { selectStaff }, event } = this.props;
@@ -362,7 +387,7 @@ export default class BuckleRecord extends React.Component {
           </WingBlank>
           <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
-            <div className={style.players}>
+            <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
               <Flex className={style.title}>
                 <Flex.Item>参与人列表</Flex.Item>
                 <Flex.Item
@@ -453,8 +478,8 @@ export default class BuckleRecord extends React.Component {
                       value={item}
                       nameKey="realname"
                       showNum={2}
-                      handleClick={() => this.changePerson('first', 1)}
-                      handleDelClick={(e, v) => this.remove(e, v, 'first')}
+                      handleClick={event.first_approver_locked === 1 ? null : () => this.changePerson('first', 1)}
+                      handleDelClick={event.first_approver_locked === 1 ? null : (e, v) => this.remove(e, v, 'first')}
                     />
                   );
                 })}
@@ -476,10 +501,10 @@ export default class BuckleRecord extends React.Component {
                     <PersonIcon
                       key={idx}
                       value={item}
-                      nameKey="realname"
+                      nameKey="staff_name"
                       showNum={2}
-                      handleClick={() => this.changePerson('final', 1)}
-                      handleDelClick={(e, v) => this.remove(e, v, 'final')}
+                      handleClick={event.final_approver_locked === 1 ? null : () => this.changePerson('final', 1)}
+                      handleDelClick={event.final_approver_locked === 1 ? null : (e, v) => this.remove(e, v, 'final')}
                     />
                   );
                 })}
@@ -504,7 +529,7 @@ export default class BuckleRecord extends React.Component {
                       nameKey="realname"
                       showNum={2}
                       type="2"
-                      handleDelClick={(e, v) => this.remove(e, v, 'copy')}
+                      handleDelClick={item.lock === 1 ? null : (e, v) => this.remove(e, v, 'copy')}
                     />
                   );
                 })}

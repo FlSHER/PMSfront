@@ -8,6 +8,14 @@ import styles from '../../common.less';
 import { PersonIcon } from '../../../components/index.js';
 @connect()
 export default class PointDetail extends React.Component {
+  componentWillMount() {
+    // const { dispatch, location } = this.props;
+    // const eventId = analyzePath(location.pathname, 1);
+    // dispatch({
+    //   type: 'buckle/getBuckleDetail',
+    //   payload: { eventId },
+    // });
+  }
   render() {
     return (
       <div
@@ -72,21 +80,34 @@ export default class PointDetail extends React.Component {
           <WhiteSpace size="sm" />
           <WingBlank>
             <div className={style.players}>
-              <Flex
-                className={style.title}
-                justify="between"
-                align="center"
-              >
-                <div style={{ color: 'rgb(74,74,74)', fontSize: '14px' }}>B分变化</div>
-                <div><a style={{ color: 'rgb(155,155,155)', fontSize: '12px' }}> 来源：任务积分</a></div>
-              </Flex>
-              <Flex className={style.point_change}>
-                <Flex.Item style={{ fontSize: '36px', color: 'rgb(229,28,35)', textAlign: 'center' }}>-0</Flex.Item>
+              <Flex className={style.title}> 积分变化</Flex>
+              <Flex style={{ padding: '0.53rem 0 1.06667rem 0' }}>
                 <Flex.Item>
-                  <div className={style.time}>变化时间：2013.12.5</div>
-                  <div className={style.time}>记录时间：2018.8.9</div>
+                  <div>
+                    <div className={style.point_a}>A分</div>
+                    <div className={style.point_a_value}>20</div>
+                  </div>
+                </Flex.Item>
+                <Flex.Item>
+                  <div >
+                    <div
+                      className={style.point_b}
+                    >
+                    B分
+                    </div>
+                    <div
+                      className={style.point_b_value}
+                    >
+                    20
+                    </div>
+                  </div>
                 </Flex.Item>
               </Flex>
+              <div >
+                <div className={style.point_info}>积分来源：积分任务</div>
+                <div className={style.point_info}>变化时间：积分任务</div>
+                <div className={style.point_info}>记录时间：积分任务</div>
+              </div>
             </div>
           </WingBlank>
           <WhiteSpace size="sm" />

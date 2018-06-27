@@ -25,14 +25,16 @@ export default class SelPerson extends Component {
     },
     selectAll: false,
     search: '',
-    key: '',
-    type: 2,
+    key: '', // 选的什么人
+    type: 2, // 选的类型，单选还是多选
   };
 
   componentWillMount() {
     const key = analyzePath(this.props.location.pathname, 1);
     const type = analyzePath(this.props.location.pathname, 2);
-
+    if (key === 'final') { // 终审人
+      this.getFinalStaff();
+    }
     this.setState({
       key,
       type,
@@ -88,6 +90,12 @@ export default class SelPerson extends Component {
       },
     });
     history.goBack(-1);
+  }
+  getFinalStaff = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'searchStaff/getFinalStaff',
+    });
   }
   fetchSelfDepStaff =() => {
     const { dispatch, userInfo } = this.props;
@@ -186,6 +194,7 @@ export default class SelPerson extends Component {
         <SearchList
           multiple={type !== '1'}
           name="realname"
+          isFinal={this.state.key === 'final'}
           bread={breadCrumb}
           checkAble={staff.length && (selected.num === staff.length)}
           selected={selected}
@@ -208,7 +217,7 @@ export default class SelPerson extends Component {
               {staff.length ? (
                 <Staff
                   link=""
-                  name="staff_sn"
+                  name={this.state.key === 'final' ? 'staff_name' : 'realname'}
                   page={pageInfo.page}
                   totalpage={pageInfo.totalpage}
                   onPageChange={this.onPageChange}

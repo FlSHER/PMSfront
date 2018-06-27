@@ -7,11 +7,13 @@ import { Bread } from '../../components/General/index';
 import { markTreeData } from '../../utils/util';
 import styles from '../common.less';
 
-@connect(({ event, loading }) => ({
+@connect(({ event, loading, searchStaff, buckle }) => ({
   evtAll: event.evtAll,
   evtName: event.evtName,
   breadCrumb: event.breadCrumb,
   loading: loading.effects['event/getEvent'],
+  selectStaff: searchStaff.selectStaff,
+  info: buckle.info,
 }))
 export default class SelEvent extends Component {
   state={
@@ -57,12 +59,63 @@ export default class SelEvent extends Component {
     }
   }
   getSingleSelect = (result) => {
-    const { history, dispatch } = this.props;
+    const { history, dispatch, selectStaff, info } = this.props;
+    const newSelectStaff = { ...selectStaff };
+    const newInfo = { ...info };
+    const participants = (info.participants || []).map((item) => {
+      const obj = { ...item };
+      obj.point_a = '';
+      obj.point_b = '';
+      return obj;
+    });
+    newInfo.participants = [...participants];
     dispatch({
-      type: 'event/saveSelectEvent',
+      type: 'buckle/save',
       payload: {
-        key: 'evtName',
-        value: result,
+        store: 'info',
+        data: newInfo,
+      },
+    });
+    if (result.first_approver_sn) {
+      newSelectStaff.first = [
+        {
+          staff_sn: result.first_approver_sn,
+          realname: result.first_approver_name,
+        },
+      ];
+    }
+
+    if (result.final_approver_sn) {
+      newSelectStaff.final = [
+        {
+          staff_sn: result.final_approver_sn,
+          realname: result.final_approver_name,
+        },
+      ];
+    }
+    const addressees = [...result.default_cc_addressees];
+    const newAddress = addressees.map((its) => {
+      const arr = its.split('=');
+      const obj = {};
+      const [staffSn, staffName] = arr.length === 2 ? arr : ['', ''];
+      obj.staff_sn = staffSn;
+      obj.realname = staffName;
+      obj.lock = 1;
+      return obj;
+    });
+    newSelectStaff.copy = newAddress;
+    dispatch({
+      type: 'event/save',
+      payload: {
+        store: 'event',
+        data: result,
+      },
+    });
+    dispatch({
+      type: 'searchStaff/save',
+      payload: {
+        store: 'selectStaff',
+        data: newSelectStaff,
       },
     });
     history.goBack(-1);
@@ -150,7 +203,6 @@ export default class SelEvent extends Component {
           name="name"
         />
         <EventName
-          link=""
           name="name"
           dispatch={this.props.dispatch}
           multiple={type !== '1'}

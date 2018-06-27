@@ -61,7 +61,7 @@ class ListFilter extends Component {
                   onClick={() => () => onResetForm}
                   style={{ color: 'rgb(24,116,208)' }}
                 >
-                重置
+                  重置
                 </a>
                 <a
                   style={{ color: '#fff' }}

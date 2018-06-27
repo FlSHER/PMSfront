@@ -36,6 +36,7 @@ export default class SearchList extends Component {
       handleBread,
       firstDepartment,
       selectOk,
+      isFinal = false,
     } = this.props;
     return (
       <div className={style.con}>
@@ -57,7 +58,7 @@ export default class SearchList extends Component {
               handleBread={handleBread}
             />
 )}
-          { this.state.value ? null : (
+          { this.state.value || isFinal ? null : (
             <div style={{ padding: '0 0.32rem' }} >
               <List >
                 <List.Item

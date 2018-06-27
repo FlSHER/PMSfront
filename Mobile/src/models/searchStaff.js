@@ -3,6 +3,7 @@ import {
   getStaff,
   firstDepartment,
   serachStaff,
+  getFinalStaff,
 } from '../services/department';
 import defaultReducers from './reducers/default';
 
@@ -24,6 +25,17 @@ export default {
     },
   },
   effects: {
+    *getFinalStaff(_, { put, call }) { // 自己部门员工列表
+      const response = yield call(getFinalStaff);
+      // console.log('response', response);
+      yield put({
+        type: 'save',
+        payload: {
+          store: 'staff',
+          data: response || [],
+        },
+      });
+    },
     * fetchSearchStaff({ payload }, { put, call }) {
       const { parentId, breadCrumb } = payload;
       const response = yield call(department, parentId);

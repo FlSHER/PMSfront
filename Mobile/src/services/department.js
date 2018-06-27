@@ -14,3 +14,7 @@ export async function firstDepartment() {
 export async function serachStaff(search) {
   return request(`/api/staff?${search}`);
 }
+export async function getFinalStaff() {
+  return request('/api/event-logs/final-staff');
+}
+

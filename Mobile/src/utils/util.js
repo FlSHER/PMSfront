@@ -151,7 +151,7 @@ export function unique(arr, name) {
 }
 function getRelation(str1, str2) {
   if (str1 === str2) {
-    console.warn('Two path are equal!');  // eslint-disable-line
+    // console.warn('Two path are equal!');  // eslint-disable-line
   }
   const arr1 = str1.split('/');
   const arr2 = str2.split('/');

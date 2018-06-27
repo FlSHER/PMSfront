@@ -5,7 +5,7 @@ import style from './index.less';
 @ListView
 export default class Staff extends Component {
   render() {
-    const { value, onClick, checked, multiple } = this.props;
+    const { value, onClick, checked, multiple, name = 'realname' } = this.props;
     const className = multiple ? { className: [style.item, checked ? style.checked : null].join(' ') } : null;
     return (
       <div className={style.action_item}>
@@ -13,7 +13,7 @@ export default class Staff extends Component {
           {...className}
           onClick={() => onClick(value)}
         >
-          <span>{value.realname}</span>
+          <span>{value[name]}</span>
         </div>
       </div>
     );

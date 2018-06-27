@@ -51,7 +51,11 @@ export default class App extends React.Component {
       <React.Fragment>
         <div key={pathname}>
           <QueueAnim>
-            <div key={pathname} className="container">
+            <div
+              key={pathname}
+              className="container"
+              style={{ ...(loading.global ? { display: 'none' } : null) }}
+            >
               {children}
             </div>
           </QueueAnim>
