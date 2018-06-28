@@ -12,5 +12,5 @@ export function getAuthority() {
 }
 
 export function setAuthority(authority) {
-  return localStorage.setItem('antd-mobile-authority', authority);
+  return localStorage.setItem('mobile-authority', authority);
 }

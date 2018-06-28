@@ -12,6 +12,7 @@ class CheckBox extends React.Component {
       value,
       nameKey,
       readonly,
+      itemStyle = {},
     } = this.props;
     let options = [...option];
     // 判断一下option里是字符串还是对象
@@ -32,7 +33,7 @@ class CheckBox extends React.Component {
                       <div
                         key={item.value}
                         className={[style.s_item, checked ? style.active : null].join(' ')}
-                        style={{ display: readonly && !checked ? 'none' : '' }}
+                        style={{ display: readonly && !checked ? 'none' : '', ...itemStyle }}
                         onClick={() => (checkStatus ? checkStatus(i, item.value, nameKey) : null)}
                       >
                         {item.name}

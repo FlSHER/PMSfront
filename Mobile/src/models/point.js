@@ -1,114 +1,47 @@
 import { Toast } from 'antd-mobile';
 import {
-  recordBuckle, getAuditList,
-  buckleReject,
-  getBuckleDetail,
-  withdrawBuckle,
-  firstApprove,
-  finalApprove,
-  getLogsList,
-} from '../services/buckle';
+  getPointDetail,
+  getPointLog,
+} from '../services/point';
 import defaultReducers from './reducers/default';
-import { makerFilters } from '../utils/util.js';
+// import { makerFilters } from '../utils/util.js';
 
 
 export default {
   namespace: 'point',
   state: {
-    selectStaff: [],
-    info: {
-      executedAt: new Date(),
-      description: '',
-      participants: [],
-    },
-    logList: {
-
-    },
-    auditList: {},
-    detail: {},
-    used: false,
+    pointDetails: {},
+    pointList: {},
   },
   effects: {
-
-    *finalApprove({ payload }, { call }) {
-      const response = yield call(finalApprove, payload.data);
-      if (response && !response.error) {
-        Toast.success(response.message);
-        payload.cb();
-      }
-    },
-    *firstApprove({ payload }, { call }) {
-      const response = yield call(firstApprove, payload.data);
-      if (response && !response.error) {
-        Toast.success(response.message);
-        payload.cb();
-      }
-    },
-    *withdrawBuckle({ payload }, { call }) {
-      const response = yield call(withdrawBuckle, payload.id);
-      if (response && !response.error) {
-        Toast.success(response.message);
-        payload.cb();
-      }
-    },
-    *buckleReject({ payload }, { call }) {
-      const response = yield call(buckleReject, payload.data);
-      if (response && !response.error) {
-        Toast.success(response.message);
-        payload.cb();
-      }
-    },
-
-    *recordBuckle({ payload }, { call }) {
-      const response = yield call(recordBuckle, payload.data);
-      if (response && !response.error) {
-        Toast.success(response.message);
-        if (payload.cb) {
-          payload.cb();
-        }
-      }
-    },
-    *getAuditList({ payload }, { call, put }) {
-      const newPayload = makerFilters(payload);
-      const response = yield call(getAuditList, newPayload);
+    *getPointDetail({ payload }, { call, put }) {
+      const { id } = payload;
+      const response = yield call(getPointDetail, id);
       if (response && !response.error) {
         yield put({
-          type: 'saveList',
+          type: 'save',
           payload: {
-            key: 'auditList',
-            type: payload.type,
-            value: response,
+            store: 'point',
+            id,
+            data: response,
           },
         });
+      } else {
+        Toast.fail(response.message);
       }
     },
-    *getLogsList({ payload }, { call, put }) {
-      const newPayload = makerFilters(payload);
-      const response = yield call(getLogsList, newPayload);
+    *getPointLog({ payload }, { call, put }) {
+      const response = yield call(getPointLog, payload);
       if (response && !response.error) {
         yield put({
-          type: 'saveList',
+          type: 'save',
           payload: {
-            key: 'logList',
-            type: payload.type,
-            value: response,
+            store: 'pointList',
+            data: response,
           },
         });
-      }
-    },
-    *getBuckleDetail({ payload }, { call, put }) {
-      const response = yield call(getBuckleDetail, payload.eventId);
-      if (response && !response.error) {
-        yield put({
-          type: 'saveData',
-          payload: {
-            key: 'detail',
-            value: response,
-          },
-        });
-        if (payload.cb) {
-          payload.cb(response);
-        }
+      } else {
+        Toast.fail(response.message);
       }
     },
   },

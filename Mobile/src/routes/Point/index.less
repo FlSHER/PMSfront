@@ -16,7 +16,8 @@
 }
 
 .header {
-  flex: 0 !important; // width: 100%;
+  flex: 0 !important;
+  width: 100%;
   .state_tab {
     background: @base-bg-color;
     :global {
@@ -86,6 +87,27 @@
     color: rgb(150, 150, 150);
     height: 80/75rem;
     line-height: 80/75rem;
+  }
+  &.range {
+    :global {
+      .am-list-item.am-input-item {
+        height: 60/75rem;
+        min-height: auto;
+        padding-left: 0;
+        background: rgb(239, 239, 239);
+      }
+      .am-list-item .am-list-line {
+        padding-right: 0;
+      }
+      .am-list-item .am-input-control input {
+        color: rgb(155, 155, 155);
+        font-size: 12px;
+        text-align: center;
+      }
+    }
+    .rg {
+      margin: 0 6/75rem;
+    }
   }
 }
 
@@ -225,9 +247,29 @@
 .point_b_value {
   color: rgb(0, 150, 136);
 }
+
 .point_info {
-  .base(rgb(155,155,155),12px);
+  .base(rgb(155,
+  155,
+  155),
+  12px);
   line-height: 68/75rem;
   height: 68/75rem;
 }
 
+.event_title {
+  // display: flex;
+  // align-items: center;
+  .base(@list-title-color,
+  @list-title-size);
+}
+
+.some_time {
+  text-align: center;
+  height: 60/75rem;
+  line-height: 60/75rem;
+  color: rgb(155, 155, 155);
+  font-size: 12px;
+  background: rgb(239, 239, 239);
+  border-radius: 4/75rem;
+}

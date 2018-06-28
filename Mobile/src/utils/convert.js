@@ -93,11 +93,11 @@ export const indexMenu = [
 export const buckleState = (state) => {
   switch (state) {
     case 0:
-      return '待审核';
+      return '审核中';
     case 1:
-      return '通过';
+      return '审核中';
     case 2:
-      return '通过';
+      return '已通过';
     case -1:
       return '已驳回';
     case -2:
@@ -115,12 +115,42 @@ export const auditState = (state) => {
     default:
   }
 };
+// 待审核的列表需要操作的标签颜色
+export const auditLabel = (state) => {
+  switch (state) {
+    case 0:
+      return 'label_state_first';
+    case 1:
+      return 'label_state_final';
+    default:
+  }
+};
+// 状态标签颜色
+export const convertStyle = (status) => {
+  switch (status) {
+    case -2: return 'label_state_0';
+    case -1: return 'label_state_1';
+    case 0: return 'label_state_3';
+    case 1:
+    case 2: return 'label_state_2';
+    default: return 'label_state_default';
+  }
+};
 // 已审核的列表已操作的状态
 export const auditFinishedState = (item) => {
-  if (item.status_id === 1 || (item.first_approved_at && item.status_id === -2)) {
+  if (item.status_id === 1 || (item.first_approved_at && item.status_id === -1)) {
     return '初审';
-  } else if (item.status_id === 2 || (item.status_id === -2 && !item.final_approved_at)) {
+  } else if (item.status_id === 2 || (item.status_id === -1 && !item.final_approved_at)) {
     return '终审';
+  }
+};
+
+// 已审核的列表已操作的状态
+export const auditFinishedLabel = (item) => {
+  if (item.status_id === 1 || (item.first_approved_at && item.status_id === -1)) {
+    return 'label_state_first';
+  } else if (item.status_id === 2 || (item.status_id === -1 && !item.final_approved_at)) {
+    return 'label_state_final';
   }
 };
 
@@ -143,4 +173,26 @@ export function reAgainImg(url, str) {
   const newImg = url.slice(0, i) + url.slice(i + str.length);
   return newImg;
 }
+
+
+export const pointSource = [
+  {
+    name: '系统分', value: 0,
+  },
+  {
+    name: '固定分', value: 1,
+  },
+  {
+    name: '奖扣分', value: 2,
+  },
+  {
+    name: '任务分', value: 3,
+  },
+  {
+    name: '考勤分', value: 4,
+  },
+  {
+    name: '日志分', value: 5,
+  },
+];
 

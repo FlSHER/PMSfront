@@ -90,7 +90,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, [], () => import('../routes/Point/survey/pointSurvey')),
     },
     '/point_list': {
-      component: dynamicWrapper(app, [], () => import('../routes/Point/survey/pointList')),
+      component: dynamicWrapper(app, ['point'], () => import('../routes/Point/survey/pointList')),
     },
     '/testView2/:key/:type': {
       component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/test/SelPerson')),

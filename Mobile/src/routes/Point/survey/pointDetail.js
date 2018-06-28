@@ -6,17 +6,34 @@ import { List, Flex, WingBlank, WhiteSpace } from 'antd-mobile';
 import style from '../index.less';
 import styles from '../../common.less';
 import { PersonIcon } from '../../../components/index.js';
-@connect()
+import { analyzePath } from '../../../utils/util';
+
+@connect(({ point }) => ({
+  pointDetails: point.pointDetails,
+}))
 export default class PointDetail extends React.Component {
+  state={
+    pointLog: '',
+  }
   componentWillMount() {
-    // const { dispatch, location } = this.props;
-    // const eventId = analyzePath(location.pathname, 1);
-    // dispatch({
-    //   type: 'buckle/getBuckleDetail',
-    //   payload: { eventId },
-    // });
+    const { dispatch, location } = this.props;
+    const pointLog = analyzePath(location.pathname, 1);
+    this.setState({
+      pointLog,
+    }, () => {
+      dispatch({
+        type: 'point/getPointDetail',
+        payload: { id: pointLog },
+      });
+    });
   }
   render() {
+    const { pointDetails } = this.props;
+    const { pointLog } = this.state;
+    const detail = pointDetails[pointLog];
+    if (!detail) {
+      return null;
+    }
     return (
       <div
         className={styles.con}
@@ -27,54 +44,27 @@ export default class PointDetail extends React.Component {
 
           <WingBlank className={style.parcel}>
             <List>
-              <List.Item >
-                积分事件标题
-              </List.Item>
-            </List>
-            <div className={style.event_info}>
-              <div
-                className={style.person_item}
-                style={{ display: 'inline-block', marginBottom: 0, width: 'auto', marginRight: '0.27rem' }}
-              >
-                <div className={style.person_icon} style={{ width: '0.75rem', height: '0.75rem', lineHeight: '0.75rem' }}>
-                  <div className={style.name}>
-                颖
-                  </div>
+              <div style={{ padding: '0.4rem 15px' }}>
+                <div className={style.event_title}>
+                  {detail.title}
                 </div>
               </div>
-              <span>魏颖（122222）</span>
+            </List>
+            <div className={style.event_info}>
+              <span>姓名</span>
+              <span>{detail.staff_name}（{detail.staff_sn}）</span>
             </div>
             <div className={style.event_info}>
               <span>品牌</span>
-              <span>店铺</span>
+              <span>{detail.brand_name}</span>
             </div>
             <div className={style.event_info}>
               <span>部门</span>
-              <span>店铺</span>
+              <span>{detail.department_name}</span>
             </div>
             <div className={style.event_info}>
               <span>店铺</span>
-              <span>店铺</span>
-            </div>
-          </WingBlank>
-          <WhiteSpace size="sm" />
-          <WingBlank>
-            <div className={style.players}>
-              <Flex
-                className={style.title}
-                justify="between"
-                align="center"
-              >
-                <div style={{ color: 'rgb(74,74,74)', fontSize: '14px' }}>A分变化</div>
-                <div><a style={{ color: 'rgb(155,155,155)', fontSize: '12px' }}> 来源：任务积分</a></div>
-              </Flex>
-              <Flex className={style.point_change}>
-                <Flex.Item style={{ fontSize: '36px', color: 'rgb(0,150,136)', textAlign: 'center' }}>+0</Flex.Item>
-                <Flex.Item>
-                  <div className={style.time}>变化时间：2013.12.5</div>
-                  <div className={style.time}>记录时间：2018.8.9</div>
-                </Flex.Item>
-              </Flex>
+              <span>{detail.shop_name}</span>
             </div>
           </WingBlank>
           <WhiteSpace size="sm" />
@@ -85,7 +75,7 @@ export default class PointDetail extends React.Component {
                 <Flex.Item>
                   <div>
                     <div className={style.point_a}>A分</div>
-                    <div className={style.point_a_value}>20</div>
+                    <div className={style.point_a_value}>{detail.point_a}</div>
                   </div>
                 </Flex.Item>
                 <Flex.Item>
@@ -98,15 +88,15 @@ export default class PointDetail extends React.Component {
                     <div
                       className={style.point_b_value}
                     >
-                    20
+                      {detail.point_b}
                     </div>
                   </div>
                 </Flex.Item>
               </Flex>
               <div >
-                <div className={style.point_info}>积分来源：积分任务</div>
-                <div className={style.point_info}>变化时间：积分任务</div>
-                <div className={style.point_info}>记录时间：积分任务</div>
+                <div className={style.point_info}>积分来源：{detail.source.name}</div>
+                <div className={style.point_info}>变化时间：{detail.changed_at}</div>
+                <div className={style.point_info}>记录时间：{detail.created_at}</div>
               </div>
             </div>
           </WingBlank>
@@ -118,16 +108,11 @@ export default class PointDetail extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                {[1, 2, 3].map((item, i) => {
-                  const idx = i;
-                  return (
-                    <PersonIcon
-                      key={idx}
-                      name="魏颖"
-                      showNum={2}
-                    />
-                  );
-                })}
+                <PersonIcon
+                  value={detail}
+                  nameKey="first_approver_name"
+                />
+
               </Flex>
             </div>
           </WingBlank>
@@ -140,12 +125,13 @@ export default class PointDetail extends React.Component {
                 wrap="wrap"
               >
                 <PersonIcon
-                  name="张博涵哈哈哈"
-                  showNum={2}
+                  value={detail}
+                  nameKey="final_approver_name"
                 />
               </Flex>
             </div>
           </WingBlank>
+          <WhiteSpace size="sm" />
         </div>
       </div>
     );

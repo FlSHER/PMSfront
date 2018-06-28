@@ -24,6 +24,7 @@ function RouterConfig({ history, app }) {
           path="/"
           render={props => <BasicLayout {...props} />}
           // authority={['token']}
+          // redirectPath="/refresh_access_token"
           redirectPath="/home"
         />
       </Switch>

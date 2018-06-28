@@ -275,7 +275,7 @@ export default class BuckleRecord extends React.Component {
           first_approver_sn: first[0].staff_sn,
           first_approver_name: first[0].realname,
           final_approver_sn: final[0].staff_sn,
-          final_approver_name: final[0].staff_name,
+          final_approver_name: final[0].realname,
           executed_at: moment(info.executedAt).format('YYYY-MM-DD'),
           addressees: newCopy,
         },
@@ -501,7 +501,7 @@ export default class BuckleRecord extends React.Component {
                     <PersonIcon
                       key={idx}
                       value={item}
-                      nameKey="staff_name"
+                      nameKey="realname"
                       showNum={2}
                       handleClick={event.final_approver_locked === 1 ? null : () => this.changePerson('final', 1)}
                       handleDelClick={event.final_approver_locked === 1 ? null : (e, v) => this.remove(e, v, 'final')}

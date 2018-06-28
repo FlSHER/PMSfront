@@ -22,15 +22,16 @@ import './app.less';
 }))
 export default class App extends React.Component {
   componentWillMount() {
-    // if (localStorage.getItem('OA_access_token') &&
-    //   localStorage.getItem('OA_access_token_expires_in') > new Date().getTime()) {
-    // } else if (localStorage.getItem('OA_refresh_token')) {
+    // if (localStorage.getItem('OA_refresh_token')
+    //  && localStorage.getItem('OA_access_token_expires_in') < new Date().getTime()) {
+    //   console.log(1);
     //   this.props.dispatch({
     //     type: 'oauth/refreshAccessToken',
     //   });
-    // } else {
+    // } else if (!localStorage.getItem('OA_access_token')) {
+    //   console.log(2);
     //   window.location.href =
-    // `${OA_PATH()}/oauth/authorize?client_id=${OA_CLIENT_ID()}&response_type=code`;
+    //     `${OA_PATH()}/oauth/authorize?client_id=${OA_CLIENT_ID()}&response_type=code`;
     // }
     return `${OA_PATH()}&${OA_CLIENT_ID()}`;
   }
@@ -54,7 +55,7 @@ export default class App extends React.Component {
             <div
               key={pathname}
               className="container"
-              style={{ ...(loading.global ? { display: 'none' } : null) }}
+              // style={{ ...(loading.global ? { display: 'none' } : null) }}
             >
               {children}
             </div>

@@ -19,7 +19,13 @@ export default class Buckle extends Component {
   }
 
   render() {
-    const { handleClick, onShortcut, hasShortcut = true, value, label = [] } = this.props;
+    const {
+      handleClick,
+      onShortcut,
+      hasShortcut = false,
+      value, label = [],
+    } = this.props;
+
     return (
       <div className={style.event_item}>
         <div className={style.main_info} onClick={() => handleClick(value)}>
@@ -30,7 +36,7 @@ export default class Buckle extends Component {
               return (
                 <div
                   key={idx}
-                  className={style[this.convertStyle(value.status_id)]}
+                  className={style[its.labelStyle(value)]}
                 >
                   {its.evt(value)}
                 </div>
@@ -43,7 +49,7 @@ export default class Buckle extends Component {
             {value.description}
           </div>
         </div>
-        {hasShortcut && (value.status_id === 0 || value.status_id === 1) ?
+        {hasShortcut ?
           (
             <div className={style.aside}>
               <img

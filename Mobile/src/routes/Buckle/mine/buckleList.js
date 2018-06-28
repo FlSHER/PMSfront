@@ -2,11 +2,15 @@ import React from 'react';
 import {
   connect,
 } from 'dva';
-import { WingBlank, WhiteSpace, Flex, InputItem } from 'antd-mobile';
+import { WingBlank, WhiteSpace, Flex } from 'antd-mobile';
 import nothing from '../../../assets/nothing.png';
 import { Buckle } from '../../../common/ListView/index';
-import { buckleState } from '../../../utils/convert.js';
-
+import {
+  convertStyle,
+  auditFinishedState,
+  buckleState,
+  auditFinishedLabel,
+} from '../../../utils/convert.js';
 import { ListFilter, CheckBoxs, ListSort, StateTabs, Nothing } from '../../../components/index';
 import style from '../index.less';
 
@@ -23,6 +27,20 @@ const auditStates = [
   { name: '抄送我的', value: 'addressee' },
 ];
 
+const dealtOption = [
+  { name: '已通过', value: 1 },
+  { name: '已驳回', value: -1 },
+];
+const stateOption = [
+  { name: '已通过', value: 1 },
+  { name: '已驳回', value: -1 },
+  { name: '审核中', value: 0 },
+  { name: '已撤回', value: -2 },
+];
+const procesingOption = [
+  { name: '初审', value: 'first_approver_sn' },
+  { name: '终审', value: 'final_approver_sn' },
+];
 @connect(({ buckle }) => ({
   logList: buckle.logList,
 }))
@@ -37,6 +55,7 @@ export default class BuckleList extends React.Component {
           min: 1, max: 12,
         },
       },
+
     },
     modal: {// 模态框
       filterModal: false,
@@ -58,13 +77,15 @@ export default class BuckleList extends React.Component {
   }
   onPageChange = () => {
     const { dispatch, logList } = this.props;
-    const { checkState } = this.state;
+    const { checkState, sortItem } = this.state;
     dispatch({
       type: 'buckle/getLogsList',
       payload: {
         pagesize: 10,
         type: checkState.value,
+        sort: sortItem.value,
         page: logList[checkState.value].page + 1,
+        filter: this.dealFilter(),
       },
     });
   }
@@ -77,7 +98,7 @@ export default class BuckleList extends React.Component {
     const { dispatch } = this.props;
     const { checkState } = this.state;
     dispatch({
-      type: 'buckle/getBuckleList',
+      type: 'buckle/getLogsList',
       payload: {
         pagesize: 10,
         page: 1,
@@ -105,18 +126,18 @@ export default class BuckleList extends React.Component {
       });
   }
   onFilterOk = () => {
-    const { filter, checkState, sortItem } = this.state;
+    const { checkState, sortItem } = this.state;
     const { dispatch } = this.props;
-    const search = {
-      created_at: {
-        min: `${filter.time.year}-${filter.time.month.min}-01`,
-        max: `${filter.time.year}-${filter.time.month.max}-01`,
-      },
-    };
-    search[filter.point] = {
-      min: filter.range.min,
-      max: filter.range.max,
-    };
+    // const search = {
+    //   created_at: {
+    //     min: `${filter.time.year}-${filter.time.month.min}-01`,
+    //     max: `${filter.time.year}-${filter.time.month.max}-01`,
+    //   },
+    // };
+    // search[filter.point] = {
+    //   min: filter.range.min,
+    //   max: filter.range.max,
+    // };
     dispatch({
       type: 'buckle/getLogsList',
       payload: {
@@ -124,7 +145,7 @@ export default class BuckleList extends React.Component {
         type: checkState.value,
         page: 1,
         sort: sortItem.value,
-        filters: search,
+        filters: this.dealFilter(),
       },
     });
     this.onCancel('', 'filterModal');
@@ -133,6 +154,24 @@ export default class BuckleList extends React.Component {
     this.setState({
       [key]: newValue,
     });
+  }
+
+  dealFilter = () => {
+    const { filter } = this.state;
+    const { userInfo } = this.props;
+    const { approveType, eventState } = filter;
+    const search = {};
+    if (!(approveType.length === procesingOption.length) && approveType.length) { // 如果不是全选
+      const appType = approveType[0];
+      search[appType] = userInfo.staff_sn;
+      if (appType === 'first_approver_sn') {
+        search.status_id = eventState === 1 ? 1 : eventState;
+      }
+      if (appType === 'final_approver_sn') {
+        search.status_id = eventState === 1 ? 2 : eventState;
+      }
+    }
+    return search;
   }
   sortReasult = (item) => {
     const { dispatch } = this.props;
@@ -170,7 +209,21 @@ export default class BuckleList extends React.Component {
   checkItem = (i, v, key) => {
     const { filter } = this.state;
     const newFilter = { ...filter };
-    newFilter[key] = v;
+    const temp = newFilter[key] === v ? '' : v;
+    newFilter[key] = temp;
+    this.setNewState('filter', newFilter);
+  }
+  doMultiple = (i, v, key) => {
+    const { filter } = this.state;
+    const newFilter = { ...filter };
+    let temp = [...(newFilter[key] || [])];
+    const isExist = temp.includes(v);
+    if (isExist) {
+      temp = temp.filter(item => item !== v);
+    } else {
+      temp.push(v);
+    }
+    newFilter[key] = [...temp];
     this.setNewState('filter', newFilter);
   }
   tabChange = (item) => {
@@ -240,10 +293,26 @@ export default class BuckleList extends React.Component {
     });
   }
   renderLalbel = () => {
-    const labelArr = [];
-    const obj = {};
-    obj.evt = value => buckleState(value.status_id);
-    labelArr.push(obj);
+    const { checkState } = this.state;
+    let labelArr = [];
+    if (checkState.value === 'approved') {
+      const newObj = [
+        {
+          evt: value => buckleState(value.status_id),
+          labelStyle: value => convertStyle(value.status_id),
+        },
+        {
+          evt: value => auditFinishedState(value),
+          labelStyle: value => auditFinishedLabel(value),
+        },
+      ];
+      labelArr = [...newObj];
+    } else {
+      const obj = {};
+      obj.evt = value => buckleState(value.status_id);
+      obj.labelStyle = value => convertStyle(value.status_id);
+      labelArr.push(obj);
+    }
     return labelArr;
   }
   render() {
@@ -278,7 +347,7 @@ export default class BuckleList extends React.Component {
                     backgroundPosition: 'right center',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: '0.4rem',
-                   }}
+                  }}
                   onClick={() => this.selFilter('sortModal')}
                 >
                   {this.state.sortItem.name}
@@ -328,12 +397,13 @@ export default class BuckleList extends React.Component {
                 <Buckle
                   dataSource={logList[checkState.value] ? logList[checkState.value].data : []}
                   handleClick={this.toLookDetail}
-                  hasShortcut={false}
                   onRefresh={this.onRefresh}
-                  label={this.renderLalbel()}
                   onPageChange={this.onPageChange}
-                  page={logList[checkState.value] ? logList[checkState.value].page : 1}
-                  totalpage={logList[checkState.value] ? logList[checkState.value].totalpage : 10}
+                  label={this.renderLalbel()}
+                  page={logList[checkState.value] ?
+                    logList[checkState.value].page : 1}
+                  totalpage={logList[checkState.value] ?
+                    logList[checkState.value].totalpage : 10}
                 />
               </WingBlank>
             )}
@@ -358,51 +428,31 @@ export default class BuckleList extends React.Component {
             paddingLeft: '2rem',
           }}
         >
-
-          <div className={style.filter_item}>
-            <div className={style.title}>分值类型</div>
-            <CheckBoxs
-              option={[{ name: 'A分', value: 'point_a' }, { name: 'B分', value: 'point_b' }]}
-              checkStatus={(i, v) => this.checkItem(i, v, 'point')}
-              value={[filter.point]}
-            />
-          </div>
-          <div className={[style.filter_item, style.range].join(' ')} >
-            <div className={style.title}>分值区间</div>
-            <Flex>
-              <InputItem
-                type="number"
-                value={filter.range.min}
-                onChange={e => this.rangeChange(e, 'min')}
-              /><span className={style.rg}>—</span><InputItem
-                type="number"
-                value={filter.range.max}
-                onChange={e => this.rangeChange(e, 'max')}
+          {checkState.value !== 'approved' ? (
+            <div className={style.filter_item}>
+              <div className={style.title}>事件状态</div>
+              <CheckBoxs
+                option={stateOption}
+                checkStatus={(i, v) => this.checkItem(i, v, 'eventState')}
+                value={[filter.eventState]}
               />
-            </Flex>
-          </div>
-          <div className={[style.filter_item, style.range].join(' ')} >
-            <div className={style.title}>生效时间</div>
-            <Flex>
-              <InputItem
-                type="number"
-                value={filter.time.year}
-                onChange={e => this.yearChange(e, 'year')}
+            </div>
+          ) : (
+            <div className={style.filter_item}>
+              <div className={style.title}>审核类型</div>
+              <CheckBoxs
+                option={procesingOption}
+                checkStatus={(i, v) => this.doMultiple(i, v, 'approveType')}
+                value={filter.approveType}
               />
-              <span className={style.rg}>年</span>
-              <InputItem
-                type="number"
-                value={filter.time.month.min}
-                onChange={e => this.monthChange(e, 'min')}
+              <div className={style.title}>事件状态</div>
+              <CheckBoxs
+                option={dealtOption}
+                checkStatus={(i, v) => this.checkItem(i, v, 'eventState')}
+                value={[filter.eventState]}
               />
-              <span className={style.rg}>—</span>
-              <InputItem
-                type="number"
-                value={filter.time.month.max}
-                onChange={e => this.monthChange(e, 'max')}
-              />
-            </Flex>
-          </div>
+            </div>
+            )}
         </ListFilter>
       </Flex>
     );
