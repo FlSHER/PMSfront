@@ -7,25 +7,15 @@ export default function ListView(ListItem) {
     state={
       refreshing: false,
     }
-
-    onRefresh = () => {
-      setTimeout(() => {
-        this.setState({
-          refreshing: false,
-        });
-      }, 1000);
-    }
-
     makeListItemProps = (item) => {
       const response = {
         ...this.props,
         value: item,
       };
-      response.onShortcut = this.showModal;
       return response;
     }
     render() {
-      const { dataSource } = this.props;
+      const { dataSource, onRefresh } = this.props;
       return (
         <PullToRefresh
           ref={(el) => { this.ptr = el; }}
@@ -35,7 +25,7 @@ export default function ListView(ListItem) {
         }}
           refreshing={this.state.refreshing}
           onRefresh={
-          this.onRefresh
+          onRefresh
         }
         >
           <QueueAnim>

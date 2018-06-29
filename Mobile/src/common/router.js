@@ -57,7 +57,7 @@ const dynamicWrapper = (app, models, component) => {
 export const getRouterData = (app) => {
   const routerConfig = {
     '/': {
-      component: dynamicWrapper(app, [], () => import('../layouts/BasicLayout')),
+      component: dynamicWrapper(app, ['user'], () => import('../layouts/BasicLayout')),
     },
     '/home': {
       component: dynamicWrapper(app, [], () => import('../routes/IndexPage')),
@@ -91,6 +91,12 @@ export const getRouterData = (app) => {
     },
     '/point_list': {
       component: dynamicWrapper(app, ['point'], () => import('../routes/Point/survey/pointList')),
+    },
+    '/ranking/:id': {
+      component: dynamicWrapper(app, ['ranking'], () => import('../routes/Point/ranking/rankingList')),
+    },
+    '/ranking_group': {
+      component: dynamicWrapper(app, ['ranking'], () => import('../routes/Point/ranking/rankingGroup')),
     },
     '/testView2/:key/:type': {
       component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/test/SelPerson')),

@@ -247,3 +247,9 @@ export function makerFilters(params) {
     filters: newFilters,
   };
 }
+
+export function userStorage(key) {
+  const info = localStorage[key];
+  const newInfo = JSON.parse(info === undefined ? '{}' : info);
+  return newInfo;
+}

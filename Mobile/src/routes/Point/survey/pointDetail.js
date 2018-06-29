@@ -75,7 +75,11 @@ export default class PointDetail extends React.Component {
                 <Flex.Item>
                   <div>
                     <div className={style.point_a}>A分</div>
-                    <div className={style.point_a_value}>{detail.point_a}</div>
+                    <div
+                      className={[style.point_a_value, detail.point_a > 0 ? style.success : style.error].join(' ')}
+                    >
+                      {detail.point_a}
+                    </div>
                   </div>
                 </Flex.Item>
                 <Flex.Item>
@@ -86,7 +90,7 @@ export default class PointDetail extends React.Component {
                     B分
                     </div>
                     <div
-                      className={style.point_b_value}
+                      className={[style.point_b_value, detail.point_b > 0 ? style.success : style.error].join(' ')}
                     >
                       {detail.point_b}
                     </div>

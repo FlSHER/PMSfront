@@ -11,6 +11,8 @@ import {
   buckleState,
   auditFinishedLabel,
 } from '../../../utils/convert.js';
+import { userStorage } from '../../../utils/util';
+
 import { ListFilter, CheckBoxs, ListSort, StateTabs, Nothing } from '../../../components/index';
 import style from '../index.less';
 
@@ -20,11 +22,10 @@ const sortList = [
   { name: '时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
 const auditStates = [
-  { name: '全部', value: 'all' },
   { name: '我参与的', value: 'participant' },
   { name: '我记录的', value: 'recorded' },
-  { name: '我审核的', value: 'approved' },
   { name: '抄送我的', value: 'addressee' },
+  { name: '我审核的', value: 'approved' },
 ];
 
 const dealtOption = [
@@ -32,7 +33,7 @@ const dealtOption = [
   { name: '已驳回', value: -1 },
 ];
 const stateOption = [
-  { name: '已通过', value: 1 },
+  { name: '已通过', value: 2 },
   { name: '已驳回', value: -1 },
   { name: '审核中', value: 0 },
   { name: '已撤回', value: -2 },
@@ -47,32 +48,30 @@ const procesingOption = [
 export default class BuckleList extends React.Component {
   state = {
     filter: {// 筛选结果
-      point: 'point_a',
-      range: { min: 0, max: 2000 },
-      time: {
-        year: '',
-        month: {
-          min: 1, max: 12,
-        },
-      },
-
+      approveType: [],
+      eventState: '',
     },
     modal: {// 模态框
       filterModal: false,
       sortModal: false,
     },
     sortItem: { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
-    checkState: { name: '全部', value: 'all' },
+    checkState: { name: '我参与的', value: 'participant' },
   }
   componentWillMount() {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'buckle/getLogsList',
-      payload: {
-        pagesize: 10,
-        type: 'all',
-        page: 1,
-      },
+    const newInfo = userStorage('userInfo');
+    this.setState({
+      userInfo: newInfo,
+    }, () => {
+      dispatch({
+        type: 'buckle/getLogsList',
+        payload: {
+          pagesize: 10,
+          type: 'participant',
+          page: 1,
+        },
+      });
     });
   }
   onPageChange = () => {
@@ -113,16 +112,22 @@ export default class BuckleList extends React.Component {
     this.setNewState('modal', newModal);
   }
   onResetForm = () => {
-    this.setNewState('filter',
-      {
-        point: '',
-        range: { min: 0, max: 2000 },
-        time: {
-          year: '',
-          month: {
-            min: 1, max: 12,
+    const { checkState, sortItem } = this.state;
+    const { dispatch } = this.props;
+    this.setState(
+      { filter: {// 筛选结果
+        approveType: [],
+        eventState: '',
+      } }, () => {
+        dispatch({
+          type: 'buckle/getLogsList',
+          payload: {
+            pagesize: 10,
+            type: checkState.value,
+            page: 1,
+            sort: sortItem.value,
           },
-        },
+        });
       });
   }
   onFilterOk = () => {
@@ -157,19 +162,24 @@ export default class BuckleList extends React.Component {
   }
 
   dealFilter = () => {
-    const { filter } = this.state;
-    const { userInfo } = this.props;
+    const { filter, checkState, userInfo } = this.state;
     const { approveType, eventState } = filter;
     const search = {};
-    if (!(approveType.length === procesingOption.length) && approveType.length) { // 如果不是全选
-      const appType = approveType[0];
-      search[appType] = userInfo.staff_sn;
-      if (appType === 'first_approver_sn') {
-        search.status_id = eventState === 1 ? 1 : eventState;
+
+    if (checkState.value === 'approved') { // 审核列表
+      if (!(approveType.length === procesingOption.length)
+      && approveType.length) { // 如果type为审核中不是全选
+        const appType = approveType[0];
+        search[appType] = userInfo.staff_sn;
+        if (appType === 'first_approver_sn') {
+          search.status_id = eventState === 1 ? 1 : eventState;
+        }
+        if (appType === 'final_approver_sn') {
+          search.status_id = eventState === 1 ? 2 : eventState;
+        }
       }
-      if (appType === 'final_approver_sn') {
-        search.status_id = eventState === 1 ? 2 : eventState;
-      }
+    } else {
+      search.status_id = eventState === 0 ? { in: [0, 1] } : eventState;
     }
     return search;
   }

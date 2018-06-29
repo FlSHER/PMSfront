@@ -13,6 +13,7 @@ import {
   buckleState,
   auditFinishedLabel,
 } from '../../../utils/convert.js';
+import { userStorage } from '../../../utils/util';
 
 import { ListFilter, CheckBoxs, ListSort, StateTabs, Nothing } from '../../../components/index';
 import style from '../index.less';
@@ -35,9 +36,8 @@ const procesingOption = [
   { name: '初审', value: 'first_approver_sn' },
   { name: '终审', value: 'final_approver_sn' },
 ];
-@connect(({ buckle, oauth }) => ({
+@connect(({ buckle }) => ({
   auditList: buckle.auditList,
-  userInfo: oauth.userInfo,
 }))
 export default class AuditList extends React.Component {
   state = {
@@ -57,13 +57,18 @@ export default class AuditList extends React.Component {
   componentWillMount() {
     const { dispatch } = this.props;
     const { checkState } = this.state;
-    dispatch({
-      type: 'buckle/getAuditList',
-      payload: {
-        pagesize: 10,
-        page: 1,
-        type: checkState.value,
-      },
+    const newInfo = userStorage('userInfo');
+    this.setState({
+      userInfo: newInfo,
+    }, () => {
+      dispatch({
+        type: 'buckle/getAuditList',
+        payload: {
+          pagesize: 10,
+          page: 1,
+          type: checkState.value,
+        },
+      });
     });
   }
   onPageChange = () => {
@@ -104,7 +109,19 @@ export default class AuditList extends React.Component {
     this.setNewState('modal', newModal);
   }
   onResetForm = () => {
-    this.setNewState('filter', {});
+    const { checkState, sortItem } = this.state;
+    const { dispatch } = this.props;
+    this.setState({ filter: {} }, () => {
+      dispatch({
+        type: 'buckle/getAuditList',
+        payload: {
+          pagesize: 10,
+          type: checkState.value,
+          page: 1,
+          sort: sortItem.value,
+        },
+      });
+    });
   }
 
   onFilterOk = () => {
@@ -136,7 +153,7 @@ export default class AuditList extends React.Component {
   }
   dealFilter = () => {
     const { filter } = this.state;
-    const { userInfo } = this.props;
+    const { userInfo } = this.state;
     const { approveType, eventState } = filter;
     const search = {};
     if (!(approveType.length === procesingOption.length) && approveType.length) { // 如果不是全选
@@ -271,8 +288,8 @@ export default class AuditList extends React.Component {
     return labelArr;
   }
   render() {
-    const { auditList, userInfo } = this.props;
-    const { checkState, filter, el, shortModal } = this.state;
+    const { auditList } = this.props;
+    const { checkState, filter, el, shortModal, userInfo } = this.state;
     return (
       <Flex direction="column" style={{ height: '100%' }}>
         <Flex.Item className={style.header}>

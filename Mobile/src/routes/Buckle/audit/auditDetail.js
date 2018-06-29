@@ -5,9 +5,8 @@ import {
 import { List, Flex, WingBlank, WhiteSpace, Button } from 'antd-mobile';
 import { PersonIcon } from '../../../components/index.js';
 import { Label } from '../../../components/General/index';
-
 import { buckleState } from '../../../utils/convert.js';
-import { analyzePath } from '../../../utils/util';
+import { analyzePath, userStorage } from '../../../utils/util';
 import style from '../index.less';
 import styles from '../../common.less';
 
@@ -25,19 +24,21 @@ const person = [
     name: '初审人',
   },
 ];
-@connect(({ buckle, oauth }) => ({
+@connect(({ buckle }) => ({
   detail: buckle.detail,
-  userInfo: oauth.userInfo,
 }))
 export default class AuditDetail extends React.Component {
   state = {
     eventId: '',
+    userInfo: {},
   }
   componentWillMount() {
     const { dispatch, location } = this.props;
     const eventId = analyzePath(location.pathname, 1);
+    const newInfo = userStorage('userInfo');
     this.setState({
       eventId,
+      userInfo: newInfo,
     }, () => {
       dispatch({
         type: 'buckle/getBuckleDetail',
@@ -99,7 +100,8 @@ export default class AuditDetail extends React.Component {
     );
   }
   render() {
-    const { detail, userInfo } = this.props;
+    const { detail } = this.props;
+    const { userInfo } = this.state;
     let approvers = [
       {
         sn: detail.first_approver_sn,

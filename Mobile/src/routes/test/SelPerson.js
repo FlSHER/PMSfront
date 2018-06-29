@@ -4,16 +4,15 @@ import {
 } from 'dva';
 import { SearchList } from '../../components/index';
 import { Department, Staff } from '../../common/ListView/index.js';
-import { analyzePath, unique } from '../../utils/util';
+import { analyzePath, unique, userStorage } from '../../utils/util';
 import styles from '../common.less';
 import style from './index.less';
-@connect(({ searchStaff, loading, oauth }) => ({
+@connect(({ searchStaff, loading }) => ({
   department: searchStaff.department,
   staff: searchStaff.staff,
   breadCrumb: searchStaff.breadCrumb,
   pageInfo: searchStaff.pageInfo,
   selectStaff: searchStaff.selectStaff,
-  userInfo: oauth.userInfo,
   loading: loading.effects['searchStaff/fetchSelfDepStaff'],
 }))
 export default class SelPerson extends Component {
@@ -98,10 +97,11 @@ export default class SelPerson extends Component {
     });
   }
   fetchSelfDepStaff =() => {
-    const { dispatch, userInfo } = this.props;
+    const { dispatch } = this.props;
+    const user = userStorage('userInfo');
     dispatch({
       type: 'searchStaff/fetchSelfDepStaff',
-      payload: { departmentId: userInfo.department_id },
+      payload: { departmentId: user.department_id },
     });
   }
 

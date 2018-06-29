@@ -1,21 +1,41 @@
 import React, { Component } from 'react';
-// import { List } from 'antd-mobile';
+// import { Flex } from 'antd-mobile';
+import moment from 'moment';
 import ListView from '../../routes/Point/ListView';
+import { convertPointSource } from '../../utils/convert.js';
 import style from './index.less';
 // const { Item } = List;
 @ListView
 export default class Point extends Component {
   render() {
-    const { handleClick } = this.props;
+    const { handleClick, value } = this.props;
     return (
-      <div className={style.event_item}>
-        <div className={style.main_info} onClick={() => handleClick()}>
+      <div
+        className={style.event_item}
+        onClick={() => handleClick(value)}
+      >
+        <div
+          className={style.main_info}
+          style={{ marginRight: 0 }}
+        >
           <div className={style.event_title}>
-            <span>事件标题</span>
+            <span>{value.title}</span>
           </div>
-          <div className={style.time}>积分生效时间</div>
-          <div className={style.desc}>
-        今天天气好晴朗，处处好风光。可是就是有时冷，有时热，温度变化多端，让人感到烦恼
+          <div className={style.time}>
+            <span className={[style.point_title].join(' ')} style={{ marginRight: '4.27rem' }}>A分</span>
+            <span className={[style.point_title].join(' ')}>B分</span>
+          </div>
+          <div className={style.point_change}>
+            <span
+              style={{ marginRight: '4.27rem' }}
+              className={[style.point_value, value.point_a < 0 ? style.error : style.success].join(' ')}
+            >{value.point_a}
+            </span>
+            <span className={[style.point_value, value.point_b < 0 ? style.error : style.success].join(' ')}>{value.point_b}</span>
+          </div>
+          <div className={style.time}>
+            <span style={{ marginRight: '1.6rem' }}>来源：{convertPointSource(value.source_id)} </span>
+            <span>生效时间：{moment(new Date(value.created_at)).format('YYYY-MM-DD HH:MM')}</span>
           </div>
         </div>
       </div>

@@ -58,16 +58,16 @@ class ListFilter extends Component {
             >
               <div className={style.footer_opt}>
                 <a
-                  onClick={() => () => onResetForm}
+                  onClick={onResetForm}
                   style={{ color: 'rgb(24,116,208)' }}
                 >
                   重置
                 </a>
                 <a
                   style={{ color: '#fff' }}
-                  onClick={() => {
-                    onOk(filterKey);
-                  }}
+                  onClick={() =>
+                    onOk(filterKey)
+                  }
                 >确定
                 </a>
               </div>

@@ -4,13 +4,10 @@ import {
 } from 'dva';
 import moment from 'moment';
 import { WingBlank, Flex, InputItem, DatePicker } from 'antd-mobile';
-// import defaultAvatar from '../../../assets/default_avatar.png';
-// import style from '../index.less';
-// import styles from '../../common.less';
+import nothing from '../../../assets/nothing.png';
 import { Point } from '../../../common/ListView/index';
-import { ListFilter, CheckBoxs, ListSort } from '../../../components/index';
+import { ListFilter, CheckBoxs, ListSort, Nothing } from '../../../components/index';
 import style from '../index.less';
-// import shortcut from '../../../assets/shortcuts.png';
 
 const sortList = [
   { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
@@ -64,7 +61,7 @@ export default class PointList extends React.Component {
         },
       },
       source_id: [],
-      date: {
+      changed_at: {
         min: '',
         max: '',
       },
@@ -80,14 +77,14 @@ export default class PointList extends React.Component {
     sortItem: { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
   }
   componentWillMount() {
-    // const { dispatch } = this.props;
-    // dispatch({
-    //   type: 'point/getPointLog',
-    //   payload: {
-    //     pagesize: 10,
-    //     page: 1,
-    //   },
-    // });
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'point/getPointLog',
+      payload: {
+        pagesize: 10,
+        page: 1,
+      },
+    });
   }
   onClose = key => () => {
     this.setState({
@@ -111,13 +108,49 @@ export default class PointList extends React.Component {
     this.setNewState('modal', newModal);
   }
   onResetForm = () => {
-    this.setNewState('filter', {});
+    const { sortItem } = this.state;
+    const { dispatch } = this.props;
+    this.setState(
+      { filter: {
+        point_a: {
+          selectd: 'point_a',
+          range: {
+            min: '',
+            max: '',
+          },
+        },
+        point_b: {
+          selectd: 'point_b',
+          range: {
+            min: '',
+            max: '',
+          },
+        },
+        source_id: [],
+        changed_at: {
+          min: '',
+          max: '',
+        },
+        created_at: {
+          min: '',
+          max: '',
+        },
+      } }, () => {
+        dispatch({
+          type: 'point/getPointLog',
+          payload: {
+            pagesize: 10,
+            page: 1,
+            sort: sortItem.value,
+          },
+        });
+      });
   }
   onFilterOk = () => {
     const { sortItem } = this.state;
     const { dispatch } = this.props;
     dispatch({
-      type: 'buckle/getLogsList',
+      type: 'point/getPointLog',
       payload: {
         pagesize: 10,
         page: 1,
@@ -126,6 +159,19 @@ export default class PointList extends React.Component {
       },
     });
     this.onCancel('', 'filterModal');
+  }
+  onPageChange = () => {
+    const { dispatch, pointList } = this.props;
+    const { sortItem } = this.state;
+    dispatch({
+      type: 'point/getPointLog',
+      payload: {
+        pagesize: 10,
+        sort: sortItem.value,
+        page: pointList.page + 1,
+        filter: this.dealFilter(),
+      },
+    });
   }
   setNewState = (key, newValue) => {
     this.setState({
@@ -141,11 +187,12 @@ export default class PointList extends React.Component {
         if (key === 'point_a' || key === 'point_b') {
           search[key] = filter[key].range;
         }
-        if (key === 'source_id') {
+        if (Array.isArray(filter[key]) && filter[key].length) {
           search[key] = {
-            in: filter[key] };
+            in: filter[key],
+          };
         }
-        if (key === 'date' || key === 'created_at') {
+        if (key === 'changed_at' || key === 'created_at') {
           search[key] = filter[key];
         }
       }
@@ -167,6 +214,7 @@ export default class PointList extends React.Component {
           pagesize: 10,
           page: 1,
           sort: item.value,
+          filters: this.dealFilter(),
         },
       });
     });
@@ -180,7 +228,7 @@ export default class PointList extends React.Component {
   selFilter = (feild) => { // 筛选
     const { modal } = this.state;
     const newModal = { ...modal };
-    newModal[feild] = true;
+    newModal[feild] = !newModal[feild];
     this.setNewState('modal', newModal);
   }
 
@@ -194,7 +242,7 @@ export default class PointList extends React.Component {
   timeChange = (date, key, range) => {
     const { filter } = this.state;
     const newFilter = { ...filter };
-    newFilter[key][range] = date;
+    newFilter[key][range] = moment(date).format('YYYY-MM-DD');
     this.setNewState('filter', newFilter);
   }
   doMultiple = (i, v, key) => {
@@ -213,8 +261,8 @@ export default class PointList extends React.Component {
   tabChange = (item) => {
     this.setNewState('checkState', item);
   }
-  toLookDetail = () => {
-    this.props.history.push('/point_detail/1');
+  toLookDetail = (item) => {
+    this.props.history.push(`/point_detail/${item.id}`);
   }
   rangeChange = (v, key, range) => {
     if (v && v !== '-' && !/^-?\d+$/.test(v)) {
@@ -265,7 +313,7 @@ export default class PointList extends React.Component {
                 position: 'fixed',
                 zIndex: 99,
                 left: 0,
-                top: '2.3733333rem',
+                top: '1.17333rem',
                 bottom: 0,
                 right: 0,
                 background: 'rgba(0, 0, 0, 0.1)',
@@ -289,16 +337,22 @@ export default class PointList extends React.Component {
           </div>
         </Flex.Item>
         <Flex.Item className={style.content}>
-          <WingBlank>
-            <Point
-              dataSource={data || []}
-              handleClick={this.toLookDetail}
-              onRefresh={this.onRefresh}
-              onPageChange={this.onPageChange}
-              page={page || 1}
-              totalpage={totalpage || 10}
-            />
-          </WingBlank>
+          {data && !data.length ? (
+            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
+              <Nothing src={nothing} />
+            </div>
+          ) : (
+            <WingBlank>
+              <Point
+                dataSource={data || []}
+                handleClick={this.toLookDetail}
+                onRefresh={this.onRefresh}
+                onPageChange={this.onPageChange}
+                page={page || 1}
+                totalpage={totalpage || 10}
+              />
+            </WingBlank>
+            )}
         </Flex.Item>
         <ListFilter
           onOk={this.onFilterOk}
@@ -381,18 +435,18 @@ export default class PointList extends React.Component {
                 <DatePicker
                   mode="date"
                   format="YYYY-MM-DD"
-                  onChange={date => this.timeChange(date, 'date', 'min')}
+                  onChange={date => this.timeChange(date, 'changed_at', 'min')}
                 >
-                  <div className={style.some_time}>{filter.date.min ? moment(filter.date.min).format('YYYY-MM-DD') : ''}</div>
+                  <div className={style.some_time}>{filter.changed_at.min}</div>
                 </DatePicker>
               </Flex.Item>
               <Flex.Item>
                 <DatePicker
                   mode="date"
                   format="YYYY-MM-DD"
-                  onChange={date => this.timeChange(date, 'date', 'max')}
+                  onChange={date => this.timeChange(date, 'changed_at', 'max')}
                 >
-                  <div className={style.some_time}>{filter.date.max ? moment(filter.date.max).format('YYYY-MM-DD') : ''}</div>
+                  <div className={style.some_time}>{filter.changed_at.max}</div>
                 </DatePicker>
               </Flex.Item>
             </Flex>
@@ -409,7 +463,7 @@ export default class PointList extends React.Component {
                   format="YYYY-MM-DD"
                   onChange={date => this.timeChange(date, 'created_at', 'min')}
                 >
-                  <div className={style.some_time}>{filter.created_at.min ? moment(filter.created_at.min).format('YYYY-MM-DD') : ''}</div>
+                  <div className={style.some_time}>{filter.created_at.min}</div>
                 </DatePicker>
               </Flex.Item>
               <Flex.Item>
@@ -418,7 +472,7 @@ export default class PointList extends React.Component {
                   format="YYYY-MM-DD"
                   onChange={date => this.timeChange(date, 'created_at', 'max')}
                 >
-                  <div className={style.some_time}>{filter.created_at.max ? moment(filter.created_at.max).format('YYYY-MM-DD') : ''}</div>
+                  <div className={style.some_time}>{filter.created_at.max}</div>
                 </DatePicker>
               </Flex.Item>
             </Flex>

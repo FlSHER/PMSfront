@@ -10518,6 +10518,8 @@ const proxy = {
 };
 
 export default !noProxy ? {
+  'GET /api/staff/authority-groups': 'http://PMS.test/api/staff/authority-groups',
+  'GET /api/current-user(.*)': 'http://192.168.20.238:8003/api/current-user',
   'GET /api/departments(.*)': 'http://192.168.20.238:8003/api/departments',
   'GET /api/staff(.*)': 'http://192.168.20.238:8003/api/staff',
   // 'GET /api/(.*)': 'http://192.168.20.238:8007/api/',
@@ -10529,6 +10531,6 @@ export default !noProxy ? {
   'POST /api/(.*)': 'http://PMS.test/api/',
   'PUT /api/(.*)': 'http://PMS.test/api/',
   'DELETE /api/(.*)': 'http://PMS.test/api/',
-  // 'POST /oauth/(.*)': 'http://localhost.oaupdate.org/oauth/',
+  'POST /oauth/(.*)': 'http://localhost.oaupdate.org/oauth/',
   'POST /oauth/(.*)': 'http://192.168.20.238:8003/oauth/'
 } : delay(proxy, 100);

@@ -1,28 +1,26 @@
 import { Toast } from 'antd-mobile';
 import {
-  getPointDetail,
-  getPointLog,
-} from '../services/point';
+  getRanking,
+  getAuthorityGroup,
+} from '../services/ranking';
 import defaultReducers from './reducers/default';
 import { makerFilters } from '../utils/util.js';
 
 
 export default {
-  namespace: 'point',
+  namespace: 'ranking',
   state: {
-    pointDetails: {},
-    pointList: {},
+    group: [],
+    ranking: {},
   },
   effects: {
-    *getPointDetail({ payload }, { call, put }) {
-      const { id } = payload;
-      const response = yield call(getPointDetail, id);
+    *getAuthorityGroup(_, { call, put }) {
+      const response = yield call(getAuthorityGroup);
       if (response && !response.error) {
         yield put({
           type: 'save',
           payload: {
-            store: 'point',
-            id,
+            store: 'group',
             data: response,
           },
         });
@@ -45,6 +43,23 @@ export default {
         Toast.fail(response.message);
       }
     },
+
+    *getRanking({ payload }, { call, put }) {
+      const newPayload = makerFilters(payload);
+      const response = yield call(getRanking, newPayload);
+      if (response && !response.error) {
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'ranking',
+            data: response,
+          },
+        });
+      } else {
+        Toast.fail(response.message);
+      }
+    },
+
   },
   reducers: {
     ...defaultReducers,
