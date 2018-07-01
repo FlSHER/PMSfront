@@ -63,10 +63,11 @@ export default {
     *recordBuckle({ payload }, { call }) {
       const response = yield call(recordBuckle, payload.data);
       if (response && !response.error) {
-        Toast.success(response.message);
+        // Toast.success(response.message, 1, () => {
         if (payload.cb) {
           payload.cb();
         }
+        // });
       }
     },
     *getAuditList({ payload }, { call, put }) {

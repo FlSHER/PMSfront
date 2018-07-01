@@ -12,6 +12,7 @@ import styles from '../common.less';
   evtName: event.evtName,
   breadCrumb: event.breadCrumb,
   loading: loading.effects['event/getEvent'],
+  loadingName: loading.effects['event/getEventName'],
   selectStaff: searchStaff.selectStaff,
   info: buckle.info,
 }))
@@ -89,11 +90,11 @@ export default class SelEvent extends Component {
       newSelectStaff.final = [
         {
           staff_sn: result.final_approver_sn,
-          realname: result.final_approver_name,
+          staff_name: result.final_approver_name,
         },
       ];
     }
-    const addressees = [...result.default_cc_addressees];
+    const addressees = [...(result.default_cc_addressees || [])];
     const newAddress = addressees.map((its) => {
       const obj = { ...its };
       obj.realname = its.staff_name;
@@ -187,9 +188,13 @@ export default class SelEvent extends Component {
 
   render() {
     const { eventList, type, selected } = this.state;
-    const { breadCrumb, evtName } = this.props;
+    const { breadCrumb, evtName, loading, loadingName, evtAll } = this.props;
+    const isLoading = loading || loadingName;
     return (
-      <div className={styles.con}>
+      <div
+        className={styles.con}
+        style={{ ...(isLoading ? { display: 'none' } : null) }}
+      >
         <Bread
           bread={breadCrumb}
           handleBread={this.selEvent}
@@ -199,14 +204,17 @@ export default class SelEvent extends Component {
           fetchDataSource={this.selEvent}
           name="name"
         />
-        <EventName
-          name="name"
-          dispatch={this.props.dispatch}
-          multiple={type !== '1'}
-          selected={selected.data}
-          dataSource={evtName || []}
-          onChange={this.getSelectResult}
-        />
+        {evtAll && evtAll.length && !eventList.length ? (
+          <EventName
+            name="name"
+            dispatch={this.props.dispatch}
+            multiple={type !== '1'}
+            selected={selected.data}
+            dataSource={evtName || []}
+            onChange={this.getSelectResult}
+          />
+        ) : null}
+
       </div>
     );
   }

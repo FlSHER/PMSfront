@@ -5,7 +5,7 @@ import {
 import { WingBlank, WhiteSpace, Flex, List, DatePicker } from 'antd-mobile';
 import moment from 'moment';
 import nothing from '../../../assets/nothing.png';
-import { userStorage, getUrlParams } from '../../../utils/util';
+import { userStorage, getUrlParams, scrollToAnchor } from '../../../utils/util';
 import { ListSort, Nothing } from '../../../components/index';
 import style from '../index.less';
 
@@ -236,10 +236,10 @@ export default class PointRanking extends React.Component {
               </Flex.Item>
               <Flex.Item>
                 <DatePicker
-                  value={new Date(params.datetime)}
-                  mode="date"
+                  value={moment(params.datetime).isValid() ? new Date(params.datetime) : '请选择时间'}
+                  mode="month"
                   onChange={(date) => {
-                    const time = moment(date).format('YYYY-MM-DD');
+                    const time = moment(date).format('YYYY-MM');
                     if (time !== this.urlParams.datetime) {
                       this.sortReasult({ datetime: time });
                     }
@@ -291,11 +291,12 @@ export default class PointRanking extends React.Component {
           <WingBlank size="lg">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p style={{ padding: '0.26667rem 0.48rem', fontSize: '14px' }}>我的排名</p>
-              <a
+              <span
                 style={{ fontSize: '12px', color: 'rgb(24, 116, 208)' }}
-                href="#my"
+                // href="#my"
+                onClick={() => scrollToAnchor('my')}
               >在列表中查看
-              </a>
+              </span>
             </div>
             <Flex
               justify="between"

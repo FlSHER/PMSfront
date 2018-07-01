@@ -98,6 +98,9 @@ export const getRouterData = (app) => {
     '/ranking_group': {
       component: dynamicWrapper(app, ['ranking'], () => import('../routes/Point/ranking/rankingGroup')),
     },
+    '/my': {
+      component: dynamicWrapper(app, [], () => import('../routes/My/my')),
+    },
     '/testView2/:key/:type': {
       component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/test/SelPerson')),
     },

@@ -7,6 +7,76 @@ export default function ListView(ListItem) {
     state={
       refreshing: false,
     }
+    // 返回角度
+    GetSlideAngle = (dx, dy) => {
+      // Math.atan2返回弧度值
+      return (Math.atan2(dy, dx) * 180) / Math.PI;
+    }
+    // 根据起点和终点返回方向 1：向上，2：向下，3：向左，4：向右,0：未滑动
+    GetSlideDirection = (sX, sY, endX, endY) => {
+      const dy = sY - endY;
+      const dx = endX - sX;
+      let result = 0;
+      // 如果滑动距离太短
+      // if (Math.abs(dx) < 2 && Math.abs(dy) < 16) {
+      //   return result;
+      // }
+      // 距离小于16，
+      if (((dx * dx) + (dy * dy)) < 256) {
+        return result;
+      }
+      // 判断方向
+      const angle = this.GetSlideAngle(dx, dy);
+      if (angle >= -45 && angle < 45) {
+        result = 4;
+      } else if (angle >= 45 && angle < 135) {
+        result = 1;
+      } else if (angle >= -135 && angle < -45) {
+        result = 2;
+      } else if ((angle >= 135 && angle <= 180) || (angle >= -180 && angle < -135)) {
+        result = 3;
+      }
+
+      return result;
+    }
+    doLoadMore = (str) => {
+      const { page, totalpage, onPageChange } = this.props;
+      // console.log(page, totalpage);
+      if (page === totalpage) {
+        return false;
+      } else if (str === 'up') {
+        onPageChange();
+      }
+    }
+    handleStart = (ev) => {
+      startX = ev.touches[0].pageX;
+      startY = ev.touches[0].pageY;
+    }
+
+    handleEnd = (ev) => {
+      const self = this;
+      const endX = ev.changedTouches[0].pageX;
+      const endY = ev.changedTouches[0].pageY;
+      const direction = this.GetSlideDirection(startX, startY, endX, endY);
+      switch (direction) {
+        case 0:
+          self.doLoadMore('no');
+          break;
+        case 1:
+          self.doLoadMore('up');
+          break;
+        case 2:
+          self.doLoadMore('down');
+          break;
+        case 3:
+          self.doLoadMore('left');
+          break;
+        case 4:
+          self.doLoadMore('right');
+          break;
+        default:
+      }
+    }
     makeListItemProps = (item) => {
       const response = {
         ...this.props,

@@ -5,6 +5,9 @@ import config from '../configs/config.js';
 
 export function env() {
   const host = window.location.hostname;
+  if (host.indexOf(config.productitionDomain) >= 0) {
+    return 'production';
+  } else
   if (host.indexOf(config.develepDomain) >= 0) {
     return 'development';
   } else if (host.indexOf(config.testingDomain) >= 0) {
@@ -284,4 +287,13 @@ export function getUrlParams(url) {
     }
   }
   return obj;
+}
+
+export function scrollToAnchor(anchorName) {
+  if (anchorName) {
+  // 找到锚点
+    const anchorElement = document.getElementById(anchorName);
+    // 如果对应id的锚点存在，就跳转到锚点
+    if (anchorElement) { anchorElement.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+  }
 }

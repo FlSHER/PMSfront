@@ -43,17 +43,20 @@ export default class SearchList extends Component {
     return (
       <div className={style.con}>
         <div className={style.header}>
-          <Search
-            value={this.state.value}
-            placeholder="请输入员工姓名"
-            showCancelButton={this.state.value}
-            onChange={this.onChange}
-            onCancel={
-              this.state.value ? this.onCancel :
-              () => {}
-            }
-            onSubmit={this.onSubmit}
-          />
+          {isFinal ? null : (
+            <Search
+              value={this.state.value}
+              placeholder="请输入员工姓名"
+              showCancelButton={this.state.value}
+              onChange={this.onChange}
+              onCancel={
+            this.state.value ? this.onCancel :
+            () => {}
+          }
+              onSubmit={this.onSubmit}
+            />
+)}
+
           {this.state.value ? null : (
             <Bread
               bread={bread}

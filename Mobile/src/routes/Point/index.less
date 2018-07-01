@@ -285,13 +285,22 @@
 }
 
 :global {
-  .am-flexbox .am-flexbox-item {
-    margin-left: 0;
-  }
+  // .am-flexbox .am-flexbox-item {
+  //   margin-left: 0;
+  // }
   html:not([data-scale]) .am-list-body::before {
     background-color: transparent;
   }
   html:not([data-scale]) .am-list-body::after {
+    background-color: transparent;
+  }
+  @media (-webkit-min-device-pixel-ratio: 2),
+    (min-resolution: 2dppx) {
+    html:not([data-scale]) .am-list-item:not(:last-child) .am-list-line::after {
+      background-color: transparent;
+    }
+  }
+  html:not([data-scale]) .am-list-item:not(:last-child) .am-list-line::after {
     background-color: transparent;
   }
 }

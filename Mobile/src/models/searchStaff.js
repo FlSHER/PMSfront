@@ -64,6 +64,20 @@ export default {
     },
     *fetchSelfDepStaff({ payload }, { put, call }) { // 自己部门员工列表
       const { departmentId } = payload;
+      yield put({
+        type: 'save',
+        payload: {
+          store: 'breadCrumb',
+          data: [],
+        },
+      });
+      yield put({
+        type: 'save',
+        payload: {
+          store: 'department',
+          data: [],
+        },
+      });
       const response = yield call(getStaff, departmentId);
       yield put({
         type: 'save',

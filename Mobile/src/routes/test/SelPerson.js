@@ -33,12 +33,13 @@ export default class SelPerson extends Component {
     const type = analyzePath(this.props.location.pathname, 2);
     if (key === 'final') { // 终审人
       this.getFinalStaff();
+    } else {
+      this.fetchSelfDepStaff();
     }
     this.setState({
       key,
       type,
     });
-    this.fetchSelfDepStaff();
   }
 
 
@@ -217,6 +218,7 @@ export default class SelPerson extends Component {
               {staff.length ? (
                 <Staff
                   link=""
+                  isFinal={this.state.key === 'final'}
                   name={this.state.key === 'final' ? 'staff_name' : 'realname'}
                   page={pageInfo.page}
                   totalpage={pageInfo.totalpage}

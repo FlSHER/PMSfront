@@ -46,11 +46,9 @@ export default function ListView(ListItem) {
     }
     doLoadMore = (str) => {
       const { page, totalpage, onPageChange } = this.props;
-      // console.log(page, totalpage);
       if (page === totalpage) {
         return false;
-      }
-      if (str === 'up') {
+      } else if (str === 'up') {
         onPageChange();
       }
     }

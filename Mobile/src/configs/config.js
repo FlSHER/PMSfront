@@ -1,6 +1,7 @@
 module.exports = {
-  develepDomain: '192.168.20.238:8003', // 生产环境域名
+  develepDomain: 'localhost', // 生产环境域名
   testingDomain: 'localhost', // 测试环境域名
+  productitionDomain: 'localhost',
   openPages: ['/home', '/approvelist'], // 单页路径（显示footer的页面）
   apiPrefix: { // 不同环境api地址前缀
     production: 'http://192.168.20.238:8006',
@@ -14,17 +15,17 @@ module.exports = {
     development: 'http://localhost:8000/',
   },
   OA_PATH: { // 不同环境本项目访问地址
-    production: 'http://192.168.20.238:8003',
+    production: 'http://of.xigemall.com',
     testing: 'http://192.168.20.238:8003',
     development: 'http://192.168.20.238:8003',
   },
   OA_CLIENT_ID: {
-    production: '7',
+    production: '8',
     testing: '7',
     development: '7',
   },
   OA_CLIENT_SECRET: {
-    production: 'lcBIS0l1eW038wqUgDf6qsNyUl3L69Ck8YxHXKGi',
+    production: 'lmL6z770WU4MkCMKYGPpSh37XcJ1Q83zcsBeQMxr',
     testing: 'lcBIS0l1eW038wqUgDf6qsNyUl3L69Ck8YxHXKGh',
     development: 'lcBIS0l1eW038wqUgDf6qsNyUl3L69Ck8YxHXKGh',
   },

@@ -6,7 +6,7 @@ import {
   withRouter,
 } from 'dva/router';
 import { FooterBar } from '../components/Footer';
-import Loader from '../components/General/Loader/Loader';
+// import Loader from '../components/General/Loader/Loader';
 import {
   openPages,
 } from '../configs/config';
@@ -49,7 +49,7 @@ export default class App extends React.Component {
 
   render() {
     const {
-      loading,
+      // loading,
       children,
       location,
     } = this.props;
@@ -58,6 +58,8 @@ export default class App extends React.Component {
     } = location;
 
     pathname = pathname.startsWith('/') ? pathname : `/ ${pathname} `;
+    // <Loader fullScreen spinning={loading.global} />
+
     return (
       <React.Fragment>
         <div key={pathname}>
@@ -71,7 +73,6 @@ export default class App extends React.Component {
             </div>
           </QueueAnim>
         </div>
-        <Loader fullScreen spinning={loading.global} />
         {
           openPages && openPages.includes(pathname) ? (
             <FooterBar

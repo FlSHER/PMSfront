@@ -155,51 +155,66 @@ export default class BuckleRecord extends React.Component {
     this.saveAllData();
     history.push(`/testView2/${name}/${type}`);
   }
+   clearNoNum = (value) => {
+     let newValue = value.replace(/[^\d.-]/g, ''); // 清除“数字”和“.”以外的字符
+     newValue = newValue.replace(/\.{2,}/g, '.'); // 只保留第一个. 清除多余的
+     newValue = newValue.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.');
+     newValue = newValue.replace(/^(-)*(\d+)\.(\d\d).*$/, '$1$2.$3');// 只能输入两个小数
+     if (newValue.indexOf('.') < 0 && newValue !== '') { // 以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+       newValue = parseFloat(newValue);
+     }
+     return newValue;
+   }
+   savePointData = (newPoint, kind, el) => {
+     const { optAll, info } = this.state;
+     const newOpt = { ...optAll };
+     const tempKey = kind === 'point_a' ?
+       'pointA' : kind === 'point_b' ?
+         'pointB' : kind === 'count' ?
+           'count' : '';
+
+     if (el === undefined) {
+       newOpt[tempKey] = newPoint;
+     } else {
+       newOpt[tempKey] = '';
+     }
+     const newParticipant = info.participants.map((item) => {
+       const tmpItem = { ...item };
+       if (el === undefined) {
+         tmpItem[kind] = newPoint;
+       } else
+       if (item.staff_sn === el.staff_sn) {
+         tmpItem[kind] = newPoint;
+       }
+       return tmpItem;
+     });
+     this.setState({
+       info: { ...info, participants: newParticipant },
+       optAll: newOpt,
+     });
+   }
+
+   // 验证数字
+   validNumer= (point, kind, el) => {
+     const newPoint = 0;
+     if (point && !/^(-?\d+)(\.\d+)?$/.test(point)) {
+       this.savePointData(newPoint, kind, el);
+     }
+   }
+
   pointChange = (point, kind, el) => {
     // const { event } = this.props;
 
-    // 验证整数
-    if (point && point !== '-' && !/^-?\d+$/.test(point)) {
+    // 验证整数;
+    if (kind === 'count' && point && !/^\d+$/.test(point)) {
       return;
     }
-    // 验证分值范围
-    // const pointAMin = event.point_a_min;
-    // const pointAMax = event.point_a_max;
-    // const pointBMin = event.point_b_min;
-    // const pointBMax = event.point_b_max;
-    // const min = event[`${kind}_min`];
-    // const max = event[`${kind}_max`];
-    // if (point < min || point > max) {
-    //   // Toast.info(`${event.name}事件的${kind === 'point_a' ? 'A' : 'B'}:分必须在${min}-${max}之间`);
-    //   Toast.info(`A分范围：${event.point_a_min}-${event.point_a_max},
-    // B分范围：${event.point_b_min}-${event.point_b_max}`);
+    // if (point && point !== '-' && !/^(-?\d+)(\.\d+)?$/.test(point)) {
+    //   return;
     // }
-    const { optAll, info } = this.state;
-    const newOpt = { ...optAll };
-    const tempKey = kind === 'point_a' ?
-      'pointA' : kind === 'point_b' ?
-        'pointB' : kind === 'count' ?
-          'count' : '';
-
-    if (el === undefined) {
-      newOpt[tempKey] = point;
-    } else {
-      newOpt[tempKey] = '';
-    }
-    const newParticipant = info.participants.map((item) => {
-      const tmpItem = { ...item };
-      if (el === undefined) {
-        tmpItem[kind] = point;
-      } else
-      if (item.staff_sn === el.staff_sn) {
-        tmpItem[kind] = point;
-      }
-      return tmpItem;
-    });
-    this.setState({
-      info: { ...info, participants: newParticipant },
-      optAll: newOpt,
-    });
+    // const newPoint = this.clearNoNum(point);
+    const newPoint = point;
+    this.savePointData(newPoint, kind, el);
   }
   stateChange = (v, key) => {
     const { info } = this.state;
@@ -265,7 +280,13 @@ export default class BuckleRecord extends React.Component {
       Toast.fail(msg);
       return;
     }
-
+    const pointError = newParticipant.find(item =>
+      isNaN(item.point_a) || isNaN(item.point_b) || isNaN(item.count)
+    );
+    if (pointError) {
+      Toast.fail('请输入正确格式的数字');
+      return;
+    }
     dispatch({
       type: 'buckle/recordBuckle',
       payload: {
@@ -276,12 +297,12 @@ export default class BuckleRecord extends React.Component {
           first_approver_sn: first[0].staff_sn,
           first_approver_name: first[0].realname,
           final_approver_sn: final[0].staff_sn,
-          final_approver_name: final[0].realname,
+          final_approver_name: final[0].staff_name,
           executed_at: moment(info.executedAt).format('YYYY-MM-DD'),
           addressees: newCopy,
         },
         cb: () => {
-          history.push('/buckle_list');
+          history.replace('/buckle_list');
         },
       },
     });
@@ -311,7 +332,7 @@ export default class BuckleRecord extends React.Component {
   infoToast = () => {
     const { event } = this.props;
     if (event.id) {
-      Toast.info(`A分范围：${event.point_a_min}-${event.point_a_max},B分范围：${event.point_b_min}-${event.point_b_max}`);
+      Toast.info(`A分范围：${event.point_a_min}-${event.point_a_max}'\n'B分范围：${event.point_b_min}-${event.point_b_max}`);
     } else {
       Toast.info('请先选择事件');
     }
@@ -418,19 +439,23 @@ export default class BuckleRecord extends React.Component {
                   <Flex.Item className={style.table_item}>
                     <InputItem
                       value={pointA}
+                      // type="digit"
                       onChange={e => this.pointChange(e, 'point_a')}
+                      // onBlur={e => this.validNumer(e, 'point_a')}
                     />
                   </Flex.Item>
                   <Flex.Item className={style.table_item}>
                     <InputItem
                       value={pointB}
                       onChange={e => this.pointChange(e, 'point_b')}
+                      // onBlur={e => this.validNumer(e, 'point_b')}
                     />
                   </Flex.Item>
                   <Flex.Item className={style.table_item}>
                     <InputItem
                       value={count}
                       onChange={e => this.pointChange(e, 'count')}
+                      // onBlur={e => this.validNumer(e, 'count')}
                     />
                   </Flex.Item>
                 </Flex>
@@ -442,19 +467,25 @@ export default class BuckleRecord extends React.Component {
                       <Flex.Item className={style.table_item}>
                         <InputItem
                           value={item.point_a}
+                          // type="digit"
                           onChange={e => this.pointChange(e, 'point_a', item)}
+                          onBlur={e => this.validNumer(e, 'point_a', item)}
+
                         />
                       </Flex.Item>
                       <Flex.Item className={style.table_item}>
                         <InputItem
                           value={item.point_b}
                           onChange={e => this.pointChange(e, 'point_b', item)}
+                          onBlur={e => this.validNumer(e, 'point_b', item)}
+
                         />
                       </Flex.Item>
                       <Flex.Item className={style.table_item}>
                         <InputItem
                           value={item.count}
                           onChange={e => this.pointChange(e, 'count', item)}
+                          // onBlur={e => this.validNumer(e, 'count', item)}
                         />
                       </Flex.Item>
                     </Flex>);
@@ -502,7 +533,7 @@ export default class BuckleRecord extends React.Component {
                     <PersonIcon
                       key={idx}
                       value={item}
-                      nameKey="realname"
+                      nameKey="staff_name"
                       showNum={2}
                       handleClick={event.final_approver_locked === 1 ? null : () => this.changePerson('final', 1)}
                       handleDelClick={event.final_approver_locked === 1 ? null : (e, v) => this.remove(e, v, 'final')}

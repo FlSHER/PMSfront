@@ -11,6 +11,8 @@
     "jasmine": true
   },
   "rules": {
+    	
+    "no-useless-escape":[2],
     "no-debugger": 2,
     "generator-star-spacing": [0],
     "consistent-return": [0],

@@ -48,8 +48,8 @@ function checkStatus(response) {
   // throw error;
 }
 export default function request(uri, params) {
+  Toast.loading('加载中...');
   let urlParam = uri;
-
   const defaultOptions = {
     credentials: 'include',
   };
@@ -97,6 +97,7 @@ export default function request(uri, params) {
   return fetch(urlParam, newOptions)
     .then(checkStatus)
     .then((response) => {
+      Toast.hide();
       if (newOptions.method === 'DELETE' && response.status === 204) {
         const obj = { status: '204', message: '删除成功' };
         return { ...obj };
@@ -108,6 +109,7 @@ export default function request(uri, params) {
       const { data } = response;
       return data;
     }).catch((error) => {
+      Toast.hide();
       const {
         response,
       } = error;
@@ -128,6 +130,7 @@ export default function request(uri, params) {
       }
     })
     .catch((error) => { // 加上catch
+      Toast.hide();
       return error;
     });
 }
