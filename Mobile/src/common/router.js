@@ -92,7 +92,7 @@ export const getRouterData = (app) => {
     '/point_list': {
       component: dynamicWrapper(app, ['point'], () => import('../routes/Point/survey/pointList')),
     },
-    '/ranking/:id': {
+    '/ranking': {
       component: dynamicWrapper(app, ['ranking'], () => import('../routes/Point/ranking/rankingList')),
     },
     '/ranking_group': {

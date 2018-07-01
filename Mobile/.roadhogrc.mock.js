@@ -10518,19 +10518,26 @@ const proxy = {
 };
 
 export default !noProxy ? {
-  'GET /api/staff/authority-groups': 'http://PMS.test/api/staff/authority-groups',
+
+  // 张卫
+  // 'GET /api/staff/authority-groups(.*)': 'http://PMS.test/api/staff/authority-groups',
+
+  // 张博涵
   'GET /api/current-user(.*)': 'http://192.168.20.238:8003/api/current-user',
   'GET /api/departments(.*)': 'http://192.168.20.238:8003/api/departments',
-  'GET /api/staff(.*)': 'http://192.168.20.238:8003/api/staff',
-  // 'GET /api/(.*)': 'http://192.168.20.238:8007/api/',
-  // 'POST /api/(.*)': 'http://192.168.20.238:8007/api/',
-  // 'PUT /api/(.*)': 'http://192.168.20.238:8007/api/',
-  // 'DELETE /api/(.*)': 'http://192.168.20.238:8007/api/',
+  // 'GET /api/staff(.*)': 'http://192.168.20.238:8003/api/staff',
 
-  'GET /api/(.*)': 'http://PMS.test/api/',
-  'POST /api/(.*)': 'http://PMS.test/api/',
-  'PUT /api/(.*)': 'http://PMS.test/api/',
-  'DELETE /api/(.*)': 'http://PMS.test/api/',
+  'GET /api/(.*)': 'http://192.168.20.238:8007/api/',
+  'POST /api/(.*)': 'http://192.168.20.238:8007/api/',
+  'PUT /api/(.*)': 'http://192.168.20.238:8007/api/',
+  'DELETE /api/(.*)': 'http://192.168.20.238:8007/api/',
+
+  // 张卫
+  // 'GET /api/(.*)': 'http://PMS.test/api/',
+  // 'POST /api/(.*)': 'http://PMS.test/api/',
+  // 'PUT /api/(.*)': 'http://PMS.test/api/',
+  // 'DELETE /api/(.*)': 'http://PMS.test/api/',
+  // 张博涵
   'POST /oauth/(.*)': 'http://localhost.oaupdate.org/oauth/',
   'POST /oauth/(.*)': 'http://192.168.20.238:8003/oauth/'
 } : delay(proxy, 100);

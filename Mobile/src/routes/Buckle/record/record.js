@@ -235,6 +235,7 @@ export default class BuckleRecord extends React.Component {
     });
   }
   record = () => {
+    this.saveAllData();
     const { info } = this.state;
     const { searchStaff: { selectStaff }, event, dispatch, history } = this.props;
     const { first, final, copy } = selectStaff;
@@ -264,7 +265,7 @@ export default class BuckleRecord extends React.Component {
       Toast.fail(msg);
       return;
     }
-    // console.log('final', final);
+
     dispatch({
       type: 'buckle/recordBuckle',
       payload: {

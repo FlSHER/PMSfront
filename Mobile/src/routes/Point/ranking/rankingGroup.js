@@ -3,6 +3,7 @@ import {
   connect,
 } from 'dva';
 import { Flex, WhiteSpace, WingBlank, List } from 'antd-mobile';
+import moment from 'moment';
 import { PersonIcon } from '../../../components/index.js';
 import { userStorage } from '../../../utils/util';
 
@@ -25,8 +26,9 @@ export default class RankingGroup extends React.Component {
   render() {
     const { group } = this.props;
     const { userInfo } = this.state;
+    const datetime = moment(new Date()).format('YYYY-MM-DD');
     return (
-      <Flex direction="column" style={{ height: '100%', background: 'rgb(240,240,240)' }}>
+      <Flex direction="column" style={{ height: '100%' }}>
         <Flex.Item className={style.header}>
           <WhiteSpace size="md" />
           <WingBlank size="lg">
@@ -54,18 +56,18 @@ export default class RankingGroup extends React.Component {
         <Flex.Item className={style.content}>
           <WhiteSpace size="md" />
           <WingBlank size="lg">
-            <List className="my-list">
+            <List className={style.my_list}>
               {(group || []).map((item, i) => {
-              const idx = i;
+                const idx = i;
                 return (
                   <List.Item
                     arrow="horizontal"
-                    onClick={() => this.props.history.push(`/ranking/${item.id}`)}
+                    onClick={() => this.props.history.push(`/ranking?group_id=${item.id}&datetime=${datetime}`)}
                     key={idx}
                   >{item.name}
                   </List.Item>
                 );
-            })}
+              })}
             </List>
           </WingBlank>
         </Flex.Item>

@@ -1,6 +1,7 @@
 import { Toast } from 'antd-mobile';
 import {
-  recordBuckle, getAuditList,
+  recordBuckle,
+  getAuditList,
   buckleReject,
   getBuckleDetail,
   withdrawBuckle,

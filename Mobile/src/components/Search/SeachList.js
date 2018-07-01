@@ -21,7 +21,9 @@ export default class SearchList extends Component {
     this.setState({
       value: '',
     }, () => {
-      handleBread(bread[bread.length - 1]);
+      if (bread && bread.length) {
+        handleBread(bread[bread.length - 1]);
+      }
     });
   }
   render() {

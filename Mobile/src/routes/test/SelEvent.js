@@ -95,15 +95,12 @@ export default class SelEvent extends Component {
     }
     const addressees = [...result.default_cc_addressees];
     const newAddress = addressees.map((its) => {
-      const arr = its.split('=');
-      const obj = {};
-      const [staffSn, staffName] = arr.length === 2 ? arr : ['', ''];
-      obj.staff_sn = staffSn;
-      obj.realname = staffName;
+      const obj = { ...its };
+      obj.realname = its.staff_name;
       obj.lock = 1;
       return obj;
     });
-    newSelectStaff.copy = newAddress;
+    newSelectStaff.copy = [...newAddress];
     dispatch({
       type: 'event/save',
       payload: {

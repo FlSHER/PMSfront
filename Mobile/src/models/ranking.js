@@ -14,7 +14,9 @@ export default {
     ranking: {},
   },
   effects: {
-    *getAuthorityGroup(_, { call, put }) {
+    *getAuthorityGroup(_, { call, put, select }) {
+      const { group } = yield select(v => v.ranking);
+      if (group && group.length) { return; }
       const response = yield call(getAuthorityGroup);
       if (response && !response.error) {
         yield put({

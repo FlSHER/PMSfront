@@ -284,6 +284,18 @@
   background: #fff;
 }
 
+:global {
+  .am-flexbox .am-flexbox-item {
+    margin-left: 0;
+  }
+  html:not([data-scale]) .am-list-body::before {
+    background-color: transparent;
+  }
+  html:not([data-scale]) .am-list-body::after {
+    background-color: transparent;
+  }
+}
+
 .my_rank {
   display: flex;
   justify-content: space-between;
@@ -305,6 +317,24 @@
     img {
       width: 32/75rem;
       height: 48/75rem;
+    }
+  }
+}
+
+.rank_list {
+  :global {
+    .am-list-body div:not(:last-child) .am-list-line {
+      border-bottom: none;
+    }
+    @media(-webkit-min-device-pixel-ratio: 2),
+      (min-resolution: 2dppx) {
+      html:not([data-scale]) .am-list-body div:not(:last-child) .am-list-line::after {
+        background-color: transparent !important;
+      }
+    }
+    .am-list-body {
+      border-bottom: none;
+      border-top: none;
     }
   }
 }

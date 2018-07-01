@@ -101,7 +101,7 @@ export default class SelPerson extends Component {
     const user = userStorage('userInfo');
     dispatch({
       type: 'searchStaff/fetchSelfDepStaff',
-      payload: { departmentId: user.department_id },
+      payload: { departmentId: user.department.id },
     });
   }
 
