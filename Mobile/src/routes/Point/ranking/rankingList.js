@@ -229,7 +229,7 @@ export default class PointRanking extends React.Component {
                 <div
                   className={[style.dosort].join(' ')}
                   onClick={() => this.selFilter('sortModal')}
-                  // style={{ background: 'none' }}
+                // style={{ background: 'none' }}
                 >
                   {sortItem ? sortItem.name : '选择部门'}
                 </div>
@@ -327,26 +327,34 @@ export default class PointRanking extends React.Component {
           </WingBlank>
           <WhiteSpace size="md" />
           <WingBlank size="lg">
-            <p style={{ padding: '0.26667rem 0.48rem', fontSize: '14px' }}>排名详情</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p style={{ padding: '0.26667rem 0.48rem', fontSize: '14px' }}> 排名详情</p>
+              {ranking.calculated_at ?
+                (
+                  <span style={{ fontSize: '12px', color: 'rgb(24, 116, 208)' }}>
+                  结算日期：{ranking.calculated_at}
+                  </span>
+                )
+                : null}
+            </div>
           </WingBlank>
         </Flex.Item>
         <Flex.Item className={style.content}>
           {list && !list.length ? (
             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
               <Nothing src={nothing} />
-            </div>
-          ) : (
-            <WingBlank>
-              <List
-                style={{ ...(loading.global ? { display: 'none' } : null) }}
-                className={style.rank_list}
-              >
-                {(list || []).map((item) => {
+            </div>) : (
+              <WingBlank>
+                <List
+                  style={{ ...(loading.global ? { display: 'none' } : null) }}
+                  className={style.rank_list}
+                >
+                  {(list || []).map((item) => {
                     return this.renderRankingItem(item);
                   })}
 
-              </List>
-            </WingBlank>
+                </List>
+              </WingBlank>
             )}
         </Flex.Item>
 

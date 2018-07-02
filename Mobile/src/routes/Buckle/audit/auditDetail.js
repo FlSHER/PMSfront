@@ -94,16 +94,28 @@ export default class AuditDetail extends React.Component {
                 <div className={style.dec}>
                   <div
                     className={style.describe}
-                    style={{ ...(detail.rejected_at ? { background: 'rgba(207,1,26,0.1)' } : null) }}
-
                   >
                     <span />
-                    <p style={{ color: 'rgb(74,74,74)' }}>{detail.rejected_at ? '驳回' : '通过'}</p>
+                    <p style={{ color: 'rgb(74,74,74)' }}>通过</p>
                     <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{approver.description}</p>
                   </div>
                   <div className={style.approver_time}>{approver.time}</div>
                 </div>
-              ) : null}
+              ) : detail.rejected_at ?
+                  (
+                    <div className={style.dec}>
+                      <div
+                        className={style.describe}
+                        style={{ background: 'rgba(207,1,26,0.1)' }}
+
+                      >
+                        <span style={{ borderRightColor: 'rgba(207,1,26,0.1)' }} />
+                        <p style={{ color: 'rgb(74,74,74)' }}>驳回</p>
+                        <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{detail.reject_remark}</p>
+                      </div>
+                      <div className={style.approver_time}>{detail.rejected_at}</div>
+                    </div>
+                  ) : null}
             </Flex>
           </div>
         </WingBlank>

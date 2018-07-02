@@ -10542,14 +10542,19 @@ export default !noProxy ? {
   // 'POST /oauth/(.*)': 'http://192.168.20.238:8003/oauth/'
 
 
+  // 'GET /api/staff/authority-groups(.*)': 'http://120.79.121.158:8004/api/staff/authority-groups',
 
+  // OA
   'POST /oauth/(.*)': 'http://of.xigemall.com/oauth/',
-  'GET /api/current-user(.*)': 'http://of.xigemall.com/api/current-user',
-  'GET /api/departments(.*)': 'http://of.xigemall.com/api/departments',
-  'GET /api/staff(.*)': 'http://of.xigemall.com/api/staff',
+  'GET /api/oa/(.*)': 'http://of.xigemall.com/api/',
+  // 'GET /api/current-user(.*)': 'http://of.xigemall.com/api/current-user',
+  // 'GET /api/departments(.*)': 'http://of.xigemall.com/api/departments',
+  // 'GET /api/staff(.*)': 'http://of.xigemall.com/api/staff',
 
+  // 积分制
   'GET /api/(.*)': 'http://120.79.121.158:8004/api/',
   'POST /api/(.*)': 'http://120.79.121.158:8004/api/',
   'PUT /api/(.*)': 'http://120.79.121.158:8004/api/',
   'DELETE /api/(.*)': 'http://120.79.121.158:8004/api/',
 } : delay(proxy, 100);
+
