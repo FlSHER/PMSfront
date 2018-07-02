@@ -6,7 +6,7 @@ import './index.css';
 import './utils/dingtalk';
 
 dd.ready(() => {
-  dd.ui.webViewBounce.enable();
+  dd.ui.webViewBounce.disable();
 });
 // 1. Initialize
 const app = dva({
