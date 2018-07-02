@@ -71,44 +71,56 @@ export default class AuditDetail extends React.Component {
   makeApprover = (approver) => {
     const { detail } = this.props;
     return (
-      <WingBlank className={style.parcel} key={approver.key}>
-        <div className={style.players}>
-          <Flex className={style.title}>{approver.title} </Flex>
-          <Flex
-            wrap="wrap"
-            align="start"
-            style={{ paddingTop: '0.4rem', paddingBottom: '0.4rem' }}
-          >
-            <div style={{ marginRight: '0.64rem' }}>
-              <PersonIcon
-                value={detail}
-                type="1"
-                nameKey={approver.key}
-                showNum={2}
-                itemStyle={{ marginBottom: 0 }}
-              />
-            </div>
-            <div
-              className={style.describe}
+      <div>
+        <WhiteSpace size="sm" />
+        <WingBlank className={style.parcel} key={approver.key}>
+          <div className={style.players}>
+            <Flex className={style.title}>{approver.title} </Flex>
+            <Flex
+              wrap="wrap"
+              align="start"
+              style={{ paddingTop: '0.4rem', paddingBottom: '0.4rem' }}
             >
-              <span />
-              {approver.description}
-            </div>
-          </Flex>
-        </div>
-      </WingBlank>
+              <div style={{ marginRight: '0.64rem' }}>
+                <PersonIcon
+                  value={detail}
+                  type="1"
+                  nameKey={approver.key}
+                  showNum={2}
+                  itemStyle={{ marginBottom: 0 }}
+                />
+              </div>
+              {approver.time ? (
+                <div className={style.dec}>
+                  <div
+                    className={style.describe}
+                    style={{ ...(detail.rejected_at ? { background: 'rgba(207,1,26,0.1)' } : null) }}
+
+                  >
+                    <span />
+                    <p style={{ color: 'rgb(74,74,74)' }}>{detail.rejected_at ? '驳回' : '通过'}</p>
+                    <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{approver.description}</p>
+                  </div>
+                  <div className={style.approver_time}>{approver.time}</div>
+                </div>
+              ) : null}
+            </Flex>
+          </div>
+        </WingBlank>
+      </div>
     );
   }
   render() {
     const { detail } = this.props;
     const { userInfo } = this.state;
-    let approvers = [
+    const approvers = [
       {
         sn: detail.first_approver_sn,
         title: '初审人',
         name: detail.first_approver_name,
         description: detail.first_approve_remark,
         key: 'first_approver_name',
+        time: detail.first_approved_at,
       },
       {
         sn: detail.final_approver_sn,
@@ -116,23 +128,25 @@ export default class AuditDetail extends React.Component {
         name: detail.final_approver_name,
         description: detail.final_approve_remark,
         key: 'final_approver_name',
+        time: detail.final_approved_at,
       },
     ];
-    if (detail.status_id === 1 || (detail.first_approved_at && detail.status_id === -2)) {
-      approvers = approvers.filter(item => item.sn === detail.first_approver_sn);
-    } else if (detail.status_id === 0 || (detail.status_id === -2 && !detail.first_approved_at)) {
-      approvers = [];
-    } else if (detail.status_id === -1) {
-      const temp = [];
-      approvers.find((item) => {
-        temp.push(item);
-        if (item.sn === detail.rejecter_sn) {
-          return true;
-        }
-        return false;
-      });
-      approvers = [...temp];
-    }
+    // if (detail.status_id === 1 || (detail.first_approved_at && detail.status_id === -2)) {
+    //   approvers = approvers.filter(item => item.sn === detail.first_approver_sn);
+    // } else if (detail.status_id === 0
+    // || (detail.status_id === -2 && !detail.first_approved_at)) {
+    //   approvers = [];
+    // } else if (detail.status_id === -1) {
+    //   const temp = [];
+    //   approvers.find((item) => {
+    //     temp.push(item);
+    //     if (item.sn === detail.rejecter_sn) {
+    //       return true;
+    //     }
+    //     return false;
+    //   });
+    //   approvers = [...temp];
+    // }
     return (
       <div
         className={styles.con}
@@ -225,7 +239,6 @@ export default class AuditDetail extends React.Component {
           <WhiteSpace size="sm" />
           {approvers.map(item => this.makeApprover(item))}
           <WhiteSpace size="sm" />
-          <WhiteSpace size="sm" />
           {detail.status_id === 2 ? (
             <WingBlank className={style.parcel}>
               <div className={style.players}>
@@ -255,36 +268,6 @@ export default class AuditDetail extends React.Component {
               </div>
             </WingBlank>
           ) : null}
-          <WhiteSpace size="sm" />
-          <WingBlank className={style.parcel}>
-            <div className={style.players}>
-              <Flex className={style.title}> 初审人</Flex>
-              <Flex
-                className={style.person_list}
-                wrap="wrap"
-              >
-                <PersonIcon
-                  value={detail}
-                  nameKey="first_approver_name"
-                />
-              </Flex>
-            </div>
-          </WingBlank>
-          <WhiteSpace size="sm" />
-          <WingBlank className={style.parcel}>
-            <div className={style.players}>
-              <Flex className={style.title}> 终审人</Flex>
-              <Flex
-                className={style.person_list}
-                wrap="wrap"
-              >
-                <PersonIcon
-                  value={detail}
-                  nameKey="final_approver_name"
-                />
-              </Flex>
-            </div>
-          </WingBlank>
           <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
             <div className={style.players}>

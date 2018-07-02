@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import {
   connect,
 } from 'dva';
+import { Flex } from 'antd-mobile';
 import { EventType, EventName } from '../../common/ListView/index.js';
 import { Bread } from '../../components/General/index';
 import { markTreeData } from '../../utils/util';
-import styles from '../common.less';
+import style from './index.less';
 
 @connect(({ event, loading, searchStaff, buckle }) => ({
   evtAll: event.evtAll,
@@ -17,7 +18,7 @@ import styles from '../common.less';
   info: buckle.info,
 }))
 export default class SelEvent extends Component {
-  state={
+  state = {
     eventList: [],
     init: false,
     type: '1',
@@ -134,7 +135,7 @@ export default class SelEvent extends Component {
     }
     return newBread;
   }
-  selEventName= (item) => {
+  selEventName = (item) => {
     const { dispatch } = this.props;
     // dispatch({
     //   type: 'event/save',
@@ -191,31 +192,31 @@ export default class SelEvent extends Component {
     const { breadCrumb, evtName, loading, loadingName, evtAll } = this.props;
     const isLoading = loading || loadingName;
     return (
-      <div
-        className={styles.con}
-        style={{ ...(isLoading ? { display: 'none' } : null) }}
-      >
-        <Bread
-          bread={breadCrumb}
-          handleBread={this.selEvent}
-        />
-        <EventType
-          dataSource={eventList || []}
-          fetchDataSource={this.selEvent}
-          name="name"
-        />
-        {evtAll && evtAll.length && !eventList.length ? (
-          <EventName
-            name="name"
-            dispatch={this.props.dispatch}
-            multiple={type !== '1'}
-            selected={selected.data}
-            dataSource={evtName || []}
-            onChange={this.getSelectResult}
+      <Flex direction="column" style={{ height: '100%', ...(isLoading ? { display: 'none' } : null) }}>
+        <Flex.Item className={style.header}>
+          <Bread
+            bread={breadCrumb}
+            handleBread={this.selEvent}
           />
-        ) : null}
-
-      </div>
+        </Flex.Item>
+        <Flex.Item className={style.content}>
+          <EventType
+            dataSource={eventList || []}
+            fetchDataSource={this.selEvent}
+            name="name"
+          />
+          {evtAll && evtAll.length && !eventList.length ? (
+            <EventName
+              name="name"
+              dispatch={this.props.dispatch}
+              multiple={type !== '1'}
+              selected={selected.data}
+              dataSource={evtName || []}
+              onChange={this.getSelectResult}
+            />
+          ) : null}
+        </Flex.Item>
+      </Flex>
     );
   }
 }

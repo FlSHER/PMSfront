@@ -42,7 +42,6 @@ export default class SelPerson extends Component {
     });
   }
 
-
   onSearch = (search) => {
     const { dispatch } = this.props;
     this.setState({
