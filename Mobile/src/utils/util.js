@@ -97,7 +97,7 @@ export function dealErrorData(data, code) {
       }
       [msg] = errs;
     }
-  } else if (code === 401) {
+  } else if (code === 401 || code === 400) {
     msg = data.message;
   } else {
     msg = codeMessage[code];
