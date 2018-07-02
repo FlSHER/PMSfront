@@ -332,7 +332,7 @@ export default class BuckleRecord extends React.Component {
   infoToast = () => {
     const { event } = this.props;
     if (event.id) {
-      Toast.info(`A分范围：${event.point_a_min}-${event.point_a_max}'\n'B分范围：${event.point_b_min}-${event.point_b_max}`);
+      Toast.info(`A分范围：${event.point_a_min}-${event.point_a_max} B分范围：${event.point_b_min}-${event.point_b_max}`);
     } else {
       Toast.info('请先选择事件');
     }

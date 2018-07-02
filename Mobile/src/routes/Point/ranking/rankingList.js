@@ -294,7 +294,6 @@ export default class PointRanking extends React.Component {
               <p style={{ padding: '0.26667rem 0.48rem', fontSize: '14px' }}>我的排名</p>
               <span
                 style={{ fontSize: '12px', color: 'rgb(24, 116, 208)' }}
-                // href="#my"
                 onClick={() => scrollToAnchor('my')}
               >在列表中查看
               </span>
