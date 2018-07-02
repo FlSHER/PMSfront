@@ -25,21 +25,24 @@ const person = [
   detail: buckle.detail,
 }))
 export default class BuckleRecord extends React.Component {
-  state = {
-    remark: '',
-    point: {
-      recorder_point: '',
-      first_approver_point: '',
-    },
-  }
-  componentWillMount() {
-    const { location } = this.props;
-    const { type, state } = location.match.params;
-    this.setState({
+  constructor(props) {
+    if (!Object.keys(props.detail).length) {
+      props.history.goBack(-1);
+    }
+    super(props);
+    const { match } = props;
+    const { type, state } = match.params;
+    this.state = {
       type,
       state,
-    });
+      remark: '',
+      point: {
+        recorder_point: '',
+        first_approver_point: '',
+      },
+    };
   }
+
   setIntegral = (v, key) => {
     const { point } = this.state;
     const newPoint = { ...point };
@@ -82,7 +85,7 @@ export default class BuckleRecord extends React.Component {
             event_id: detail.id,
           },
           cb: () => {
-            history.goBack(-2);
+            history.go(-2);
           },
         },
       });
@@ -99,8 +102,7 @@ export default class BuckleRecord extends React.Component {
             event_id: detail.id,
           },
           cb: () => {
-            // history.replace('/audit_list');
-            history.goBack(-2);
+            history.go(-2);
           },
         },
       });
@@ -171,10 +173,7 @@ export default class BuckleRecord extends React.Component {
         <div className={styles.footer}>
           <WingBlank>
             <div className={style.opt}>
-              {type === '0' && state === 'yes' ? <Button type="primary" onClick={this.doAudit}>初审通过</Button> : null}
-              {type === '0' && state === 'no' ? <Button type="primary" onClick={this.doAudit}>初审驳回</Button> : null}
-              {type === '1' && state === 'yes' ? <Button type="primary" onClick={this.doAudit}>终审通过</Button> : null}
-              {type === '1' && state === 'no' ? <Button type="primary" onClick={this.doAudit}>终审驳回</Button> : null}
+              {state === 'yes' ? <Button type="primary" onClick={this.doAudit}>通过</Button> : <Button type="primary" onClick={this.doAudit}>驳回</Button>}
             </div>
           </WingBlank>
         </div>
