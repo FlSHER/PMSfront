@@ -263,6 +263,7 @@ export default class PointRanking extends React.Component {
                 top: '1.17333rem',
                 bottom: 0,
                 right: 0,
+                overflow: 'auto',
                 background: 'rgba(0, 0, 0, 0.1)',
               }}
               visible={this.state.modal.sortModal}

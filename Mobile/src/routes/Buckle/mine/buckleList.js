@@ -379,6 +379,7 @@ export default class BuckleList extends React.Component {
                 top: '2.3733333rem',
                 bottom: 0,
                 right: 0,
+                overflow: 'auto',
                 background: 'rgba(0, 0, 0, 0.1)',
               }}
               visible={this.state.modal.sortModal}
