@@ -3,7 +3,6 @@ import {
   connect,
 } from 'dva';
 import { List, TextareaItem, WingBlank, WhiteSpace, Button, Flex, InputItem } from 'antd-mobile';
-import { analyzePath } from '../../../utils/util';
 
 import style from '../index.less';
 import styles from '../../common.less';
@@ -35,8 +34,7 @@ export default class BuckleRecord extends React.Component {
   }
   componentWillMount() {
     const { location } = this.props;
-    const type = analyzePath(location.pathname, 1);
-    const state = analyzePath(location.pathname, 2);
+    const { type, state } = location.match.params;
     this.setState({
       type,
       state,
@@ -75,7 +73,7 @@ export default class BuckleRecord extends React.Component {
           },
         },
       });
-    } else if (type === '1') { // 初审
+    } else if (type === '0') { // 初审
       dispatch({
         type: 'buckle/firstApprove',
         payload: {
@@ -88,7 +86,7 @@ export default class BuckleRecord extends React.Component {
           },
         },
       });
-    } else if (type === '2') {
+    } else if (type === '1') {
       dispatch({
         type: 'buckle/finalApprove',
         payload: {
@@ -118,7 +116,7 @@ export default class BuckleRecord extends React.Component {
       >
         <div className={styles.con_content}>
           <WhiteSpace size="sm" />
-          {type === '2' && state === 'yes' ? (
+          {type === '1' && state === 'yes' ? (
             <WingBlank className={style.parcel}>
               <div className={style.players}>
                 <Flex className={style.title}> 配置分值</Flex>
@@ -173,10 +171,10 @@ export default class BuckleRecord extends React.Component {
         <div className={styles.footer}>
           <WingBlank>
             <div className={style.opt}>
-              {type === '1' && state === 'yes' ? <Button type="primary" onClick={this.doAudit}>初审通过</Button> : null}
-              {type === '1' && state === 'no' ? <Button type="primary" onClick={this.doAudit}>初审驳回</Button> : null}
-              {type === '2' && state === 'yes' ? <Button type="primary" onClick={this.doAudit}>终审通过</Button> : null}
-              {type === '2' && state === 'no' ? <Button type="primary" onClick={this.doAudit}>终审驳回</Button> : null}
+              {type === '0' && state === 'yes' ? <Button type="primary" onClick={this.doAudit}>初审通过</Button> : null}
+              {type === '0' && state === 'no' ? <Button type="primary" onClick={this.doAudit}>初审驳回</Button> : null}
+              {type === '1' && state === 'yes' ? <Button type="primary" onClick={this.doAudit}>终审通过</Button> : null}
+              {type === '1' && state === 'no' ? <Button type="primary" onClick={this.doAudit}>终审驳回</Button> : null}
             </div>
           </WingBlank>
         </div>

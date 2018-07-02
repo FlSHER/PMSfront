@@ -278,10 +278,14 @@ export default class AuditList extends React.Component {
     }
     if (checkState.value === 'approved') {
       const newObj = [
-        { evt: value => buckleState(value.status_id),
-          labelStyle: value => convertStyle(value.status_id) },
-        { evt: value => auditFinishedState(value),
-          labelStyle: value => auditFinishedLabel(value) },
+        {
+          evt: value => buckleState(value.status_id),
+          labelStyle: value => convertStyle(value.status_id),
+        },
+        {
+          evt: value => auditFinishedState(value),
+          labelStyle: value => auditFinishedLabel(value),
+        },
       ];
       labelArr = [...newObj];
     }
@@ -290,6 +294,38 @@ export default class AuditList extends React.Component {
   render() {
     const { auditList } = this.props;
     const { checkState, filter, el, shortModal, userInfo } = this.state;
+    const linkBtn = [];
+    if (Object.keys(el).length) {
+      const detail = { ...el };
+      const type = detail.status_id.toString();
+      const reject = (
+        <div
+          className={[style.opt_item, style.reject].join(' ')}
+          onClick={() => this.doAudit(type, 'no')}
+        >
+          驳回
+        </div>
+      );
+      const pass = (
+        <div
+          className={[style.opt_item, style.agree].join(' ')}
+          onClick={() => this.doAudit(type, 'yes')}
+        >
+          通过
+        </div>
+      );
+
+      if (
+        (detail.first_approver_sn === userInfo.staff_sn && detail.status_id === 0)
+        ||
+        (detail.final_approver_sn === userInfo.staff_sn && detail.status_id === 1)
+      ) {
+        // 初审 || 终审
+        linkBtn.push(reject);
+        linkBtn.push(pass);
+      }
+    }
+
     return (
       <Flex direction="column" style={{ height: '100%' }}>
         <Flex.Item className={style.header}>
@@ -315,7 +351,7 @@ export default class AuditList extends React.Component {
                     backgroundPosition: 'right center',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: '0.4rem',
-                   }}
+                  }}
                   onClick={() => this.selFilter('sortModal')}
                 >
                   {this.state.sortItem.name}
@@ -372,9 +408,9 @@ export default class AuditList extends React.Component {
                   onShortcut={checkState.value === 'approved' ? null : this.onShortcut}
                   label={this.renderLalbel()}
                   page={auditList[checkState.value] ?
-                     auditList[checkState.value].page : 1}
+                    auditList[checkState.value].page : 1}
                   totalpage={auditList[checkState.value] ?
-                     auditList[checkState.value].totalpage : 10}
+                    auditList[checkState.value].totalpage : 10}
                 >
                   <Modal
                     popup
@@ -393,39 +429,7 @@ export default class AuditList extends React.Component {
                           direction="column"
                         >
                           <Flex.Item className={style.base_opt}>
-                            {el.first_approver_sn === userInfo.staff_sn && el.status_id === 0 ?
-                              (
-                                <div
-                                  className={[style.opt_item, style.reject].join(' ')}
-                                  onClick={() => this.doAudit('1', 'no')}
-                                >初审驳回
-                                </div>
-                              ) : null}
-                            {el.first_approver_sn === userInfo.staff_sn && el.status_id === 0 ?
-                              (
-                                <div
-                                  className={[style.opt_item, style.agree].join(' ')}
-                                  onClick={() => this.doAudit('1', 'yes')}
-                                >初审通过
-                                </div>
-                              ) : null}
-                            {el.final_approver_sn === userInfo.staff_sn && el.status_id === 1 ?
-                              (
-                                <div
-                                  className={[style.opt_item, style.reject].join(' ')}
-                                  onClick={() => this.doAudit('2', 'no')}
-                                >终审驳回
-                                </div>
-                              ) : null}
-                            {el.final_approver_sn === userInfo.staff_sn && el.status_id === 1 ?
-                              (
-                                <div
-                                  className={[style.opt_item, style.agree].join(' ')}
-                                  onClick={() => this.doAudit('2', 'yes')}
-                                >终审通过
-                                </div>
-                              ) : null}
-
+                            {linkBtn}
                           </Flex.Item>
                           <Flex.Item
                             onClick={() => this.onClose('shortModal')}
@@ -486,7 +490,7 @@ export default class AuditList extends React.Component {
                 value={[filter.eventState]}
               />
             </div>
-          )}
+            )}
 
 
         </ListFilter>

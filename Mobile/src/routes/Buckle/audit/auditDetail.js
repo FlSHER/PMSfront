@@ -147,6 +147,56 @@ export default class AuditDetail extends React.Component {
     //   });
     //   approvers = [...temp];
     // }
+    const footerBtn = [];
+    if (Object.keys(detail).length) {
+      if (detail.recorder_sn === userInfo.staff_sn) {
+        if ([0, 1].includes(detail.status_id)) {
+          // 撤回
+          footerBtn.push(
+            <Flex.Item>
+              <Button type="primary" onClick={this.withDraw}>
+                撤回
+              </Button>
+            </Flex.Item>);
+        }
+        if ([-1, -2].includes(detail.status_id)) {
+          // 再次提交
+          footerBtn.push(
+            <Flex.Item>
+              <Button type="primary" onClick={() => this.submitAgain(detail)}>
+                再次提交
+              </Button>
+            </Flex.Item>);
+        }
+      }
+
+      const type = detail.status_id.toString();
+      const reject = (
+        <Flex.Item>
+          <Button type="ghost" onClick={() => this.doAudit(type, 'no')}>
+            驳回
+          </Button>
+        </Flex.Item>
+      );
+      const pass = (
+        <Flex.Item>
+          <Button type="primary" onClick={() => this.doAudit(type, 'yes')}>
+            驳回
+          </Button>
+        </Flex.Item>
+      );
+
+      if (
+        (detail.first_approver_sn === userInfo.staff_sn && detail.status_id === 0)
+        ||
+        (detail.final_approver_sn === userInfo.staff_sn && detail.status_id === 1)
+      ) {
+        // 初审 || 终审
+        footerBtn.push(reject);
+        footerBtn.push(pass);
+      }
+    }
+    const footerAble = footerBtn.length > 0;
     return (
       <div
         className={styles.con}
@@ -238,7 +288,8 @@ export default class AuditDetail extends React.Component {
           </WingBlank>
           <WhiteSpace size="sm" />
           {approvers.map(item => this.makeApprover(item))}
-          <WhiteSpace size="sm" />
+          {detail.status_id === 2 ?
+            <WhiteSpace size="sm" /> : null}
           {detail.status_id === 2 ? (
             <WingBlank className={style.parcel}>
               <div className={style.players}>
@@ -309,28 +360,15 @@ export default class AuditDetail extends React.Component {
           <WhiteSpace size="lg" />
         </div>
 
-        <div className={styles.footer}>
-          <WingBlank>
-            <Flex className={style.opt}>
-              {detail.first_approver_sn === userInfo.staff_sn && detail.status_id === 0 ?
-                <Flex.Item><Button type="ghost" onClick={() => this.doAudit('1', 'no')}>初审驳回</Button></Flex.Item> : null}
-              {detail.first_approver_sn === userInfo.staff_sn && detail.status_id === 0 ?
-                <Flex.Item><Button type="primary" onClick={() => this.doAudit('1', 'yes')}>初审通过</Button></Flex.Item> : null}
-
-              {detail.final_approver_sn === userInfo.staff_sn && detail.status_id === 1 ?
-                <Flex.Item><Button type="ghost" onClick={() => this.doAudit('2', 'no')}>终审驳回</Button></Flex.Item> : null}
-              {detail.final_approver_sn === userInfo.staff_sn && detail.status_id === 1 ?
-                <Flex.Item><Button type="primary" onClick={() => this.doAudit('2', 'yes')}>终审通过</Button></Flex.Item> : null}
-
-              {detail.recorder_sn === userInfo.staff_sn &&
-                (detail.status_id === 0 || detail.status_id === 1) ?
-                  <Flex.Item><Button type="primary" onClick={this.withDraw}>撤回</Button></Flex.Item> : null}
-              {detail.recorder_sn === userInfo.staff_sn &&
-                (detail.status_id === -1 || detail.status_id === -2) ?
-                  <Flex.Item><Button type="primary" onClick={() => this.submitAgain(detail)}>再次提交</Button></Flex.Item> : null}
-            </Flex>
-          </WingBlank>
-        </div>
+        {footerAble && (
+          <div className={styles.footer}>
+            <WingBlank>
+              <Flex className={style.opt}>
+                {footerBtn}
+              </Flex>
+            </WingBlank>
+          </div>
+        )}
       </div>
     );
   }
