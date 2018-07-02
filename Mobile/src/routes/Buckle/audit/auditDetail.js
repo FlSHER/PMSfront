@@ -153,7 +153,7 @@ export default class AuditDetail extends React.Component {
         if ([0, 1].includes(detail.status_id)) {
           // 撤回
           footerBtn.push(
-            <Flex.Item>
+            <Flex.Item key="withdraw">
               <Button type="primary" onClick={this.withDraw}>
                 撤回
               </Button>
@@ -162,7 +162,7 @@ export default class AuditDetail extends React.Component {
         if ([-1, -2].includes(detail.status_id)) {
           // 再次提交
           footerBtn.push(
-            <Flex.Item>
+            <Flex.Item key="submit">
               <Button type="primary" onClick={() => this.submitAgain(detail)}>
                 再次提交
               </Button>
@@ -172,16 +172,16 @@ export default class AuditDetail extends React.Component {
 
       const type = detail.status_id.toString();
       const reject = (
-        <Flex.Item>
+        <Flex.Item key="reject">
           <Button type="ghost" onClick={() => this.doAudit(type, 'no')}>
             驳回
           </Button>
         </Flex.Item>
       );
       const pass = (
-        <Flex.Item>
+        <Flex.Item key="pass">
           <Button type="primary" onClick={() => this.doAudit(type, 'yes')}>
-            驳回
+            通过
           </Button>
         </Flex.Item>
       );

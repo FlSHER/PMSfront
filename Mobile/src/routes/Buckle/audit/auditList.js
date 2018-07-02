@@ -300,6 +300,7 @@ export default class AuditList extends React.Component {
       const type = detail.status_id.toString();
       const reject = (
         <div
+          key="reject"
           className={[style.opt_item, style.reject].join(' ')}
           onClick={() => this.doAudit(type, 'no')}
         >
@@ -308,6 +309,7 @@ export default class AuditList extends React.Component {
       );
       const pass = (
         <div
+          key="pass"
           className={[style.opt_item, style.agree].join(' ')}
           onClick={() => this.doAudit(type, 'yes')}
         >
