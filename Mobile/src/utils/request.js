@@ -68,17 +68,22 @@ export default function request(uri, params) {
     ...params,
     method: params ? params.method : 'GET',
   };
-  if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
-    // newOptions.headers = {
-    //   Accept: 'application/json',
-    //   'Content-Type': 'application/json;charset=utf-8',
-    //   ...newOptions.headers,
-    // };
-  } else if (newOptions.method === 'GET' && newOptions.body) {
+
+  newOptions.headers = {
+    Accept: 'application/json',
+    ...newOptions.headers,
+  };
+  if (newOptions.body) {
+    newOptions.headers = {
+      'Content-Type': 'application/json;charset=utf-8',
+      ...newOptions.headers,
+    };
+  }
+  if (newOptions.method === 'GET' && newOptions.body) {
     const paramsArray = [];
     newOptions.headers = {
-      // Accept: 'application/json',
-      'Content-Type': 'application/json;charset=utf-8',
+      Accept: 'application/json',
+      // 'Content-Type': 'application/json;charset=utf-8',
       ...newOptions.headers,
     };
     Object.keys(newOptions.body).forEach((key) => {
