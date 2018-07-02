@@ -71,9 +71,9 @@ export default class AuditDetail extends React.Component {
   makeApprover = (approver) => {
     const { detail } = this.props;
     return (
-      <div>
+      <div key={approver.key}>
         <WhiteSpace size="sm" />
-        <WingBlank className={style.parcel} key={approver.key}>
+        <WingBlank className={style.parcel} >
           <div className={style.players}>
             <Flex className={style.title}>{approver.title} </Flex>
             <Flex
