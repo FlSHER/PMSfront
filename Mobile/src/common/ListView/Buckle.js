@@ -28,9 +28,13 @@ export default class Buckle extends Component {
 
     return (
       <div className={style.event_item}>
-        <div className={style.main_info} onClick={() => handleClick(value)}>
+        <div
+          className={style.main_info}
+          style={{ marginRight: hasShortcut ? '0.53333333rem' : '0' }}
+          onClick={() => handleClick(value)}
+        >
           <div className={style.event_title}>
-            <span>{value.event_name}</span>
+            <span className={style.event_name}>{value.event_name}</span>
             {label.map((its, i) => {
               const idx = i;
               return (
