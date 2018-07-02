@@ -2,9 +2,12 @@ import dva from 'dva';
 import createLoading from 'dva-loading';
 import createHistory from 'history/createBrowserHistory';
 import { Toast } from 'antd-mobile';
-
 import './index.css';
+import './utils/dingtalk';
 
+dd.ready(() => {
+  dd.ui.webViewBounce.enable();
+});
 // 1. Initialize
 const app = dva({
   ...createLoading({

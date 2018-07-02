@@ -2,14 +2,14 @@
 // 银行类型
 // 中国农业银行,中国工商银行,中国建设银行,中国银行,交通银行,招商银行,中国邮政储蓄银行,农村商业银行
 
-import stastic from '../assets/stastic.svg';
-import stastic_ from '../assets/stastic_.svg';
+// import stastic from '../assets/stastic.svg';
+// import stastic_ from '../assets/stastic_.svg';
 
 import home from '../assets/home.svg';
 import home_ from '../assets/home_.svg';
 
-import my from '../assets/my.svg';
-import my_ from '../assets/my_.svg';
+// import my from '../assets/my.svg';
+// import my_ from '../assets/my_.svg';
 
 import appro from '../assets/appro.svg';
 import appro_ from '../assets/appro_.svg';
@@ -34,39 +34,42 @@ export const tabbar = [{
 }, {
   title: '审批',
   key: 'approval',
-  to: '/approvelist',
+  to: '/audit_list',
   icon: appro_,
   selIcon: appro,
-}, {
-  title: '统计',
-  key: 'statistics',
-  to: '/statistics',
-  icon: stastic_,
-  selIcon: stastic,
-}, {
-  title: '我的',
-  key: 'my',
-  to: '/my',
-  icon: my_,
-  selIcon: my,
-}];
+},
+// {
+//   title: '统计',
+//   key: 'statistics',
+//   to: '/statistics',
+//   icon: stastic_,
+//   selIcon: stastic,
+// },
+// {
+//   title: '我的',
+//   key: 'my',
+//   to: '/my',
+//   icon: my_,
+//   selIcon: my,
+// }
+];
 
 
 // 首页入口
 export const indexMenu = [
-  {
-    name: '任务中心',
-    key: '1',
-    children: [
-      { text: '当前任务', to: '', icon: import('../assets/jobstation/积分制-icon-当前任务.png') },
-      { text: '任务审核', to: '', icon: import('../assets/jobstation/积分制-icon-任务管理.png') },
-      { text: '任务管理', to: '', icon: import('../assets/jobstation/积分制-icon-任务管理.png') },
-      { text: '任务统计', to: '', icon: import('../assets/jobstation/积分制-icon-任务统计.png') },
-      { text: '特殊任务', to: '', icon: import('../assets/jobstation/积分制-icon-特殊任务.png') },
-      { text: '周期任务', to: '', icon: import('../assets/jobstation/积分制-icon-周期任务.png') },
-      { text: '悬赏任务', to: '', icon: import('../assets/jobstation/积分制-icon-悬赏任务.png') },
-    ],
-  },
+  // {
+  //   name: '任务中心',
+  //   key: '1',
+  //   children: [
+  //     { text: '当前任务', to: '', icon: import('../assets/jobstation/积分制-icon-当前任务.png') },
+  //     { text: '任务审核', to: '', icon: import('../assets/jobstation/积分制-icon-任务管理.png') },
+  //     { text: '任务管理', to: '', icon: import('../assets/jobstation/积分制-icon-任务管理.png') },
+  //     { text: '任务统计', to: '', icon: import('../assets/jobstation/积分制-icon-任务统计.png') },
+  //     { text: '特殊任务', to: '', icon: import('../assets/jobstation/积分制-icon-特殊任务.png') },
+  //     { text: '周期任务', to: '', icon: import('../assets/jobstation/积分制-icon-周期任务.png') },
+  //     { text: '悬赏任务', to: '', icon: import('../assets/jobstation/积分制-icon-悬赏任务.png') },
+  //   ],
+  // },
   {
     name: '奖扣',
     key: '2',
@@ -74,18 +77,18 @@ export const indexMenu = [
       { text: '记录奖扣', to: '/buckle_record', icon: import('../assets/jobstation/积分制-icon-记录奖扣.png') },
       { text: '奖扣审核', to: '/audit_list', icon: import('../assets/jobstation/积分制-icon-奖扣审核.png') },
       { text: '我的奖扣', to: '/buckle_list', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
-      { text: '奖扣指标', to: '', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
+      // { text: '奖扣指标', to: '', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
     ],
   },
   {
     name: '积分',
     key: '3',
     children: [
-      { text: '我的积分', to: '', icon: import('../assets/jobstation/积分制-icon-我的积分.png') },
+      // { text: '我的积分', to: '', icon: import('../assets/jobstation/积分制-icon-我的积分.png') },
       { text: '积分明细', to: '/point_list', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },
-      { text: '全员统计', to: '', icon: import('../assets/jobstation/积分制-icon-全员统计.png') },
+      // { text: '全员统计', to: '', icon: import('../assets/jobstation/积分制-icon-全员统计.png') },
       { text: '积分排名', to: '/ranking_group', icon: import('../assets/jobstation/积分制-icon-积分排名.png') },
-      { text: '投诉受理', to: '', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },
+      // { text: '投诉受理', to: '', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },
     ],
   },
 ];

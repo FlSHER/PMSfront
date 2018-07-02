@@ -30,13 +30,11 @@ class My extends React.Component {
             <div className={style.my}>
               <span>{userInfo.realname}</span>
             </div>
-
-          </div>
-          <div className={styles.footer}>
             <div className={style.exit}>
               <Button type="primary" onClick={this.toExit}>退出登录</Button>
             </div>
           </div>
+
         </div>
       );
     }
