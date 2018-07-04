@@ -22,6 +22,11 @@ export default {
       description: '',
       participants: [],
     },
+    optAll: {
+      pointA: '',
+      pointB: '',
+      count: '',
+    },
     logList: {
 
     },

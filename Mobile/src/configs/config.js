@@ -1,7 +1,7 @@
 module.exports = {
   develepDomain: 'localhost', // 生产环境域名
   testingDomain: 'localhost', // 测试环境域名
-  productitionDomain: 'localhost',
+  productitionDomain: 'http://120.79.121.158',
   openPages: ['/home', '/audit_list', '/my'], // 单页路径（显示footer的页面）
   apiPrefix: { // 不同环境api地址前缀
     production: 'http://192.168.20.238:8006',

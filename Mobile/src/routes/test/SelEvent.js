@@ -5,7 +5,7 @@ import {
 import { Flex } from 'antd-mobile';
 import { EventType, EventName } from '../../common/ListView/index.js';
 import { Bread } from '../../components/General/index';
-import { markTreeData } from '../../utils/util';
+import { markTreeData, userStorage } from '../../utils/util';
 import style from './index.less';
 
 @connect(({ event, loading, searchStaff, buckle }) => ({
@@ -16,6 +16,7 @@ import style from './index.less';
   loadingName: loading.effects['event/getEventName'],
   selectStaff: searchStaff.selectStaff,
   info: buckle.info,
+  optAll: buckle.optAll,
 }))
 export default class SelEvent extends Component {
   state = {
@@ -61,13 +62,15 @@ export default class SelEvent extends Component {
     }
   }
   getSingleSelect = (result) => {
-    const { history, dispatch, selectStaff, info } = this.props;
+    const userInfo = userStorage('userInfo');
+    const { history, dispatch, selectStaff, info, optAll } = this.props;
     const newSelectStaff = { ...selectStaff };
     const newInfo = { ...info };
+
     const participants = (info.participants || []).map((item) => {
       const obj = { ...item };
-      obj.point_a = '';
-      obj.point_b = '';
+      obj.point_a = result.point_a_default;
+      obj.point_b = result.point_b_default;
       return obj;
     });
     newInfo.participants = [...participants];
@@ -78,15 +81,23 @@ export default class SelEvent extends Component {
         data: newInfo,
       },
     });
-    if (result.first_approver_sn) {
-      newSelectStaff.first = [
-        {
-          staff_sn: result.first_approver_sn,
-          realname: result.first_approver_name,
+    dispatch({
+      type: 'buckle/save',
+      payload: {
+        store: 'optAll',
+        data: {
+          ...optAll,
+          pointA: result.point_a_default,
+          pointB: result.point_b_default,
         },
-      ];
-    }
-
+      },
+    });
+    newSelectStaff.first = [
+      {
+        staff_sn: result.first_approver_sn || userInfo.staff_sn,
+        realname: result.first_approver_name || userInfo.staff_name,
+      },
+    ];
     if (result.final_approver_sn) {
       newSelectStaff.final = [
         {

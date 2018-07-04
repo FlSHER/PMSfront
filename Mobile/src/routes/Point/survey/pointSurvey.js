@@ -15,7 +15,7 @@ export default class PointSurvey extends React.Component {
         className={styles.con}
       >
         <div className={styles.con_content}>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
           <WingBlank>
             <div className={style.survey}>
               <Flex style={{ padding: '0.24rem 0 1.5rem 0' }}>
@@ -29,7 +29,7 @@ export default class PointSurvey extends React.Component {
               </Flex>
             </div>
           </WingBlank>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
           <WingBlank>
             <div className={style.players}>
               <Flex

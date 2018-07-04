@@ -40,7 +40,7 @@ export default class PointDetail extends React.Component {
         direction="column"
       >
         <div className={styles.con_content}>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
 
           <WingBlank className={style.parcel}>
             <List>
@@ -67,7 +67,7 @@ export default class PointDetail extends React.Component {
               <span>{detail.shop_name}</span>
             </div>
           </WingBlank>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
           <WingBlank>
             <div className={style.players}>
               <Flex className={style.title}> 积分变化</Flex>
@@ -104,7 +104,7 @@ export default class PointDetail extends React.Component {
               </div>
             </div>
           </WingBlank>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
           <WingBlank className={style.parcel}>
             <div className={style.players}>
               <Flex className={style.title}> 初审人</Flex>
@@ -120,7 +120,7 @@ export default class PointDetail extends React.Component {
               </Flex>
             </div>
           </WingBlank>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
           <WingBlank className={style.parcel}>
             <div className={style.players}>
               <Flex className={style.title}> 终审人</Flex>
@@ -135,7 +135,7 @@ export default class PointDetail extends React.Component {
               </Flex>
             </div>
           </WingBlank>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
         </div>
       </div>
     );
