@@ -13,7 +13,7 @@ export function env() {
   } else if (host.indexOf(config.testingDomain) >= 0) {
     return 'testing';
   }
-  return 'development';
+  return 'production';
 }
 
 export function apiPrefix() {
