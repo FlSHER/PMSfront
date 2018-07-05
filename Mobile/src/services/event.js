@@ -8,3 +8,10 @@ export async function getEvent() {
 export async function getEventName(id) {
   return request(`/api/event/${id}/events`);
 }
+
+export async function searchEventName(params) {
+  return request('/api/event', {
+    body: params,
+    method: 'GET',
+  });
+}

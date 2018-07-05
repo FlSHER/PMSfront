@@ -395,15 +395,15 @@ export default class BuckleRecord extends React.Component {
     let tmpPointA = participants[0] ? participants[0].point_a : '';
     let tmpPointB = participants[0] ? participants[0].point_b : '';
     let tmpCount = participants[0] ? participants[0].count : '';
-    const newTempA = participants.filter(item => item.point_a !== tmpPointA);
+    const newTempA = (participants || []).filter(item => item.point_a !== tmpPointA);
     if (newTempA.length) {
       tmpPointA = '';
     }
-    const newTempB = participants.filter(item => item.point_b !== tmpPointB);
+    const newTempB = (participants || []).filter(item => item.point_b !== tmpPointB);
     if (newTempB.length) {
       tmpPointB = '';
     }
-    if (participants.filter(item => item.count !== tmpCount).length) {
+    if ((participants || []).filter(item => item.count !== tmpCount).length) {
       tmpCount = '';
     }
     this.state.optAll.pointA = tmpPointA;

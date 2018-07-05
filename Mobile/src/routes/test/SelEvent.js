@@ -4,7 +4,7 @@ import {
 } from 'dva';
 import { Flex } from 'antd-mobile';
 import { EventType, EventName } from '../../common/ListView/index.js';
-import { Bread } from '../../components/General/index';
+import { Bread, Search } from '../../components/General/index';
 import { markTreeData, userStorage } from '../../utils/util';
 import style from './index.less';
 
@@ -17,6 +17,7 @@ import style from './index.less';
   selectStaff: searchStaff.selectStaff,
   info: buckle.info,
   optAll: buckle.optAll,
+  pageInfo: event.pageInfo,
 }))
 export default class SelEvent extends Component {
   state = {
@@ -28,6 +29,7 @@ export default class SelEvent extends Component {
       total: 50,
       num: 0,
     },
+    searchValue: '',
   }
   componentWillMount() {
     this.props.dispatch({
@@ -46,6 +48,22 @@ export default class SelEvent extends Component {
         eventList: tree,
       });
     }
+  }
+  onPageChange = () => {
+    const { dispatch, pageInfo } = this.props;
+    const { searchValue } = this.state;
+    dispatch({
+      type: 'event/searchEventName',
+      payload: {
+        page: pageInfo.page + 1,
+        pagesize: 15,
+        filters: {
+          name: {
+            like: searchValue,
+          },
+        },
+      },
+    });
   }
   getSelectResult = (result) => {
     const { selected, type } = this.state;
@@ -196,27 +214,54 @@ export default class SelEvent extends Component {
       }
     }
   }
-
-
+  searchChange = (v) => {
+    this.setState({
+      searchValue: v,
+    });
+  }
+  searchSubmit = (v) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'event/searchEventName',
+      payload: {
+        page: 1,
+        pagesize: 15,
+        filters: {
+          name: {
+            like: v,
+          },
+        },
+      },
+    });
+  }
   render() {
-    const { eventList, type, selected } = this.state;
-    const { breadCrumb, evtName, loading, loadingName, evtAll } = this.props;
+    const { eventList, type, selected, searchValue } = this.state;
+    const { breadCrumb, evtName, loading, loadingName, evtAll, pageInfo } = this.props;
     const isLoading = loading || loadingName;
     return (
       <Flex direction="column" style={{ height: '100%', ...(isLoading ? { display: 'none' } : null) }}>
         <Flex.Item className={style.header}>
-          <Bread
-            bread={breadCrumb}
-            handleBread={this.selEvent}
+          <Search
+            value={searchValue}
+            onChange={this.searchChange}
+            onSubmit={this.searchSubmit}
           />
+          {!searchValue ? (
+            <Bread
+              bread={breadCrumb}
+              handleBread={this.selEvent}
+            />
+          ) : null}
+
         </Flex.Item>
         <Flex.Item className={style.content}>
-          <EventType
-            dataSource={eventList || []}
-            fetchDataSource={this.selEvent}
-            name="name"
-          />
-          {evtAll && evtAll.length && !eventList.length ? (
+          {!searchValue ? (
+            <EventType
+              dataSource={eventList || []}
+              fetchDataSource={this.selEvent}
+              name="name"
+            />) : null}
+          {(evtAll && evtAll.length && !eventList.length) || searchValue ? (
             <EventName
               name="name"
               dispatch={this.props.dispatch}
@@ -224,6 +269,10 @@ export default class SelEvent extends Component {
               selected={selected.data}
               dataSource={evtName || []}
               onChange={this.getSelectResult}
+
+              page={pageInfo.page}
+              totalpage={pageInfo.totalpage}
+              onPageChange={this.onPageChange}
             />
           ) : null}
         </Flex.Item>

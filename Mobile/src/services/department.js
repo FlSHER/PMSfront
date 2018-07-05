@@ -15,6 +15,6 @@ export async function serachStaff(search) {
   return request(`/api/oa/staff?${search}`);
 }
 export async function getFinalStaff() {
-  return request('/api/event-logs/final-staff');
+  return request('/api/event/final-staff');
 }
 

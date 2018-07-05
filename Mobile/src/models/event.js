@@ -1,8 +1,10 @@
 import {
   getEvent,
   getEventName,
+  searchEventName,
 } from '../services/event';
 import defaultReducers from './reducers/default';
+import { makerFilters } from '../utils/util';
 
 export default {
   namespace: 'event',
@@ -11,6 +13,10 @@ export default {
     evtName: [],
     event: {},
     breadCrumb: [],
+    pageInfo: {
+      page: '',
+      totalpage: '',
+    },
   },
   subscriptions: {
     setup({ dispatch, history }) {  // eslint-disable-line
@@ -18,6 +24,7 @@ export default {
   },
 
   effects: {
+
     *getEvent({ payload }, { put, call }) {
       const { breadCrumb } = payload;
       const response = yield call(getEvent);
@@ -51,6 +58,35 @@ export default {
         if (payload.cb) {
           payload.cb();
         }
+      }
+    },
+    *searchEventName({ payload }, { put, call, select }) {
+      const newParams = makerFilters(payload);
+      const response = yield call(searchEventName, newParams);
+      const { evtName } = yield select(_ => _.event);
+      if (response && !response.error) {
+        const { data, page, totalpage } = response;
+        let newEvent = [];
+        if (page !== 1) {
+          newEvent = [...evtName];
+          newEvent = evtName.concat(data);
+        } else {
+          newEvent = [...data];
+        }
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'evtName',
+            data: newEvent,
+          },
+        });
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'pageInfo',
+            data: { page, totalpage },
+          },
+        });
       }
     },
   },
