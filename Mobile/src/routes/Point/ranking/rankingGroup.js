@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import {
   connect,
 } from 'dva';
@@ -12,6 +13,12 @@ import style from '../index.less';
   group: ranking.group,
 }))
 export default class RankingGroup extends React.Component {
+  state = {
+    // shortModal: false,
+    height: document.documentElement.clientHeight,
+    userInfo: {},
+  }
+
   componentWillMount() {
     const { dispatch } = this.props;
     const newInfo = userStorage('userInfo');
@@ -23,12 +30,20 @@ export default class RankingGroup extends React.Component {
       });
     });
   }
+
+  componentDidMount() {
+    const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop;
+    setTimeout(() => this.setState({
+      height: hei,
+    }), 0);
+  }
+
   render() {
     const { group } = this.props;
     const { userInfo } = this.state;
     const datetime = moment(new Date()).format('YYYY-MM-DD');
     return (
-      <Flex direction="column" style={{ height: '100%' }}>
+      <Flex direction="column">
         <Flex.Item className={style.header}>
           <WhiteSpace size="md" />
           <WingBlank size="lg">
@@ -46,17 +61,25 @@ export default class RankingGroup extends React.Component {
             </div>
           </WingBlank>
           <WhiteSpace size="md" />
+
+
+        </Flex.Item>
+        <Flex.Item className={style.header}>
           <WingBlank size="lg">
-            <List className="my-list">
+            <List className={style.my_list}>
               <List.Item>排名筛选</List.Item>
             </List>
           </WingBlank>
-
         </Flex.Item>
+
         <Flex.Item className={style.content}>
           <WhiteSpace size="md" />
           <WingBlank size="lg">
-            <List className={style.my_list}>
+            <List
+              className={style.my_list}
+              style={{ height: this.state.height, overflow: 'auto' }}
+              ref={(el) => { this.ptr = el; }}
+            >
               {(group || []).map((item, i) => {
                 const idx = i;
                 return (

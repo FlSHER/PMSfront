@@ -34,8 +34,7 @@ const proxy = {
       "brand": {
         "id": 2,
         "name": "杰尼威尼专卖",
-        "sort": 3,
-        "is_public": 0,
+        "sort": 3,"is_public": 0,
         "deleted_at": null
       },
       "department": {
@@ -10528,17 +10527,17 @@ export default !noProxy ? {
   'POST /oauth/(.*)': 'http://localhost.oaupdate.org/oauth/',
   'POST /oauth/(.*)': 'http://192.168.20.238:8003/oauth/',
   'GET /api/oa/(.*)': 'http://192.168.20.238:8007/api/',
-  // 'GET /api/(.*)': 'http://192.168.20.238:8007/api/',
-  // 'POST /api/(.*)': 'http://192.168.20.238:8007/api/',
-  // 'PUT /api/(.*)': 'http://192.168.20.238:8007/api/',
-  // 'DELETE /api/(.*)': 'http://192.168.20.238:8007/api/',
+  'GET /api/(.*)': 'http://192.168.20.238:8007/api/',
+  'POST /api/(.*)': 'http://192.168.20.238:8007/api/',
+  'PUT /api/(.*)': 'http://192.168.20.238:8007/api/',
+  'DELETE /api/(.*)': 'http://192.168.20.238:8007/api/',
 
 
   // 张卫
-  'GET /api/(.*)': 'http://PMS.test/api/',
-  'POST /api/(.*)': 'http://PMS.test/api/',
-  'PUT /api/(.*)': 'http://PMS.test/api/',
-  'DELETE /api/(.*)': 'http://PMS.test/api/',
+  // 'GET /api/(.*)': 'http://PMS.test/api/',
+  // 'POST /api/(.*)': 'http://PMS.test/api/',
+  // 'PUT /api/(.*)': 'http://PMS.test/api/',
+  // 'DELETE /api/(.*)': 'http://PMS.test/api/',
 
 
   // 线上

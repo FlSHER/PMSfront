@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import { PullToRefresh } from 'antd-mobile';
 import QueueAnim from 'rc-queue-anim';
 // import style from './index.less';
@@ -9,7 +10,15 @@ export default function ListView(ListItem) {
   class NewItem extends PureComponent {
     state = {
       // shortModal: false,
+      height: document.documentElement.clientHeight,
       refreshing: false,
+    }
+
+    componentDidMount() {
+      const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop;
+      setTimeout(() => this.setState({
+        height: hei,
+      }), 0);
     }
 
     // 返回角度
@@ -104,7 +113,7 @@ export default function ListView(ListItem) {
       return (
         <PullToRefresh
           ref={(el) => { this.ptr = el; }}
-          style={{ height: '100%', overflow: 'auto' }}
+          style={{ height: this.state.height, overflow: 'auto' }}
           refreshing={this.state.refreshing}
           onRefresh={
             onRefresh
@@ -114,6 +123,7 @@ export default function ListView(ListItem) {
             <div
               onTouchStart={this.handleStart}
               onTouchEnd={this.handleEnd}
+              style={{ minHeight: this.state.height }}
             >
               {(dataSource || []).map((item, i) => {
                 const idx = i;

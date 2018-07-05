@@ -337,7 +337,7 @@ export default class BuckleList extends React.Component {
     const { logList } = this.props;
     const { checkState, filter } = this.state;
     return (
-      <Flex direction="column" style={{ height: '100%' }}>
+      <Flex direction="column">
         <Flex.Item className={style.header}>
           <div className={style.state_tab}>
             <WhiteSpace size="md" />
@@ -405,7 +405,7 @@ export default class BuckleList extends React.Component {
             </ListSort>
           </div>
         </Flex.Item>
-        <Flex.Item className={style.content} style={{ display: 'flex' }}>
+        <Flex.Item className={style.content}>
           {logList[checkState.value] && !logList[checkState.value].data.length ?
             (
               <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>

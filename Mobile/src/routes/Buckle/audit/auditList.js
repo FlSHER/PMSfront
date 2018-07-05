@@ -337,7 +337,7 @@ export default class AuditList extends React.Component {
     }
 
     return (
-      <Flex direction="column" style={{ height: '100%' }}>
+      <Flex direction="column">
         <Flex.Item className={style.header}>
           <div className={style.state_tab}>
             <WhiteSpace size="md" />
@@ -402,7 +402,7 @@ export default class AuditList extends React.Component {
             </ListSort>
           </div>
         </Flex.Item>
-        <Flex.Item className={style.content} style={{ display: 'flex' }}>
+        <Flex.Item className={style.content}>
           {auditList[checkState.value] && !auditList[checkState.value].data.length ?
             (
               <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
@@ -486,22 +486,24 @@ export default class AuditList extends React.Component {
                 value={filter.approveType}
               />
             </div>
-          ) : (
-            <div className={style.filter_item}>
-              <div className={style.title}>审核类型</div>
-              <CheckBoxs
-                option={procesingOption}
-                checkStatus={(i, v) => this.doMultiple(i, v, 'approveType')}
-                value={filter.approveType}
-              />
-              <div className={style.title}>事件状态</div>
-              <CheckBoxs
-                option={dealtOption}
-                checkStatus={(i, v) => this.checkItem(i, v, 'eventState')}
-                value={[filter.eventState]}
-              />
-            </div>
-            )}
+          ) :
+            (
+              <div className={style.filter_item}>
+                <div className={style.title}>审核类型</div>
+                <CheckBoxs
+                  option={procesingOption}
+                  checkStatus={(i, v) => this.doMultiple(i, v, 'approveType')}
+                  value={filter.approveType}
+                />
+                <div className={style.title}>事件状态</div>
+                <CheckBoxs
+                  option={dealtOption}
+                  checkStatus={(i, v) => this.checkItem(i, v, 'eventState')}
+                  value={[filter.eventState]}
+                />
+              </div>
+            )
+          }
 
 
         </ListFilter>

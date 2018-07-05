@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import {
   connect,
 } from 'dva';
@@ -32,6 +33,7 @@ export default class PointRanking extends React.Component {
       filterModal: false,
       sortModal: false,
     },
+    height: document.documentElement.clientHeight,
     // params: {
     //   stage: 'month',
     //   datetime: moment(new Date()).format('YYYY-MM-DD'),
@@ -48,6 +50,13 @@ export default class PointRanking extends React.Component {
       type: 'ranking/getAuthorityGroup',
     });
     this.userInfo = userStorage('userInfo');
+  }
+
+  componentDidMount() {
+    const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop;
+    setTimeout(() => this.setState({
+      height: hei,
+    }), 0);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -215,9 +224,9 @@ export default class PointRanking extends React.Component {
     const { list, user } = ranking;
     const { userInfo } = this;
     const params = this.urlParams;
-    const sortItem = group.find(item => item.id.toString() === this.urlParams.group_id);
+    const [sortItem] = group.filter(item => item.id.toString() === this.urlParams.group_id);
     return (
-      <Flex direction="column" style={{ height: '100%' }}>
+      <Flex direction="column">
         <Flex.Item className={style.header}>
           <div className={style.filter_con} >
             <Flex
@@ -331,21 +340,22 @@ export default class PointRanking extends React.Component {
               {ranking.calculated_at ?
                 (
                   <span style={{ fontSize: '12px', color: 'rgb(24, 116, 208)' }}>
-                  结算日期：{ranking.calculated_at}
+                    结算日期：{ranking.calculated_at}
                   </span>
                 )
                 : null}
             </div>
           </WingBlank>
         </Flex.Item>
-        <Flex.Item className={style.content} style={{ display: 'flex' }}>
+        <Flex.Item className={style.content}>
           {list && !list.length ? (
             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
               <Nothing src={nothing} />
             </div>) : (
               <WingBlank>
                 <List
-                  style={{ ...(loading.global ? { display: 'none' } : null) }}
+                  ref={(el) => { this.ptr = el; }}
+                  style={{ height: this.state.height, overflow: 'auto', ...(loading.global ? { display: 'none' } : null) }}
                   className={style.rank_list}
                 >
                   {(list || []).map((item) => {

@@ -250,7 +250,7 @@ export default class PointList extends React.Component {
     const isFilter = makerFilters({ filters }).filters;
 
     return (
-      <Flex direction="column" style={{ height: '100%' }}>
+      <Flex direction="column">
         <Flex.Item className={style.header}>
           <div className={style.filter_con}>
             <Flex
@@ -308,7 +308,7 @@ export default class PointList extends React.Component {
             </ListSort>
           </div>
         </Flex.Item>
-        <Flex.Item className={style.content} style={{ display: 'flex' }}>
+        <Flex.Item className={style.content}>
           {data && !data.length ? (
             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
               <Nothing src={nothing} />
