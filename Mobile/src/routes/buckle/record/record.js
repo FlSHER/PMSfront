@@ -107,8 +107,11 @@ export default class BuckleRecord extends React.Component {
       let newParticipant = participants.map((item) => {
         const obj = { ...item };
         obj.realname = item.staff_name || item.realname;
-        obj.point_a = (item.point_a === '' || item.point_a === undefined) ? (optAll.pointA || event.point_a_default || '') : item.point_a;
-        obj.point_b = (item.point_b === '' || item.point_b === undefined) ? (optAll.pointB || event.point_b_default || '') : item.point_b;
+        obj.point_a = (item.point_a === '' || item.point_a === undefined) ?
+          (optAll.pointA || event.point_a_default === undefined ? '' : event.point_a_default) : item.point_a;
+        obj.point_b = (item.point_b === '' || item.point_b === undefined) ?
+          (optAll.pointB || event.point_b_default === undefined ? '' : event.point_b_default) : item.point_b;
+        obj.count = item.count === undefined ? optAll.count : item.count;
         return obj;
       });
       if (!info.event || event.id !== info.event.id) {
