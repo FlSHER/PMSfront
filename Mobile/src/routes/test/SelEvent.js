@@ -239,7 +239,7 @@ export default class SelEvent extends Component {
     const { breadCrumb, evtName, loading, loadingName, evtAll, pageInfo } = this.props;
     const isLoading = loading || loadingName;
     return (
-      <Flex direction="column" style={{ height: '100%', ...(isLoading ? { display: 'none' } : null) }}>
+      <Flex direction="column" style={{ ...(isLoading ? { display: 'none' } : null) }}>
         <Flex.Item className={style.header}>
           <Search
             value={searchValue}
