@@ -336,7 +336,6 @@ export default class BuckleList extends React.Component {
   render() {
     const { logList } = this.props;
     const { checkState, filter } = this.state;
-    console.log('dealFilter', this.dealFilter());
     return (
       <Flex direction="column">
         <Flex.Item className={style.header}>
