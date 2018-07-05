@@ -214,7 +214,6 @@ export default class PointRanking extends React.Component {
     const { ranking, loading, group } = this.props;
     const { list, user } = ranking;
     const { userInfo } = this;
-
     const params = this.urlParams;
     const sortItem = group.find(item => item.id.toString() === this.urlParams.group_id);
     return (
@@ -339,7 +338,7 @@ export default class PointRanking extends React.Component {
             </div>
           </WingBlank>
         </Flex.Item>
-        <Flex.Item className={style.content}>
+        <Flex.Item className={style.content} style={{ display: 'flex' }}>
           {list && !list.length ? (
             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
               <Nothing src={nothing} />

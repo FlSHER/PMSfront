@@ -7,9 +7,7 @@ import {
 } from 'dva/router';
 import { FooterBar } from '../components/Footer';
 // import Loader from '../components/General/Loader/Loader';
-import {
-  openPages,
-} from '../configs/config';
+import { openPages } from '../configs/config';
 import {
   OA_PATH,
   OA_CLIENT_ID,
@@ -43,10 +41,6 @@ export default class App extends React.Component {
   //   });
   // }
 
-  componentWillReceiveProps() {
-
-  }
-
   render() {
     const {
       // loading,
@@ -57,7 +51,7 @@ export default class App extends React.Component {
       pathname,
     } = location;
 
-    pathname = pathname.startsWith('/') ? pathname : `/ ${pathname} `;
+    pathname = pathname.indexOf('/') === 0 ? pathname : `/ ${pathname} `;
     // <Loader fullScreen spinning={loading.global} />
 
     return (
@@ -74,7 +68,7 @@ export default class App extends React.Component {
           </QueueAnim>
         </div>
         {
-          openPages && openPages.includes(pathname) ? (
+          openPages && openPages.indexOf(pathname) !== -1 ? (
             <FooterBar
               history={this.props.history}
               pathname={pathname}

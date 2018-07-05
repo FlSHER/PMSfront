@@ -120,7 +120,7 @@ export default function ListView(ListItem) {
       if (!this.props.fetchDataSource) {
         response.onClick = multiple ? this.handlesMultiple : onChange;
         const dataId = muti.map(m => m[name]);
-        response.checked = dataId.includes(item[name]);
+        response.checked = dataId.indexOf(item[name]) !== -1;
       }
       return response;
     }

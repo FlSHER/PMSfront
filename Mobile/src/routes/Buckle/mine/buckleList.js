@@ -211,9 +211,17 @@ export default class BuckleList extends React.Component {
   }
   selFilter = (feild) => { // 筛选
     const { modal } = this.state;
-    const newModal = { ...modal };
-    newModal[feild] = true;
-    this.setNewState('modal', newModal);
+    const modalObj = {};
+    Object.keys(modal).map((key) => {
+      const value = modal[key];
+      if (key !== feild) {
+        modalObj[key] = false;
+      } else {
+        modalObj[key] = !value;
+      }
+      return value;
+    });
+    this.setNewState('modal', modalObj);
   }
 
   checkItem = (i, v, key) => {
@@ -227,7 +235,7 @@ export default class BuckleList extends React.Component {
     const { filter } = this.state;
     const newFilter = { ...filter };
     let temp = [...(newFilter[key] || [])];
-    const isExist = temp.includes(v);
+    const isExist = temp.indexOf(v) !== -1;
     if (isExist) {
       temp = temp.filter(item => item !== v);
     } else {
@@ -365,7 +373,7 @@ export default class BuckleList extends React.Component {
               </Flex.Item>
               <Flex.Item>
                 <div
-                  className={[style.filter, Object.keys(this.state.filter).length ? style.active : null].join(' ')}
+                  className={[style.filter, Object.keys(this.dealFilter()).length ? style.active : null].join(' ')}
                   onClick={() => this.selFilter('filterModal')}
                 >筛选
                 </div>
@@ -380,8 +388,8 @@ export default class BuckleList extends React.Component {
                 bottom: 0,
                 right: 0,
                 overflow: 'auto',
-                background: 'rgba(0, 0, 0, 0.1)',
               }}
+              topStyle={{ height: '2.3466667rem' }}
               visible={this.state.modal.sortModal}
               onCancel={this.onCancel}
               filterKey="sortModal"
@@ -397,7 +405,7 @@ export default class BuckleList extends React.Component {
             </ListSort>
           </div>
         </Flex.Item>
-        <Flex.Item className={style.content}>
+        <Flex.Item className={style.content} style={{ display: 'flex' }}>
           {logList[checkState.value] && !logList[checkState.value].data.length ?
             (
               <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>

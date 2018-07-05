@@ -13,7 +13,7 @@ export function env() {
   } else if (host.indexOf(config.testingDomain) >= 0) {
     return 'testing';
   }
-  return 'production';
+  return 'development';
 }
 
 export function apiPrefix() {
@@ -231,7 +231,7 @@ export function dotWheresValue(fields) {
         if (Array.isArray(value) && value.length > 0) {
           value = value.length > 1 ? `[${value}]` : value[0];
         }
-        if (value) {
+        if (value && value.length) {
           fieldsWhere += `${name}${whereConfig[i]}${value};`;
         }
       });

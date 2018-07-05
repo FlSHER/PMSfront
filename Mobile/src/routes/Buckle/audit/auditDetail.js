@@ -162,7 +162,7 @@ export default class AuditDetail extends React.Component {
     const footerBtn = [];
     if (Object.keys(detail).length) {
       if (detail.recorder_sn === userInfo.staff_sn) {
-        if ([0, 1].includes(detail.status_id)) {
+        if ([0, 1].indexOf(detail.status_id) !== -1) {
           // 撤回
           footerBtn.push(
             <Flex.Item key="withdraw">
@@ -171,7 +171,7 @@ export default class AuditDetail extends React.Component {
               </Button>
             </Flex.Item>);
         }
-        if ([-1, -2].includes(detail.status_id)) {
+        if ([-1, -2].indexOf(detail.status_id) !== -1) {
           // 再次提交
           footerBtn.push(
             <Flex.Item key="submit">
@@ -304,7 +304,7 @@ export default class AuditDetail extends React.Component {
             <WhiteSpace size="sm" /> : null}
           {detail.status_id === 2 ? (
             <WingBlank className={style.parcel}>
-              <div className={style.players}>
+              <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
                 <Flex className={style.title}> 配置分值</Flex>
                 <Flex
                   className={style.table_head}

@@ -95,14 +95,14 @@ export default class SelEvent extends Component {
     newSelectStaff.first = [
       {
         staff_sn: result.first_approver_sn || userInfo.staff_sn,
-        realname: result.first_approver_name || userInfo.staff_name,
+        realname: result.first_approver_name || userInfo.realname,
       },
     ];
     if (result.final_approver_sn) {
       newSelectStaff.final = [
         {
           staff_sn: result.final_approver_sn,
-          staff_name: result.final_approver_name,
+          realname: result.final_approver_name,
         },
       ];
     }

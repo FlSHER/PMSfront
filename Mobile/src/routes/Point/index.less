@@ -49,8 +49,12 @@
     }
     .filter {
       cursor: pointer;
-      background: url('../../assets/filter/screen.png') no-repeat right center;
+      background: url('../../assets/filter/unscreen.svg') no-repeat right center;
       background-size: 30/75rem;
+      &.active {
+        background: url('../../assets/filter/screen.png') no-repeat right center;
+        background-size: 30/75rem;
+      }
     }
   }
   .state {

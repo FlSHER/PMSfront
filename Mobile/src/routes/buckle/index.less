@@ -1,5 +1,11 @@
 @import '../../utils/var';
 // record
+// :global {
+//   .am-pull-to-refresh-content-wrapper {
+//     height: 100%;
+//   }
+// }
+
 .parcel {
   :global {
     .am-list-item .am-list-line .am-list-content {
@@ -177,12 +183,18 @@
     }
     .filter {
       cursor: pointer;
-      background: url('../../assets/filter/screen.png') no-repeat right center;
+      background: url('../../assets/filter/unscreen.svg') no-repeat right center;
       background-size: 30/75rem;
+      &.active {
+        background: url('../../assets/filter/screen.png') no-repeat right center;
+        background-size: 30/75rem;
+      }
     }
   }
   .state {
-    .base(rgb(137, 137, 137),
+    .base(rgb(137,
+    137,
+    137),
     16px);
     &.active {
       .stateLabel(@tab-text-color,
@@ -229,7 +241,9 @@
     .label_state {
       margin-left: 20/75rem;
       padding: 6/75rem 16/75rem;
-      .label(rgb(229, 27, 35),
+      .label(rgb(229,
+      27,
+      35),
       12px,
       20/75rem,
       #fff);
@@ -238,13 +252,17 @@
   .time {
     margin: 20/75rem 0 10/75rem;
     height: 36/75rem;
-    .base(rgb(155, 155, 155),
+    .base(rgb(155,
+    155,
+    155),
     @list-text-size);
   }
   .desc {
     width: 540/75rem;
     height: 36/75rem;
-    .base(rgb(155, 155, 155),
+    .base(rgb(155,
+    155,
+    155),
     @list-text-size);
     .textLineOverFlow();
   }
