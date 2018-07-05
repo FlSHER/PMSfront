@@ -12,12 +12,10 @@ npm-debug.log*
 yarn-error.log
 
 #Mobile
-/Mobile/dist
 /Mobile/node_modules
 /Mobile/.history
 
 #PC
-/PC/dist
 /PC/node_modules
 /PC/.history
 
