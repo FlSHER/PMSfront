@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "start": "cross-env && set PORT=8002 && roadhog dev",
-    "start:no-proxy": "cross-env NO_PROXY=true ESLINT=none roadhog dev",
+    "start:no-proxy": "set PORT=8002 && cross-env NO_PROXY=true ESLINT=none roadhog dev",
     "build": "cross-env roadhog build",
     "prettier": "prettier --write ./src/**/**/**/*",
     "site": "roadhog-api-doc static && gh-pages -d dist",
