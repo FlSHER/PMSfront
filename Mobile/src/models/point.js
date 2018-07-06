@@ -61,7 +61,7 @@ export default {
       if (info.page !== 1) { // 多页
         let newData = [...newList[action.payload.type].data];
         newData = newData.concat(info.data);
-        newList[action.payload.type].data = [...newData];
+        newList[action.payload.type] = { ...info, data: newData };
       } else {
         newList[action.payload.type] = { ...info };
       }

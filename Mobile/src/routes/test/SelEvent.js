@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import {
   connect,
 } from 'dva';
@@ -24,6 +25,7 @@ import style from './index.less';
 }))
 export default class SelEvent extends Component {
   state = {
+    height: document.documentElement.clientHeight,
     eventList: [],
     init: false,
     type: '1',
@@ -41,6 +43,12 @@ export default class SelEvent extends Component {
         breadCrumb: [{ name: '选择事件', id: -1 }],
       },
     });
+  }
+  componentDidMount() {
+    const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop;
+    setTimeout(() => this.setState({
+      height: hei,
+    }), 0);
   }
   componentWillReceiveProps(nextProps) {
     const { evtAll } = nextProps;
@@ -264,14 +272,19 @@ export default class SelEvent extends Component {
           ) : null}
 
         </Flex.Item>
-        <Flex.Item className={style.content}>
+        <Flex.Item
+          className={style.content}
+          ref={(el) => { this.ptr = el; }}
+        >
           {(!eventList.length && !evtName.length) ?
           (
             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
               <Nothing src={nothing} />
             </div>
           ) : (
-            <div>
+            <div
+              style={{ height: this.state.height }}
+            >
               {!searchValue ? (
                 <EventType
                   dataSource={eventList || []}

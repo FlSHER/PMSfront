@@ -3,6 +3,7 @@ import { SearchBar } from 'antd-mobile';
 import {
   connect,
 } from 'dva';
+import './index.less';
 
 class Bread extends React.Component {
   render() {

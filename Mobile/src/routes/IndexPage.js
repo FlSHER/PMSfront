@@ -9,7 +9,7 @@ import style from './index.less';
 
 function IndexPage({ history }) {
   return (
-    <div className={styles.con}>
+    <div className={styles.con} style={{ marginBottom: '60px' }}>
       {
         indexMenu.map((item, i) => {
       const idx = i;
