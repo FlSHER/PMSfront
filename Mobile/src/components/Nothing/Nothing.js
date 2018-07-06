@@ -4,9 +4,11 @@ import {
   connect,
 } from 'dva';
 import style from './index.less';
+import nothing from '../../assets/nothing.png';
 
 class Nothing extends React.Component {
   render() {
+    const { src = `${nothing}` } = this.props;
     return (
       <div style={{
   display: 'flex',
@@ -15,7 +17,7 @@ class Nothing extends React.Component {
       >
         <div className={style.nothing}>
           <img
-            src={this.props.src}
+            src={src}
             alt="img"
           />
           <span>暂无数据</span>

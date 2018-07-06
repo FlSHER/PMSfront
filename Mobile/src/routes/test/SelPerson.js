@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   connect,
 } from 'dva';
-import { SearchList } from '../../components/index';
+import { SearchList, Nothing } from '../../components/index';
 import { Department, Staff } from '../../common/ListView/index.js';
 import { analyzePath, unique, userStorage } from '../../utils/util';
 import styles from '../common.less';
@@ -13,7 +13,9 @@ import style from './index.less';
   breadCrumb: searchStaff.breadCrumb,
   pageInfo: searchStaff.pageInfo,
   selectStaff: searchStaff.selectStaff,
-  loading: loading.effects['searchStaff/fetchSelfDepStaff'],
+  loading1: loading.effects['searchStaff/fetchSearchStaff'],
+  loading2: loading.effects['searchStaff/fetchSelfDepStaff'],
+  loading3: loading.effects['searchStaff/fetchFirstDepartment'],
 }))
 export default class SelPerson extends Component {
   state = {
@@ -171,6 +173,17 @@ export default class SelPerson extends Component {
       },
     });
   }
+  searchOncancel = () => {
+    this.setState({
+      search: '',
+    });
+    const { breadCrumb } = this.props;
+    if (breadCrumb && breadCrumb.length) {
+      this.selDepartment(breadCrumb[breadCrumb.length - 1]);
+    } else {
+      this.fetchSelfDepStaff();
+    }
+  }
   selectOk = () => {
     const { history, selectStaff, dispatch } = this.props;
     const { selected, key } = this.state;
@@ -187,8 +200,8 @@ export default class SelPerson extends Component {
     history.goBack(-1);
   }
   render() {
-    const { department, staff, breadCrumb, loading, pageInfo } = this.props;
-    const { selected, type } = this.state;
+    const { department, staff, breadCrumb, loading1, loading2, loading3, pageInfo } = this.props;
+    const { selected, type, search } = this.state;
     return (
       <div className={styles.con}>
         <SearchList
@@ -203,34 +216,37 @@ export default class SelPerson extends Component {
           handleBread={this.selDepartment}
           firstDepartment={this.firstDepartment}
           selectOk={this.selectOk}
-          searchOncancel={this.fetchSelfDepStaff}
+          searchOncancel={this.searchOncancel}
         >
-          {!loading ? (
-            <div className={style.child}>
-              {department.length ? (
-                <Department
-                  dataSource={department}
-                  fetchDataSource={this.selDepartment}
-                  name="id"
-                />
+          <div
+            className={style.child}
+            style={{ ...(loading1 || loading2 || loading3 ? { display: 'none' } : null) }}
+          >
+            {department.length && !search ? (
+              <Department
+                dataSource={department}
+                fetchDataSource={this.selDepartment}
+                name="id"
+              />
               ) : null}
-              {staff.length ? (
-                <Staff
-                  link=""
-                  isFinal={this.state.key === 'final'}
-                  name={this.state.key === 'final' ? 'staff_name' : 'realname'}
-                  page={pageInfo.page}
-                  totalpage={pageInfo.totalpage}
-                  onPageChange={this.onPageChange}
-                  dispatch={this.props.dispatch}
-                  multiple={type !== '1'}
-                  selected={selected.data}
-                  dataSource={staff}
-                  onChange={this.getSelectResult}
-                />
+            {search && !staff.length ? <Nothing /> : null }
+            {staff.length ? (
+              <Staff
+                link=""
+                isFinal={this.state.key === 'final'}
+                name={this.state.key === 'final' ? 'staff_name' : 'realname'}
+                page={search ? pageInfo.page : false}
+                totalpage={search ? pageInfo.totalpage : false}
+                onPageChange={this.onPageChange}
+                dispatch={this.props.dispatch}
+                multiple={type !== '1'}
+                selected={selected.data}
+                dataSource={staff}
+                onChange={this.getSelectResult}
+              />
               ) : null}
-            </div>
-          ) : null}
+          </div>
+
         </SearchList>
       </div>
     );

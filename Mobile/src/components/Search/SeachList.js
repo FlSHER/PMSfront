@@ -10,20 +10,22 @@ export default class SearchList extends Component {
   };
 
   onChange = (value) => {
+    const { searchOncancel } = this.props;
     this.setState({ value });
+    if (value === '') {
+      searchOncancel();
+    }
   };
   onSubmit = () => {
     const { handleSearch } = this.props;
     handleSearch(this.state.value);
   }
   onCancel = () => {
-    const { handleBread, bread } = this.props;
+    const { searchOncancel } = this.props;
     this.setState({
       value: '',
     }, () => {
-      if (bread && bread.length) {
-        handleBread(bread[bread.length - 1]);
-      }
+      searchOncancel();
     });
   }
   render() {

@@ -14,8 +14,8 @@ export default {
     event: {},
     breadCrumb: [],
     pageInfo: {
-      page: '',
-      totalpage: '',
+      page: 1,
+      totalpage: 10,
     },
   },
   subscriptions: {

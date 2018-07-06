@@ -252,17 +252,36 @@ export default class SelEvent extends Component {
       },
     });
   }
+  searchCancel = () => {
+    const { breadCrumb, dispatch } = this.props;
+    this.setState({
+      searchValue: '',
+    }, () => {
+      if (breadCrumb && breadCrumb.length > 1) {
+        this.selEventName(breadCrumb[breadCrumb.length - 1]);
+      } else {
+        dispatch({
+          type: 'event/save',
+          payload: {
+            store: 'evtName',
+            data: [],
+          },
+        });
+      }
+    });
+  }
   render() {
     const { eventList, type, selected, searchValue } = this.state;
     const { breadCrumb, evtName, loading, loadingName, pageInfo } = this.props;
     const isLoading = loading || loadingName;
     return (
-      <Flex direction="column" style={{ ...(isLoading ? { display: 'none' } : null) }}>
+      <Flex direction="column">
         <Flex.Item className={style.header}>
           <Search
             value={searchValue}
             onChange={this.searchChange}
             onSubmit={this.searchSubmit}
+            onCancel={this.searchCancel}
           />
           {!searchValue ? (
             <Bread
@@ -278,12 +297,12 @@ export default class SelEvent extends Component {
         >
           {(!eventList.length && !evtName.length) ?
           (
-            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
+            <div style={{ display: isLoading ? 'none' : 'flex', flexDirection: 'column' }}>
               <Nothing src={nothing} />
             </div>
           ) : (
             <div
-              style={{ height: this.state.height }}
+              style={{ height: this.state.height, ...(isLoading ? { display: 'none' } : null) }}
             >
               {!searchValue ? (
                 <EventType
@@ -301,8 +320,8 @@ export default class SelEvent extends Component {
                 dataSource={evtName || []}
                 onChange={this.getSelectResult}
 
-                page={pageInfo.page}
-                totalpage={pageInfo.totalpage}
+                page={searchValue ? pageInfo.page : false}
+                totalpage={searchValue ? pageInfo.totalpage : false}
                 onPageChange={this.onPageChange}
               />
             </div>)
