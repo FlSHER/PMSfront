@@ -78,7 +78,7 @@ export default class BuckleRecord extends React.Component {
             });
             const selectStaffs = {
               first: [{ realname: data.first_approver_name, staff_sn: data.first_approver_sn }],
-              final: [{ realname: data.final_approver_name, staff_sn: data.final_approver_sn }],
+              final: [{ staff_name: data.final_approver_name, staff_sn: data.final_approver_sn }],
               participants: data.participant,
               copy: addressees,
             };
@@ -317,8 +317,7 @@ export default class BuckleRecord extends React.Component {
       '请选择事件' : !info.participants.length ?
         '请选择参与人' : !first.length ?
           '请选择初审人' : !final.length ?
-            '请选择终审人' : !copy.length ?
-              '请选择抄送人' : '';
+            '请选择终审人' : '';
     if (msg) {
       Toast.fail(msg);
       return;
@@ -603,7 +602,7 @@ export default class BuckleRecord extends React.Component {
                     <PersonIcon
                       key={idx}
                       value={item}
-                      nameKey="realname"
+                      nameKey="staff_name"
                       showNum={2}
                       handleClick={event.final_approver_locked === 1 ? null : () => this.changePerson('final', 1)}
                       handleDelClick={event.final_approver_locked === 1 ? null : (e, v) => this.remove(e, v, 'final')}
