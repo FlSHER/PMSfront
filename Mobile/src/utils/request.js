@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Toast } from 'antd-mobile';
-import { dealErrorData, OA_PATH, OA_CLIENT_ID } from './util';
+import { dealErrorData } from './util';
 
 const fetch = (url, options) => {
   const {
@@ -60,7 +60,7 @@ export default function request(uri, params) {
         Authorization: `Bearer ${localStorage.getItem('OA_access_token')}`,
       };
     } else {
-      window.location.href = `${OA_PATH()}/oauth/authorize?client_id=${OA_CLIENT_ID()}&response_type=code`;
+      window.location.href = `${OA_PATH}/oauth/authorize?client_id=${OA_CLIENT_ID}&response_type=code`;
     }
   }
   const newOptions = {

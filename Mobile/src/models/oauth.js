@@ -1,7 +1,6 @@
 import {
   getAccessToken,
 } from '../services/oauth';
-import { OA_CLIENT_ID, OA_CLIENT_SECRET } from '../utils/util';
 
 export default {
   namespace: 'oauth',
@@ -51,8 +50,8 @@ export default {
     * getAccessTokenByAuthCode({ payload }, { call, put }) {
       const params = {
         grant_type: 'authorization_code',
-        client_id: OA_CLIENT_ID(),
-        client_secret: OA_CLIENT_SECRET(),
+        client_id: OA_CLIENT_ID,
+        client_secret: OA_CLIENT_SECRET,
         ...payload,
       };
       const response = yield call(getAccessToken, params);
@@ -73,8 +72,8 @@ export default {
       const params = {
         grant_type: 'refresh_token',
         refresh_token: localStorage.getItem('OA_refresh_token'),
-        client_id: OA_CLIENT_ID(),
-        client_secret: OA_CLIENT_SECRET(),
+        client_id: OA_CLIENT_ID,
+        client_secret: OA_CLIENT_SECRET,
         scope: '',
         ...payload,
       };

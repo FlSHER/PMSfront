@@ -5,7 +5,10 @@ import {
 import { Flex } from 'antd-mobile';
 import { EventType, EventName } from '../../common/ListView/index.js';
 import { Bread, Search } from '../../components/General/index';
+import { Nothing } from '../../components/index';
 import { markTreeData, userStorage } from '../../utils/util';
+import nothing from '../../assets/nothing.png';
+
 import style from './index.less';
 
 @connect(({ event, loading, searchStaff, buckle }) => ({
@@ -182,6 +185,13 @@ export default class SelEvent extends Component {
   }
   selEvent = (item) => {
     const { dispatch, evtAll } = this.props;
+    dispatch({
+      type: 'event/save',
+      payload: {
+        store: 'evtName',
+        data: [],
+      },
+    });
     if (item.id === -1) {
       const tree = markTreeData(evtAll, null, { parentId: 'parent_id', key: 'id' });
       this.setState({
@@ -209,9 +219,9 @@ export default class SelEvent extends Component {
           },
         });
       });
-      if (!newEventList) {
-        this.selEventName(item);
-      }
+      // if (!newEventList) {
+      this.selEventName(item);
+      // }
     }
   }
   searchChange = (v) => {
@@ -236,7 +246,7 @@ export default class SelEvent extends Component {
   }
   render() {
     const { eventList, type, selected, searchValue } = this.state;
-    const { breadCrumb, evtName, loading, loadingName, evtAll, pageInfo } = this.props;
+    const { breadCrumb, evtName, loading, loadingName, pageInfo } = this.props;
     const isLoading = loading || loadingName;
     return (
       <Flex direction="column" style={{ ...(isLoading ? { display: 'none' } : null) }}>
@@ -255,26 +265,35 @@ export default class SelEvent extends Component {
 
         </Flex.Item>
         <Flex.Item className={style.content}>
-          {!searchValue ? (
-            <EventType
-              dataSource={eventList || []}
-              fetchDataSource={this.selEvent}
-              name="name"
-            />) : null}
-          {(evtAll && evtAll.length && !eventList.length) || searchValue ? (
-            <EventName
-              name="name"
-              dispatch={this.props.dispatch}
-              multiple={type !== '1'}
-              selected={selected.data}
-              dataSource={evtName || []}
-              onChange={this.getSelectResult}
+          {(!eventList.length && !evtName.length) ?
+          (
+            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
+              <Nothing src={nothing} />
+            </div>
+          ) : (
+            <div>
+              {!searchValue ? (
+                <EventType
+                  dataSource={eventList || []}
+                  fetchDataSource={this.selEvent}
+                  name="name"
+                />) : null}
+              {eventList.length && evtName.length ?
+                <p style={{ padding: '0.5rem 0 0.2rem 0.4rem', fontSize: '16px', color: 'rgb(100,100,100)' }}>事件列表</p> : null}
+              <EventName
+                name="name"
+                dispatch={this.props.dispatch}
+                multiple={type !== '1'}
+                selected={selected.data}
+                dataSource={evtName || []}
+                onChange={this.getSelectResult}
 
-              page={pageInfo.page}
-              totalpage={pageInfo.totalpage}
-              onPageChange={this.onPageChange}
-            />
-          ) : null}
+                page={pageInfo.page}
+                totalpage={pageInfo.totalpage}
+                onPageChange={this.onPageChange}
+              />
+            </div>)
+              }
         </Flex.Item>
       </Flex>
     );

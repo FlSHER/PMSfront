@@ -19,13 +19,20 @@ export default {
     },
   },
   subscriptions: {
-    setup({ dispatch, history }) {  // eslint-disable-line
+        setup({ dispatch, history }) { // eslint-disable-line
     },
   },
 
   effects: {
 
-    *getEvent({ payload }, { put, call }) {
+    * getEvent({ payload }, { put, call }) {
+      yield put({
+        type: 'save',
+        payload: {
+          store: 'evtName',
+          data: response || [],
+        },
+      });
       const { breadCrumb } = payload;
       const response = yield call(getEvent);
       if (response && !response.error) {
@@ -45,7 +52,7 @@ export default {
         });
       }
     },
-    *getEventName({ payload }, { put, call }) {
+    * getEventName({ payload }, { put, call }) {
       const response = yield call(getEventName, payload.id);
       if (response && !response.error) {
         yield put({
@@ -60,7 +67,7 @@ export default {
         }
       }
     },
-    *searchEventName({ payload }, { put, call, select }) {
+    * searchEventName({ payload }, { put, call, select }) {
       const newParams = makerFilters(payload);
       const response = yield call(searchEventName, newParams);
       const { evtName } = yield select(_ => _.event);
@@ -97,8 +104,24 @@ export default {
       const newState = { ...state };
       newState[action.payload.key] = action.payload.value;
       return {
-        ...state, ...newState,
+        ...state,
+        ...newState,
 
+      };
+    },
+    clearModal() {
+      const state = {
+        evtAll: [],
+        evtName: [],
+        event: {},
+        breadCrumb: [],
+        pageInfo: {
+          page: '',
+          totalpage: '',
+        },
+      };
+      return {
+        ...state,
       };
     },
   },

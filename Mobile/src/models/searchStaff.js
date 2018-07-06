@@ -157,5 +157,19 @@ export default {
         ...state, ...newState,
       };
     },
+    clearSelectStaff(state) {
+      const newState = {
+        selectStaff: {
+          first: [],
+          final: [],
+          participants: [],
+          copy: [],
+        },
+      };
+      return {
+        ...state,
+        ...newState,
+      };
+    },
   },
 };

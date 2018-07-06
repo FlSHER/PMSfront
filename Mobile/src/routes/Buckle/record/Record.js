@@ -57,7 +57,7 @@ export default class BuckleRecord extends React.Component {
             const addressees = data.addressee.map((item) => {
               const obj = { ...item };
               obj.realname = item.staff_name;
-              if ((defaultAddr || []).find(its => its.staff_sn === item.staff_sn)) {
+              if ((defaultAddr || []).filter(its => its.staff_sn === item.staff_sn).length) {
                 obj.lock = 1;
               }
               return obj;
@@ -322,10 +322,12 @@ export default class BuckleRecord extends React.Component {
       Toast.fail(msg);
       return;
     }
-    const pointError = newParticipant.find(item =>
+
+    const pointError = newParticipant.filter(item =>
       isNaN(item.point_a) || isNaN(item.point_b)
     );
-    if (pointError) {
+
+    if (pointError.length) {
       Toast.fail('请输入正确格式的数字');
       return;
     }
@@ -344,9 +346,22 @@ export default class BuckleRecord extends React.Component {
           addressees: newCopy,
         },
         cb: () => {
+          this.clearModal();
           history.replace('/home');
         },
       },
+    });
+  }
+  clearModal = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'buckle/clearModal',
+    });
+    dispatch({
+      type: 'event/clearModal',
+    });
+    dispatch({
+      type: 'searchStaff/clearSelectStaff',
     });
   }
   selEvent = () => {

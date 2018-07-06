@@ -4,7 +4,7 @@ import {
 } from 'dva';
 import { Button } from 'antd-mobile';
 import {
-  OA_PATH,
+  // OA_PATH,
   userStorage,
 } from '../../utils/util';
 
@@ -15,9 +15,8 @@ import style from './index.less';
 class My extends React.Component {
     toExit = (e) => {
       e.preventDefault();
-      // console.log(`${OA_PATH()}/logout?redirect_uri=http://localhost:8000`)
       localStorage.clear();
-      window.location.href = `${OA_PATH()}/logout?redirect_uri=${OA_PATH()}/home`;
+      window.location.href = `${OA_PATH}/logout?redirect_uri=${OA_PATH}/home`;
     }
     render() {
       const userInfo = userStorage('userInfo');

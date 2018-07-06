@@ -1,9 +1,28 @@
 {
     "entry": "src/index.js",
     "extraBabelPlugins": [
-         ["import", { "libraryName": "antd-mobile", "libraryDirectory": "es", "style": true }]
+        ["import", { "libraryName": "antd-mobile", "libraryDirectory": "es", "style": true }]
     ],
-	"publicPath": "/",
+    "env": {
+        "development": {
+            "extraBabelPlugins": [
+                "dva-hmr"
+            ],
+            "define": {
+                "OA_PATH": "http://192.168.20.238:8003",
+                "OA_CLIENT_ID": "7",
+                "OA_CLIENT_SECRET": "lcBIS0l1eW038wqUgDf6qsNyUl3L69Ck8YxHXKGh"
+            }
+        },
+        "production": {
+            "define": {
+                "OA_PATH": "http://of.xigemall.com",
+                "OA_CLIENT_ID": "8",
+                "OA_CLIENT_SECRET": "lmL6z770WU4MkCMKYGPpSh37XcJ1Q83zcsBeQMxr"
+            }
+        }
+    },
+    "publicPath": "/",
     "disableDynamicImport": true,
     "html": {
         "template": "./src/index.ejs"

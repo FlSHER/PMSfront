@@ -8,10 +8,6 @@ import {
 import { FooterBar } from '../components/Footer';
 // import Loader from '../components/General/Loader/Loader';
 import { openPages } from '../configs/config';
-import {
-  OA_PATH,
-  OA_CLIENT_ID,
-} from '../utils/util';
 import './app.less';
 
 @withRouter
@@ -27,7 +23,7 @@ export default class App extends React.Component {
       });
     } else if (!localStorage.getItem('OA_access_token')) {
       window.location.href =
-        `${OA_PATH()}/oauth/authorize?client_id=${OA_CLIENT_ID()}&response_type=code`;
+        `${OA_PATH}/oauth/authorize?client_id=${OA_CLIENT_ID}&response_type=code`;
     } else {
       this.props.dispatch({
         type: 'user/getUserInfo',
