@@ -3,8 +3,8 @@ import {
   connect,
 } from 'dva';
 import { WingBlank, WhiteSpace, Grid } from 'antd-mobile';
-import { indexMenu } from '../utils/convert';
-import styles from './common.less';
+import { indexMenu } from '../../utils/convert';
+import styles from '../common.less';
 import style from './index.less';
 
 function IndexPage({ history }) {

@@ -17,7 +17,7 @@ import { userStorage, makerFilters } from '../../../utils/util';
 
 import { ListFilter, CheckBoxs, ListSort, StateTabs, Nothing } from '../../../components/index';
 import style from '../index.less';
-// import shortcut from '../../../assets/shortcuts.png';
+import shortcut from '../../../assets/shortcuts.png';
 
 const sortList = [
   { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
@@ -298,9 +298,21 @@ export default class AuditList extends React.Component {
     }
     return labelArr;
   }
+  renderExtraContent = (value) => {
+    const extra = (
+      <div className={style.aside}>
+        <img
+          src={shortcut}
+          alt="快捷操作"
+          onClick={() => { this.onShortcut(value); }}
+        />
+      </div>
+    );
+    return extra;
+  }
   render() {
     const { auditList } = this.props;
-    const { checkState, filter, el, shortModal, userInfo } = this.state;
+    const { checkState, filter, el, userInfo, shortModal } = this.state;
     const isFilter = makerFilters(filter).filters;
     const linkBtn = [];
     if (Object.keys(el).length) {
@@ -335,7 +347,8 @@ export default class AuditList extends React.Component {
         linkBtn.push(pass);
       }
     }
-
+    const isApproved = checkState.value === 'approved';
+    const extra = !isApproved ? this.renderExtraContent : null;
     return (
       <Flex direction="column">
         <Flex.Item className={style.header}>
@@ -411,49 +424,17 @@ export default class AuditList extends React.Component {
             ) : (
               <WingBlank>
                 <Buckle
+                  extra={extra}
+                  onRefresh={this.onRefresh}
                   dataSource={auditList[checkState.value] ? auditList[checkState.value].data : []}
                   handleClick={this.toLookDetail}
-                  onRefresh={this.onRefresh}
                   onPageChange={this.onPageChange}
-                  hasShortcut={checkState.value !== 'approved'}
-                  onShortcut={checkState.value === 'approved' ? null : this.onShortcut}
-                  label={this.renderLalbel()}
+                  label={this.renderLalbel() || []}
                   page={auditList[checkState.value] ?
                     auditList[checkState.value].page : 1}
                   totalpage={auditList[checkState.value] ?
                     auditList[checkState.value].totalpage : 10}
-                >
-                  <Modal
-                    popup
-                    visible={checkState.value === 'approved' ? false : shortModal}
-                    onClose={() => this.onClose('shortModal')}
-                    animationType="slide-up"
-                  >
-                    <div
-                      style={{ background: 'rgba(0, 0, 0, 0.4)' }}
-                      onClick={(e) => {
-                        e.stopPropagation(); return false;
-                      }}
-                    >
-                      <WingBlank>
-                        <Flex
-                          direction="column"
-                        >
-                          <Flex.Item className={style.base_opt}>
-                            {linkBtn}
-                          </Flex.Item>
-                          <Flex.Item
-                            onClick={() => this.onClose('shortModal')}
-                            className={[style.opt_item, style.cancel].join(' ')}
-                          >取消
-                          </Flex.Item>
-                        </Flex>
-
-                      </WingBlank>
-                    </div>
-                  </Modal>
-
-                </Buckle>
+                />
               </WingBlank>
             )}
 
@@ -504,9 +485,36 @@ export default class AuditList extends React.Component {
               </div>
             )
           }
-
-
         </ListFilter>
+        <Modal
+          popup
+          visible={!isApproved && shortModal}
+          onClose={() => this.onClose('shortModal')}
+          animationType="slide-up"
+        >
+          <div
+            style={{ background: 'rgba(0, 0, 0, 0.4)' }}
+            onClick={(e) => {
+              e.stopPropagation(); return false;
+            }}
+          >
+            <WingBlank>
+              <Flex
+                direction="column"
+              >
+                <Flex.Item className={style.base_opt}>
+                  {linkBtn}
+                </Flex.Item>
+                <Flex.Item
+                  onClick={() => this.onClose('shortModal')}
+                  className={[style.opt_item, style.cancel].join(' ')}
+                >取消
+                </Flex.Item>
+              </Flex>
+
+            </WingBlank>
+          </div>
+        </Modal>
       </Flex>
     );
   }

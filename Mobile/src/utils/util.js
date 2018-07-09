@@ -299,3 +299,13 @@ export function scrollToAnchor(anchorName) {
     if (anchorElement) { anchorElement.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
   }
 }
+// 到页面顶部距离
+export function getElementTop(element) {
+  let top = element.offsetTop;
+  let cur = element.offsetParent;
+  while (cur != null) {
+    top += cur.offsetTop;
+    cur = cur.offsetParent;
+  }
+  return top;
+}

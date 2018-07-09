@@ -178,7 +178,7 @@ export default class BuckleRecord extends React.Component {
   changePerson = (name, type) => {
     const { history } = this.props;
     this.saveAllData();
-    history.push(`/testView2/${name}/${type}`);
+    history.push(`/sel_person/${name}/${type}`);
   }
   addMore = (name = 'first', type) => {
     const { event } = this.props;
@@ -190,7 +190,7 @@ export default class BuckleRecord extends React.Component {
     }
     const { history } = this.props;
     this.saveAllData();
-    history.push(`/testView2/${name}/${type}`);
+    history.push(`/sel_person/${name}/${type}`);
   }
 
   savePointData = (newPoint, kind, el) => {

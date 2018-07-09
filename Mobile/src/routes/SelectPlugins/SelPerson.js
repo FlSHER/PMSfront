@@ -225,6 +225,7 @@ export default class SelPerson extends Component {
             {department.length && !search ? (
               <Department
                 dataSource={department}
+                heightNone
                 fetchDataSource={this.selDepartment}
                 name="id"
               />
@@ -233,6 +234,7 @@ export default class SelPerson extends Component {
             {staff.length ? (
               <Staff
                 link=""
+                heightNone
                 isFinal={this.state.key === 'final'}
                 name={this.state.key === 'final' ? 'staff_name' : 'realname'}
                 page={search ? pageInfo.page : false}

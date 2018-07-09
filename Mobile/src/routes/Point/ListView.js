@@ -4,7 +4,7 @@ import QueueAnim from 'rc-queue-anim';
 
 export default function ListView(ListItem) {
   class NewItem extends PureComponent {
-    state={
+    state = {
       refreshing: false,
     }
     // 返回角度
@@ -90,13 +90,13 @@ export default function ListView(ListItem) {
         <PullToRefresh
           ref={(el) => { this.ptr = el; }}
           style={{
-          height: '100%',
-          overflow: 'auto',
-        }}
+            height: '100%',
+            overflow: 'auto',
+          }}
           refreshing={this.state.refreshing}
           onRefresh={
-          onRefresh
-        }
+            onRefresh
+          }
         >
           <QueueAnim>
             {dataSource.map((item, i) => {

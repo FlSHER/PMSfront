@@ -1,10 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {
   connect,
 } from 'dva';
-import { WingBlank, WhiteSpace, Flex, List, DatePicker } from 'antd-mobile';
+import { WingBlank, WhiteSpace, Flex, DatePicker } from 'antd-mobile';
 import moment from 'moment';
+import { Ranking } from '../../../common/ListView';
 import nothing from '../../../assets/nothing.png';
 import { userStorage, getUrlParams, scrollToAnchor } from '../../../utils/util';
 import { ListSort, Nothing } from '../../../components/index';
@@ -33,7 +33,6 @@ export default class PointRanking extends React.Component {
       filterModal: false,
       sortModal: false,
     },
-    height: document.documentElement.clientHeight,
     // params: {
     //   stage: 'month',
     //   datetime: moment(new Date()).format('YYYY-MM-DD'),
@@ -50,13 +49,6 @@ export default class PointRanking extends React.Component {
       type: 'ranking/getAuthorityGroup',
     });
     this.userInfo = userStorage('userInfo');
-  }
-
-  componentDidMount() {
-    const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop;
-    setTimeout(() => this.setState({
-      height: hei,
-    }), 0);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -347,22 +339,16 @@ export default class PointRanking extends React.Component {
             </div>
           </WingBlank>
         </Flex.Item>
-        <Flex.Item className={style.content}>
+        <Flex.Item
+          {...(loading.global && { style: { display: 'none' } })}
+          className={style.content}
+        >
           {list && !list.length ? (
             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
               <Nothing src={nothing} />
             </div>) : (
               <WingBlank>
-                <List
-                  ref={(el) => { this.ptr = el; }}
-                  style={{ height: this.state.height, overflow: 'auto', ...(loading.global ? { display: 'none' } : null) }}
-                  className={style.rank_list}
-                >
-                  {(list || []).map((item) => {
-                    return this.renderRankingItem(item);
-                  })}
-
-                </List>
+                <Ranking dataSource={list || []} />
               </WingBlank>
             )}
         </Flex.Item>

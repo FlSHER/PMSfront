@@ -60,10 +60,10 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['user'], () => import('../layouts/BasicLayout')),
     },
     '/home': {
-      component: dynamicWrapper(app, [], () => import('../routes/IndexPage')),
+      component: dynamicWrapper(app, [], () => import('../routes/Home/IndexPage')),
     },
     '/user': {
-      component: dynamicWrapper(app, [], () => import('../routes/IndexPage')),
+      component: dynamicWrapper(app, [], () => import('../routes/Home/IndexPage')),
     },
     '/buckle_record': {
       component: dynamicWrapper(app, ['buckle'], () => import('../routes/Buckle/record/record')),
@@ -101,13 +101,13 @@ export const getRouterData = (app) => {
     '/my': {
       component: dynamicWrapper(app, [], () => import('../routes/My/my')),
     },
-    '/testView2/:key/:type': {
-      component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/test/SelPerson')),
+    '/sel_person/:key/:type': {
+      component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/SelectPlugins/SelPerson')),
     },
     '/sel_event': {
-      component: dynamicWrapper(app, ['event', 'searchStaff', 'buckle'], () => import('../routes/test/SelEvent')),
+      component: dynamicWrapper(app, ['event', 'searchStaff', 'buckle'], () => import('../routes/SelectPlugins/SelEvent')),
     },
-    '/testView': {
+    '/test': {
       component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/test')),
     },
     '/get_access_token': {

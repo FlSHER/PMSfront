@@ -25,10 +25,9 @@ import style from './index.less';
 }))
 export default class SelEvent extends Component {
   state = {
-    height: document.documentElement.clientHeight,
     eventList: [],
     init: false,
-    type: '1',
+    height: document.documentElement.clientHeight,
     selected: {
       data: [],
       total: 50,
@@ -44,12 +43,16 @@ export default class SelEvent extends Component {
       },
     });
   }
+
   componentDidMount() {
-    const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop;
+    const htmlDom = ReactDOM.findDOMNode(this.ptr);
+    const offetTop = htmlDom.getBoundingClientRect().top;
+    const hei = this.state.height - offetTop;
     setTimeout(() => this.setState({
       height: hei,
     }), 0);
   }
+
   componentWillReceiveProps(nextProps) {
     const { evtAll } = nextProps;
     if (evtAll && evtAll.length && !this.state.init) {
@@ -77,18 +80,7 @@ export default class SelEvent extends Component {
     });
   }
   getSelectResult = (result) => {
-    const { selected, type } = this.state;
-    if (type === '1') {
-      this.getSingleSelect(result);
-    } else {
-      this.setState({
-        selected: {
-          ...selected,
-          data: result,
-          num: result.length,
-        },
-      });
-    }
+    this.getSingleSelect(result);
   }
   getSingleSelect = (result) => {
     const userInfo = userStorage('userInfo');
@@ -236,6 +228,9 @@ export default class SelEvent extends Component {
     this.setState({
       searchValue: v,
     });
+    if (v === '') {
+      this.searchCancel();
+    }
   }
   searchSubmit = (v) => {
     const { dispatch } = this.props;
@@ -271,12 +266,12 @@ export default class SelEvent extends Component {
     });
   }
   render() {
-    const { eventList, type, selected, searchValue } = this.state;
+    const { eventList, selected, searchValue } = this.state;
     const { breadCrumb, evtName, loading, loadingName, pageInfo } = this.props;
     const isLoading = loading || loadingName;
     return (
       <Flex direction="column">
-        <Flex.Item className={style.header}>
+        <Flex.Item className={style.header} >
           <Search
             value={searchValue}
             onChange={this.searchChange}
@@ -293,39 +288,38 @@ export default class SelEvent extends Component {
         </Flex.Item>
         <Flex.Item
           className={style.content}
-          ref={(el) => { this.ptr = el; }}
+          ref={(e) => { this.ptr = e; }}
+          style={{ ...(isLoading && { display: 'none' }), overflow: 'auto', height: this.state.height }}
         >
-          {(!eventList.length && !evtName.length) ?
-          (
-            <div style={{ display: isLoading ? 'none' : 'flex', flexDirection: 'column' }}>
-              <Nothing src={nothing} />
-            </div>
-          ) : (
-            <div
-              style={{ height: this.state.height, ...(isLoading ? { display: 'none' } : null) }}
-            >
-              {!searchValue ? (
-                <EventType
-                  dataSource={eventList || []}
-                  fetchDataSource={this.selEvent}
-                  name="name"
-                />) : null}
-              {eventList.length && evtName.length ?
-                <p style={{ padding: '0.5rem 0 0.2rem 0.4rem', fontSize: '16px', color: 'rgb(100,100,100)' }}>事件列表</p> : null}
-              <EventName
+          {(!eventList.length && !evtName.length) &&
+            (
+              <div style={{ display: isLoading ? 'none' : 'flex', flexDirection: 'column' }}>
+                <Nothing src={nothing} />
+              </div>
+            )
+          }
+          {
+            !searchValue && (
+              <EventType
                 name="name"
-                dispatch={this.props.dispatch}
-                multiple={type !== '1'}
-                selected={selected.data}
-                dataSource={evtName || []}
-                onChange={this.getSelectResult}
-
-                page={searchValue ? pageInfo.page : false}
-                totalpage={searchValue ? pageInfo.totalpage : false}
-                onPageChange={this.onPageChange}
+                heightNone
+                dataSource={eventList || []}
+                fetchDataSource={this.selEvent}
               />
-            </div>)
-              }
+            )
+          }
+          {eventList.length && evtName.length ?
+            <p style={{ padding: '0.5rem 0 0.2rem 0.4rem', fontSize: '16px', color: 'rgb(100,100,100)' }}>事件列表</p> : null}
+          <EventName
+            name="name"
+            heightNone
+            selected={selected.data}
+            dataSource={evtName || []}
+            onChange={this.getSelectResult}
+            page={searchValue ? pageInfo.page : false}
+            totalpage={searchValue ? pageInfo.totalpage : false}
+            onPageChange={this.onPageChange}
+          />
         </Flex.Item>
       </Flex>
     );

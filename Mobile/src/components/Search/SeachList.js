@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, List } from 'antd-mobile';
+import ReactDOM from 'react-dom';
 import { PersonIcon } from '../../components/index.js';
 import { Search, Bread } from '../../components/General/index';
 import style from './index.less';
@@ -7,7 +8,17 @@ import style from './index.less';
 export default class SearchList extends Component {
   state = {
     value: '',
+    height: document.documentElement.clientHeight,
+
   };
+  componentDidMount() {
+    const htmlDom = ReactDOM.findDOMNode(this.ptr);
+    const offetTop = htmlDom.getBoundingClientRect().top;
+    const hei = this.state.height - offetTop;
+    setTimeout(() => this.setState({
+      height: hei,
+    }), 0);
+  }
 
   onChange = (value) => {
     const { searchOncancel } = this.props;
@@ -57,14 +68,14 @@ export default class SearchList extends Component {
           }
               onSubmit={this.onSubmit}
             />
-)}
+        )}
 
           {this.state.value ? null : (
             <Bread
               bread={bread}
               handleBread={handleBread}
             />
-)}
+        )}
           { this.state.value || isFinal ? null : (
             <div style={{ padding: '0 0.32rem' }} >
               <List >
@@ -75,8 +86,7 @@ export default class SearchList extends Component {
                 </List.Item>
               </List>
             </div>
-) }
-
+        )}
           {multiple && !this.state.value ? (
             <div className={style.action}>
               <div className={style.action_item}>
@@ -90,7 +100,11 @@ export default class SearchList extends Component {
             </div>
           ) : null}
         </div>
-        <div className={style.con_content}>
+        <div
+          className={style.con_content}
+          ref={(e) => { this.ptr = e; }}
+          style={{ overflow: 'auto', height: this.state.height }}
+        >
           {children}
         </div>
         {

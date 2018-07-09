@@ -6,6 +6,8 @@ import Point from './Point';
 // import EventList from './EventList';
 import EventType from './EventType';
 import EventName from './EventName';
+import Ranking from './Ranking';
+import Group from './Group';
 
 export {
   Department,
@@ -14,5 +16,7 @@ export {
   Point,
   EventType,
   EventName,
+  Ranking,
+  Group,
   // EventList,
 };

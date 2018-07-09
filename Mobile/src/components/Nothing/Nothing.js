@@ -1,12 +1,9 @@
 import React from 'react';
 
-import {
-  connect,
-} from 'dva';
 import style from './index.less';
 import nothing from '../../assets/nothing.png';
 
-class Nothing extends React.Component {
+export class Nothing extends React.Component {
   render() {
     const { src = `${nothing}` } = this.props;
     return (
@@ -26,7 +23,3 @@ class Nothing extends React.Component {
     );
   }
 }
-
-Nothing.propTypes = {};
-
-export default connect()(Nothing);

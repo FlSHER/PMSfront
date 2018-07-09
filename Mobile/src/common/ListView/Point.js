@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 // import { Flex } from 'antd-mobile';
 import moment from 'moment';
-import ListView from '../../routes/Point/ListView';
+import ListView from '../../components/ListView';
 import { convertPointSource } from '../../utils/convert.js';
 import style from './index.less';
 // const { Item } = List;

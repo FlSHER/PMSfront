@@ -1,13 +1,33 @@
+
 import React, { PureComponent } from 'react';
-import { List } from 'antd-mobile';
+import ReactDOM from 'react-dom';
+import { List, PullToRefresh } from 'antd-mobile';
 import QueueAnim from 'rc-queue-anim';
 
 let startX;
 let startY;
+
+/**
+属性      说明
+page:      用来判断是否有分页功能
+onRefresh  刷新的执行事件，也用来判断是否有刷新效果
+onChange   选中回调函数
+multiple   false 是否多选
+name       require
+ */
 export default function ListView(ListItem) {
   class NewItem extends PureComponent {
     state = {
       muti: [],
+      height: document.documentElement.clientHeight,
+    }
+    componentDidMount() {
+      const htmlDom = ReactDOM.findDOMNode(this.ptr);
+      const offetTop = htmlDom.getBoundingClientRect().top;
+      const hei = this.state.height - offetTop;
+      setTimeout(() => this.setState({
+        height: hei,
+      }), 0);
     }
     componentWillReceiveProps(nextProps) {
       const { selected } = nextProps;
@@ -117,7 +137,8 @@ export default function ListView(ListItem) {
         ...this.props,
         value: item,
       };
-      if (!this.props.fetchDataSource) {
+
+      if (!this.props.fetchDataSource && onChange) {
         response.onClick = multiple ? this.handlesMultiple : onChange;
         const dataId = muti.map(m => m[name]);
         response.checked = dataId.indexOf(item[name]) !== -1;
@@ -125,34 +146,56 @@ export default function ListView(ListItem) {
       return response;
     }
 
-    render() {
-      const { dataSource, page } = this.props;
-      // console.log(page, totalpage);
+
+    pullDownToRefresh = () => {
+      const { onRefresh } = this.props;
+      const { height } = this.state;
       return (
-        <QueueAnim>
+        <PullToRefresh
+          style={{ overflow: 'auto', height }}
+          onRefresh={onRefresh}
+        >
+          {this.renderList()}
+        </PullToRefresh>
+      );
+    }
+
+    renderList = () => {
+      const { dataSource, page, heightNone } = this.props;
+      const { height } = this.state;
+      const style = dataSource.length && !heightNone ? { style: { minHeight: height } } : null;
+      return (
+        <QueueAnim style={!heightNone ? { overflow: 'auto', height } : null}>
           <div
-            onTouchStart={page ? this.handleStart : () => { return false; }}
-            onTouchEnd={page ? this.handleEnd : () => { return false; }}
+            {...style}
+            {...(page && { onTouchStart: this.handleStart })}
+            {...(page && { onTouchEnd: this.handleEnd })}
+            ref={(el) => { this.ptr = el; }}
           >
             <List key="list">
               {dataSource.map((item, i) => {
-              const idx = i;
-              return (
-                <ListItem
-                  key={idx}
-                  {...this.makeListItemProps(item)}
-                />
-              );
-            })}
+                const idx = i;
+                return (
+                  <ListItem
+                    key={idx}
+                    {...this.makeListItemProps(item)}
+                  />
+                );
+              })}
             </List>
           </div>
         </QueueAnim>
       );
     }
+    render() {
+      const { onRefresh } = this.props;
+      return (
+        <React.Fragment>
+          {onRefresh ? this.pullDownToRefresh() : this.renderList()}
+        </React.Fragment>
+      );
+    }
   }
-  NewItem.defaultProps = {
-    onChange: () => { },
-  };
   return NewItem;
 }
 
