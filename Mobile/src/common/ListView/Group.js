@@ -8,8 +8,8 @@ import ListView from '../../components/ListView';
 @connect()
 export default class Group extends Component {
   redirect=() => {
-    const { datetime, value, dispatch } = this.props;
-    dispatch(routerRedux.push(`/ranking?group_id=${value.id}&datetime=${datetime}`));
+    const { datetime, value, dispatch, url } = this.props;
+    dispatch(routerRedux.push(`${url}?group_id=${value.id}&datetime=${datetime}`));
   }
   render() {
     const { value } = this.props;

@@ -161,13 +161,13 @@ export default function ListView(ListItem) {
     }
 
     renderList = () => {
-      const { dataSource, page, heightNone } = this.props;
-      const { height } = this.state;
-      const style = dataSource.length && !heightNone ? { style: { minHeight: height } } : null;
+      const { dataSource, page } = this.props;
+      // const height = this.state.height - (offsetBottom || 0);
+      // const style = dataSource.length && !heightNone ? { style: { minHeight: height } } : null;
       return (
-        <QueueAnim style={!heightNone ? { overflow: 'auto', height } : null}>
+        <QueueAnim >
           <div
-            {...style}
+            // {...style}
             {...(page && { onTouchStart: this.handleStart })}
             {...(page && { onTouchEnd: this.handleEnd })}
             ref={(el) => { this.ptr = el; }}

@@ -92,13 +92,15 @@ export default class AuditList extends React.Component {
   }
   onRefresh = () => {
     const { dispatch } = this.props;
-    const { checkState } = this.state;
+    const { checkState, sortItem } = this.state;
     dispatch({
       type: 'buckle/getAuditList',
       payload: {
         pagesize: 10,
         page: 1,
         type: checkState.value,
+        sort: sortItem.value,
+        filters: this.dealFilter(),
       },
     });
   }

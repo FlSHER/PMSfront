@@ -2,6 +2,7 @@ import { Toast } from 'antd-mobile';
 import {
   getRanking,
   getAuthorityGroup,
+  getStatiRanking,
 } from '../services/ranking';
 import defaultReducers from './reducers/default';
 import { makerFilters } from '../utils/util.js';
@@ -10,8 +11,9 @@ import { makerFilters } from '../utils/util.js';
 export default {
   namespace: 'ranking',
   state: {
-    group: [],
+    group: {},
     ranking: {},
+    optRanking: {},
   },
   effects: {
     *getAuthorityGroup(_, { call, put, select }) {
@@ -54,6 +56,21 @@ export default {
           type: 'save',
           payload: {
             store: 'ranking',
+            data: response,
+          },
+        });
+      } else {
+        Toast.fail(response.message);
+      }
+    },
+    *getStatiRanking({ payload }, { call, put }) {
+      const newPayload = makerFilters(payload);
+      const response = yield call(getStatiRanking, newPayload);
+      if (response && !response.error) {
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'optRanking',
             data: response,
           },
         });
