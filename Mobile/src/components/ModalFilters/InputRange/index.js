@@ -1,6 +1,6 @@
 import React from 'react';
 import { Flex, InputItem } from 'antd-mobile';
-import style from './index.less';
+import style from '../index.less';
 
 const defaultValue = {
   min: '',
@@ -43,8 +43,10 @@ class InputRange extends React.Component {
 
   render() {
     const { value: { min, max } } = this.state;
+    const { addonBefore } = this.props;
     return (
       <Flex align="center">
+        {addonBefore}
         <InputItem
           value={min}
           onChange={value => this.handleOnChange('min', value)}
@@ -59,6 +61,9 @@ class InputRange extends React.Component {
   }
 }
 InputRange.defaultProps = {
+  min: null,
+  max: null,
+  addonBefore: null,
   onChange: () => { },
 };
 export default InputRange;

@@ -231,7 +231,7 @@ export function dotWheresValue(fields) {
         if (Array.isArray(value) && value.length > 0) {
           value = value.length > 1 ? `[${value}]` : value[0];
         }
-        if (value && value.length) {
+        if ((value && value.length) || (typeof value === 'number')) {
           fieldsWhere += `${name}${whereConfig[i]}${value};`;
         }
       });
@@ -264,7 +264,7 @@ export function getUrlParams(url) {
   let queryString = url ? url.split('?')[1] : window.location.search.slice(1);
   const obj = {};
   if (queryString) {
-  queryString = queryString.split('#')[0]; // eslint-disable-line
+    queryString = queryString.split('#')[0]; // eslint-disable-line
     const arr = queryString.split('&');
     for (let i = 0; i < arr.length; i += 1) {
       const a = arr[i].split('=');
@@ -293,7 +293,7 @@ export function getUrlParams(url) {
 
 export function scrollToAnchor(anchorName) {
   if (anchorName) {
-  // 找到锚点
+    // 找到锚点
     const anchorElement = document.getElementById(anchorName);
     // 如果对应id的锚点存在，就跳转到锚点
     if (anchorElement) { anchorElement.scrollIntoView({ block: 'start', behavior: 'smooth' }); }

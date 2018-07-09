@@ -1,9 +1,10 @@
-
 import React from 'react';
+import { CheckBoxs } from '../../components/index';
 import ListFilter from '../Filter/ListFilter';
 import { makerFilters } from '../../utils/util';
-import InputRange from './inputRange';
-// import style from './index.less';
+import InputRange from './InputRange';
+import CheckBox from './CheckBox';
+import style from './index.less';
 
 class ModalFilters extends React.Component {
   constructor(props) {
@@ -16,37 +17,24 @@ class ModalFilters extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchFilters();
+    this.fetchFilters({});
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   const { filters, sorters } = nextProps;
-  //   if (
-  //     JSON.stringify(this.props.filters) !== JSON.stringify(filters)
-  //     ||
-  //     JSON.stringify(this.props.sorters) !== JSON.stringify(sorters)
-  //   ) {
-  //     this.setState({ filters: { ...filters }, sorters: { ...sorters } }, () => {
-  //       this.fetchFilters();
-  //     });
-  //   }
-  // }
-
-
-  fetchFilters = () => {
+  fetchFilters = (params) => {
     const { filters, sorters } = this.state;
     const { fetchDataSource } = this.props;
-    let params = {
+    let newParams = {
       sorters,
       filters,
     };
-    params = makerFilters(params);
-    console.log(params);
-    fetchDataSource(params);
+    newParams = makerFilters(params || newParams);
+    console.log(newParams);
+    fetchDataSource(newParams);
   }
 
   handleOnChange = (key, value) => {
     const { filters } = this.state;
+    console.log(filters);
     this.setState({
       filters: {
         ...filters,
@@ -55,13 +43,27 @@ class ModalFilters extends React.Component {
     });
   }
 
-  makeRangeFilter = ({ name, min, max }) => {
+  makeRangeFilter = (props) => {
+    const { name, min, max } = props;
     const rangaValue = this.state.filters[name];
     return (
       <InputRange
-        value={rangaValue || {}}
+        {...props}
+        value={rangaValue}
         min={min}
         max={max}
+        onChange={value => this.handleOnChange(name, value)}
+      />
+    );
+  }
+
+  makeCheckFilter = (props) => {
+    const { name } = props;
+    const rangaValue = this.state.filters[name];
+    return (
+      <CheckBox
+        {...props}
+        value={rangaValue}
         onChange={value => this.handleOnChange(name, value)}
       />
     );
@@ -73,16 +75,32 @@ class ModalFilters extends React.Component {
       case 'range':
         component = this.makeRangeFilter(item);
         break;
-      case 'time':
-        component = this.makeTimeFilter(item);
+      case 'checkBox':
+        component = this.makeCheckFilter(item);
         break;
       default:
         break;
     }
 
+    if (!item.title) {
+      return (
+        <div
+          key={item.name}
+          className={[style.filter_item, style.range].join(' ')}
+          style={{ paddingBottom: '0.48rem' }}
+        >
+          {component}
+        </div>
+      );
+    }
+
     return (
-      <div key={item.name}>
-        <label>{item.label}</label>
+      <div
+        key={item.name}
+        className={[style.filter_item, style.range].join(' ')}
+        style={{ paddingBottom: '0.48rem' }}
+      >
+        <div className={style.title}>{item.title}</div>
         {component}
       </div>
     );
@@ -99,7 +117,7 @@ class ModalFilters extends React.Component {
   render() {
     return (
       <ListFilter
-        onOk={this.fetchFilters}
+        onOk={() => this.fetchFilters()}
         filterKey="filterModal"
         iconStyle={{ width: '0.533rem', height: '0.533rem' }}
         visible={this.props.visible}
@@ -124,16 +142,55 @@ class ModalFilters extends React.Component {
 ModalFilters.defaultProps = {
   filterColumns: [
     {
+      title: '分值类型',
       name: 'point_a',
       type: 'range',
+      addonBefore: (
+        <CheckBoxs
+          itemStyle={{ marginBottom: 0, marginRight: '0.1333rem' }}
+          option={[{ name: 'A分', value: 'point_a' }]}
+        />
+      ),
       min: 1,
       max: 10,
     },
     {
       name: 'point_b',
       type: 'range',
+      addonBefore: (
+        <CheckBoxs
+          itemStyle={{ marginBottom: 0, marginRight: '0.1333rem' }}
+          option={[{ name: 'B分', value: 'point_b' }]}
+        />
+      ),
       min: 1,
       max: 10,
+    },
+    {
+      name: 'source_id',
+      type: 'checkBox',
+      title: '分值来源',
+      multiple: false,
+      options: [
+        {
+          label: '系统分', value: 0,
+        },
+        {
+          label: '固定分', value: 1,
+        },
+        {
+          label: '奖扣分', value: 2,
+        },
+        {
+          label: '任务分', value: 3,
+        },
+        {
+          label: '考勤分', value: 4,
+        },
+        {
+          label: '日志分', value: 5,
+        },
+      ],
     },
   ],
   sorters: {},

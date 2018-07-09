@@ -1,5 +1,4 @@
 .filter_item {
-  border-bottom: 1px solid #eee;
   padding: 0 40/75rem;
   :global {
     .am-list-item:not(:last-child) .am-list-line {
@@ -22,6 +21,9 @@
       }
       .am-list-item .am-list-line {
         padding-right: 0;
+      }
+      .am-list-line::after {
+        content: none !important;
       }
       .am-list-item .am-input-control input {
         color: rgb(155, 155, 155);

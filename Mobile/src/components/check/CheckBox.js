@@ -1,7 +1,4 @@
 import React from 'react';
-import {
-  connect,
-} from 'dva';
 import style from './index.less';
 
 class CheckBox extends React.Component {
@@ -47,4 +44,4 @@ class CheckBox extends React.Component {
 }
 CheckBox.propTypes = {};
 
-export default connect()(CheckBox);
+export default CheckBox;
