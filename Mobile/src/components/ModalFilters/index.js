@@ -4,15 +4,16 @@ import ListFilter from '../Filter/ListFilter';
 import { makerFilters } from '../../utils/util';
 import InputRange from './InputRange';
 import CheckBox from './CheckBox';
+import ModalSorter from './ModalSorter';
 import style from './index.less';
 
 class ModalFilters extends React.Component {
   constructor(props) {
     super(props);
-    const { filters, sorters } = props;
+    const { filters, sorter } = props;
     this.state = {
       filters: filters || {},
-      sorters: sorters || {},
+      sorter: sorter || {},
     };
   }
 
@@ -21,10 +22,16 @@ class ModalFilters extends React.Component {
   }
 
   fetchFilters = (params) => {
-    const { filters, sorters } = this.state;
+    const { sorter } = this.state;
+    const filters = { ...this.state.filters };
     const { fetchDataSource } = this.props;
+    Object.keys(filters).forEach((key) => {
+      if (Array.isArray(filters[key])) {
+        filters[key] = { in: filters[key] };
+      }
+    });
     let newParams = {
-      sorters,
+      sort: sorter,
       filters,
     };
     newParams = makerFilters(params || newParams);
@@ -32,9 +39,8 @@ class ModalFilters extends React.Component {
     fetchDataSource(newParams);
   }
 
-  handleOnChange = (key, value) => {
+  handleFiltersOnChange = (key, value) => {
     const { filters } = this.state;
-    console.log(filters);
     this.setState({
       filters: {
         ...filters,
@@ -42,6 +48,15 @@ class ModalFilters extends React.Component {
       },
     });
   }
+
+  handlesorterOnChange = (sortValue) => {
+    this.setState({
+      sorter: sortValue,
+    }, () => {
+      this.fetchFilters();
+    });
+  }
+
 
   makeRangeFilter = (props) => {
     const { name, min, max } = props;
@@ -52,7 +67,7 @@ class ModalFilters extends React.Component {
         value={rangaValue}
         min={min}
         max={max}
-        onChange={value => this.handleOnChange(name, value)}
+        onChange={value => this.handleFiltersOnChange(name, value)}
       />
     );
   }
@@ -64,7 +79,7 @@ class ModalFilters extends React.Component {
       <CheckBox
         {...props}
         value={rangaValue}
-        onChange={value => this.handleOnChange(name, value)}
+        onChange={value => this.handleFiltersOnChange(name, value)}
       />
     );
   }
@@ -106,6 +121,15 @@ class ModalFilters extends React.Component {
     );
   }
 
+  makeModalProps = () => {
+    const { onCancel, visible } = this.props;
+    const resopnse = {
+      onCancel: () => onCancel(false),
+      visible,
+    };
+    return resopnse;
+  }
+
   renderFiltersComponent = () => {
     const { filterColumns } = this.props;
     const renderFilter = filterColumns.map((item) => {
@@ -114,13 +138,13 @@ class ModalFilters extends React.Component {
     return renderFilter;
   }
 
-  render() {
+  renderFilters = () => {
     return (
       <ListFilter
+        {...this.makeModalProps()}
         onOk={() => this.fetchFilters()}
         filterKey="filterModal"
         iconStyle={{ width: '0.533rem', height: '0.533rem' }}
-        visible={this.props.visible}
         contentStyle={{
           position: 'fixed',
           top: 0,
@@ -137,9 +161,27 @@ class ModalFilters extends React.Component {
       </ListFilter>
     );
   }
+
+
+  render() {
+    const { model, sorterData } = this.props;
+    return (
+      <React.Fragment>
+        {model === 'filter' && this.renderFilters()}
+        {model === 'sort' && (
+          <ModalSorter
+            {...this.makeModalProps()}
+            data={sorterData}
+            onChange={this.handlesorterOnChange}
+          />
+        )}
+      </React.Fragment>
+    );
+  }
 }
 
 ModalFilters.defaultProps = {
+  model: 'filter',
   filterColumns: [
     {
       title: '分值类型',
@@ -170,7 +212,7 @@ ModalFilters.defaultProps = {
       name: 'source_id',
       type: 'checkBox',
       title: '分值来源',
-      multiple: false,
+      multiple: true,
       options: [
         {
           label: '系统分', value: 0,
@@ -193,8 +235,18 @@ ModalFilters.defaultProps = {
       ],
     },
   ],
-  sorters: {},
+  sorter: {},
+  sorterData: [
+    { name: '默认排序', value: 'created_at-asc' },
+    { name: '时间升序', value: 'created_at-asc' },
+    { name: '时间降序', value: 'created_at-desc' },
+    { name: 'A分升序', value: 'point_a-asc' },
+    { name: 'A分降序', value: 'point_a_-desc' },
+    { name: 'B分升序', value: 'point_b_-asc' },
+    { name: 'B分降序', value: 'point_b_-desc' },
+  ],
   filters: { point_a: { min: 1, max: 10 }, point_b: { min: 1, max: 10 } },
+  onCancel: () => { },
   fetchDataSource: () => { },
 };
 export default ModalFilters;
