@@ -1,63 +1,107 @@
-import React, {
-  Component,
-} from 'react';
-import {
-  connect,
-} from 'dva';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import Animate from 'rc-animate';
+import velocity from 'velocity-animate';
+import SortView from './Sort';
+import '../../assets/css/index.less';
 import style from './index.less';
-// import styles from '../../routes/common.less';
 
-@connect()
-export default class ListSort extends Component {
+export default class AnimateSort extends React.Component {
   state = {
-    enter: true,
-    destroyed: false,
-    visible: false,
-    exclusive: false,
-
+    height: document.documentElement.clientHeight,
   }
 
-  selFilter = (feild) => { // 筛选
-    this.setState({
-      [feild]: !this.state[feild],
+  componentDidMount() {
+    const htmlDom = ReactDOM.findDOMNode(this.ptr);
+    const offetTop = htmlDom.getBoundingClientRect().top;
+    console.log(offetTop);
+    const hei = this.state.height - offetTop;
+    setTimeout(() => this.setState({
+      height: hei,
+    }), 0);
+  }
+
+
+  animateEnter = (node, done) => {
+    let ok = false;
+    const newNode = node;
+    function complete() {
+      if (!ok) {
+        ok = 1;
+        done();
+      }
+    }
+
+    newNode.style.display = 'none';
+
+    velocity(node, 'slideDown', {
+      duration: 300,
+      complete,
     });
+    return {
+      stop() {
+        velocity(newNode, 'finish');
+        // velocity complete is async
+        complete();
+      },
+    };
   }
+
+  animateLeave = (node, done) => {
+    let ok = false;
+    const newNode = node;
+    function complete() {
+      if (!ok) {
+        ok = 1;
+        done();
+      }
+    }
+
+    newNode.style.display = 'block';
+
+    velocity(node, 'slideUp', {
+      duration: 300,
+      complete,
+    });
+    return {
+      stop() {
+        velocity(newNode, 'finish');
+        // velocity complete is async
+        complete();
+      },
+    };
+  }
+
   render() {
     const {
-      children,
       visible,
       onCancel,
       filterKey,
-      contentStyle,
     } = this.props;
+    // const { height } = this.state;
     const conStyle = {
+      // height,
       display: visible ? 'block' : 'none',
-      ...contentStyle,
     };
-    return (
-      <Animate
-        component=""
-        exclusive={this.state.exclusive}
-        showProp="visible"
-        transitionAppear
-        transitionName="fade"
-      >
-        <div
-          style={conStyle}
-          onClick={e => onCancel(e, filterKey)}
-          className={style.some_sort}
+    const anim = {
+      enter: this.animateEnter,
+      leave: this.animateLeave,
+    };
 
+    return (
+      <div
+        ref={(e) => { this.ptr = e; }}
+        style={conStyle}
+        onClick={e => onCancel(e, filterKey)}
+        className={style.some_sort}
+      >
+        <Animate
+          showProp="visible"
+          animation={anim}
         >
-          <div
-            className={style.sort_con}
-            onClick={(e) => { e.stopPropagation(); return false; }}
-          >
-            {children}
-          </div>
-        </div>
-      </Animate>
+          <SortView {...this.props} />
+        </Animate>
+      </div>
     );
   }
 }
-

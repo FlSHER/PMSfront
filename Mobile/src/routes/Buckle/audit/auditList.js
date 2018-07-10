@@ -3,7 +3,6 @@ import {
   connect,
 } from 'dva';
 import { WingBlank, WhiteSpace, Flex, Modal } from 'antd-mobile';
-import nothing from '../../../assets/nothing.png';
 import { Buckle } from '../../../common/ListView/index';
 import {
   auditState,
@@ -15,7 +14,7 @@ import {
 } from '../../../utils/convert.js';
 import { userStorage, makerFilters } from '../../../utils/util';
 
-import { ListFilter, CheckBoxs, ListSort, StateTabs, Nothing } from '../../../components/index';
+import { ListFilter, CheckBoxs, ListSort, StateTabs } from '../../../components/index';
 import style from '../index.less';
 import shortcut from '../../../assets/shortcuts.png';
 
@@ -418,27 +417,20 @@ export default class AuditList extends React.Component {
           </div>
         </Flex.Item>
         <Flex.Item className={style.content}>
-          {auditList[checkState.value] && !auditList[checkState.value].data.length ?
-            (
-              <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
-                <Nothing src={nothing} />
-              </div>
-            ) : (
-              <WingBlank>
-                <Buckle
-                  extra={extra}
-                  onRefresh={this.onRefresh}
-                  dataSource={auditList[checkState.value] ? auditList[checkState.value].data : []}
-                  handleClick={this.toLookDetail}
-                  onPageChange={this.onPageChange}
-                  label={this.renderLalbel() || []}
-                  page={auditList[checkState.value] ?
-                    auditList[checkState.value].page : 1}
-                  totalpage={auditList[checkState.value] ?
-                    auditList[checkState.value].totalpage : 10}
-                />
-              </WingBlank>
-            )}
+          <WingBlank>
+            <Buckle
+              extra={extra}
+              onRefresh={this.onRefresh}
+              dataSource={auditList[checkState.value] ? auditList[checkState.value].data : []}
+              handleClick={this.toLookDetail}
+              onPageChange={this.onPageChange}
+              label={this.renderLalbel() || []}
+              page={auditList[checkState.value] ?
+                auditList[checkState.value].page : 1}
+              totalpage={auditList[checkState.value] ?
+                auditList[checkState.value].totalpage : 10}
+            />
+          </WingBlank>
 
         </Flex.Item>
         <ListFilter

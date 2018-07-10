@@ -3,6 +3,8 @@ import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import { List, PullToRefresh } from 'antd-mobile';
 import QueueAnim from 'rc-queue-anim';
+import nothing from '../../assets/nothing.png';
+import { Nothing } from '../index';
 
 let startX;
 let startY;
@@ -21,14 +23,19 @@ export default function ListView(ListItem) {
       muti: [],
       height: document.documentElement.clientHeight,
     }
+
     componentDidMount() {
-      const htmlDom = ReactDOM.findDOMNode(this.ptr);
-      const offetTop = htmlDom.getBoundingClientRect().top;
-      const hei = this.state.height - offetTop;
-      setTimeout(() => this.setState({
-        height: hei,
-      }), 0);
+      const { dataSource } = this.props;
+      if (dataSource && dataSource.length) {
+        const htmlDom = ReactDOM.findDOMNode(this.ptr);
+        const offetTop = htmlDom.getBoundingClientRect().top;
+        const hei = this.state.height - offetTop;
+        setTimeout(() => this.setState({
+          height: hei,
+        }), 0);
+      }
     }
+
     componentWillReceiveProps(nextProps) {
       const { selected } = nextProps;
       if (selected && JSON.stringify(selected) !== JSON.stringify(this.state.muti)) {
@@ -163,26 +170,34 @@ export default function ListView(ListItem) {
     renderList = () => {
       const { dataSource, page, offsetBottom, heightNone } = this.props;
       const height = this.state.height - (offsetBottom || 0);
-      const style = dataSource.length && !heightNone ? { style: { minHeight: height } } : null;
+      const style = !heightNone ? { style: { minHeight: height } } : null;
       return (
         <div
           {...(page && { onTouchStart: this.handleStart })}
           {...(page && { onTouchEnd: this.handleEnd })}
           ref={(el) => { this.ptr = el; }}
         >
-          <QueueAnim>
-            <List key="list" {...style}>
-              {dataSource.map((item, i) => {
-                const idx = i;
-                return (
-                  <ListItem
-                    key={idx}
-                    {...this.makeListItemProps(item)}
-                  />
-                );
-              })}
-            </List>
-          </QueueAnim>
+          {
+            !dataSource.length || dataSource ? (
+              <div {...style}>
+                <Nothing src={nothing} />
+              </div>
+            ) : (
+              <QueueAnim>
+                <List key="list" {...style}>
+                  {dataSource.map((item, i) => {
+                      const idx = i;
+                      return (
+                        <ListItem
+                          key={idx}
+                          {...this.makeListItemProps(item)}
+                        />
+                      );
+                    })}
+                </List>
+              </QueueAnim>
+              )
+          }
         </div>
       );
     }

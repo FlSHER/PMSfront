@@ -1,23 +1,27 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { ListSort } from '../../components/index';
 import style from './index.less';
 
 class ModalSorter extends React.PureComponent {
+  state = {
+    height: document.documentElement.clientHeight,
+  }
+
+  componentDidMount() {
+    const htmlDom = ReactDOM.findDOMNode(this.ptr);
+    const offetTop = htmlDom.getBoundingClientRect().top;
+    const hei = this.state.height - offetTop;
+    setTimeout(() => this.setState({
+      height: hei,
+    }), 0);
+  }
+
   render() {
     const { onChange, data, visible, onCancel } = this.props;
     return (
       <div className={style.filter_con}>
         <ListSort
-          contentStyle={{
-            position: 'fixed',
-            zIndex: 99,
-            left: 0,
-            top: '1.17333rem',
-            bottom: 0,
-            right: 0,
-            overflow: 'auto',
-            background: 'rgba(0, 0, 0, 0.1)',
-          }}
           visible={visible}
           onCancel={onCancel}
           filterKey="sortModal"
