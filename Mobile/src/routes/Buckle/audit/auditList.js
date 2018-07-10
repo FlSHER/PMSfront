@@ -390,15 +390,6 @@ export default class AuditList extends React.Component {
               </Flex.Item>
             </Flex>
             <ListSort
-              contentStyle={{
-                position: 'fixed',
-                zIndex: 99,
-                left: 0,
-                top: '2.3733333rem',
-                bottom: 0,
-                right: 0,
-                overflow: 'auto',
-              }}
               maskColor="rgba(0, 0, 0, 0.1)"
               visible={this.state.modal.sortModal}
               onCancel={this.onCancel}
@@ -412,7 +403,7 @@ export default class AuditList extends React.Component {
                   onClick={() => this.sortReasult(item)}
                 >{item.name}
                 </div>
-              ))}
+            ))}
             </ListSort>
           </div>
         </Flex.Item>
@@ -431,7 +422,6 @@ export default class AuditList extends React.Component {
                 auditList[checkState.value].totalpage : 10}
             />
           </WingBlank>
-
         </Flex.Item>
         <ListFilter
           onOk={this.onFilterOk}

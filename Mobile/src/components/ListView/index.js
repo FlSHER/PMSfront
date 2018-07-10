@@ -1,6 +1,7 @@
 
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
+import { connect } from 'dva';
 import { List, PullToRefresh } from 'antd-mobile';
 import QueueAnim from 'rc-queue-anim';
 import nothing from '../../assets/nothing.png';
@@ -17,6 +18,7 @@ onChange   选中回调函数
 multiple   false 是否多选
 name       require
  */
+@connect(({ loading }) => ({ loading }))
 export default function ListView(ListItem) {
   class NewItem extends PureComponent {
     state = {
@@ -25,15 +27,13 @@ export default function ListView(ListItem) {
     }
 
     componentDidMount() {
-      const { dataSource } = this.props;
-      if (dataSource && dataSource.length) {
-        const htmlDom = ReactDOM.findDOMNode(this.ptr);
-        const offetTop = htmlDom.getBoundingClientRect().top;
-        const hei = this.state.height - offetTop;
-        setTimeout(() => this.setState({
-          height: hei,
-        }), 0);
-      }
+      const htmlDom = ReactDOM.findDOMNode(this.ptr);
+      const offetTop = htmlDom.getBoundingClientRect().top;
+      console.log(offetTop);
+      const hei = this.state.height - offetTop;
+      setTimeout(() => this.setState({
+        height: hei,
+      }), 0);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -168,9 +168,11 @@ export default function ListView(ListItem) {
     }
 
     renderList = () => {
-      const { dataSource, page, offsetBottom, heightNone } = this.props;
+      const { dataSource, page, offsetBottom, heightNone, loading } = this.props;
       const height = this.state.height - (offsetBottom || 0);
       const style = !heightNone ? { style: { minHeight: height } } : null;
+      const nothingAble = !heightNone &&
+        (!loading.global && ((dataSource && !dataSource.length) || !dataSource));
       return (
         <div
           {...(page && { onTouchStart: this.handleStart })}
@@ -178,14 +180,15 @@ export default function ListView(ListItem) {
           ref={(el) => { this.ptr = el; }}
         >
           {
-            !dataSource.length || dataSource ? (
+            nothingAble ? (
               <div {...style}>
                 <Nothing src={nothing} />
               </div>
-            ) : (
-              <QueueAnim>
-                <List key="list" {...style}>
-                  {dataSource.map((item, i) => {
+            ) :
+              (
+                <QueueAnim>
+                  <List key="list" {...style}>
+                    {dataSource.map((item, i) => {
                       const idx = i;
                       return (
                         <ListItem
@@ -194,13 +197,14 @@ export default function ListView(ListItem) {
                         />
                       );
                     })}
-                </List>
-              </QueueAnim>
+                  </List>
+                </QueueAnim>
               )
           }
         </div>
       );
     }
+
     render() {
       const { onRefresh } = this.props;
       return (
@@ -209,7 +213,7 @@ export default function ListView(ListItem) {
         </React.Fragment>
       );
     }
-  }
-  return NewItem;
+}
+return NewItem;
 }
 

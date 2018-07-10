@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Animate from 'rc-animate';
 import velocity from 'velocity-animate';
 import SortView from './Sort';
@@ -7,21 +6,6 @@ import '../../assets/css/index.less';
 import style from './index.less';
 
 export default class AnimateSort extends React.Component {
-  state = {
-    height: document.documentElement.clientHeight,
-  }
-
-  componentDidMount() {
-    const htmlDom = ReactDOM.findDOMNode(this.ptr);
-    const offetTop = htmlDom.getBoundingClientRect().top;
-    console.log(offetTop);
-    const hei = this.state.height - offetTop;
-    setTimeout(() => this.setState({
-      height: hei,
-    }), 0);
-  }
-
-
   animateEnter = (node, done) => {
     let ok = false;
     const newNode = node;
@@ -77,10 +61,12 @@ export default class AnimateSort extends React.Component {
       visible,
       onCancel,
       filterKey,
+      top,
     } = this.props;
     // const { height } = this.state;
     const conStyle = {
       // height,
+      top,
       display: visible ? 'block' : 'none',
     };
     const anim = {
