@@ -35,7 +35,7 @@ export default {
       const response = yield call(getPointLog, newPayload);
       if (response && !response.error) {
         yield put({
-          type: 'save',
+          type: 'saveList',
           payload: {
             store: 'pointList',
             data: response,

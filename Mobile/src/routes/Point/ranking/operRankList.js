@@ -160,7 +160,7 @@ export default class PointRanking extends React.Component {
   toPointList = (item) => {
     const { history, ranking } = this.props;
     const groupId = ranking.group_id;
-    history.replace(`/point_list?staff_sn=${item.staff_sn}&group_id=${groupId}`);
+    history.push(`/point_list?staff_sn=${item.staff_sn}&group_id=${groupId}`);
   }
   renderRankingItem = (item) => {
     const { userInfo } = this;
