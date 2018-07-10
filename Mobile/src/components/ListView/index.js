@@ -152,8 +152,8 @@ export default function ListView(ListItem) {
       const { height } = this.state;
       return (
         <PullToRefresh
-          style={{ overflow: 'auto', height }}
           onRefresh={onRefresh}
+          style={{ overflow: 'auto', height }}
         >
           {this.renderList()}
         </PullToRefresh>
@@ -161,18 +161,17 @@ export default function ListView(ListItem) {
     }
 
     renderList = () => {
-      const { dataSource, page } = this.props;
-      // const height = this.state.height - (offsetBottom || 0);
-      // const style = dataSource.length && !heightNone ? { style: { minHeight: height } } : null;
+      const { dataSource, page, offsetBottom, heightNone } = this.props;
+      const height = this.state.height - (offsetBottom || 0);
+      const style = dataSource.length && !heightNone ? { style: { minHeight: height } } : null;
       return (
-        <QueueAnim >
-          <div
-            // {...style}
-            {...(page && { onTouchStart: this.handleStart })}
-            {...(page && { onTouchEnd: this.handleEnd })}
-            ref={(el) => { this.ptr = el; }}
-          >
-            <List key="list">
+        <div
+          {...(page && { onTouchStart: this.handleStart })}
+          {...(page && { onTouchEnd: this.handleEnd })}
+          ref={(el) => { this.ptr = el; }}
+        >
+          <QueueAnim>
+            <List key="list" {...style}>
               {dataSource.map((item, i) => {
                 const idx = i;
                 return (
@@ -183,8 +182,8 @@ export default function ListView(ListItem) {
                 );
               })}
             </List>
-          </div>
-        </QueueAnim>
+          </QueueAnim>
+        </div>
       );
     }
     render() {
