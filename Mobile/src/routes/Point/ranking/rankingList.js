@@ -6,7 +6,7 @@ import {
 import { WingBlank, WhiteSpace, Flex, DatePicker } from 'antd-mobile';
 import moment from 'moment';
 import { Ranking } from '../../../common/ListView';
-import TimeRange from '../../../components/ModalFilters/TimeRange';
+// import TimeRange from '../../../components/ModalFilters/TimeRange';
 import nothing from '../../../assets/nothing.png';
 import { userStorage, getUrlParams, scrollToAnchor } from '../../../utils/util';
 import { ListSort, Nothing } from '../../../components/index';
@@ -302,8 +302,6 @@ export default class PointRanking extends React.Component {
                   >{params.datetime}
                   </div>
                 </DatePicker>
-
-                <TimeRange />
               </Flex.Item>
             </Flex>
             <ListSort

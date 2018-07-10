@@ -230,11 +230,11 @@ export default class PointRanking extends React.Component {
   }
   render() {
     const { ranking, loading, group } = this.props;
-    const authGroup = group.auth_group || [];
+    const statisGroup = group.statis_group || [];
     const { list } = ranking;
     const params = this.urlParams;
     const { offsetBottom } = this.state;
-    const [sortItem] = authGroup.filter(item => item.id.toString() === this.urlParams.group_id);
+    const [sortItem] = statisGroup.filter(item => item.id.toString() === this.urlParams.group_id);
     return (
       <Flex direction="column">
         <Flex.Item className={style.header}>
