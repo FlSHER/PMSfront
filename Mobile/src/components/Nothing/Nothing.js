@@ -3,7 +3,7 @@ import React from 'react';
 import style from './index.less';
 import nothing from '../../assets/nothing.png';
 
-export class Nothing extends React.Component {
+export default class Nothing extends React.Component {
   render() {
     const { src = `${nothing}` } = this.props;
     return (

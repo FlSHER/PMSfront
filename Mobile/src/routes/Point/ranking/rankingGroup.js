@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import {
   connect,
 } from 'dva';
@@ -15,6 +16,8 @@ import style from '../index.less';
 export default class RankingGroup extends React.Component {
   state = {
     userInfo: {},
+    height: document.documentElement.clientHeight,
+
   }
 
   componentWillMount() {
@@ -28,9 +31,18 @@ export default class RankingGroup extends React.Component {
       });
     });
   }
-
+  componentDidMount() {
+    const htmlDom = ReactDOM.findDOMNode(this.ptr);
+    const offetTop = htmlDom.getBoundingClientRect().top;
+    const hei = this.state.height - offetTop;
+    setTimeout(() => this.setState({
+      height: hei,
+    }), 0);
+  }
   render() {
     const { group } = this.props;
+    const authGroup = group.auth_group;
+    const statisGroup = group.statis_group;
     const { userInfo } = this.state;
     const datetime = moment(new Date()).format('YYYY-MM-DD');
     return (
@@ -61,11 +73,27 @@ export default class RankingGroup extends React.Component {
           </WingBlank>
         </Flex.Item>
 
-        <Flex.Item className={style.content}>
+        <Flex.Item
+          className={style.content}
+          ref={(e) => { this.ptr = e; }}
+          style={{ overflow: 'auto', height: this.state.height }}
+        >
           <WhiteSpace size="md" />
           <WingBlank size="lg">
+            {authGroup && authGroup.length ?
+              <p style={{ padding: '0.5rem 0 0.2rem 0.4rem', fontSize: '16px', color: 'rgb(100,100,100)' }}>我的分组</p> : null}
             <Group
-              dataSource={group || []}
+              dataSource={authGroup || []}
+              heightNone
+              datetime={datetime}
+              url="/ranking"
+            />
+            {statisGroup && statisGroup.length ?
+              <p style={{ padding: '0.5rem 0 0.2rem 0.4rem', fontSize: '16px', color: 'rgb(100,100,100)' }}>可见分组</p> : null}
+            <Group
+              dataSource={statisGroup || []}
+              heightNone
+              url="/opt_ranking"
               datetime={datetime}
             />
           </WingBlank>

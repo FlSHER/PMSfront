@@ -6,9 +6,8 @@ import {
 import { WingBlank, WhiteSpace, Flex, DatePicker } from 'antd-mobile';
 import moment from 'moment';
 import { Ranking } from '../../../common/ListView';
-import TimeRange from '../../../components/ModalFilters/TimeRange';
 import nothing from '../../../assets/nothing.png';
-import { userStorage, getUrlParams, scrollToAnchor } from '../../../utils/util';
+import { userStorage, getUrlParams } from '../../../utils/util';
 import { ListSort, Nothing } from '../../../components/index';
 import style from '../index.less';
 
@@ -23,22 +22,9 @@ import style from '../index.less';
 //   { name: 'B分降序', value: 'point_b_-desc', icon: import('../../../assets/filter/desc.svg') },
 // ];
 
-// const tabs = [
-//   {
-//     value: 'month',
-//     name: '月度排名',
-//   },
-//   {
-//     value: 'stage',
-//     name: '阶段排名',
-//   },
-//   {
-//     value: 'total',
-//     name: '累计排名',
-//   },
-// ];
+
 @connect(({ ranking, loading }) => ({
-  ranking: ranking.ranking,
+  ranking: ranking.optRanking,
   loading,
   group: ranking.group,
 }))
@@ -122,7 +108,7 @@ export default class PointRanking extends React.Component {
   fetchRanking = (params) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'ranking/getRanking',
+      type: 'ranking/getStatiRanking',
       payload: params,
     });
   }
@@ -154,10 +140,10 @@ export default class PointRanking extends React.Component {
       ...this.urlParams,
       ...filters,
     };
-    let url = '/ranking';
+    let url = '/opt_ranking';
     const params = this.urlParamsUnicode(this.urlParams);
     url += params ? `?${params}` : '';
-    this.props.history.replace(url);
+    this.props.history.push(url);
 
     // const { modal, params } = this.state;
     // const newModal = { ...modal };
@@ -171,9 +157,10 @@ export default class PointRanking extends React.Component {
     //   this.dealFilter();
     // });
   }
-  tabChange = (item) => {
-    const url = `/ranking?group_id=${this.urlParams.group_id}&stage=${item.value}`;
-    this.props.history.replace(url);
+  toPointList = (item) => {
+    const { history, ranking } = this.props;
+    const groupId = ranking.group_id;
+    history.replace(`/point_list?staff_sn=${item.staff_sn}&group_id=${groupId}`);
   }
   renderRankingItem = (item) => {
     const { userInfo } = this;
@@ -241,30 +228,10 @@ export default class PointRanking extends React.Component {
       </Flex>
     );
   }
-  //  <Flex.Item
-  //   className={style.footer}
-  //   ref={(e) => { this.ptr = e; }}
-  // >
-  //   <Flex
-  //     align="center"
-  //     style={{ height: '50px' }}
-  //   >
-  //     {tabs.map(item => (
-  //       <Flex.Item
-  //         key={item.value}
-  //         className={[style.item, (params.stage || 'month')
-  // === item.value ? style.active : null].join(' ')}
-  //         onClick={() => this.tabChange(item)}
-  //       ><span>{item.name}</span>
-  //       </Flex.Item>
-  //   ))}
-  //   </Flex>
-  // </Flex.Item>
   render() {
     const { ranking, loading, group } = this.props;
     const authGroup = group.auth_group || [];
-    const { list, user } = ranking;
-    const { userInfo } = this;
+    const { list } = ranking;
     const params = this.urlParams;
     const { offsetBottom } = this.state;
     const [sortItem] = authGroup.filter(item => item.id.toString() === this.urlParams.group_id);
@@ -299,11 +266,11 @@ export default class PointRanking extends React.Component {
                 >
                   <div
                     className={[style.filter].join(' ')}
+
                   >{params.datetime}
                   </div>
                 </DatePicker>
 
-                <TimeRange />
               </Flex.Item>
             </Flex>
             <ListSort
@@ -342,43 +309,6 @@ export default class PointRanking extends React.Component {
           <WhiteSpace size="md" />
           <WingBlank size="lg">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <p style={{ padding: '0.26667rem 0.48rem', fontSize: '14px' }}>我的排名</p>
-              <span
-                style={{ fontSize: '12px', color: 'rgb(24, 116, 208)' }}
-                onClick={() => scrollToAnchor('my')}
-              >在列表中查看
-              </span>
-            </div>
-            <Flex
-              justify="between"
-              style={{
-                height: '50px',
-                padding: '0 0.48rem',
-                borderBottom: '1px solid rgb(250,250,250)',
-                background: '#fff',
-              }}
-            >
-              <Flex.Item
-                style={{
-                  fontSize: '16px',
-                }}
-              >
-                {user ? user.rank : ''}&nbsp;&nbsp;{userInfo.realname}
-              </Flex.Item>
-              <Flex.Item
-                style={{
-                  color: 'rgb(155,155,155)',
-                  fontSize: '16px',
-                  textAlign: 'right',
-                }}
-              >
-                {user ? user.total : ''}
-              </Flex.Item>
-            </Flex>
-          </WingBlank>
-          <WhiteSpace size="md" />
-          <WingBlank size="lg">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p style={{ padding: '0.26667rem 0.48rem', fontSize: '14px' }}> 排名详情</p>
               {ranking.calculated_at ?
                 (
@@ -402,9 +332,23 @@ export default class PointRanking extends React.Component {
                 <Ranking
                   dataSource={list || []}
                   offsetBottom={offsetBottom}
+                  handleClick={this.toPointList}
                 />
               </WingBlank>
             )}
+        </Flex.Item>
+        <Flex.Item
+          className={style.footer}
+          ref={(e) => { this.ptr = e; }}
+        >
+          <Flex
+            align="center"
+            style={{ height: '50px' }}
+          >
+            <Flex.Item className={[style.item, style.active].join(' ')}><span>月度排名</span></Flex.Item>
+            <Flex.Item className={[style.item].join(' ')}><span>阶段排名</span></Flex.Item>
+            <Flex.Item className={[style.item].join(' ')}><span>累计排名</span></Flex.Item>
+          </Flex>
         </Flex.Item>
 
       </Flex>

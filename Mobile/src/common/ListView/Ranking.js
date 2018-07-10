@@ -11,7 +11,7 @@ export default class Ranking extends Component {
   }
   render() {
     const { userInfo } = this;
-    const { value } = this.props;
+    const { value, handleClick } = this.props;
     const item = { ...value };
 
     if (item.staff_sn === userInfo.staff_sn) {
@@ -19,6 +19,7 @@ export default class Ranking extends Component {
         <Flex
           justify="between"
           key={item.staff_sn}
+          onClick={() => handleClick(value)}
           style={{
             borderBottom: '1px solid rgb(250,250,250)',
             position: 'relative',
@@ -51,13 +52,13 @@ export default class Ranking extends Component {
     return (
       <Flex
         key={item.staff_sn}
-
         justify="between"
         style={{
           height: '50px',
           padding: '0 0.48rem',
           borderBottom: '1px solid rgb(250,250,250)',
         }}
+        onClick={() => handleClick(value)}
       >
         <Flex.Item
           style={{
@@ -79,4 +80,8 @@ export default class Ranking extends Component {
     );
   }
 }
+
+Ranking.defaultProps = {
+  handleClick: () => {},
+};
 

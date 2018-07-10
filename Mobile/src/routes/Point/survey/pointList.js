@@ -6,8 +6,9 @@ import moment from 'moment';
 import { WingBlank, Flex, InputItem, DatePicker } from 'antd-mobile';
 import nothing from '../../../assets/nothing.png';
 import { Point } from '../../../common/ListView/index';
-import { ListFilter, CheckBoxs, ListSort, Nothing } from '../../../components/index';
-import { makerFilters } from '../../../utils/util';
+import { ListFilter, CheckBoxs, ListSort } from '../../../components/index';
+import Nothing from '../../../components/Nothing/Nothing.js';
+import { makerFilters, getUrlParams } from '../../../utils/util';
 import style from '../index.less';
 
 const sortList = [
@@ -74,22 +75,28 @@ export default class PointList extends React.Component {
     sortItem: { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
   }
   componentWillMount() {
-    const { dispatch } = this.props;
+    const { dispatch, location } = this.props;
+    this.urlParams = getUrlParams(location.search);
     dispatch({
       type: 'point/getPointLog',
       payload: {
         pagesize: 10,
         page: 1,
+        ...this.urlParams,
       },
     });
   }
   onRefresh = () => {
     const { dispatch } = this.props;
+    const { filters, sortItem } = this.state;
     dispatch({
       type: 'point/getPointLog',
       payload: {
         pagesize: 10,
         page: 1,
+        sort: sortItem.value,
+        filters,
+        ...this.urlParams,
       },
     });
   }
@@ -127,6 +134,7 @@ export default class PointList extends React.Component {
           payload: {
             pagesize: 10,
             page: 1,
+            ...this.urlParams,
             sort: sortItem.value,
           },
         });
@@ -141,6 +149,7 @@ export default class PointList extends React.Component {
         pagesize: 10,
         page: 1,
         sort: sortItem.value,
+        ...this.urlParams,
         filters,
       },
     });
@@ -155,6 +164,7 @@ export default class PointList extends React.Component {
         pagesize: 10,
         sort: sortItem.value,
         page: pointList.page + 1,
+        ...this.urlParams,
         filters,
       },
     });
@@ -180,6 +190,7 @@ export default class PointList extends React.Component {
           pagesize: 10,
           page: 1,
           sort: item.value,
+          ...this.urlParams,
           filters,
         },
       });
@@ -209,8 +220,8 @@ export default class PointList extends React.Component {
     this.setNewState('filter', newFilter);
   }
   timeChange = (date, key, range) => {
-    const { filter } = this.state;
-    const newFilter = { ...filter };
+    const { filters } = this.state;
+    const newFilter = { ...filters };
     newFilter[key][range] = moment(date).format('YYYY-MM-DD');
     this.setNewState('filter', newFilter);
   }

@@ -84,7 +84,7 @@ export default class BuckleList extends React.Component {
         type: checkState.value,
         sort: sortItem.value,
         page: logList[checkState.value].page + 1,
-        filter: this.dealFilter(),
+        filters: this.dealFilter(),
       },
     });
   }
@@ -95,13 +95,15 @@ export default class BuckleList extends React.Component {
   }
   onRefresh = () => {
     const { dispatch } = this.props;
-    const { checkState } = this.state;
+    const { checkState, sortItem } = this.state;
     dispatch({
       type: 'buckle/getLogsList',
       payload: {
         pagesize: 10,
         page: 1,
+        sort: sortItem.value,
         type: checkState.value,
+        filters: this.dealFilter(),
       },
     });
   }
