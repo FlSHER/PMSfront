@@ -288,7 +288,7 @@ export default class PointRanking extends React.Component {
               onCancel={this.onCancel}
               filterKey="sortModal"
             >
-              {authGroup.map((item, i) => {
+              {statisGroup.map((item, i) => {
                 const idx = i;
                 return (
                   <div
@@ -337,19 +337,7 @@ export default class PointRanking extends React.Component {
               </WingBlank>
             )}
         </Flex.Item>
-        <Flex.Item
-          className={style.footer}
-          ref={(e) => { this.ptr = e; }}
-        >
-          <Flex
-            align="center"
-            style={{ height: '50px' }}
-          >
-            <Flex.Item className={[style.item, style.active].join(' ')}><span>月度排名</span></Flex.Item>
-            <Flex.Item className={[style.item].join(' ')}><span>阶段排名</span></Flex.Item>
-            <Flex.Item className={[style.item].join(' ')}><span>累计排名</span></Flex.Item>
-          </Flex>
-        </Flex.Item>
+
 
       </Flex>
     );
