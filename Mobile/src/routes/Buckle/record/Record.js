@@ -392,10 +392,10 @@ export default class BuckleRecord extends React.Component {
       Toast.info(
         <div>
           <p>A分范围：
-            {event.point_a_min === 0 ? event.point_a_min : -event.point_a_min}-{event.point_a_max}
+            {event.point_a_min} 至 {event.point_a_max}
           </p>
           <p>B分范围：
-            {event.point_b_min === 0 ? event.point_b_min : -event.point_b_min}-{event.point_b_max}
+            {event.point_b_min} 至 {event.point_b_max}
           </p>
         </div>);
     } else {

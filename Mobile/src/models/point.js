@@ -37,8 +37,9 @@ export default {
         yield put({
           type: 'saveList',
           payload: {
-            store: 'pointList',
-            data: response,
+            key: 'pointList',
+            // type: payload.type,
+            value: response,
           },
         });
       } else {
@@ -57,13 +58,13 @@ export default {
     },
     saveList(state, action) {
       const info = action.payload.value;
-      const newList = { ...state[action.payload.key] };
+      let newList = { ...state[action.payload.key] };
       if (info.page !== 1) { // 多页
-        let newData = [...newList[action.payload.type].data];
+        let newData = [...newList.data];
         newData = newData.concat(info.data);
-        newList[action.payload.type] = { ...info, data: newData };
+        newList = { ...info, data: newData };
       } else {
-        newList[action.payload.type] = { ...info };
+        newList = { ...info };
       }
       return {
         ...state,
