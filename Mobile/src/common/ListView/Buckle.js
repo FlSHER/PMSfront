@@ -36,12 +36,14 @@ export default class Buckle extends Component {
                 </div>
               );
             })}
-
           </div>
-          <div className={style.time}>{value.created_at}</div>
-          <div className={style.desc}>
+          <div className={style.time}>
             {value.description}
           </div>
+          <div className={style.desc}>
+            记录人：{value.recorder_name}
+          </div>
+          <div className={style.desc}>{value.created_at}</div>
         </div>
         {extra && extra(value)}
       </div>

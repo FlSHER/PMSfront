@@ -467,7 +467,7 @@ export default class BuckleRecord extends React.Component {
           <WingBlank className={style.parcel}>
             <List>
               <List.Item arrow="horizontal" onClick={this.selEvent}>
-                {event && event.name ? event.name : '事件标题'}
+                {event && event.name ? event.name : <span style={{ color: 'rgb(150,150,150)' }}>请选择事件</span>}
               </List.Item>
               <TextareaItem
                 placeholder="输入事件描述"
@@ -559,25 +559,25 @@ export default class BuckleRecord extends React.Component {
                 </Flex>
                 <div className={style.table_body}>
                   <Flex>
-                    <Flex.Item className={style.table_item}>全部操作</Flex.Item>
-                    <Flex.Item className={style.table_item}>
+                    <Flex.Item className={[style.table_item, style.opt_all].join(' ')} >全部操作</Flex.Item>
+                    <Flex.Item className={[style.table_item, style.opt_all].join(' ')} >
                       <Input
                         value={tmpPointA}
-                        style={{ ...(optAll.point_a_error ? { color: 'red' } : null) }}
+                        style={{ background: '#badcff', ...(optAll.point_a_error ? { color: 'red' } : null) }}
                         onChange={v => this.pointChange(v, 'point_a')}
                       />
                     </Flex.Item>
-                    <Flex.Item className={style.table_item}>
+                    <Flex.Item className={[style.table_item, style.opt_all].join(' ')} >
                       <Input
                         value={tmpPointB}
-                        style={{ ...(optAll.point_b_error ? { color: 'red' } : null) }}
+                        style={{ background: '#badcff', ...(optAll.point_b_error ? { color: 'red' } : null) }}
                         onChange={v => this.pointChange(v, 'point_b')}
                       />
                     </Flex.Item>
-                    <Flex.Item className={style.table_item}>
+                    <Flex.Item className={[style.table_item, style.opt_all].join(' ')}>
                       <Input
                         value={tmpCount}
-                        style={{ ...(optAll.count_error ? { color: 'red' } : null) }}
+                        style={{ background: '#badcff', ...(optAll.count_error ? { color: 'red' } : null) }}
                         onChange={v => this.pointChange(v, 'count')}
                       />
                     </Flex.Item>
