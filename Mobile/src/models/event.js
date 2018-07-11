@@ -11,6 +11,11 @@ export default {
   state: {
     evtAll: [],
     evtName: [],
+    searchEvent: {
+      page: '',
+      totalpage: '',
+      data: [],
+    },
     event: {},
     breadCrumb: [],
     pageInfo: {
@@ -19,7 +24,7 @@ export default {
     },
   },
   subscriptions: {
-        setup({ dispatch, history }) { // eslint-disable-line
+    setup({ dispatch, history }) { // eslint-disable-line
     },
   },
 
@@ -69,32 +74,48 @@ export default {
     },
     * searchEventName({ payload }, { put, call, select }) {
       const newParams = makerFilters(payload);
+      const { searchEvent } = yield select(_ => _.event);
       const response = yield call(searchEventName, newParams);
-      const { evtName } = yield select(_ => _.event);
       if (response && !response.error) {
         const { data, page, totalpage } = response;
-        let newEvent = [];
+        let newEvent = null;
         if (page !== 1) {
-          newEvent = [...evtName];
-          newEvent = evtName.concat(data);
+          const oldData = searchEvent.data;
+          const newData = oldData.concat(data);
+          newEvent = { data: newData, page, totalpage };
         } else {
-          newEvent = [...data];
+          newEvent = { ...response };
         }
         yield put({
           type: 'save',
           payload: {
-            store: 'evtName',
+            store: 'searchEvent',
             data: newEvent,
           },
         });
-        yield put({
-          type: 'save',
-          payload: {
-            store: 'pageInfo',
-            data: { page, totalpage },
-          },
-        });
       }
+
+      // const newParams = makerFilters(payload);
+      // const response = yield call(searchEventName, newParams);
+      // const { evtName } = yield select(_ => _.event);
+      // if (response && !response.error) {
+      //   const { data, page, totalpage } = response;
+      //   let newEvent = [];
+      //   if (page !== 1) {
+      //     newEvent = [...evtName];
+      //     newEvent = evtName.concat(data);
+      //   } else {
+      //     newEvent = [...data];
+      //   }
+
+      //   yield put({
+      //     type: 'save',
+      //     payload: {
+      //       store: 'pageInfo',
+      //       data: { page, totalpage },
+      //     },
+      //   });
+      // }
     },
   },
 

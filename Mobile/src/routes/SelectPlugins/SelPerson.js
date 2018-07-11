@@ -3,19 +3,21 @@ import {
   connect,
 } from 'dva';
 import { SearchList, Nothing } from '../../components/index';
-import { Department, Staff } from '../../common/ListView/index.js';
+import { Department, Staff, SeStaff } from '../../common/ListView/index.js';
 import { analyzePath, unique, userStorage } from '../../utils/util';
 import styles from '../common.less';
 import style from './index.less';
 @connect(({ searchStaff, loading }) => ({
   department: searchStaff.department,
   staff: searchStaff.staff,
+  searStaff: searchStaff.searStaff,
   breadCrumb: searchStaff.breadCrumb,
-  pageInfo: searchStaff.pageInfo,
+  // pageInfo: searchStaff.pageInfo,
   selectStaff: searchStaff.selectStaff,
   loading1: loading.effects['searchStaff/fetchSearchStaff'],
   loading2: loading.effects['searchStaff/fetchSelfDepStaff'],
   loading3: loading.effects['searchStaff/fetchFirstDepartment'],
+  searchLoding: loading.effects['searchStaff/serachStaff'],
 }))
 export default class SelPerson extends Component {
   state = {
@@ -43,25 +45,40 @@ export default class SelPerson extends Component {
       type,
     });
   }
-
+  componentWillUnmount() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+  }
   onSearch = (search) => {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.timer = setInterval(() => {
+      this.onSearchSubmit(search);
+    }, 500);
+  }
+  onSearchSubmit = (search) => {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
     const { dispatch } = this.props;
     this.setState({
       search,
     }, () => {
       dispatch({
         type: 'searchStaff/serachStaff',
-        payload: `filters=realname~${search}&page=1&pagesize=15`,
+        payload: `page=1&pagesize=15&filters=realname~${search};status_id>=0`,
       });
     });
   }
-
   onPageChange = () => {
-    const { dispatch, pageInfo } = this.props;
+    const { dispatch, searStaff } = this.props;
+    const { page } = searStaff;
     const { search } = this.state;
     dispatch({
       type: 'searchStaff/serachStaff',
-      payload: `filters=realname~${search}&page=${pageInfo.page + 1}&pagesize=15`,
+      payload: `page=${page + 1}&pagesize=15&status_id>=0&filters=realname~${search};status_id>=0`,
     });
   }
   getSelectResult = (result) => {
@@ -98,7 +115,7 @@ export default class SelPerson extends Component {
       type: 'searchStaff/getFinalStaff',
     });
   }
-  fetchSelfDepStaff =() => {
+  fetchSelfDepStaff = () => {
     const { dispatch } = this.props;
     const user = userStorage('userInfo');
     dispatch({
@@ -200,8 +217,13 @@ export default class SelPerson extends Component {
     history.goBack(-1);
   }
   render() {
-    const { department, staff, breadCrumb, loading1, loading2, loading3, pageInfo } = this.props;
+    const { department,
+      staff, searStaff,
+      breadCrumb, loading1,
+      loading2, loading3, searchLoding,
+    } = this.props;
     const { selected, type, search } = this.state;
+    const { page, totalpage, data = [] } = searStaff;
     return (
       <div className={styles.con}>
         <SearchList
@@ -220,7 +242,7 @@ export default class SelPerson extends Component {
         >
           <div
             className={style.child}
-            style={{ ...(loading1 || loading2 || loading3 ? { display: 'none' } : null) }}
+            style={{ ...(loading1 || loading2 || loading3 || searchLoding ? { display: 'none' } : null) }}
           >
             {department.length && !search ? (
               <Department
@@ -229,24 +251,44 @@ export default class SelPerson extends Component {
                 fetchDataSource={this.selDepartment}
                 name="id"
               />
-              ) : null}
-            {search && !staff.length ? <Nothing /> : null }
-            {staff.length ? (
+            ) : null}
+            {search && data && !data.length ? <Nothing /> : null}
+            {!search && staff.length ? (
               <Staff
                 link=""
                 heightNone
                 isFinal={this.state.key === 'final'}
-                name={this.state.key === 'final' ? 'staff_name' : 'realname'}
-                page={search ? pageInfo.page : false}
-                totalpage={search ? pageInfo.totalpage : false}
-                onPageChange={this.onPageChange}
+                // name={this.state.key === 'final' ? 'staff_name' : 'realname'}
+                name="staff_sn"
+                renderName={this.state.key === 'final' ? 'staff_name' : 'realname'}
+                // page={search ? pageInfo.page : false}
+                // totalpage={search ? pageInfo.totalpage : false}
+                // onPageChange={this.onPageChange}
                 dispatch={this.props.dispatch}
                 multiple={type !== '1'}
                 selected={selected.data}
                 dataSource={staff}
                 onChange={this.getSelectResult}
               />
-              ) : null}
+            ) : null}
+            {search ? (
+              <SeStaff
+                link=""
+                heightNone
+                isFinal={this.state.key === 'final'}
+                // name={this.state.key === 'final' ? 'staff_name' : 'realname'}
+                name="staff_sn"
+                renderName={this.state.key === 'final' ? 'staff_name' : 'realname'}
+                page={page}
+                totalpage={totalpage}
+                onPageChange={this.onPageChange}
+                dispatch={this.props.dispatch}
+                multiple={type !== '1'}
+                selected={selected.data}
+                dataSource={data}
+                onChange={this.getSelectResult}
+              />
+            ) : null}
           </div>
 
         </SearchList>

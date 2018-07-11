@@ -12,7 +12,7 @@ import { analyzePath } from '../../../utils/util';
   pointDetails: point.pointDetails,
 }))
 export default class PointDetail extends React.Component {
-  state={
+  state = {
     pointLog: '',
   }
   componentWillMount() {
@@ -26,6 +26,11 @@ export default class PointDetail extends React.Component {
         payload: { id: pointLog },
       });
     });
+  }
+  toLookDetail = () => {
+    const { history } = this.props;
+    const { pointLog } = this.state;
+    history.replace(`/audit_detail/${pointLog}`);
   }
   render() {
     const { pointDetails } = this.props;
@@ -70,7 +75,17 @@ export default class PointDetail extends React.Component {
           <WhiteSpace size="md" />
           <WingBlank>
             <div className={style.players}>
-              <Flex className={style.title}> 积分变化</Flex>
+              <Flex className={style.title} id="participants">
+                <Flex.Item >积分变化</Flex.Item>
+                <Flex.Item
+                  style={{
+                    textAlign: 'right',
+                    fontSize: '12px',
+                    color: 'rgb(24, 116, 208)',
+                  }}
+                  onClick={this.toLookDetail}
+                />
+              </Flex>
               <Flex style={{ padding: '0.53rem 0 1.06667rem 0' }}>
                 <Flex.Item>
                   <div>
@@ -87,7 +102,7 @@ export default class PointDetail extends React.Component {
                     <div
                       className={style.point_b}
                     >
-                    B分
+                      B分
                     </div>
                     <div
                       className={[style.point_b_value, detail.point_b > 0 ? style.success : style.error].join(' ')}

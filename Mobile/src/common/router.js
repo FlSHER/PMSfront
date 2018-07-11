@@ -113,9 +113,9 @@ export const getRouterData = (app) => {
     '/test': {
       component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/test')),
     },
-    // '/test2': {
-    //   component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/Test/test')),
-    // },
+    '/test2': {
+      component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/Test/test')),
+    },
     '/get_access_token': {
       component: dynamicWrapper(app, ['oauth'], () => import('../routes/Oauth/GetAccessToken')),
     },

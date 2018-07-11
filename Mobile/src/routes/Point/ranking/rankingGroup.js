@@ -81,7 +81,7 @@ export default class RankingGroup extends React.Component {
           <WhiteSpace size="md" />
           <WingBlank size="lg">
             {authGroup && authGroup.length ?
-              <p style={{ padding: '0.5rem 0 0.2rem 0.4rem', fontSize: '16px', color: 'rgb(100,100,100)' }}>我的分组</p> : null}
+              <p style={{ padding: '0.26667rem 0.48rem', fontSize: '14px', color: 'rgb(100,100,100)' }}>我的分组</p> : null}
             <Group
               dataSource={authGroup || []}
               heightNone
@@ -89,7 +89,7 @@ export default class RankingGroup extends React.Component {
               url="/ranking"
             />
             {statisGroup && statisGroup.length ?
-              <p style={{ padding: '0.5rem 0 0.2rem 0.4rem', fontSize: '16px', color: 'rgb(100,100,100)' }}>可见分组</p> : null}
+              <p style={{ padding: '0.26667rem 0.48rem', fontSize: '14px', color: 'rgb(100,100,100)' }}>可见分组</p> : null}
             <Group
               dataSource={statisGroup || []}
               heightNone

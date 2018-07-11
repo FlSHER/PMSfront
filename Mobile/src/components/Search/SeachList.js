@@ -21,10 +21,12 @@ export default class SearchList extends Component {
   }
 
   onChange = (value) => {
-    const { searchOncancel } = this.props;
+    const { searchOncancel, handleSearch } = this.props;
     this.setState({ value });
     if (value === '') {
       searchOncancel();
+    } else {
+      handleSearch(value);
     }
   };
   onSubmit = () => {
@@ -63,20 +65,20 @@ export default class SearchList extends Component {
               showCancelButton={this.state.value}
               onChange={this.onChange}
               onCancel={
-            this.state.value ? this.onCancel :
-            () => {}
-          }
+                this.state.value ? this.onCancel :
+                  () => { }
+              }
               onSubmit={this.onSubmit}
             />
-        )}
+          )}
 
           {this.state.value ? null : (
             <Bread
               bread={bread}
               handleBread={handleBread}
             />
-        )}
-          { this.state.value || isFinal ? null : (
+          )}
+          {this.state.value || isFinal ? null : (
             <div style={{ padding: '0 0.32rem' }} >
               <List >
                 <List.Item
@@ -86,7 +88,7 @@ export default class SearchList extends Component {
                 </List.Item>
               </List>
             </div>
-        )}
+          )}
           {multiple && !this.state.value ? (
             <div className={style.action}>
               <div className={style.action_item}>

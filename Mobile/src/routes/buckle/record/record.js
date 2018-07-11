@@ -3,9 +3,10 @@ import moment from 'moment';
 import {
   connect,
 } from 'dva';
-import { List, TextareaItem, Flex, WingBlank, WhiteSpace, InputItem, Button, DatePicker, Toast } from 'antd-mobile';
+import { List, TextareaItem, Flex, WingBlank, WhiteSpace, Button, DatePicker, Toast } from 'antd-mobile';
 import { PersonIcon, PersonAdd } from '../../../components/index.js';
-import { analyzePath } from '../../../utils/util';
+import Input from '../../../components/General/Input/input.js';
+import { analyzePath, userStorage, scrollToAnchor } from '../../../utils/util';
 
 import style from '../index.less';
 import styles from '../../common.less';
@@ -21,7 +22,7 @@ export default class BuckleRecord extends React.Component {
     optAll: {
       pointA: '',
       pointB: '',
-      count: '',
+      count: 1,
     },
     info: {
       executedAt: new Date(),
@@ -104,13 +105,14 @@ export default class BuckleRecord extends React.Component {
       });
     } else {
       const { participants } = selectStaff;
+
       let newParticipant = participants.map((item) => {
         const obj = { ...item };
         obj.realname = item.staff_name || item.realname;
         obj.point_a = (item.point_a === '' || item.point_a === undefined) ?
-          (optAll.pointA || event.point_a_default === undefined ? '' : event.point_a_default) : item.point_a;
+          (optAll.pointA ? optAll.pointA : event.point_a_default) : item.point_a;
         obj.point_b = (item.point_b === '' || item.point_b === undefined) ?
-          (optAll.pointB || event.point_b_default === undefined ? '' : event.point_b_default) : item.point_b;
+          (optAll.pointB ? optAll.pointB : event.point_b_default) : item.point_b;
         obj.count = item.count === undefined ? optAll.count : item.count;
         return obj;
       });
@@ -136,7 +138,12 @@ export default class BuckleRecord extends React.Component {
       });
     }
   }
-
+  componentDidMount() {
+    const { location } = this.props;
+    const { hash } = location;
+    const link = hash ? hash.slice(hash.indexOf('#') + 1) : '';
+    scrollToAnchor(link);
+  }
 
   remove = (e, item, name) => {
     e.stopPropagation();
@@ -180,7 +187,7 @@ export default class BuckleRecord extends React.Component {
     this.saveAllData();
     history.push(`/sel_person/${name}/${type}`);
   }
-  addMore = (name = 'first', type) => {
+  addMore = (name, type) => {
     const { event } = this.props;
     if (name === 'final') {
       if (!Object.keys(event || {}).length) {
@@ -190,13 +197,14 @@ export default class BuckleRecord extends React.Component {
     }
     const { history } = this.props;
     this.saveAllData();
+    history.replace(`/buckle_record#${name}`);
     history.push(`/sel_person/${name}/${type}`);
   }
 
   savePointData = (newPoint, kind, el) => {
     const { event } = this.props;
     let error = false;
-    if (newPoint > event[`${kind}_max`] || newPoint < (-event[`${kind}_min`])) {
+    if ((Number(newPoint) > Number(event[`${kind}_max`])) || (Number(newPoint) < Number(event[`${kind}_min`]))) {
       error = true;
     }
     const { optAll, info } = this.state;
@@ -239,8 +247,6 @@ export default class BuckleRecord extends React.Component {
   }
 
   pointChange = (point, kind, el) => {
-    // const { event } = this.props;
-
     // 验证整数;
     if (kind === 'count' && point && !/^\d+$/.test(point)) {
       return;
@@ -386,6 +392,30 @@ export default class BuckleRecord extends React.Component {
 
     history.push('/sel_event');
   }
+  addMySelf = () => {
+    const { event } = this.props;
+    const { info, optAll } = this.state;
+    const userInfo = userStorage('userInfo');
+    const { participants } = info;
+    const newParticipants = [...participants];
+    if (participants.filter(item => item.staff_sn === userInfo.staff_sn).length) {
+      return;
+    }
+    const myself = {
+      staff_sn: userInfo.staff_sn,
+      realname: userInfo.realname,
+      point_a: optAll.pointA ? optAll.pointA : event.point_a_default,
+      point_b: optAll.pointB ? optAll.pointB : event.point_b_default,
+      count: optAll.count ? optAll.count : 1,
+    };
+    newParticipants.push(myself);
+    this.setState({
+      info: {
+        ...info,
+        participants: newParticipants,
+      },
+    });
+  }
   infoToast = () => {
     const { event } = this.props;
     if (event.id) {
@@ -425,7 +455,7 @@ export default class BuckleRecord extends React.Component {
     }
     this.state.optAll.pointA = tmpPointA;
     this.state.optAll.pointB = tmpPointB;
-    this.state.optAll.count = tmpCount;
+    this.state.optAll.count = tmpCount || 1;
     return (
       <div
         className={styles.con}
@@ -464,195 +494,203 @@ export default class BuckleRecord extends React.Component {
             </DatePicker>
 
           </WingBlank>
-          <WhiteSpace size="sm" />
-          <WingBlank className={style.parcel}>
-            <div className={style.players}>
-              <Flex className={style.title}> 参与人</Flex>
-              <Flex
-                className={style.person_list}
-                wrap="wrap"
-              >
-                {(participants || []).map((item, i) => {
-                  const idx = i;
-                  return (
-                    <PersonIcon
-                      key={idx}
-                      value={item}
-                      type="2"
-                      nameKey="realname"
-                      showNum={2}
-                      handleDelClick={(e, v) => this.remove(e, v, 'participants')}
-                    />
-                  );
-                })}
-                <PersonAdd handleClick={() => this.addMore('participants', 2)} />
-              </Flex>
-            </div>
-          </WingBlank>
-          <WhiteSpace size="sm" />
-          <WingBlank className={style.parcel}>
-            <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
-              <Flex className={style.title}>
-                <Flex.Item>参与人列表</Flex.Item>
-                <Flex.Item
-                  style={{
-                    textAlign: 'right',
-                    fontSize: '12px',
-                    color: '#9b9b9b',
-                    paddingRight: '0.48rem',
-                    backgroundImage: `url(${prompt})`,
-                    backgroundPosition: 'right center',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundSize: '0.32rem',
-                  }}
-                  onClick={this.infoToast}
-                >分值范围
-                </Flex.Item>
-              </Flex>
-              <Flex className={style.table_head}>
-                <Flex.Item className={style.table_item}>姓名</Flex.Item>
-                <Flex.Item className={style.table_item}>A分</Flex.Item>
-                <Flex.Item className={style.table_item}>B分</Flex.Item>
-                <Flex.Item className={style.table_item}>计件</Flex.Item>
-              </Flex>
-              <div className={style.table_body}>
-                <Flex>
-                  <Flex.Item className={style.table_item}>全部操作</Flex.Item>
-                  <Flex.Item className={style.table_item}>
-                    <InputItem
-                      value={tmpPointA}
-                      style={{ ...(optAll.point_a_error ? { color: 'red' } : null) }}
-
-                      onChange={e => this.pointChange(e, 'point_a')}
-                    // onBlur={e => this.validNumer(e, 'point_a')}
-                    />
-                  </Flex.Item>
-                  <Flex.Item className={style.table_item}>
-                    <InputItem
-                      value={tmpPointB}
-                      style={{ ...(optAll.point_b_error ? { color: 'red' } : null) }}
-                      onChange={e => this.pointChange(e, 'point_b')}
-                    // onBlur={e => this.validNumer(e, 'point_b')}
-                    />
-                  </Flex.Item>
-                  <Flex.Item className={style.table_item}>
-                    <InputItem
-                      value={tmpCount}
-                      onChange={e => this.pointChange(e, 'count')}
-                    // onBlur={e => this.validNumer(e, 'count')}
-                    />
+          <div style={{ ...((event && !Object.keys(event).length) || !event ? { display: 'none' } : null) }}>
+            <WhiteSpace size="sm" />
+            <WingBlank className={style.parcel}>
+              <div className={style.players}>
+                <Flex className={style.title} id="participants">
+                  <Flex.Item >参与人</Flex.Item>
+                  <Flex.Item
+                    style={{
+                      textAlign: 'right',
+                      fontSize: '12px',
+                      color: 'rgb(24, 116, 208)',
+                    }}
+                    onClick={this.addMySelf}
+                  >添加自己
                   </Flex.Item>
                 </Flex>
-                {(participants || []).map((item, i) => {
-                  const idx = i;
-                  return (
-                    <Flex key={idx}>
-                      <Flex.Item className={style.table_item}>{item.realname}</Flex.Item>
-                      <Flex.Item className={style.table_item}>
-                        <InputItem
-                          value={`${item.point_a}`}
-                          style={{ ...(item.point_a_error ? { color: 'red' } : null) }}
-                          onChange={e => this.pointChange(e, 'point_a', item)}
-                          // onBlur={e => this.validNumer(e, 'point_a', item)}
-                        />
-                      </Flex.Item>
-                      <Flex.Item className={style.table_item}>
-                        <InputItem
-                          style={{ ...(item.point_b_error ? { color: 'red' } : null) }}
-                          value={`${item.point_b}`}
-                          onChange={e => this.pointChange(e, 'point_b', item)}
-                          // onBlur={e => this.validNumer(e, 'point_b', item)}
-                        />
-                      </Flex.Item>
-                      <Flex.Item className={style.table_item}>
-                        <InputItem
-                          value={item.count}
-                          style={{ ...(item.count_error ? { color: 'red' } : null) }}
-                          onChange={e => this.pointChange(e, 'count', item)}
-                        // onBlur={e => this.validNumer(e, 'count', item)}
-                        />
-                      </Flex.Item>
-                    </Flex>);
-                })
-                }
+                <Flex
+                  className={style.person_list}
+                  wrap="wrap"
+                >
+                  {(participants || []).map((item, i) => {
+                    const idx = i;
+                    return (
+                      <PersonIcon
+                        key={idx}
+                        value={item}
+                        type="2"
+                        nameKey="realname"
+                        showNum={2}
+                        handleDelClick={(e, v) => this.remove(e, v, 'participants')}
+                      />
+                    );
+                  })}
+                  <PersonAdd handleClick={() => this.addMore('participants', 2)} />
+                </Flex>
               </div>
-            </div>
-          </WingBlank>
-          <WhiteSpace size="sm" />
-          <WingBlank className={style.parcel}>
-            <div className={style.players}>
-              <Flex className={style.title}> 初审人</Flex>
-              <Flex
-                className={style.person_list}
-                wrap="wrap"
-              >
-                {(first || []).map((item, i) => {
-                  const idx = i;
-                  return (
-                    <PersonIcon
-                      key={idx}
-                      value={item}
-                      nameKey="realname"
-                      showNum={2}
-                      handleClick={event.first_approver_locked === 1 ? null : () => this.changePerson('first', 1)}
-                      handleDelClick={event.first_approver_locked === 1 ? null : (e, v) => this.remove(e, v, 'first')}
-                    />
-                  );
-                })}
-                {first && (!first.length) ? <PersonAdd handleClick={() => this.addMore('first', 1)} /> : null}
-              </Flex>
-            </div>
-          </WingBlank>
-          <WhiteSpace size="sm" />
-          <WingBlank className={style.parcel}>
-            <div className={style.players}>
-              <Flex className={style.title}> 终审人</Flex>
-              <Flex
-                className={style.person_list}
-                wrap="wrap"
-              >
-                {(final || []).map((item, i) => {
-                  const idx = i;
-                  return (
-                    <PersonIcon
-                      key={idx}
-                      value={item}
-                      nameKey="staff_name"
-                      showNum={2}
-                      handleClick={event.final_approver_locked === 1 ? null : () => this.changePerson('final', 1)}
-                      handleDelClick={event.final_approver_locked === 1 ? null : (e, v) => this.remove(e, v, 'final')}
-                    />
-                  );
-                })}
-                {final && (!final.length) ? <PersonAdd handleClick={() => this.addMore('final', 1)} /> : null}
-              </Flex>
-            </div>
-          </WingBlank>
-          <WhiteSpace size="sm" />
-          <WingBlank className={style.parcel}>
-            <div className={style.players}>
-              <Flex className={style.title}> 抄送人</Flex>
-              <Flex
-                className={style.person_list}
-                wrap="wrap"
-              >
-                {(copy || []).map((item, i) => {
-                  const idx = i;
-                  return (
-                    <PersonIcon
-                      key={idx}
-                      value={item}
-                      nameKey="realname"
-                      showNum={2}
-                      type="2"
-                      handleDelClick={item.lock === 1 ? null : (e, v) => this.remove(e, v, 'copy')}
-                    />
-                  );
-                })}
-                <PersonAdd handleClick={() => this.addMore('copy', 2)} />
-              </Flex>
-            </div>
-          </WingBlank>
+            </WingBlank>
+            <WhiteSpace size="sm" />
+            <WingBlank className={style.parcel}>
+              <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
+                <Flex className={style.title}>
+                  <Flex.Item>参与人列表</Flex.Item>
+                  <Flex.Item
+                    style={{
+                      textAlign: 'right',
+                      fontSize: '12px',
+                      color: '#9b9b9b',
+                      paddingRight: '0.48rem',
+                      backgroundImage: `url(${prompt})`,
+                      backgroundPosition: 'right center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '0.32rem',
+                    }}
+                    onClick={this.infoToast}
+                  >分值范围
+                  </Flex.Item>
+                </Flex>
+                <Flex className={style.table_head}>
+                  <Flex.Item className={style.table_item}>姓名</Flex.Item>
+                  <Flex.Item className={style.table_item}>A分</Flex.Item>
+                  <Flex.Item className={style.table_item}>B分</Flex.Item>
+                  <Flex.Item className={style.table_item}>次数</Flex.Item>
+                </Flex>
+                <div className={style.table_body}>
+                  <Flex>
+                    <Flex.Item className={style.table_item}>全部操作</Flex.Item>
+                    <Flex.Item className={style.table_item}>
+                      <Input
+                        value={tmpPointA}
+                        style={{ ...(optAll.point_a_error ? { color: 'red' } : null) }}
+                        onChange={v => this.pointChange(v, 'point_a')}
+                      />
+                    </Flex.Item>
+                    <Flex.Item className={style.table_item}>
+                      <Input
+                        value={tmpPointB}
+                        style={{ ...(optAll.point_b_error ? { color: 'red' } : null) }}
+                        onChange={v => this.pointChange(v, 'point_b')}
+                      />
+                    </Flex.Item>
+                    <Flex.Item className={style.table_item}>
+                      <Input
+                        value={tmpCount}
+                        style={{ ...(optAll.count_error ? { color: 'red' } : null) }}
+                        onChange={v => this.pointChange(v, 'count')}
+                      />
+                    </Flex.Item>
+                  </Flex>
+                  {(participants || []).map((item, i) => {
+                    const idx = i;
+                    return (
+                      <Flex key={idx}>
+                        <Flex.Item className={style.table_item}>{item.realname}</Flex.Item>
+                        <Flex.Item className={style.table_item}>
+                          <Input
+                            value={`${item.point_a}`}
+                            style={{ ...(item.point_a_error ? { color: 'red' } : null) }}
+                            onChange={v => this.pointChange(v, 'point_a', item)}
+                          />
+                        </Flex.Item>
+                        <Flex.Item className={style.table_item}>
+                          <Input
+                            value={`${item.point_b}`}
+                            style={{ ...(item.point_b_error ? { color: 'red' } : null) }}
+                            onChange={v => this.pointChange(v, 'point_b', item)}
+                          />
+                        </Flex.Item>
+                        <Flex.Item className={style.table_item}>
+                          <Input
+                            value={item.count}
+                            style={{ ...(item.count_error ? { color: 'red' } : null) }}
+                            onChange={v => this.pointChange(v, 'count', item)}
+                          />
+                        </Flex.Item>
+                      </Flex>);
+                  })
+                  }
+                </div>
+              </div>
+            </WingBlank>
+            <WhiteSpace size="sm" />
+            <WingBlank className={style.parcel}>
+              <div className={style.players} id="first">
+                <Flex className={style.title} > 初审人</Flex>
+                <Flex
+                  className={style.person_list}
+                  wrap="wrap"
+                >
+                  {(first || []).map((item, i) => {
+                    const idx = i;
+                    return (
+                      <PersonIcon
+                        key={idx}
+                        value={item}
+                        nameKey="realname"
+                        showNum={2}
+                        handleClick={event.first_approver_locked === 1 ? null : () => this.changePerson('first', 1)}
+                        handleDelClick={event.first_approver_locked === 1 ? null : (e, v) => this.remove(e, v, 'first')}
+                      />
+                    );
+                  })}
+                  {first && (!first.length) ? <PersonAdd handleClick={() => this.addMore('first', 1)} /> : null}
+                </Flex>
+              </div>
+            </WingBlank>
+            <WhiteSpace size="sm" />
+            <WingBlank className={style.parcel}>
+              <div className={style.players} id="final">
+                <Flex className={style.title} > 终审人</Flex>
+                <Flex
+                  className={style.person_list}
+                  wrap="wrap"
+                >
+                  {(final || []).map((item, i) => {
+                    const idx = i;
+                    return (
+                      <PersonIcon
+                        key={idx}
+                        value={item}
+                        nameKey="staff_name"
+                        showNum={2}
+                        handleClick={event.final_approver_locked === 1 ? null : () => this.changePerson('final', 1)}
+                        handleDelClick={event.final_approver_locked === 1 ? null : (e, v) => this.remove(e, v, 'final')}
+                      />
+                    );
+                  })}
+                  {final && (!final.length) ? <PersonAdd handleClick={() => this.addMore('final', 1)} /> : null}
+                </Flex>
+              </div>
+            </WingBlank>
+            <WhiteSpace size="sm" />
+            <WingBlank className={style.parcel}>
+              <div className={style.players} id="copy">
+                <Flex className={style.title} > 抄送人</Flex>
+                <Flex
+                  className={style.person_list}
+                  wrap="wrap"
+                >
+                  {(copy || []).map((item, i) => {
+                    const idx = i;
+                    return (
+                      <PersonIcon
+                        key={idx}
+                        value={item}
+                        nameKey="realname"
+                        showNum={2}
+                        type="2"
+                        handleDelClick={item.lock === 1 ? null : (e, v) => this.remove(e, v, 'copy')}
+                      />
+                    );
+                  })}
+                  <PersonAdd handleClick={() => this.addMore('copy', 2)} />
+                </Flex>
+              </div>
+            </WingBlank>
+            <WhiteSpace size="lg" />
+          </div>
         </div>
         <div className={styles.footer}>
           <WingBlank>

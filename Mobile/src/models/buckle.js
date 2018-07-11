@@ -25,7 +25,7 @@ export default {
     optAll: {
       pointA: '',
       pointB: '',
-      count: '',
+      count: 1,
     },
     logList: {
 

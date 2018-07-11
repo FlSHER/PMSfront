@@ -31,12 +31,6 @@ export default class App extends React.Component {
     }
   }
 
-  // componentDidMount() {
-  //   this.props.dispatch({
-  //     type: 'user/getUserInfo',
-  //   });
-  // }
-
   render() {
     const {
       // loading,

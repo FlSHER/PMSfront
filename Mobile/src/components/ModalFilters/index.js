@@ -35,7 +35,6 @@ class ModalFilters extends React.Component {
       filters,
     };
     newParams = makerFilters(params || newParams);
-    console.log(newParams);
     fetchDataSource(newParams);
   }
 

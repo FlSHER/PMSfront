@@ -4,7 +4,7 @@ import {
   connect,
 } from 'dva';
 import { Flex } from 'antd-mobile';
-import { EventType, EventName } from '../../common/ListView/index.js';
+import { EventType, EventName, SearchEvent } from '../../common/ListView/index.js';
 import { Bread, Search } from '../../components/General/index';
 import { Nothing } from '../../components/index';
 import { markTreeData, userStorage } from '../../utils/util';
@@ -15,13 +15,15 @@ import style from './index.less';
 @connect(({ event, loading, searchStaff, buckle }) => ({
   evtAll: event.evtAll,
   evtName: event.evtName,
+  searchEvent: event.searchEvent,
   breadCrumb: event.breadCrumb,
   loading: loading.effects['event/getEvent'],
   loadingName: loading.effects['event/getEventName'],
+  loadingSearch: loading.effects['event/searchEventName'],
   selectStaff: searchStaff.selectStaff,
   info: buckle.info,
   optAll: buckle.optAll,
-  pageInfo: event.pageInfo,
+  // pageInfo: event.pageInfo,
 }))
 export default class SelEvent extends Component {
   state = {
@@ -63,13 +65,19 @@ export default class SelEvent extends Component {
       });
     }
   }
+  componentWillUnmount() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+  }
   onPageChange = () => {
-    const { dispatch, pageInfo } = this.props;
+    const { dispatch, searchEvent } = this.props;
+    const { page } = searchEvent;
     const { searchValue } = this.state;
     dispatch({
       type: 'event/searchEventName',
       payload: {
-        page: pageInfo.page + 1,
+        page: page + 1,
         pagesize: 15,
         filters: {
           name: {
@@ -123,7 +131,7 @@ export default class SelEvent extends Component {
       newSelectStaff.final = [
         {
           staff_sn: result.final_approver_sn,
-          realname: result.final_approver_name,
+          staff_name: result.final_approver_name,
         },
       ];
     }
@@ -225,6 +233,12 @@ export default class SelEvent extends Component {
     }
   }
   searchChange = (v) => {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.timer = setInterval(() => {
+      this.searchSubmit(v);
+    }, 500);
     this.setState({
       searchValue: v,
     });
@@ -233,6 +247,9 @@ export default class SelEvent extends Component {
     }
   }
   searchSubmit = (v) => {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
     const { dispatch } = this.props;
     dispatch({
       type: 'event/searchEventName',
@@ -265,10 +282,12 @@ export default class SelEvent extends Component {
       }
     });
   }
+
   render() {
     const { eventList, selected, searchValue } = this.state;
-    const { breadCrumb, evtName, loading, loadingName, pageInfo } = this.props;
+    const { breadCrumb, evtName, loading, loadingName, searchEvent, loadingSearch } = this.props;
     const isLoading = loading || loadingName;
+    const { page, totalpage, data = [] } = searchEvent;
     return (
       <Flex direction="column">
         <Flex.Item className={style.header} >
@@ -291,9 +310,9 @@ export default class SelEvent extends Component {
           ref={(e) => { this.ptr = e; }}
           style={{ ...(isLoading && { display: 'none' }), overflow: 'auto', height: this.state.height }}
         >
-          {(!eventList.length && !evtName.length) &&
+          {((searchValue && !evtName.length) || (!evtName.length && !eventList.length)) &&
             (
-              <div style={{ display: isLoading ? 'none' : 'flex', flexDirection: 'column' }}>
+              <div style={{ display: isLoading || loadingSearch ? 'none' : 'flex', flexDirection: 'column' }}>
                 <Nothing src={nothing} />
               </div>
             )
@@ -310,16 +329,26 @@ export default class SelEvent extends Component {
           }
           {eventList.length && evtName.length ?
             <p style={{ padding: '0.5rem 0 0.2rem 0.4rem', fontSize: '16px', color: 'rgb(100,100,100)' }}>事件列表</p> : null}
-          <EventName
-            name="name"
-            heightNone
-            selected={selected.data}
-            dataSource={evtName || []}
-            onChange={this.getSelectResult}
-            page={searchValue ? pageInfo.page : false}
-            totalpage={searchValue ? pageInfo.totalpage : false}
-            onPageChange={this.onPageChange}
-          />
+          {!searchValue ? (
+            <EventName
+              name="name"
+              heightNone
+              selected={selected.data}
+              dataSource={evtName || []}
+              onChange={this.getSelectResult}
+            />) : null}
+          {searchValue ? (
+            <SearchEvent
+              name="name"
+              heightNone
+              selected={selected.data}
+              dataSource={data || []}
+              onChange={this.getSelectResult}
+              page={page}
+              totalpage={totalpage}
+              onPageChange={this.onPageChange}
+            />
+          ) : null}
         </Flex.Item>
       </Flex>
     );

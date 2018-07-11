@@ -8,6 +8,8 @@ import EventType from './EventType';
 import EventName from './EventName';
 import Ranking from './Ranking';
 import Group from './Group';
+import SeStaff from './searchStaff';
+import SearchEvent from './SearchEvent';
 
 export {
   Department,
@@ -18,5 +20,7 @@ export {
   EventName,
   Ranking,
   Group,
+  SeStaff,
+  SearchEvent,
   // EventList,
 };

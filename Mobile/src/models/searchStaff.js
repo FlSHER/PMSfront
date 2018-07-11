@@ -12,6 +12,11 @@ export default {
   state: {
     department: [],
     staff: [],
+    searStaff: {
+      page: '',
+      totalpage: '',
+      data: [],
+    },
     breadCrumb: [],
     pageInfo: {
       page: '',
@@ -79,13 +84,15 @@ export default {
         },
       });
       const response = yield call(getStaff, departmentId);
-      yield put({
-        type: 'save',
-        payload: {
-          store: 'staff',
-          data: response || [],
-        },
-      });
+      if (response && !response.error) {
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'staff',
+            data: response || [],
+          },
+        });
+      }
     },
     *fetchFirstDepartment({ payload }, { put, call }) { // 一级部门列表
       const { breadCrumb } = payload;
@@ -115,37 +122,26 @@ export default {
       });
     },
     *serachStaff({ payload }, { put, call, select }) { // 一级部门列表
-      const { staff } = yield select(_ => _.searchStaff);
+      const { searStaff } = yield select(_ => _.searchStaff);
       const response = yield call(serachStaff, payload);
-      const { data, page, totalpage } = response;
-      let newStaff = [];
-      if (page !== 1) {
-        newStaff = [...staff];
-        newStaff = staff.concat(data);
-      } else {
-        newStaff = [...data];
+      if (response && !response.error) {
+        const { data, page, totalpage } = response;
+        let newStaff = null;
+        if (page !== 1) {
+          const oldData = searStaff.data;
+          const newData = oldData.concat(data);
+          newStaff = { data: newData, page, totalpage };
+        } else {
+          newStaff = { ...response };
+        }
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'searStaff',
+            data: newStaff,
+          },
+        });
       }
-      yield put({
-        type: 'save',
-        payload: {
-          store: 'department',
-          data: [],
-        },
-      });
-      yield put({
-        type: 'save',
-        payload: {
-          store: 'staff',
-          data: newStaff,
-        },
-      });
-      yield put({
-        type: 'save',
-        payload: {
-          store: 'pageInfo',
-          data: { page, totalpage },
-        },
-      });
     },
   },
   reducers: {
