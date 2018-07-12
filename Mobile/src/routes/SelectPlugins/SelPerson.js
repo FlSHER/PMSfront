@@ -3,16 +3,16 @@ import {
   connect,
 } from 'dva';
 import { SearchList, Nothing } from '../../components/index';
-import { Department, Staff, SeStaff } from '../../common/ListView/index.js';
-import { analyzePath, unique, userStorage } from '../../utils/util';
+import { Department, Staff, SeStaff, FinalStaff } from '../../common/ListView/index.js';
+import { analyzePath, unique, userStorage, isArray } from '../../utils/util';
 import styles from '../common.less';
 import style from './index.less';
 @connect(({ searchStaff, loading }) => ({
   department: searchStaff.department,
   staff: searchStaff.staff,
+  finalStaff: searchStaff.finalStaff,
   searStaff: searchStaff.searStaff,
   breadCrumb: searchStaff.breadCrumb,
-  // pageInfo: searchStaff.pageInfo,
   selectStaff: searchStaff.selectStaff,
   loading1: loading.effects['searchStaff/fetchSearchStaff'],
   loading2: loading.effects['searchStaff/fetchSelfDepStaff'],
@@ -50,7 +50,29 @@ export default class SelPerson extends Component {
       clearInterval(this.timer);
     }
   }
+
+  onFinalSearch = (search) => {
+    // const { finalStaff } = this.props;
+    const finalStaff = userStorage('finalStaff');
+    let newFinalStaff = null;
+    if (isArray(finalStaff)) {
+      newFinalStaff = finalStaff.filter(item => item.staff_name.indexOf(search) > -1);
+    } else {
+      newFinalStaff = [];
+    }
+    // this.finalStaff = newFinalStaff;
+    return newFinalStaff;
+  }
+
   onSearch = (search) => {
+    const { key } = this.state;
+    const isFinal = key === 'final';
+    if (isFinal) {
+      this.setState({
+        search,
+      });
+      return;
+    }
     if (this.timer) {
       clearInterval(this.timer);
     }
@@ -58,6 +80,7 @@ export default class SelPerson extends Component {
       this.onSearchSubmit(search);
     }, 500);
   }
+
   onSearchSubmit = (search) => {
     if (this.timer) {
       clearInterval(this.timer);
@@ -72,6 +95,7 @@ export default class SelPerson extends Component {
       });
     });
   }
+
   onPageChange = () => {
     const { dispatch, searStaff } = this.props;
     const { page } = searStaff;
@@ -95,6 +119,7 @@ export default class SelPerson extends Component {
       });
     }
   }
+
   getSingleSelect = (result) => {
     const { history, selectStaff, dispatch } = this.props;
     const { key } = this.state;
@@ -109,12 +134,19 @@ export default class SelPerson extends Component {
     });
     history.goBack(-1);
   }
+
   getFinalStaff = () => {
     const { dispatch } = this.props;
     dispatch({
       type: 'searchStaff/getFinalStaff',
+      payload: {
+        cb: (data) => {
+          this.finalStaff = data;
+        },
+      },
     });
   }
+
   fetchSelfDepStaff = () => {
     const { dispatch } = this.props;
     const user = userStorage('userInfo');
@@ -201,6 +233,7 @@ export default class SelPerson extends Component {
       this.fetchSelfDepStaff();
     }
   }
+
   selectOk = () => {
     const { history, selectStaff, dispatch } = this.props;
     const { selected, key } = this.state;
@@ -216,20 +249,23 @@ export default class SelPerson extends Component {
     });
     history.goBack(-1);
   }
+
   render() {
     const { department,
       staff, searStaff,
       breadCrumb, loading1,
       loading2, loading3, searchLoding,
     } = this.props;
-    const { selected, type, search } = this.state;
+    const { selected, type, search, key } = this.state;
+    const isFinal = key === 'final';
     const { page, totalpage, data = [] } = searStaff;
+    const tempFinal = this.onFinalSearch(search);
     return (
       <div className={styles.con}>
         <SearchList
           multiple={type !== '1'}
-          name="realname"
-          isFinal={this.state.key === 'final'}
+          name={isFinal ? 'staff_name' : 'realname'}
+          isFinal={isFinal}
           bread={breadCrumb}
           checkAble={staff.length && (selected.num === staff.length)}
           selected={selected}
@@ -252,18 +288,14 @@ export default class SelPerson extends Component {
                 name="id"
               />
             ) : null}
-            {search && data && !data.length ? <Nothing /> : null}
-            {!search && staff.length ? (
+            {search && data && !data.length && !tempFinal.length ? <Nothing /> : null}
+            {!search && staff.length && !isFinal ? (
               <Staff
                 link=""
                 heightNone
-                isFinal={this.state.key === 'final'}
-                // name={this.state.key === 'final' ? 'staff_name' : 'realname'}
+                isFinal={isFinal}
                 name="staff_sn"
-                renderName={this.state.key === 'final' ? 'staff_name' : 'realname'}
-                // page={search ? pageInfo.page : false}
-                // totalpage={search ? pageInfo.totalpage : false}
-                // onPageChange={this.onPageChange}
+                renderName={isFinal ? 'staff_name' : 'realname'}
                 dispatch={this.props.dispatch}
                 multiple={type !== '1'}
                 selected={selected.data}
@@ -271,14 +303,13 @@ export default class SelPerson extends Component {
                 onChange={this.getSelectResult}
               />
             ) : null}
-            {search ? (
+            {search && !isFinal ? (
               <SeStaff
                 link=""
                 heightNone
-                isFinal={this.state.key === 'final'}
-                // name={this.state.key === 'final' ? 'staff_name' : 'realname'}
+                isFinal={isFinal}
                 name="staff_sn"
-                renderName={this.state.key === 'final' ? 'staff_name' : 'realname'}
+                renderName={isFinal ? 'staff_name' : 'realname'}
                 page={page}
                 totalpage={totalpage}
                 onPageChange={this.onPageChange}
@@ -286,6 +317,17 @@ export default class SelPerson extends Component {
                 multiple={type !== '1'}
                 selected={selected.data}
                 dataSource={data}
+                onChange={this.getSelectResult}
+              />
+            ) : null}
+            { isFinal ? (
+              <FinalStaff
+                link=""
+                heightNone
+                name="staff_sn"
+                dispatch={this.props.dispatch}
+                selected={selected.data}
+                dataSource={tempFinal}
                 onChange={this.getSelectResult}
               />
             ) : null}

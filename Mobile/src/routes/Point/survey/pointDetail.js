@@ -28,9 +28,14 @@ export default class PointDetail extends React.Component {
     });
   }
   toLookDetail = () => {
-    const { history } = this.props;
+    const { history, pointDetails } = this.props;
     const { pointLog } = this.state;
-    history.replace(`/audit_detail/${pointLog}`);
+    const detail = pointDetails[pointLog];
+    const sourceId = detail.source_id;
+    if (sourceId === 2) {
+      const sourceForeignKey = detail.source_foreign_key;
+      history.replace(`/audit_detail/${sourceForeignKey}`);
+    }
   }
   render() {
     const { pointDetails } = this.props;
@@ -39,6 +44,8 @@ export default class PointDetail extends React.Component {
     if (!detail) {
       return null;
     }
+    const sourceId = detail.source_id;
+    const hasDetail = sourceId === 2;
     return (
       <div
         className={styles.con}
@@ -77,6 +84,7 @@ export default class PointDetail extends React.Component {
             <div className={style.players}>
               <Flex className={style.title} id="participants">
                 <Flex.Item >积分变化</Flex.Item>
+                {hasDetail && (
                 <Flex.Item
                   style={{
                     textAlign: 'right',
@@ -84,7 +92,10 @@ export default class PointDetail extends React.Component {
                     color: 'rgb(24, 116, 208)',
                   }}
                   onClick={this.toLookDetail}
-                />
+                >
+                查看详情
+                </Flex.Item>
+                )}
               </Flex>
               <Flex style={{ padding: '0.53rem 0 1.06667rem 0' }}>
                 <Flex.Item>

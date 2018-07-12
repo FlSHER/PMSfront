@@ -14,7 +14,10 @@ class Input extends React.Component {
         style={style}
         type={type}
         ref={(e) => { this.ptr = e; }}
-        onFocus={() => { this.ptr.select(); }}
+        onFocus={() => { this.ptr.focused = true; this.ptr.select(); }}
+        onMouseUp={() => {
+          if (this.ptr.focused) { this.ptr.focused = false; this.ptr.select(); return false; }
+        }}
         onChange={() => onChange(this.ptr.value)}
       />
     );

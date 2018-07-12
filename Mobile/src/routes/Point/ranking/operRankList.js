@@ -76,6 +76,9 @@ export default class PointRanking extends React.Component {
     newModal[feild] = false;
     this.setNewState('modal', newModal);
   }
+  onRefresh = () => {
+    this.fetchRanking(this.urlParams);
+  }
   setNewState = (key, newValue) => {
     this.setState({
       [key]: newValue,
@@ -332,6 +335,7 @@ export default class PointRanking extends React.Component {
                   dataSource={list || []}
                   offsetBottom={offsetBottom}
                   handleClick={this.toPointList}
+                  onRefresh={this.onRefresh}
                 />
               </WingBlank>
             )}

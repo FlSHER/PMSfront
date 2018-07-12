@@ -1,4 +1,4 @@
-/** 项目中一些自定义的控件 */
+/** 项目中一些自定义的列表控件 */
 import Department from './Department';
 import Staff from './Staff';
 import Buckle from './Buckle';
@@ -10,6 +10,7 @@ import Ranking from './Ranking';
 import Group from './Group';
 import SeStaff from './searchStaff';
 import SearchEvent from './SearchEvent';
+import FinalStaff from './FinalStaff';
 
 export {
   Department,
@@ -22,5 +23,6 @@ export {
   Group,
   SeStaff,
   SearchEvent,
+  FinalStaff,
   // EventList,
 };

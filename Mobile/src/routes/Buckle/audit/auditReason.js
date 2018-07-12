@@ -31,10 +31,11 @@ export default class BuckleRecord extends React.Component {
     }
     super(props);
     const { match } = props;
-    const { type, state } = match.params;
+    const { type, state, level } = match.params;
     this.state = {
       type,
       state,
+      level,
       remark: '',
       point: {
         recorder_point: '',
@@ -61,7 +62,7 @@ export default class BuckleRecord extends React.Component {
     });
   }
   doAudit = () => {
-    const { type, state, remark, point } = this.state;
+    const { type, state, remark, point, level } = this.state;
     const { dispatch, history, detail } = this.props;
     if (state === 'no') {
       dispatch({
@@ -72,7 +73,7 @@ export default class BuckleRecord extends React.Component {
             event_id: detail.id,
           },
           cb: () => {
-            history.goBack(-3);
+            history.goBack(Number(level));
           },
         },
       });
@@ -85,7 +86,7 @@ export default class BuckleRecord extends React.Component {
             event_id: detail.id,
           },
           cb: () => {
-            history.go(-2);
+            history.go(level);
           },
         },
       });
@@ -102,7 +103,7 @@ export default class BuckleRecord extends React.Component {
             event_id: detail.id,
           },
           cb: () => {
-            history.go(-2);
+            history.go(level);
           },
         },
       });

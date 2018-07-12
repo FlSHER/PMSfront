@@ -23,6 +23,7 @@ function IndexPage({ history }) {
                 hasLine={false}
                 data={item.children}
                 columnNum={4}
+                square={false}
                 renderItem={dataItem => (
                   <div>
                     <img src={dataItem.icon} alt={dataItem.text} style={{ width: '40px' }} />

@@ -66,7 +66,7 @@ export default class AuditDetail extends React.Component {
   }
   doAudit = (type, state) => {
     const { history } = this.props;
-    history.push(`/audit_reason/${type}/${state}`);
+    history.push(`/audit_reason/${type}/${state}/-2`);
   }
   makeApprover = (approver) => {
     const { detail } = this.props;
@@ -240,28 +240,6 @@ export default class AuditDetail extends React.Component {
           </WingBlank>
           <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
-            <div className={style.players}>
-              <Flex className={style.title}> 参与人</Flex>
-              <Flex
-                className={style.person_list}
-                wrap="wrap"
-              >
-                {(detail.participant || []).map((item, i) => {
-                  const idx = i;
-                  return (
-                    <PersonIcon
-                      key={idx}
-                      value={item}
-                      nameKey="staff_name"
-                      showNum={2}
-                    />
-                  );
-                })}
-              </Flex>
-            </div>
-          </WingBlank>
-          <WhiteSpace size="sm" />
-          <WingBlank className={style.parcel}>
             <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
               <Flex className={style.title}> 参与人列表</Flex>
               <Flex
@@ -270,9 +248,9 @@ export default class AuditDetail extends React.Component {
                 justify="center"
               >
                 <Flex.Item className={style.table_item}>姓名</Flex.Item>
-                <Flex.Item className={style.table_item}>A分</Flex.Item>
-                <Flex.Item className={style.table_item}>B分</Flex.Item>
-                <Flex.Item className={style.table_item}>计件</Flex.Item>
+                <Flex.Item className={style.table_item}>单次A分</Flex.Item>
+                <Flex.Item className={style.table_item}>单次B分</Flex.Item>
+                <Flex.Item className={style.table_item}>次数</Flex.Item>
               </Flex>
               <div className={style.table_body}>
                 {(detail.participant || []).map((item, i) => {

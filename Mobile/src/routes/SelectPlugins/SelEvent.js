@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import {
   connect,
 } from 'dva';
-import { Flex } from 'antd-mobile';
+import { Flex, SearchBar } from 'antd-mobile';
 import { EventType, EventName, SearchEvent } from '../../common/ListView/index.js';
-import { Bread, Search } from '../../components/General/index';
+import { Bread } from '../../components/General/index';
 import { Nothing } from '../../components/index';
 import { markTreeData, userStorage } from '../../utils/util';
 import nothing from '../../assets/nothing.png';
@@ -291,8 +291,9 @@ export default class SelEvent extends Component {
     return (
       <Flex direction="column">
         <Flex.Item className={style.header} >
-          <Search
+          <SearchBar
             value={searchValue}
+            placeholder="请输入事件名称"
             onChange={this.searchChange}
             onSubmit={this.searchSubmit}
             onCancel={this.searchCancel}
@@ -310,7 +311,7 @@ export default class SelEvent extends Component {
           ref={(e) => { this.ptr = e; }}
           style={{ ...(isLoading && { display: 'none' }), overflow: 'auto', height: this.state.height }}
         >
-          {((searchValue && !evtName.length) || (!evtName.length && !eventList.length)) &&
+          {((searchValue && !data.length) || (!evtName.length && !eventList.length)) &&
             (
               <div style={{ display: isLoading || loadingSearch ? 'none' : 'flex', flexDirection: 'column' }}>
                 <Nothing src={nothing} />

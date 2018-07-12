@@ -48,14 +48,14 @@ export default class AuditList extends React.Component {
       filterModal: false,
       sortModal: false,
     },
-    sortItem: { name: '默认排序', value: 'created_at-asc' },
+    sortItem: { name: '默认排序', value: 'created_at-desc' },
     checkState: { name: '待审核', value: 'processing' },
     el: {},
     shortModal: false,
   }
   componentWillMount() {
     const { dispatch } = this.props;
-    const { checkState } = this.state;
+    const { checkState, sortItem } = this.state;
     const newInfo = userStorage('userInfo');
     this.setState({
       userInfo: newInfo,
@@ -65,6 +65,7 @@ export default class AuditList extends React.Component {
         payload: {
           pagesize: 10,
           page: 1,
+          sort: sortItem.value,
           type: checkState.value,
         },
       });
@@ -179,7 +180,7 @@ export default class AuditList extends React.Component {
         value: el,
       },
     });
-    history.push(`/audit_reason/${type}/${state}`);
+    history.push(`/audit_reason/${type}/${state}/-1`);
   }
   sortReasult = (item) => {
     const { modal } = this.state;

@@ -77,7 +77,7 @@ export const getRouterData = (app) => {
     '/audit_list': {
       component: dynamicWrapper(app, ['buckle', 'oauth'], () => import('../routes/Buckle/audit/auditList')),
     },
-    '/audit_reason/:type/:state': {
+    '/audit_reason/:type/:state/:level': {
       component: dynamicWrapper(app, [], () => import('../routes/Buckle/audit/auditReason')),
     },
     '/audit_detail/:id': {

@@ -6,12 +6,14 @@ import {
   getFinalStaff,
 } from '../services/department';
 import defaultReducers from './reducers/default';
+import { userStorage, isArray } from '../utils/util';
 
 export default {
   namespace: 'searchStaff',
   state: {
     department: [],
     staff: [],
+    finalStaff: [],
     searStaff: {
       page: '',
       totalpage: '',
@@ -30,16 +32,32 @@ export default {
     },
   },
   effects: {
-    *getFinalStaff(_, { put, call }) { // 自己部门员工列表
+    *getFinalStaff(payload, { put, call }) { // 自己部门员工列表
+      const finalStaff = userStorage('finalStaff');
+      if (isArray(finalStaff)) {
+        return;
+      }
       const response = yield call(getFinalStaff);
-      // console.log('response', response);
-      yield put({
-        type: 'save',
-        payload: {
-          store: 'staff',
-          data: response || [],
-        },
-      });
+      if (response && !response.error) {
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'staff',
+            data: response || [],
+          },
+        });
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'finalStaff',
+            data: response || [],
+          },
+        });
+        localStorage.finalStaff = JSON.stringify(response);
+        if (payload.cb) {
+          payload.cb(response);
+        }
+      }
     },
     * fetchSearchStaff({ payload }, { put, call }) {
       const { parentId, breadCrumb } = payload;

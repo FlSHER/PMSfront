@@ -258,6 +258,9 @@ export function userStorage(key) {
   const newInfo = JSON.parse(info === undefined ? '{}' : info);
   return newInfo;
 }
+export function isArray(o) {
+  return Object.prototype.toString.call(o) === '[object Array]';
+}
 
 export function getUrlParams(url) {
   const d = decodeURIComponent;
@@ -309,3 +312,42 @@ export function getElementTop(element) {
   }
   return top;
 }
+
+
+export function calculateDate(date1, date2) {
+  const d1 = date1;
+  const d2 = date2;
+  let m1 = d1.getMonth() === 0 ? 12 : d1.getMonth() + 1;
+  let y1 = d1.getFullYear();
+  // const d2 = new Date('2018-7');
+  const m2 = d2.getMonth() === 0 ? 12 : d2.getMonth();
+  const y2 = d2.getFullYear();
+  const arr = [];
+  while ((y2 === y1 && m1 > m2) || (y2 < y1)) {
+    const obj = {};
+    obj.month = m1;
+    obj.year = y1;
+    arr.push(obj);
+    m1 -= 1;
+    if (m1 === 0) {
+      m1 = 12;
+      y1 -= 1;
+    }
+    if (m1 === m2 && y2 === y1) {
+      break;
+    }
+  }
+  return arr;
+}
+
+export function makeMonthData(arr) {
+  const dateData = (arr || []).map((item, index) => {
+    const obj = {};
+    const str = `${item.year}-${item.month}`;
+    obj.label = str;
+    obj.value = index;
+    return obj;
+  });
+  return dateData;
+}
+

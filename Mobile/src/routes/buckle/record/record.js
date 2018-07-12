@@ -358,6 +358,7 @@ export default class BuckleRecord extends React.Component {
       },
     });
   }
+
   clearModal = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -370,6 +371,7 @@ export default class BuckleRecord extends React.Component {
       type: 'searchStaff/clearSelectStaff',
     });
   }
+
   selEvent = () => {
     const { history, dispatch, searchStaff: { selectStaff } } = this.props;
     const { info } = this.state;
@@ -389,7 +391,7 @@ export default class BuckleRecord extends React.Component {
         value: { ...info },
       },
     });
-
+    history.replace('/buckle_record#event');
     history.push('/sel_event');
   }
   addMySelf = () => {
@@ -467,7 +469,7 @@ export default class BuckleRecord extends React.Component {
           <WingBlank className={style.parcel}>
             <List>
               <List.Item arrow="horizontal" onClick={this.selEvent}>
-                {event && event.name ? event.name : <span style={{ color: 'rgb(150,150,150)' }}>请选择事件</span>}
+                {event && event.name ? <span id="event">{event.name}</span> : <span style={{ color: 'rgb(150,150,150)' }}>请选择事件</span>}
               </List.Item>
               <TextareaItem
                 placeholder="输入事件描述"
@@ -507,7 +509,7 @@ export default class BuckleRecord extends React.Component {
                       color: 'rgb(24, 116, 208)',
                     }}
                     onClick={this.addMySelf}
-                  >添加自己
+                  >添加本人
                   </Flex.Item>
                 </Flex>
                 <Flex
@@ -535,7 +537,7 @@ export default class BuckleRecord extends React.Component {
             <WingBlank className={style.parcel}>
               <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
                 <Flex className={style.title}>
-                  <Flex.Item>参与人列表</Flex.Item>
+                  <Flex.Item>事件配置</Flex.Item>
                   <Flex.Item
                     style={{
                       textAlign: 'right',
@@ -553,8 +555,8 @@ export default class BuckleRecord extends React.Component {
                 </Flex>
                 <Flex className={style.table_head}>
                   <Flex.Item className={style.table_item}>姓名</Flex.Item>
-                  <Flex.Item className={style.table_item}>A分</Flex.Item>
-                  <Flex.Item className={style.table_item}>B分</Flex.Item>
+                  <Flex.Item className={style.table_item}>单次A分</Flex.Item>
+                  <Flex.Item className={style.table_item}>单次B分</Flex.Item>
                   <Flex.Item className={style.table_item}>次数</Flex.Item>
                 </Flex>
                 <div className={style.table_body}>

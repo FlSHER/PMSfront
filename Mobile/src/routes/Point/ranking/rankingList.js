@@ -12,31 +12,21 @@ import { userStorage, getUrlParams, scrollToAnchor } from '../../../utils/util';
 import { ListSort, Nothing } from '../../../components/index';
 import style from '../index.less';
 
-// const sortList = [
-//   { name: '默认排序', value: 'created_at-asc',
-// icon: import('../../../assets/filter/default_sort.svg') },
-//   { name: '时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
-//   { name: '时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
-//   { name: 'A分升序', value: 'point_a-asc', icon: import('../../../assets/filter/asc.svg') },
-//   { name: 'A分降序', value: 'point_a_-desc', icon: import('../../../assets/filter/desc.svg') },
-//   { name: 'B分升序', value: 'point_b_-asc', icon: import('../../../assets/filter/asc.svg') },
-//   { name: 'B分降序', value: 'point_b_-desc', icon: import('../../../assets/filter/desc.svg') },
-// ];
 
-// const tabs = [
-//   {
-//     value: 'month',
-//     name: '月度排名',
-//   },
-//   {
-//     value: 'stage',
-//     name: '阶段排名',
-//   },
-//   {
-//     value: 'total',
-//     name: '累计排名',
-//   },
-// ];
+const tabs = [
+  {
+    value: 'month',
+    name: '月度排名',
+  },
+  {
+    value: 'stage',
+    name: '阶段排名',
+  },
+  {
+    value: 'total',
+    name: '累计排名',
+  },
+];
 @connect(({ ranking, loading }) => ({
   ranking: ranking.ranking,
   loading,
@@ -89,6 +79,9 @@ export default class PointRanking extends React.Component {
     const newModal = { ...modal };
     newModal[feild] = false;
     this.setNewState('modal', newModal);
+  }
+  onRefresh = () => {
+    this.fetchRanking(this.urlParams);
   }
   setNewState = (key, newValue) => {
     this.setState({
@@ -246,25 +239,7 @@ export default class PointRanking extends React.Component {
       </Flex>
     );
   }
-  //  <Flex.Item
-  //   className={style.footer}
-  //   ref={(e) => { this.ptr = e; }}
-  // >
-  //   <Flex
-  //     align="center"
-  //     style={{ height: '50px' }}
-  //   >
-  //     {tabs.map(item => (
-  //       <Flex.Item
-  //         key={item.value}
-  //         className={[style.item, (params.stage || 'month')
-  // === item.value ? style.active : null].join(' ')}
-  //         onClick={() => this.tabChange(item)}
-  //       ><span>{item.name}</span>
-  //       </Flex.Item>
-  //   ))}
-  //   </Flex>
-  // </Flex.Item>
+
   render() {
     const { ranking, loading, group } = this.props;
     const authGroup = group.auth_group || [];
@@ -291,6 +266,7 @@ export default class PointRanking extends React.Component {
                 </div>
               </Flex.Item>
               <Flex.Item>
+                {}
                 <DatePicker
                   value={moment(params.datetime).isValid() ? new Date(params.datetime) : '请选择时间'}
                   mode="month"
@@ -406,11 +382,30 @@ export default class PointRanking extends React.Component {
                   dataSource={list || []}
                   offsetBottom={offsetBottom}
                   handleClick={this.toPointList}
+                  onRefresh={this.onRefresh}
                 />
               </WingBlank>
             )}
         </Flex.Item>
-
+        <Flex.Item
+          className={style.footer}
+          ref={(e) => { this.ptr = e; }}
+        >
+          <Flex
+            align="center"
+            style={{ height: '50px' }}
+          >
+            {tabs.map(item => (
+              <Flex.Item
+                key={item.value}
+                className={[style.item, (params.stage || 'month')
+      === item.value ? style.active : null].join(' ')}
+                onClick={() => this.tabChange(item)}
+              ><span>{item.name}</span>
+              </Flex.Item>
+        ))}
+          </Flex>
+        </Flex.Item>
       </Flex>
     );
   }
