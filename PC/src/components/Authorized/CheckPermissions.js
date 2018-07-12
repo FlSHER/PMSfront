@@ -81,6 +81,7 @@ const checkPermissions = (authority, currentAuthority, target, Exception) => {
 export { checkPermissions };
 
 const check = (authority, target, Exception) => {
+  console.log(CURRENT);
   return checkPermissions(authority, CURRENT, target, Exception);
 };
 

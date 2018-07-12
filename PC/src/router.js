@@ -25,7 +25,6 @@ function RouterConfig({ history, app }) {
           <AuthorizedRoute
             path="/passport"
             render={props => <BlankLayout {...props} />}
-            authority={[]}
             redirectPath="/"
           />
           <App app={app} history={history} />

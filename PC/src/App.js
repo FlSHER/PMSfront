@@ -21,7 +21,7 @@ export default class extends React.Component {
         path="/"
         render={props => <BasicLayout {...props} />}
         authority={['token']}
-        redirectPath="/passport/refresh_access_token"
+        redirectPath="/passport/get_access_token"
       />
     );
   }

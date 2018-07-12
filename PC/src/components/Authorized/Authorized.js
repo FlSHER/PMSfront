@@ -5,6 +5,12 @@ class Authorized extends React.Component {
   render() {
     const { children, authority, noMatch = null } = this.props;
     const childrenRender = typeof children === 'undefined' ? null : children;
+    console.log(CheckPermissions(
+      authority,
+      childrenRender,
+      noMatch
+    ));
+    return null;
     return CheckPermissions(
       authority,
       childrenRender,

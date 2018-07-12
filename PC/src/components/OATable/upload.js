@@ -52,7 +52,7 @@ export default class extends React.Component {
       },
       withCredentials: true,
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('OA_access_token')}`,
+        Authorization: `Bearer ${localStorage.getItem('PMS_access_token')}`,
       },
     };
 

@@ -141,10 +141,10 @@ class BasicLayout extends React.PureComponent {
   // }
 
   checkOauthPermission() {
-    if (localStorage.getItem('OA_access_token')
-      && localStorage.getItem('OA_access_token_expires_in') > new Date().getTime()) {
+    if (localStorage.getItem('PMS_access_token')
+      && localStorage.getItem('PMS_access_token_expires_in') > new Date().getTime()) {
       //
-    } else if (localStorage.getItem('OA_refresh_token')) {
+    } else if (localStorage.getItem('PMS_refresh_token')) {
       this.props.dispatch({
         type: 'oauth/refreshAccessToken',
       });
