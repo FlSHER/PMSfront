@@ -72,13 +72,13 @@ export default async function request(url, options) {
     ...options,
   };
 
-  const accessToken = localStorage.getItem('PMS_access_token');
-  const expiresIn = localStorage.getItem('PMS_access_token_expires_in');
+  const accessToken = localStorage.getItem(`${TOKEN_PREFIX}access_token`);
+  const expiresIn = localStorage.getItem(`${TOKEN_PREFIX}access_token__expires_in`);
 
   if (url.match(/\/api\//)) {
     if (accessToken && expiresIn > new Date().getTime()) {
       newOptions.headers = {
-        Authorization: `Bearer ${localStorage.getItem('PMS_access_token')}`,
+        Authorization: `Bearer ${accessToken}`,
         ...newOptions.headers,
       };
     } else {

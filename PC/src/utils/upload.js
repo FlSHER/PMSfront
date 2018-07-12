@@ -46,10 +46,13 @@ export default function upload(url, options) {
   const defaultOptions = {
     credentials: 'include',
   };
-  if (localStorage.getItem('PMS_access_token')
-      && localStorage.getItem('PMS_access_token_expires_in') > new Date().getTime()) {
+
+  const accessToken = localStorage.getItem(`${TOKEN_PREFIX}access_token`);
+  const expiresIn = localStorage.getItem(`${TOKEN_PREFIX}access_token__expires_in`);
+
+  if (accessToken && expiresIn > new Date().getTime()) {
     defaultOptions.headers = {
-      Authorization: `Bearer ${localStorage.getItem('PMS_access_token')}`,
+      Authorization: `Bearer ${accessToken}`,
     };
   } else {
     store.dispatch(routerRedux.push('/passport/redirect_to_authorize'));
