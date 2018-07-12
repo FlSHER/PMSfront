@@ -175,6 +175,11 @@ export default class PointRanking extends React.Component {
     const url = `/ranking?group_id=${this.urlParams.group_id}&stage=${item.value}`;
     this.props.history.replace(url);
   }
+  toPointList = (item) => {
+    const { history, ranking } = this.props;
+    const groupId = ranking.group_id;
+    history.push(`/point_list?staff_sn=${item.staff_sn}&group_id=${groupId}`);
+  }
   renderRankingItem = (item) => {
     const { userInfo } = this;
     if (item.staff_sn === userInfo.staff_sn) {
@@ -278,7 +283,7 @@ export default class PointRanking extends React.Component {
             >
               <Flex.Item>
                 <div
-                  className={[style.dosort].join(' ')}
+                  className={[style.dosort, style.cancelbg].join(' ')}
                   onClick={() => this.selFilter('sortModal')}
                 // style={{ background: 'none' }}
                 >
@@ -298,7 +303,7 @@ export default class PointRanking extends React.Component {
                   }
                 >
                   <div
-                    className={[style.filter].join(' ')}
+                    className={[style.filter, style.cancelbg].join(' ')}
                   >{params.datetime}
                   </div>
                 </DatePicker>
@@ -380,8 +385,8 @@ export default class PointRanking extends React.Component {
               <p style={{ padding: '0.26667rem 0.48rem', fontSize: '14px' }}> 排名详情</p>
               {ranking.calculated_at ?
                 (
-                  <span style={{ fontSize: '12px', color: 'rgb(24, 116, 208)' }}>
-                    结算日期：{ranking.calculated_at}
+                  <span style={{ fontSize: '12px' }}>
+                    结算时间：{ranking.calculated_at}
                   </span>
                 )
                 : null}
@@ -400,6 +405,7 @@ export default class PointRanking extends React.Component {
                 <Ranking
                   dataSource={list || []}
                   offsetBottom={offsetBottom}
+                  handleClick={this.toPointList}
                 />
               </WingBlank>
             )}

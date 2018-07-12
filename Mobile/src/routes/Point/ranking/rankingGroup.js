@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {
   connect,
 } from 'dva';
-import { Flex, WhiteSpace, WingBlank, List } from 'antd-mobile';
+import { Flex, WhiteSpace, WingBlank } from 'antd-mobile';
 import moment from 'moment';
 import { Group } from '../../../common/ListView';
 import { PersonIcon } from '../../../components/index.js';
@@ -43,7 +43,7 @@ export default class RankingGroup extends React.Component {
     const { group } = this.props;
     const authGroup = group.auth_group;
     const statisGroup = group.statis_group;
-    const { userInfo } = this.state;
+    const { userInfo = {} } = this.state;
     const datetime = moment(new Date()).format('YYYY-MM-DD');
     return (
       <Flex direction="column">
@@ -59,20 +59,12 @@ export default class RankingGroup extends React.Component {
               />
               <div>
                 <p style={{ fontSize: '14px' }}>{userInfo.realname}({userInfo.staff_sn})</p>
-                <p style={{ fontSize: '12px', marginTop: '0.26667rem' }}>{userInfo.department.full_name}/{userInfo.brand.name}</p>
+                <p style={{ fontSize: '12px', marginTop: '0.26667rem' }}>{userInfo.department && userInfo.department.full_name}/{userInfo.brand && userInfo.brand.name}</p>
               </div>
             </div>
           </WingBlank>
           <WhiteSpace size="md" />
         </Flex.Item>
-        <Flex.Item className={style.header}>
-          <WingBlank size="lg">
-            <List className={style.my_list}>
-              <List.Item>排名筛选</List.Item>
-            </List>
-          </WingBlank>
-        </Flex.Item>
-
         <Flex.Item
           className={style.content}
           ref={(e) => { this.ptr = e; }}

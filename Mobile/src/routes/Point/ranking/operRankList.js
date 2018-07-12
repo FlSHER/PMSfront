@@ -245,7 +245,7 @@ export default class PointRanking extends React.Component {
             >
               <Flex.Item>
                 <div
-                  className={[style.dosort].join(' ')}
+                  className={[style.filter, style.cancelbg].join(' ')}
                   onClick={() => this.selFilter('sortModal')}
                 // style={{ background: 'none' }}
                 >
@@ -265,8 +265,7 @@ export default class PointRanking extends React.Component {
                   }
                 >
                   <div
-                    className={[style.filter].join(' ')}
-
+                    className={[style.filter, style.cancelbg].join(' ')}
                   >{params.datetime}
                   </div>
                 </DatePicker>
