@@ -12,7 +12,6 @@ export function getAuthority() {
   if (localStorage.getItem('PMS_refresh_token')) {
     authority.push('refresh-token');
   }
-  console.log(authority);
   return authority;
 }
 

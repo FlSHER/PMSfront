@@ -10,7 +10,7 @@
       ],
       "define": {
         "OA_PATH": "http://192.168.20.238:8003/",
-        "OA_CLIENT_ID": "7",
+        "OA_CLIENT_ID": "3",
         "OA_CLIENT_SECRET": "lcBIS0l1eW038wqUgDf6qsNyUl3L69Ck8YxHXKGh"
       }
     },
