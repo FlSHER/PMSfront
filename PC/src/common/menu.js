@@ -1,9 +1,20 @@
 
 const menuData = [
   {
-    name: '首页',
-    icon: 'dashboard',
-    path: '/',
+    name: '任务',
+    path: '/system/task',
+  },
+  {
+    name: '奖扣',
+    path: '/system/reward',
+  },
+  {
+    name: '审核',
+    path: '/system/check',
+  },
+  {
+    name: '积分',
+    path: '/system/point',
   },
 ];
 
