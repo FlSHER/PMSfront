@@ -105,6 +105,12 @@ export default class SelPerson extends Component {
       payload: `page=${page + 1}&pagesize=15&status_id>=0&filters=realname~${search};status_id>=0`,
     });
   }
+
+  onRefresh = () => {
+    const { search } = this.state;
+    this.onSearchSubmit(search);
+  }
+
   getSelectResult = (result) => {
     const { selected, type } = this.state;
     if (type === '1') {
@@ -254,7 +260,7 @@ export default class SelPerson extends Component {
     const { department,
       staff, searStaff,
       breadCrumb, loading1,
-      loading2, loading3, searchLoding,
+      loading2, loading3,
     } = this.props;
     const { selected, type, search, key } = this.state;
     const isFinal = key === 'final';
@@ -278,7 +284,7 @@ export default class SelPerson extends Component {
         >
           <div
             className={style.child}
-            style={{ ...(loading1 || loading2 || loading3 || searchLoding ? { display: 'none' } : null) }}
+            style={{ ...(loading1 || loading2 || loading3 ? { display: 'none' } : null) }}
           >
             {department.length && !search ? (
               <Department
@@ -317,6 +323,7 @@ export default class SelPerson extends Component {
                 multiple={type !== '1'}
                 selected={selected.data}
                 dataSource={data}
+                onRefresh={this.onRefresh}
                 onChange={this.getSelectResult}
               />
             ) : null}

@@ -1,7 +1,7 @@
 import request from '../utils/request';
 
 export async function getAuthorityGroup() {
-  return request('/api/authority-group/rank');
+  return request('/api/authority-group/rank', null, false);
 }
 
 export async function getRanking(params) {

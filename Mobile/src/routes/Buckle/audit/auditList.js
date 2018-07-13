@@ -53,6 +53,7 @@ export default class AuditList extends React.Component {
     el: {},
     shortModal: false,
   }
+
   componentWillMount() {
     const { dispatch } = this.props;
     const { checkState, sortItem } = this.state;
@@ -71,6 +72,7 @@ export default class AuditList extends React.Component {
       });
     });
   }
+
   onPageChange = () => {
     const { dispatch, auditList } = this.props;
     const { checkState, sortItem } = this.state;
@@ -85,11 +87,13 @@ export default class AuditList extends React.Component {
       },
     });
   }
+
   onClose = (key) => {
     this.setState({
       [key]: false,
     });
   }
+
   onRefresh = () => {
     const { dispatch } = this.props;
     const { checkState, sortItem } = this.state;
@@ -104,12 +108,14 @@ export default class AuditList extends React.Component {
       },
     });
   }
+
   onCancel = (e, feild) => {
     const { modal } = this.state;
     const newModal = { ...modal };
     newModal[feild] = false;
     this.setNewState('modal', newModal);
   }
+
   onResetForm = () => {
     const { checkState, sortItem } = this.state;
     const { dispatch } = this.props;

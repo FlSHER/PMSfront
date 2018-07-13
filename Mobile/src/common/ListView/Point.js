@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 // import { Flex } from 'antd-mobile';
-import moment from 'moment';
 import ListView from '../../components/ListView';
 import { convertPointSource } from '../../utils/convert.js';
 import style from './index.less';
@@ -35,7 +34,7 @@ export default class Point extends Component {
           </div>
           <div className={style.time}>
             <span style={{ marginRight: '1.6rem' }}>来源：{convertPointSource(value.source_id)} </span>
-            <span>生效时间：{value.created_at ? moment(new Date(value.created_at)).format('YYYY/MM/DD HH:MM') : ''}</span>
+            <span>生效时间：{value.changed_at}</span>
           </div>
         </div>
       </div>

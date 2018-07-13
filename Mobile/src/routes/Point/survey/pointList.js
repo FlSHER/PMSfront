@@ -74,6 +74,7 @@ export default class PointList extends React.Component {
     },
     sortItem: { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
   }
+
   componentWillMount() {
     const { dispatch, location } = this.props;
     this.urlParams = getUrlParams(location.search);
@@ -86,6 +87,7 @@ export default class PointList extends React.Component {
       },
     });
   }
+
   onRefresh = () => {
     const { dispatch } = this.props;
     const { filters, sortItem } = this.state;
@@ -100,12 +102,14 @@ export default class PointList extends React.Component {
       },
     });
   }
+
   onCancel = (e, feild) => {
     const { modal } = this.state;
     const newModal = { ...modal };
     newModal[feild] = false;
     this.setNewState('modal', newModal);
   }
+
   onResetForm = () => {
     const { sortItem } = this.state;
     const { dispatch } = this.props;
@@ -140,6 +144,7 @@ export default class PointList extends React.Component {
         });
       });
   }
+
   onFilterOk = () => {
     const { sortItem, filters } = this.state;
     const { dispatch } = this.props;
@@ -155,6 +160,7 @@ export default class PointList extends React.Component {
     });
     this.onCancel('', 'filterModal');
   }
+
   onPageChange = () => {
     const { dispatch, pointList } = this.props;
     const { sortItem, filters } = this.state;
@@ -169,6 +175,7 @@ export default class PointList extends React.Component {
       },
     });
   }
+
   setNewState = (key, newValue) => {
     this.setState({
       [key]: newValue,
@@ -219,12 +226,14 @@ export default class PointList extends React.Component {
     newFilter[key].selectd = temp;
     this.setNewState('filter', newFilter);
   }
+
   timeChange = (date, key, range) => {
     const { filters } = this.state;
     const newFilter = { ...filters };
-    newFilter[key][range] = moment(date).format('YYYY-MM-DD');
+    newFilter[key][range] = moment(date).format('YYYY/MM/DD');
     this.setNewState('filter', newFilter);
   }
+
   doMultiple = (i, v, key) => {
     const { filters } = this.state;
     const newFilter = { ...filters };
@@ -238,12 +247,15 @@ export default class PointList extends React.Component {
     newFilter[key].in = [...temp];
     this.setNewState('filter', newFilter);
   }
+
   tabChange = (item) => {
     this.setNewState('checkState', item);
   }
+
   toLookDetail = (item) => {
     this.props.history.push(`/point_detail/${item.id}`);
   }
+
   rangeChange = (v, key, range) => {
     if (v && v !== '-' && !/^-?\d+$/.test(v)) {
       return;
@@ -253,6 +265,7 @@ export default class PointList extends React.Component {
     newFilter[key][range] = v;
     this.setNewState('filter', newFilter);
   }
+
   render() {
     const { pointList } = this.props;
     const { data } = pointList;
@@ -442,7 +455,7 @@ export default class PointList extends React.Component {
               <Flex.Item>
                 <DatePicker
                   mode="date"
-                  format="YYYY-MM-DD"
+                  format="YYYY/MM/DD"
                   onChange={date => this.timeChange(date, 'created_at', 'min')}
                 >
                   <div className={style.some_time}>{filters.created_at.min}</div>

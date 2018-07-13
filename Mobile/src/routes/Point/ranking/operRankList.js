@@ -6,6 +6,7 @@ import {
 import { WingBlank, WhiteSpace, Flex, DatePicker } from 'antd-mobile';
 import moment from 'moment';
 import { Ranking } from '../../../common/ListView';
+import { TimeRange } from '../../../components/General';
 import nothing from '../../../assets/nothing.png';
 import { userStorage, getUrlParams } from '../../../utils/util';
 import { ListSort, Nothing } from '../../../components/index';
@@ -22,7 +23,20 @@ import style from '../index.less';
 //   { name: 'B分降序', value: 'point_b_-desc', icon: import('../../../assets/filter/desc.svg') },
 // ];
 
-
+const tabs = [
+  {
+    value: 'month',
+    name: '月度排名',
+  },
+  {
+    value: 'stage',
+    name: '阶段排名',
+  },
+  {
+    value: 'total',
+    name: '累计排名',
+  },
+];
 @connect(({ ranking, loading }) => ({
   ranking: ranking.optRanking,
   loading,
@@ -46,6 +60,9 @@ export default class PointRanking extends React.Component {
   componentWillMount() {
     const { dispatch, location } = this.props;
     this.urlParams = getUrlParams(location.search);
+    this.month = this.setInitValue('month');
+    this.stage = this.setInitValue('stage');
+    this.total = this.setInitValue('total');
     this.fetchRanking(this.urlParams);
     dispatch({
       type: 'ranking/getAuthorityGroup',
@@ -70,20 +87,28 @@ export default class PointRanking extends React.Component {
       this.fetchRanking(this.urlParams);
     }
   }
+
   onCancel = (e, feild) => {
     const { modal } = this.state;
     const newModal = { ...modal };
     newModal[feild] = false;
     this.setNewState('modal', newModal);
   }
+
   onRefresh = () => {
     this.fetchRanking(this.urlParams);
   }
+
+  setInitValue = (tab) => {
+    return `?group_id=${this.urlParams.group_id}&stage=${tab}`;
+  }
+
   setNewState = (key, newValue) => {
     this.setState({
       [key]: newValue,
     });
   }
+
   selFilter = (feild) => { // 筛选
     const { modal } = this.state;
     const newModal = { ...modal };
@@ -107,6 +132,14 @@ export default class PointRanking extends React.Component {
   //   });
   // }
 
+  tabChange = (item) => {
+    const { history } = this.props;
+    const stage = item.value;
+    const params = this[stage];
+    console.log('params', item, params);
+    const url = `/ranking${params}`;
+    history.replace(url);
+  }
 
   fetchRanking = (params) => {
     const { dispatch } = this.props;
@@ -236,43 +269,56 @@ export default class PointRanking extends React.Component {
     const statisGroup = group.statis_group || [];
     const { list } = ranking;
     const params = this.urlParams;
+    const { stage = 'month' } = params;
     const { offsetBottom } = this.state;
     const [sortItem] = statisGroup.filter(item => item.id.toString() === this.urlParams.group_id);
+    const endAt = new Date();
+    const startAt = new Date('2018/7/1');
+    const iosTime = (params.datetime || '').replace(/-/g, '/');
     return (
       <Flex direction="column">
         <Flex.Item className={style.header}>
-          <div className={style.filter_con} >
+          <div className={[style.filter_con, style.tab].join(' ')} >
             <Flex
               justify="between"
-              style={{ padding: '0 1.68rem' }}
             >
-              <Flex.Item>
+              <Flex.Item style={{ textAlign: 'center' }}>
                 <div
                   className={[style.filter, style.cancelbg].join(' ')}
                   onClick={() => this.selFilter('sortModal')}
                 // style={{ background: 'none' }}
                 >
-                  {sortItem ? sortItem.name : '选择部门'}
+                  <span>{sortItem ? sortItem.name : '选择部门'}</span>
                 </div>
               </Flex.Item>
-              <Flex.Item>
+              <Flex.Item style={{ textAlign: 'center' }}>
+                {stage === 'month' && (
                 <DatePicker
-                  value={moment(params.datetime).isValid() ? new Date(params.datetime) : '请选择时间'}
+                  value={moment(params.datetime).isValid() ? new Date(iosTime) : '请选择时间'}
                   mode="month"
+                  maxDate={new Date()}
                   onChange={(date) => {
-                    const time = moment(date).format('YYYY-MM');
-                    if (time !== this.urlParams.datetime) {
-                      this.sortReasult({ datetime: time });
-                    }
+                  const time = moment(date).format('YYYY-MM');
+                  if (time !== this.urlParams.datetime) {
+                    this.sortReasult({ datetime: time });
                   }
-                  }
+                }
+                }
                 >
                   <div
                     className={[style.filter, style.cancelbg].join(' ')}
-                  >{params.datetime}
+                  ><span style={{ borderRight: 'none' }}>{params.datetime ? params.datetime : moment(new Date()).format('YYYY-MM')}</span>
                   </div>
                 </DatePicker>
-
+                )}
+                {stage === 'stage' && (
+                <TimeRange
+                  distance={6}
+                  value={{ min: startAt, max: endAt }}
+                  onChange={(start, end) => this.sortReasult({ start_at: start, end_at: end })}
+                />
+                )}
+                {stage === 'total' && <div><span style={{ borderRight: 'none', color: 'rgb(155, 155, 155)' }}>累计</span></div>}
               </Flex.Item>
             </Flex>
             <ListSort
@@ -340,7 +386,25 @@ export default class PointRanking extends React.Component {
               </WingBlank>
             )}
         </Flex.Item>
-
+        <Flex.Item
+          className={style.footer}
+          ref={(e) => { this.ptr = e; }}
+        >
+          <Flex
+            align="center"
+            style={{ height: '50px' }}
+          >
+            {tabs.map(item => (
+              <Flex.Item
+                key={item.value}
+                className={[style.item, (params.stage || 'month')
+                === item.value ? style.active : null].join(' ')}
+                onClick={() => this.tabChange(item)}
+              ><span>{item.name}</span>
+              </Flex.Item>
+          ))}
+          </Flex>
+        </Flex.Item>
 
       </Flex>
     );
