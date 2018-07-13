@@ -1,0 +1,145 @@
+@import "~antd/lib/style/themes/default.less";
+.header {
+  padding: 0 12px 0 0;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+  background-color: #001538;
+  position: relative;
+  height: 60px;
+  color: #ffffff;
+  font-size: 18px;
+  display: flex;
+}
+
+:global {
+  .ant-layout {
+    overflow-x: hidden;
+  }
+}
+
+.siderMenu {
+  flex-grow: 1;
+  .menuItem {
+    height: 100%;
+    line-height: 60px;
+    text-align: center;
+    float: left;
+    width: 120px;
+    a {
+      color: #fff
+    }
+  }
+  .active {
+    background: #58c3c3;
+  }
+}
+
+.logo {
+  flex-grow: 0;
+  line-height: 50px;
+  vertical-align: top;
+  display: inline-block;
+  padding: 0 58px;
+  cursor: pointer;
+  font-size: 20px;
+  img {
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
+.menu {
+  :global(.anticon) {
+    margin-right: 8px;
+  }
+  :global(.ant-dropdown-menu-item) {
+    width: 160px;
+  }
+}
+
+i.trigger {
+  font-size: 20px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: all .3s, padding 0s;
+  padding: 0 24px;
+  &:hover {
+    background: @primary-1;
+  }
+}
+
+.right {
+  // width: 223px;
+  // margin-right: 20px;
+  height: 100%;
+  flex-grow: 0;
+  font-size: 14px;
+  display: flex;
+  .icon {
+    flex-flow: 0;
+    font-size: 16px;
+    .account {
+      margin-left: 25px;
+    }
+  }
+  .name {
+    margin-left: 10px;
+  }
+  .action {
+    cursor: pointer; // padding: 0 12px;
+    display: inline-block; // transition: all .3s;
+    height: 100%;
+    line-height: 60px;
+    >i {
+      font-size: 16px;
+      vertical-align: middle;
+    } // &:hover,
+    // &:global(.ant-popover-open) {
+    //   background: @primary-1;
+    // }
+  }
+  .search {
+    padding: 0;
+    margin: 0 12px;
+    &:hover {
+      background: transparent;
+    }
+  }
+  .account {
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .85);
+      vertical-align: middle;
+    }
+  }
+}
+
+@media only screen and (max-width: @screen-md) {
+  .header {
+    :global(.ant-divider-vertical) {
+      vertical-align: unset;
+    }
+    .name {
+      display: none;
+    }
+    i.trigger {
+      padding: 0 12px;
+    }
+    .logo {
+      padding-right: 12px;
+      position: relative;
+    }
+    .right {
+      position: absolute;
+      right: 12px;
+      top: 0;
+      background: #fff;
+      .account {
+        .avatar {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}
