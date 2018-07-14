@@ -17,9 +17,11 @@ import { ListFilter, CheckBoxs, ListSort, StateTabs, Nothing } from '../../../co
 import style from '../index.less';
 
 const sortList = [
-  { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
-  { name: '时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
-  { name: '时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
+  { name: '默认排序', value: 'created_at-desc', icon: import('../../../assets/filter/default_sort.svg') },
+  { name: '记录时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
+  { name: '记录时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
+  { name: '执行时间升序', value: 'executed_at-asc', icon: import('../../../assets/filter/asc.svg') },
+  { name: '执行时间降序', value: 'executed_at-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
 const auditStates = [
   { name: '我参与的', value: 'participant' },
