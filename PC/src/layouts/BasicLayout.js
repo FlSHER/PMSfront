@@ -15,7 +15,7 @@ import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
 import logo from '../assets/logo.svg';
-import './BasiclLayout.less';
+import styles from './BasiclLayout.less';
 
 const { Content } = Layout;
 const { AuthorizedRoute } = Authorized;
@@ -142,18 +142,18 @@ class BasicLayout extends React.PureComponent {
             location={location}
             menuData={getMenuData()}
           />
-          <Content className="container">
-            <Breadcrumb className="creadcrumb">
+          <Content className={styles.container}>
+            <Breadcrumb className={styles.creadcrumb}>
               <Breadcrumb.Item>奖扣</Breadcrumb.Item>
               <Breadcrumb.Item>记录奖扣</Breadcrumb.Item>
               <Breadcrumb.Item>新建奖扣</Breadcrumb.Item>
             </Breadcrumb>
-            <Layout className="content">
+            <Layout className={styles.content}>
               <SiderMenu
                 location={location}
                 menuData={getMenuData()}
               />
-              <Content style={{ background: '#ffffff', marginLeft: '-20px' }}>
+              <Content className={styles.contentView}>
                 <div style={{ minHeight: 'calc(100vh - 260px)' }}>
                   <Switch>
                     {

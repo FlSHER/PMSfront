@@ -142,7 +142,7 @@ export default class SiderMenu extends PureComponent {
         <Menu
           key="Menu"
           mode="inline"
-          className="ant-left-menu"
+          className="leftMenu"
           selectedKeys={selectedKeys}
         >
           {menuData && this.getNavMenuItems(menuData.children)}
