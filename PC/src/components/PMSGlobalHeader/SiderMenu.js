@@ -26,7 +26,6 @@ function MenuItem(props) {
   );
 }
 
-
 export default class SiderMenu extends PureComponent {
   constructor(props) {
     super(props);
