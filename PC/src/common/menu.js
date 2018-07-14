@@ -2,29 +2,39 @@
 const menuData = [
   {
     name: '任务',
-    path: '/system/task',
+    path: '/task',
   },
   {
     name: '奖扣',
-    path: '/system/reward',
+    path: '/reward',
     children: [
       {
         name: '记录奖扣',
-        path: '/buckle',
+        path: 'buckle',
       },
       {
         name: '我的奖扣',
-        path: '/my',
+        path: 'my',
       },
     ],
   },
   {
     name: '审核',
-    path: '/system/check',
+    path: '/check',
+    children: [
+      {
+        name: '待审核',
+        path: 'audit',
+      },
+      {
+        name: '已审核',
+        path: 'my-audit',
+      },
+    ],
   },
   {
     name: '积分',
-    path: '/system/point',
+    path: '/point',
   },
 ];
 

@@ -22,32 +22,6 @@ export default class SiderMenu extends PureComponent {
   constructor(props) {
     super(props);
     this.menus = props.menuData;
-    this.state = {
-      openKeys: this.getDefaultCollapsedSubMenus(props),
-    };
-  }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.location.pathname !== this.props.location.pathname) {
-      this.setState({
-        openKeys: this.getDefaultCollapsedSubMenus(nextProps),
-      });
-    }
-  }
-  getDefaultCollapsedSubMenus(props) {
-    const { location: { pathname } } = props || this.props;
-    const snippets = pathname.split('/').slice(1, -1);
-    const currentPathSnippets = snippets.map((item, index) => {
-      const arr = snippets.filter((_, i) => i <= index);
-      return arr.join('/');
-    });
-    let currentMenuSelectedKeys = [];
-    currentPathSnippets.forEach((item) => {
-      currentMenuSelectedKeys = currentMenuSelectedKeys.concat(this.getSelectedMenuKeys(item));
-    });
-    if (currentMenuSelectedKeys.length === 0) {
-      return ['/'];
-    }
-    return currentMenuSelectedKeys;
   }
   getFlatMenuKeys(menus) {
     let keys = [];
@@ -72,7 +46,7 @@ export default class SiderMenu extends PureComponent {
     return flatMenuKeys.filter((item) => {
       const itemRegExpStr = `^${item.replace(/:[\w-]+/g, '[\\w-]+')}$`;
       const itemRegExp = new RegExp(itemRegExpStr);
-      return itemRegExp.test(path.replace(/^\//, '').replace(/\/$/, ''));
+      return itemRegExp.test(path);
     });
   }
   /**
@@ -97,7 +71,6 @@ export default class SiderMenu extends PureComponent {
         to={itemPath}
         target={target}
         replace={itemPath === this.props.location.pathname}
-        onClick={this.props.isMobile ? () => { this.props.onCollapse(true); } : undefined}
       >
         {icon}<span>{name}</span>
       </Link>
@@ -150,26 +123,19 @@ export default class SiderMenu extends PureComponent {
     }
     return ItemDom;
   }
-  handleOpenChange = (openKeys) => {
-    const lastOpenKey = openKeys[openKeys.length - 1];
-    const isMainMenu = this.menus.some(
-      item => lastOpenKey && (item.key === lastOpenKey || item.path === lastOpenKey)
-    );
-    this.setState({
-      openKeys: isMainMenu ? [lastOpenKey] : [...openKeys],
-    });
-  }
+
   render() {
-    const { collapsed, location: { pathname } } = this.props;
-    const { openKeys } = this.state;
-    // Don't show popup menu when it is been collapsed
-    const menuProps = collapsed ? {} : {
-      openKeys,
-    };
+    const { location: { pathname } } = this.props;
+
     // if pathname can't match, use the nearest parent's key
-    let selectedKeys = this.getSelectedMenuKeys(pathname);
+    const parentUrl = `/${pathname.split('/')[1]}`;
+    const path = `${parentUrl}/${pathname.split('/').slice(-1)[0]}`;
+    const menuData = this.menus.find((item) => {
+      return item.path === parentUrl;
+    });
+    let selectedKeys = this.getSelectedMenuKeys(path);
     if (!selectedKeys.length) {
-      selectedKeys = [openKeys[openKeys.length - 1]];
+      selectedKeys = menuData && menuData.children ? [menuData.children[0].path] : ['/'];
     }
     return (
       <Sider>
@@ -177,15 +143,9 @@ export default class SiderMenu extends PureComponent {
           key="Menu"
           mode="inline"
           className="ant-left-menu"
-          {...menuProps}
-          onOpenChange={this.handleOpenChange}
           selectedKeys={selectedKeys}
         >
-          {
-            this.menus.map((item) => {
-              return item.children ? this.getNavMenuItems(item.children) : null;
-            })
-          }
+          {menuData && this.getNavMenuItems(menuData.children)}
         </Menu>
       </Sider>
     );
