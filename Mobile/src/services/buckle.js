@@ -13,7 +13,7 @@ export async function getAuditList(params) {
     method: 'GET',
     body: params,
     json: true,
-  });
+  }, false);
 }
 
 export async function getLogsList(params) {
@@ -21,7 +21,7 @@ export async function getLogsList(params) {
     method: 'GET',
     body: params,
     json: true,
-  });
+  }, false);
 }
 
 

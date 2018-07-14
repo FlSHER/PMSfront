@@ -44,7 +44,7 @@ export default class RankingGroup extends React.Component {
     const authGroup = group.auth_group;
     const statisGroup = group.statis_group;
     const { userInfo = {} } = this.state;
-    const datetime = moment(new Date()).format('YYYY-MM-DD');
+    const datetime = moment(new Date()).format('YYYY-MM');
     return (
       <Flex direction="column">
         <Flex.Item className={style.header}>

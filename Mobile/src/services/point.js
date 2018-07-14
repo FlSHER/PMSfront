@@ -9,5 +9,5 @@ export async function getPointLog(params) {
     method: 'GET',
     body: params,
     json: true,
-  });
+  }, false);
 }

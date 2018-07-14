@@ -5,6 +5,9 @@ import { connect } from 'dva';
 import { List, PullToRefresh } from 'antd-mobile';
 import QueueAnim from 'rc-queue-anim';
 import nothing from '../../assets/nothing.png';
+import SmallLoader from '../General/Loader/SmallLoader';
+import Loader from '../General/Loader/Loader';
+
 import { Nothing } from '../index';
 
 let startX;
@@ -168,7 +171,8 @@ export default function ListView(ListItem) {
     }
 
     renderList = () => {
-      const { dataSource, page, offsetBottom, heightNone, loading } = this.props;
+      const { dataSource, page, offsetBottom, heightNone,
+        loading, totalpage, onRefresh } = this.props;
       const height = this.state.height - (offsetBottom || 0);
       const style = !heightNone ? { style: { minHeight: height } } : null;
       const nothingAble = !heightNone &&
@@ -179,6 +183,9 @@ export default function ListView(ListItem) {
           {...(page && { onTouchEnd: this.handleEnd })}
           ref={(el) => { this.ptr = el; }}
         >
+          {((!dataSource) || (dataSource && !dataSource.length)) &&
+            <Loader fullScreen spinning={loading.global} />
+          }
           {
             nothingAble ? (
               <div {...style}>
@@ -198,6 +205,10 @@ export default function ListView(ListItem) {
                       );
                     })}
                   </List>
+                  {!loading.global && onRefresh && page < totalpage &&
+                  <div style={{ textAlign: 'center' }}>加载更多</div>
+                  }
+                  {loading.global && onRefresh && <SmallLoader />}
                 </QueueAnim>
               )
           }
