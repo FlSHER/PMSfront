@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Icon, Breadcrumb } from 'antd';
+import { Layout, Icon } from 'antd';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import { Route, Redirect, Switch, routerRedux } from 'dva/router';
@@ -16,6 +16,7 @@ import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
 import logo from '../assets/logo.svg';
 import styles from './BasiclLayout.less';
+import PageHeader from '../components/PMSPageHeader';
 
 const { Content } = Layout;
 const { AuthorizedRoute } = Authorized;
@@ -143,11 +144,7 @@ class BasicLayout extends React.PureComponent {
             menuData={getMenuData()}
           />
           <Content className={styles.container}>
-            <Breadcrumb className={styles.creadcrumb}>
-              <Breadcrumb.Item>奖扣</Breadcrumb.Item>
-              <Breadcrumb.Item>记录奖扣</Breadcrumb.Item>
-              <Breadcrumb.Item>新建奖扣</Breadcrumb.Item>
-            </Breadcrumb>
+            <PageHeader />
             <Layout className={styles.content}>
               <SiderMenu
                 location={location}
