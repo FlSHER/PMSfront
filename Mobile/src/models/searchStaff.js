@@ -32,9 +32,9 @@ export default {
     },
   },
   effects: {
-    *getFinalStaff(payload, { put, call }) { // 自己部门员工列表
-      const finalStaff = userStorage('finalStaff');
-      if (isArray(finalStaff)) {
+    * getFinalStaff(payload, { select, put, call }) { // 自己部门员工列表
+      const finalStaff = yield select(state => state.searchStaff.finalStaff);
+      if (finalStaff.lenght > 0) {
         return;
       }
       const response = yield call(getFinalStaff);
@@ -53,7 +53,6 @@ export default {
             data: response || [],
           },
         });
-        localStorage.finalStaff = JSON.stringify(response);
         if (payload.cb) {
           payload.cb(response);
         }
@@ -85,7 +84,7 @@ export default {
         },
       });
     },
-    *fetchSelfDepStaff({ payload }, { put, call }) { // 自己部门员工列表
+    * fetchSelfDepStaff({ payload }, { put, call }) { // 自己部门员工列表
       const { departmentId } = payload;
       yield put({
         type: 'save',
@@ -112,7 +111,7 @@ export default {
         });
       }
     },
-    *fetchFirstDepartment({ payload }, { put, call }) { // 一级部门列表
+    * fetchFirstDepartment({ payload }, { put, call }) { // 一级部门列表
       const { breadCrumb } = payload;
       const response = yield call(firstDepartment);
       if (response && !response.error) {
@@ -139,7 +138,7 @@ export default {
         },
       });
     },
-    *serachStaff({ payload }, { put, call, select }) { // 一级部门列表
+    * serachStaff({ payload }, { put, call, select }) { // 一级部门列表
       const { searStaff } = yield select(_ => _.searchStaff);
       const response = yield call(serachStaff, payload);
       if (response && !response.error) {

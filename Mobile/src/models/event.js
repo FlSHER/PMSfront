@@ -43,7 +43,7 @@ export default {
           data: [],
         },
       });
-      if (evtAll.length === 0) {
+      if (!evtAll || evtAll.length === 0) {
         const response = yield call(getEvent);
         if (response && !response.error) {
           yield put({
