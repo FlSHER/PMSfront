@@ -7,6 +7,7 @@ import { Department, Staff, SeStaff, FinalStaff } from '../../common/ListView/in
 import { analyzePath, unique, userStorage, isArray } from '../../utils/util';
 import styles from '../common.less';
 import style from './index.less';
+
 @connect(({ searchStaff, loading }) => ({
   department: searchStaff.department,
   staff: searchStaff.staff,
@@ -45,6 +46,7 @@ export default class SelPerson extends Component {
       type,
     });
   }
+
   componentWillUnmount() {
     if (this.timer) {
       clearInterval(this.timer);
@@ -52,15 +54,13 @@ export default class SelPerson extends Component {
   }
 
   onFinalSearch = (search) => {
-    // const { finalStaff } = this.props;
-    const finalStaff = userStorage('finalStaff');
+    const { finalStaff } = this.props;
     let newFinalStaff = null;
     if (isArray(finalStaff)) {
       newFinalStaff = finalStaff.filter(item => item.staff_name.indexOf(search) > -1);
     } else {
       newFinalStaff = [];
     }
-    // this.finalStaff = newFinalStaff;
     return newFinalStaff;
   }
 
@@ -145,11 +145,6 @@ export default class SelPerson extends Component {
     const { dispatch } = this.props;
     dispatch({
       type: 'searchStaff/getFinalStaff',
-      payload: {
-        cb: (data) => {
-          this.finalStaff = data;
-        },
-      },
     });
   }
 
@@ -203,8 +198,7 @@ export default class SelPerson extends Component {
   checkedAll = () => { // 全选
     const { staff } = this.props;
     const { selectAll } = this.state;
-    const selected = {
-    };
+    const selected = {};
     if (selectAll) {
       selected.data = [];
       selected.num = 0;
@@ -257,7 +251,8 @@ export default class SelPerson extends Component {
   }
 
   render() {
-    const { department,
+    const {
+      department,
       staff, searStaff,
       breadCrumb, loading1,
       loading2, loading3,
@@ -327,7 +322,7 @@ export default class SelPerson extends Component {
                 onChange={this.getSelectResult}
               />
             ) : null}
-            { isFinal ? (
+            {isFinal ? (
               <FinalStaff
                 link=""
                 heightNone

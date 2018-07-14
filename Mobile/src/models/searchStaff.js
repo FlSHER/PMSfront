@@ -52,9 +52,6 @@ export default {
             data: response || [],
           },
         });
-        if (payload.cb) {
-          payload.cb(response);
-        }
       }
     },
     * fetchSearchStaff({ payload }, { put, call }) {
