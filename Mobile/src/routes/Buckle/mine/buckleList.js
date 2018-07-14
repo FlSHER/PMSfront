@@ -57,10 +57,9 @@ export default class BuckleList extends React.Component {
       filterModal: false,
       sortModal: false,
     },
-    sortItem: { name: '默认排序', value: 'created_at-desc', icon: import('../../../assets/filter/default_sort.svg') },
-    checkState: { name: '我参与的', value: 'participant' },
+    sortItem: sortList[0],
+    checkState: auditStates[0],
   }
-
   componentWillMount() {
     const { dispatch } = this.props;
     const { checkState, sortItem } = this.state;
@@ -72,7 +71,6 @@ export default class BuckleList extends React.Component {
         type: 'buckle/getLogsList',
         payload: {
           pagesize: 10,
-          type: 'participant',
           sort: sortItem.value,
           type: checkState.value,
           page: 1,
@@ -80,7 +78,6 @@ export default class BuckleList extends React.Component {
       });
     });
   }
-
   onPageChange = () => {
     const { dispatch, logList } = this.props;
     const { checkState, sortItem } = this.state;
@@ -124,12 +121,10 @@ export default class BuckleList extends React.Component {
     const { checkState, sortItem } = this.state;
     const { dispatch } = this.props;
     this.setState(
-      {
-        filter: {// 筛选结果
-          approveType: [],
-          eventState: '',
-        }
-      }, () => {
+      { filter: {// 筛选结果
+        approveType: [],
+        eventState: '',
+      } }, () => {
         dispatch({
           type: 'buckle/getLogsList',
           payload: {
@@ -179,7 +174,7 @@ export default class BuckleList extends React.Component {
 
     if (checkState.value === 'approved') { // 审核列表
       if (!(approveType.length === procesingOption.length)
-        && approveType.length) { // 如果type为审核中不是全选
+      && approveType.length) { // 如果type为审核中不是全选
         const appType = approveType[0];
         search[appType] = userInfo.staff_sn;
         if (appType === 'first_approver_sn') {
@@ -344,7 +339,6 @@ export default class BuckleList extends React.Component {
     }
     return labelArr;
   }
-
   render() {
     const { logList } = this.props;
     const { checkState, filter } = this.state;
@@ -483,7 +477,7 @@ export default class BuckleList extends React.Component {
                 value={[filter.eventState]}
               />
             </div>
-          )}
+            )}
         </ListFilter>
       </Flex>
     );
