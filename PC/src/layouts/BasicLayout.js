@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Icon, Breadcrumb, Menu } from 'antd';
+import { Layout, Icon, Breadcrumb } from 'antd';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import { Route, Redirect, Switch, routerRedux } from 'dva/router';
@@ -8,6 +8,7 @@ import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
 // import { enquireScreen } from 'enquire-js';
 import GlobalHeader from '../components/PMSGlobalHeader';
+import SiderMenu from '../components/PMSSiderMenu';
 import GlobalFooter from '../components/GlobalFooter';
 import NotFound from '../routes/Exception/404';
 import { getRoutes } from '../utils/utils';
@@ -16,7 +17,7 @@ import { getMenuData } from '../common/menu';
 import logo from '../assets/logo.svg';
 import './BasiclLayout.less';
 
-const { Content, Sider } = Layout;
+const { Content } = Layout;
 const { AuthorizedRoute } = Authorized;
 
 /**
@@ -148,17 +149,10 @@ class BasicLayout extends React.PureComponent {
               <Breadcrumb.Item>新建奖扣</Breadcrumb.Item>
             </Breadcrumb>
             <Layout className="content">
-              <Sider width={200} style={{ background: '#fff' }}>
-                <Menu
-                  mode="inline"
-                  className="ant-left-menu"
-                  defaultSelectedKeys={['1']}
-                  defaultOpenKeys={['sub1']}
-                >
-                  <Menu.Item key="1">记录奖扣</Menu.Item>
-                  <Menu.Item key="2">我的奖扣</Menu.Item>
-                </Menu>
-              </Sider>
+              <SiderMenu
+                location={location}
+                menuData={getMenuData()}
+              />
               <Content style={{ background: '#ffffff', marginLeft: '-20px' }}>
                 <div style={{ minHeight: 'calc(100vh - 260px)' }}>
                   <Switch>
