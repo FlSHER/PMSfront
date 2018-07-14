@@ -6,7 +6,6 @@ import {
   getFinalStaff,
 } from '../services/department';
 import defaultReducers from './reducers/default';
-import { userStorage, isArray } from '../utils/util';
 
 export default {
   namespace: 'searchStaff',
@@ -34,7 +33,7 @@ export default {
   effects: {
     * getFinalStaff(payload, { select, put, call }) { // 自己部门员工列表
       const finalStaff = yield select(state => state.searchStaff.finalStaff);
-      if (finalStaff.lenght > 0) {
+      if (finalStaff.length > 0) {
         return;
       }
       const response = yield call(getFinalStaff);
