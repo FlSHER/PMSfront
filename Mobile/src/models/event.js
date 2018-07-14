@@ -18,10 +18,6 @@ export default {
     },
     event: {},
     breadCrumb: [],
-    pageInfo: {
-      page: 1,
-      totalpage: 10,
-    },
   },
   subscriptions: {
     setup({ dispatch, history }) { // eslint-disable-line
@@ -30,31 +26,34 @@ export default {
 
   effects: {
 
-    * getEvent({ payload }, { put, call }) {
+    * getEvent({ payload }, { select, put, call }) {
+      const { breadCrumb } = payload;
+      const evtAll = yield select(state => state.event.evtAll);
+      yield put({
+        type: 'save',
+        payload: {
+          store: 'breadCrumb',
+          data: breadCrumb,
+        },
+      });
       yield put({
         type: 'save',
         payload: {
           store: 'evtName',
-          data: response || [],
+          data: [],
         },
       });
-      const { breadCrumb } = payload;
-      const response = yield call(getEvent);
-      if (response && !response.error) {
-        yield put({
-          type: 'save',
-          payload: {
-            store: 'evtAll',
-            data: response || [],
-          },
-        });
-        yield put({
-          type: 'save',
-          payload: {
-            store: 'breadCrumb',
-            data: breadCrumb,
-          },
-        });
+      if (evtAll.length === 0) {
+        const response = yield call(getEvent);
+        if (response && !response.error) {
+          yield put({
+            type: 'save',
+            payload: {
+              store: 'evtAll',
+              data: response || [],
+            },
+          });
+        }
       }
     },
     * getEventName({ payload }, { put, call }) {
@@ -94,28 +93,6 @@ export default {
           },
         });
       }
-
-      // const newParams = makerFilters(payload);
-      // const response = yield call(searchEventName, newParams);
-      // const { evtName } = yield select(_ => _.event);
-      // if (response && !response.error) {
-      //   const { data, page, totalpage } = response;
-      //   let newEvent = [];
-      //   if (page !== 1) {
-      //     newEvent = [...evtName];
-      //     newEvent = evtName.concat(data);
-      //   } else {
-      //     newEvent = [...data];
-      //   }
-
-      //   yield put({
-      //     type: 'save',
-      //     payload: {
-      //       store: 'pageInfo',
-      //       data: { page, totalpage },
-      //     },
-      //   });
-      // }
     },
   },
 
@@ -130,19 +107,17 @@ export default {
 
       };
     },
-    clearModal() {
-      const state = {
-        evtAll: [],
-        evtName: [],
-        event: {},
-        breadCrumb: [],
-        pageInfo: {
-          page: '',
-          totalpage: '',
-        },
-      };
+    clearModal(state) {
       return {
         ...state,
+        evtName: [],
+        searchEvent: {
+          page: '',
+          totalpage: '',
+          data: [],
+        },
+        event: {},
+        breadCrumb: [],
       };
     },
   },

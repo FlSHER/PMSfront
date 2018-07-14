@@ -23,7 +23,6 @@ import style from './index.less';
   selectStaff: searchStaff.selectStaff,
   info: buckle.info,
   optAll: buckle.optAll,
-  // pageInfo: event.pageInfo,
 }))
 export default class SelEvent extends Component {
   state = {
@@ -41,7 +40,7 @@ export default class SelEvent extends Component {
     this.props.dispatch({
       type: 'event/getEvent',
       payload: {
-        breadCrumb: [{ name: '选择事件', id: -1 }],
+        breadCrumb: [{ name: '全部', id: -1 }],
       },
     });
   }
