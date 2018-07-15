@@ -3,6 +3,7 @@ import {
   DatePicker,
 } from 'antd';
 import moment from 'moment';
+import './index.less';
 
 export default class DataPicker extends PureComponent {
   render() {
@@ -12,8 +13,18 @@ export default class DataPicker extends PureComponent {
       <DatePicker
         {...this.props}
         {...momentValue}
-        style={{ width: '100%' }}
-        onChange={(date, dateString) => {
+        dateRender={(current, today) => {
+          let className = 'ant-calendar-date';
+          if (current.date() === today.date()) {
+            className = 'ant-calendar-date customer-today';
+          }
+          return (
+            <div className={className}>
+              {current.date()}
+            </div>
+          );
+        }}
+        onChange={(_, dateString) => {
           onChange(dateString);
         }}
       />

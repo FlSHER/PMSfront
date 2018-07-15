@@ -33,6 +33,7 @@ class Operator extends PureComponent {
       multiOperator,
       extraOperator,
       fetchTableDataSource, resetFilter, clearSelectedRows,
+      sync,
     } = this.props;
     const hasFilter = Object.keys(filters)
       .filter(key => filters[key] && filters[key].length)
@@ -40,14 +41,16 @@ class Operator extends PureComponent {
     return (
       <div className={styles.filterTableOperator} style={{ display: 'flex' }}>
         {extraOperator || null}
+        {sync && (
         <Tooltip title="数据同步">
           <Button
             icon="sync"
             onClick={() => {
-            fetchTableDataSource();
-          }}
+              fetchTableDataSource();
+            }}
           />
         </Tooltip>
+        )}
         {
           (Object.keys(sorter).length > 0 || hasFilter) &&
           (<Button onClick={() => resetFilter()}>清空筛选</Button>)

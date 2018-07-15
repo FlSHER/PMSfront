@@ -27,6 +27,8 @@ const defaultProps = {
   excelTemplate: null,
   extraExportFields: [],
   filtered: 0,
+  sync: true,
+  tableVisible: true,
   fetchDataSource: () => {
     // message.error('请设置fetchDataSource');
   },
@@ -686,7 +688,6 @@ class OATable extends PureComponent {
             <QueueAnim key="hearderBoor" type="top">
               <Operator
                 {...this.state}
-
                 multiOperator={multiOperator}
                 extraOperator={this.makeExtraOperator()}
                 fetchTableDataSource={this.fetchTableDataSource}
@@ -694,16 +695,18 @@ class OATable extends PureComponent {
                 clearSelectedRows={this.clearSelectedRows}
               />
             </QueueAnim>
-            <QueueAnim key="table" type="bottom">
-              <Table
-                {...this.makeTableProps()}
-              // components={{
-              //   body: {
-              //     wrapper: this.getBodyWrapper,
-              //   },
-              // }}
-              />
-            </QueueAnim>
+            {tableVisible && (
+              <QueueAnim key="table" type="bottom">
+                <Table
+                  {...this.makeTableProps()}
+                // components={{
+                //   body: {
+                //     wrapper: this.getBodyWrapper,
+                //   },
+                // }}
+                />
+              </QueueAnim>
+            )}
           </QueueAnim>
         </div>
       </Spin>
