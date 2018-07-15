@@ -99,7 +99,7 @@ export default class GlobalHeader extends PureComponent {
                 <Icon type="caret-down" style={{ marginRight: '5px', fontSize: '12px', float: 'right', lineHeight: '60px' }} />
               </span>
             </Dropdown>
-          ) : <Spin size="small" style={{ marginLeft: 8 }} />}
+          ) : <Spin size="small" style={{ marginLeft: 8, lineHeight: '60px', width: 80 }} />}
         </div>
       </Header>
     );

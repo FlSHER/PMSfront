@@ -128,12 +128,12 @@ export default class SiderMenu extends PureComponent {
     const { location: { pathname } } = this.props;
 
     // if pathname can't match, use the nearest parent's key
-    const parentUrl = `/${pathname.split('/')[1]}`;
-    const path = `${parentUrl}/${pathname.split('/').slice(-1)[0]}`;
+    const parentUrl = `${pathname.split('/')[1]}`;
+    // const path = `${parentUrl}/${pathname.split('/').slice(-1)[0]}`;
     const menuData = this.menus.find((item) => {
       return item.path === parentUrl;
     });
-    let selectedKeys = this.getSelectedMenuKeys(path);
+    let selectedKeys = this.getSelectedMenuKeys(pathname);
     if (!selectedKeys.length) {
       selectedKeys = menuData && menuData.children ? [menuData.children[0].path] : ['/'];
     }

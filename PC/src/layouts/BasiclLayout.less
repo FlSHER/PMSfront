@@ -75,11 +75,18 @@
 
 :global {
   body {
-    min-width: 1024px;
+    min-width: 900px;
     background: rgba(240, 240, 240, 1)
   }
   .ant-layout {
     background-color: inherit;
+  }
+  .ant-input:focus,
+  .ant-input:hover {
+    border-color: #59c3c3 !important;
+  }
+  .ant-input:focus {
+    box-shadow: 2px 2px 4px 0px #e5f5f3 !important;
   }
 }
 

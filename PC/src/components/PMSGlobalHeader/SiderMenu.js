@@ -64,7 +64,7 @@ export default class SiderMenu extends PureComponent {
   * @memberof SiderMenu
   */
   getMenuItemPath = (item) => {
-    const itemPath = this.conversionPath(item.path);
+    const itemPath = item.path;
     const icon = getIcon(item.icon);
     const { target, name } = item;
     // Is it a http link
@@ -78,7 +78,7 @@ export default class SiderMenu extends PureComponent {
     const defaultPathUrl = item.children ? item.children[0].path : itemPath;
     return (
       <Link
-        to={defaultPathUrl}
+        to={this.conversionPath(defaultPathUrl)}
         target={target}
         replace={itemPath === this.props.location.pathname}
         style={{
@@ -97,7 +97,7 @@ export default class SiderMenu extends PureComponent {
   getSubMenuOrItem = (item) => {
     // console.log(item);
     const { location: { pathname } } = this.props;
-    const path = `/${pathname.split('/')[1]}`;
+    const path = `${pathname.split('/')[1]}`;
     let selectedKeys = this.getSelectedMenuKeys(path);
     if (!selectedKeys.length) {
       selectedKeys = ['/'];

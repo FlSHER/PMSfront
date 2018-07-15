@@ -72,6 +72,14 @@ export const getRouterData = (app) => {
     '/': {
       component: dynamicWrapper(app, ['currentUser'], () => import('../layouts/BasicLayout')),
     },
+    '/index': {
+      component: dynamicWrapper(app, [], () => import('../routes/Index')),
+    },
+    '/reward/buckle': {
+      component: dynamicWrapper(app, [], () => import('../routes/Reward/Buckle')),
+    },
+
+
     '/exception/403': {
       component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
     },

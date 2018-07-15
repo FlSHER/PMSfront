@@ -132,7 +132,7 @@ class BasicLayout extends React.PureComponent {
 
   render() {
     const {
-      currentUser, routerData, match, location,
+      currentUser, routerData, match, location, location: { pathname },
     } = this.props;
     const layout = (
       <Layout>
@@ -146,10 +146,14 @@ class BasicLayout extends React.PureComponent {
           <Content className={styles.container}>
             <PageHeader />
             <Layout className={styles.content}>
-              <SiderMenu
-                location={location}
-                menuData={getMenuData()}
-              />
+              {
+                pathname !== '/index' && (
+                <SiderMenu
+                  location={location}
+                  menuData={getMenuData()}
+                />
+                )
+              }
               <Content className={styles.contentView}>
                 <div style={{ minHeight: 'calc(100vh - 260px)' }}>
                   <Switch>
@@ -172,6 +176,7 @@ class BasicLayout extends React.PureComponent {
                         <Redirect key={item.from} exact from={item.from} to={item.to} />
                       )
                     }
+                    <Redirect exact from="/" to="/index" />
                     <Route render={NotFound} />
                   </Switch>
                 </div>

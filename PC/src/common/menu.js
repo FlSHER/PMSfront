@@ -1,12 +1,8 @@
 
 const menuData = [
   {
-    name: '任务',
-    path: '/task',
-  },
-  {
     name: '奖扣',
-    path: '/reward',
+    path: 'reward',
     children: [
       {
         name: '记录奖扣',
@@ -20,7 +16,7 @@ const menuData = [
   },
   {
     name: '审核',
-    path: '/check',
+    path: 'check',
     children: [
       {
         name: '待审核',
@@ -34,7 +30,7 @@ const menuData = [
   },
   {
     name: '积分',
-    path: '/point',
+    path: 'point',
   },
 ];
 
