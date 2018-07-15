@@ -21,6 +21,7 @@ import request from '../../utils/request';
 const defaultProps = {
   multiOperator: null,
   extraOperator: null,
+  extraOperatorRight: null,
   serverSide: false,
   excelExport: null,
   excelInto: null,
@@ -679,7 +680,7 @@ class OATable extends PureComponent {
   }
 
   render() {
-    const { multiOperator } = this.props;
+    const { multiOperator, tableVisible, extraOperatorRight } = this.props;
     const { loading } = this.state;
     return (
       <Spin spinning={loading !== false} tip={`${loading}`}>
@@ -690,12 +691,13 @@ class OATable extends PureComponent {
                 {...this.state}
                 multiOperator={multiOperator}
                 extraOperator={this.makeExtraOperator()}
+                extraOperatorRight={extraOperatorRight}
                 fetchTableDataSource={this.fetchTableDataSource}
                 resetFilter={this.resetFilter}
                 clearSelectedRows={this.clearSelectedRows}
               />
             </QueueAnim>
-            {tableVisible && (
+            {(tableVisible === true) && (
               <QueueAnim key="table" type="bottom">
                 <Table
                   {...this.makeTableProps()}

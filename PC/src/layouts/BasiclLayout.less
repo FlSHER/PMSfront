@@ -70,6 +70,13 @@
     .ant-menu-inline .ant-menu-item:after {
       border: none;
     }
+    .ant-btn>.anticon+span,
+    .ant-btn>span+.anticon {
+      margin-left: 5px;
+    }
+    .ant-btn {
+      padding: 0px 10px;
+    }
   }
 }
 
@@ -82,17 +89,34 @@
     background-color: inherit;
   }
   .ant-input:focus,
-  .ant-input:hover {
+  .ant-input:hover,
+  .ant-select-selection:hover,
+  .ant-select-focused .ant-select-selection,
+  .ant-select-selection:focus,
+  .ant-select-selection:active {
     border-color: #59c3c3 !important;
   }
-  .ant-input:focus {
+  .ant-input:focus,
+  .ant-select-selection:focus,
+  .ant-select-selection:active {
     box-shadow: 2px 2px 4px 0px #e5f5f3 !important;
   }
-  .ant-calendar-picker:hover .ant-calendar-picker-input:not(.ant-input-disabled){
+  .ant-calendar-picker:hover .ant-calendar-picker-input:not(.ant-input-disabled) {
     border-color: #59c3c3 !important;
   }
-  .ant-form-item-label label:after{
+  .ant-form-item-label label:after {
     margin: 0 10px 0 4px !important;
+  }
+  .ant-btn {
+    height: 30px;
+    line-height: 30px;
+  }
+  .ant-form-item {
+    margin-bottom: 30px;
+  }
+  .cust-button {
+    background: #59c3c3;
+    color: #fff;
   }
 }
 

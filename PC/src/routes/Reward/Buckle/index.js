@@ -1,8 +1,8 @@
 import React from 'react';
-import { Input, Modal, Select } from 'antd';
+import { Input, Select } from 'antd';
 import { connect } from 'dva';
 import OAForm from '../../../components/OAForm';
-import SelectTable from '../../../components/OAForm/selectTable';
+import WorkingStaff from '../../common/Table/workingStaff';
 import styles from './index.less';
 
 const { TextArea } = Input;
@@ -29,16 +29,13 @@ export default class extends React.PureComponent {
 
   render() {
     const { form: { getFieldDecorator } } = this.props;
-    const style = { style: { width: 380 } };
+    const style = { style: { width: 560 } };
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 18 },
     };
     return (
       <div style={{ padding: 10 }}>
-        <Modal>
-          <SelectTable />
-        </Modal>
         <OAForm {...this.makeFormProps()}>
           <FormItem label="事件标题" {...formItemLayout}>
             {getFieldDecorator('Select', {})(
@@ -57,11 +54,13 @@ export default class extends React.PureComponent {
                 {...style}
                 showToday={false}
                 dropdownClassName={styles.calendar}
-                popupStyle={{ width: 380 }}
+                popupStyle={{ width: 560 }}
               />
             )}
           </FormItem>
-          <FormItem label="事件配置" {...formItemLayout} />
+          <FormItem label="事件配置" {...formItemLayout} >
+            <WorkingStaff />
+          </FormItem>
         </OAForm>
       </div>
     );
