@@ -1,7 +1,8 @@
+@import '../../../utils/utils.less';
 :global {
   .customer-today {
     background: #ffffff;
-    border: solid 1px #59c3c3 !important;
+    border: solid 1px @template-background-color  !important;
   }
   .ant-calendar-date {
     width: 40px;
@@ -11,30 +12,30 @@
     border-radius: 4px;
   }
   .ant-calendar-today .ant-calendar-date {
-    border: solid 1px #59c3c3 !important;
-    color: #59c3c3;
+    border: solid 1px @template-background-color  !important;
+    color: @template-background-color;
   }
   .ant-calendar-selected-day .ant-calendar-date {
-    background: #e5f5f3;
+    background: @template-hover-active;
   }
   .ant-calendar-selected-date .ant-calendar-date,
   .ant-calendar-selected-start-date .ant-calendar-date,
   .ant-calendar-selected-end-date .ant-calendar-date {
-    background: #59c3c3;
+    background: @template-background-color;
     color: #ffffff;
   }
   .ant-calendar-date:active {
-    background: #59c3c3;
+    background: @template-background-color;
   }
   .ant-calendar-date:hover {
-    background: #e5f5f3;
+    background: @template-hover-active;
   }
   .ant-calendar-selected-date .ant-calendar-date:hover,
   .ant-calendar-selected-start-date .ant-calendar-date:hover,
   .ant-calendar-selected-end-date .ant-calendar-date:hover {
-    background: #e5f5f3;
+    background: @template-hover-active;
   }
   .ant-calendar-header a:hover {
-    color: #59c3c3;
+    color: @template-background-color;
   }
 }

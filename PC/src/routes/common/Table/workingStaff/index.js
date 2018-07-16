@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button } from 'antd';
 import { connect } from 'dva';
-import OATable from '../../../components/OATable';
+import OATable from '../../../../components/OATable';
+import ModalStaff from './modalStaff';
 
 const { EdiTableCell } = OATable;
 @connect()
@@ -10,7 +11,12 @@ export default class WorkingStaff extends React.PureComponent {
     super(props);
     this.state = {
       value: props.value || [],
+      visible: false,
     };
+  }
+
+  handleModalVisible = (flag) => {
+    this.setState({ visible: !!flag });
   }
 
   handleOnChange = () => {
@@ -83,6 +89,7 @@ export default class WorkingStaff extends React.PureComponent {
         icon="user-add"
         className="cust-button"
         style={{ fontSize: 12 }}
+        onClick={() => { this.handleModalVisible(true); }}
       >
         添加参与人
       </Button>
@@ -109,11 +116,13 @@ export default class WorkingStaff extends React.PureComponent {
   }
 
   render() {
+    const { visible } = this.state;
     return (
       <div style={{ paddingTop: 5, width: 560 }}>
         <OATable
           {...this.makeTableProps()}
         />
+        <ModalStaff visible={visible === false} />
       </div>
     );
   }

@@ -1,4 +1,5 @@
 @import "/font/pms/iconfont.css";
+@import "../utils/utils.less";
 .container {
   padding: 0 20px;
   margin-top: 23px;
@@ -51,7 +52,7 @@
     }
     .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
       z-index: 1;
-      background: #fff;
+      background: @ant-menu;
       width: 100%;
       padding-right: 26px;
       border-right: none;
@@ -83,40 +84,86 @@
 :global {
   body {
     min-width: 900px;
-    background: rgba(240, 240, 240, 1)
+    background: @body-background
   }
   .ant-layout {
     background-color: inherit;
   }
+  /*form*/
   .ant-input:focus,
   .ant-input:hover,
   .ant-select-selection:hover,
   .ant-select-focused .ant-select-selection,
   .ant-select-selection:focus,
   .ant-select-selection:active {
-    border-color: #59c3c3 !important;
+    border-color: @template-background-color  !important;
   }
   .ant-input:focus,
   .ant-select-selection:focus,
   .ant-select-selection:active {
-    box-shadow: 2px 2px 4px 0px #e5f5f3 !important;
+    box-shadow: 2px 2px 4px 0px @template-background-color  !important;
   }
   .ant-calendar-picker:hover .ant-calendar-picker-input:not(.ant-input-disabled) {
-    border-color: #59c3c3 !important;
+    border-color: @template-background-color  !important;
   }
   .ant-form-item-label label:after {
     margin: 0 10px 0 4px !important;
   }
+  .ant-form-item {
+    margin-bottom: 30px;
+  }
+  /* button **/
   .ant-btn {
     height: 30px;
     line-height: 30px;
   }
-  .ant-form-item {
-    margin-bottom: 30px;
+  .ant-btn-primary:focus,
+  .ant-btn-primary {
+    background: @template-background-color;
+    border-color: @template-background-color;
+  }
+  .ant-btn-primary:hover,
+  .ant-btn-primary:active,
+  .ant-btn-primary.active {
+    color: @template-background-color;
+    background: @template-hover-active;
+    border-color: @template-background-color;
   }
   .cust-button {
-    background: #59c3c3;
+    background: @template-background-color;
     color: #fff;
+  }
+  /*modal*/
+  .ant-modal-content {
+    border-radius: 0 !important;
+  }
+  .ant-modal-header {
+    height: 40px;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: @template-background-color  !important;
+  }
+  .ant-modal-body {
+    padding: 20px !important;
+    margin-bottom: 23px;
+  }
+  .ant-modal-footer {
+    border-radius: 0 !important;
+    height: 49px !important;
+    margin: 0 20px;
+    line-height: 49px;
+    padding: 0 !important;
+  }
+  .ant-modal-close-x {
+    width: 26px !important;
+    height: 26px !important;
+    line-height: 40px !important;
+    margin-right: 0;
+    font-size: 12px !important;
+    color: #fff;
+  }
+  .ant-modal-footer button+button {
+    margin-left: 20px;
   }
 }
 

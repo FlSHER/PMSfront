@@ -147,7 +147,7 @@ export default class SearchTable extends PureComponent {
   };
 
   render() {
-    const { multiple, name, showName, title, tableProps } = this.props;
+    const { multiple, name, title, tableProps } = this.props;
     const { visible, modelStyle: { width }, value } = this.state;
     const footer = multiple ? null : { footer: null };
     let selectValue = [];
@@ -173,7 +173,6 @@ export default class SearchTable extends PureComponent {
             <SelectTable
               {...tableProps}
               name={name}
-              showName={showName}
               multiple={multiple}
               selectValue={selectValue}
               setSelectedValue={this.setTableValue}
