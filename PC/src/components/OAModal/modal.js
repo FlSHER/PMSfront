@@ -6,6 +6,7 @@ export default class OAModal extends React.PureComponent {
     const { title, titleStyle } = this.props;
     return (
       <Modal
+        destroyOnClose
         {...this.props}
         title={(
           <div style={{

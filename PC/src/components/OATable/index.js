@@ -85,7 +85,6 @@ class OATable extends PureComponent {
     }
   }
 
-
   onEnd = (e) => {
     const dom = e.target;
     dom.style.height = 'auto';
@@ -480,13 +479,13 @@ class OATable extends PureComponent {
       dataSource: data,
       onChange: this.handleTableChange,
       size: 'middle',
-      bordered: true,
-      scroll: { x: true },
-      ...this.props,
+      bordered: false,
+      // scroll: { x: true },
       pagination: {
         ...pagination,
         ...this.props.pagination,
       },
+      ...this.props,
       rowSelection: newRowSelection,
       columns: this.mapColumns(),
     };
@@ -680,7 +679,7 @@ class OATable extends PureComponent {
   }
 
   render() {
-    const { multiOperator, tableVisible, extraOperatorRight } = this.props;
+    const { multiOperator, tableVisible, extraOperatorRight, sync } = this.props;
     const { loading } = this.state;
     return (
       <Spin spinning={loading !== false} tip={`${loading}`}>
@@ -689,6 +688,7 @@ class OATable extends PureComponent {
             <QueueAnim key="hearderBoor" type="top">
               <Operator
                 {...this.state}
+                sync={sync}
                 multiOperator={multiOperator}
                 extraOperator={this.makeExtraOperator()}
                 extraOperatorRight={extraOperatorRight}

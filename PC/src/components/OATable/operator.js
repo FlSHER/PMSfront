@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Button, Dropdown, Icon, Menu, Tooltip } from 'antd';
+import { Button, Dropdown, Menu, Tooltip } from 'antd';
 import styles from './index.less';
 
 class Operator extends PureComponent {
@@ -35,7 +35,7 @@ class Operator extends PureComponent {
       extraOperatorRight,
       fetchTableDataSource,
       resetFilter,
-      clearSelectedRows,
+      // clearSelectedRows,
       sync,
     } = this.props;
     const hasFilter = Object.keys(filters)
@@ -61,14 +61,13 @@ class Operator extends PureComponent {
           }
           {
             selectedRows.length > 0 && multiOperator && (
-              <span>
+              <React.Fragment>
                 <Dropdown overlay={this.makeMultiOperator()} trigger={['click']}>
-                  <Button>
-                    批量操作 <Icon type="down" />
+                  <Button icon="menu-fold" style={{ fontSize: '12px' }}>
+                    批量操作
                   </Button>
                 </Dropdown>
-                <Button style={{ margin: '0 8px' }} type="danger" onClick={() => clearSelectedRows()}>清空选择</Button>
-              </span>
+              </React.Fragment>
             )
           }
         </div>

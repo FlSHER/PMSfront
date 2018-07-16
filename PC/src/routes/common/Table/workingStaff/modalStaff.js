@@ -5,8 +5,8 @@ import SelectTable from '../../../../components/OAForm/SearchTable/selectTable';
 
 const data = [
   {
-    staff_sn: 1,
-    realname: 'jyy',
+    staff_sn: 110105,
+    realname: '张博涵',
     brand_id: '总监',
     position_id: '总监',
     department_id: '总监',
@@ -18,23 +18,69 @@ const data = [
 export default class ModalStaff extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.pushValue = [];
+    const value = this.makeInitialValue(props.value || []);
     this.state = {
-      value: props.value || [],
+      value,
     };
   }
 
-  setSelectedValue = (staff) => {
-    this.setState({ value: staff });
+  componentWillReceiveProps(nextProps) {
+    if (JSON.stringify(nextProps.value) !== JSON.stringify(this.props.value)) {
+      const value = this.makeInitialValue(nextProps.value || []);
+      this.setState({ value: [...value] });
+    }
   }
 
-  handleOnChange = () => {
-    const { onChange } = this.props;
-    const { value } = this.state;
-    onChange(value);
+  setSelectedValue = (rowDatas) => {
+    this.pushValue = rowDatas;
   }
+
 
   fetchStaff = (params) => {
     console.log(params);
+  }
+
+
+  handleOnChange = () => {
+    this.setState({ value: this.pushValue }, () => {
+      const { onChange } = this.props;
+      const value = this.makeNameFieldsValue();
+      // console.log(value);
+      onChange(value);
+    });
+  }
+
+  makeInitialValue = (value) => {
+    const { name } = this.props;
+    if (Object.keys(name).length) {
+      let newValue = [];
+      newValue = value.map((item) => {
+        const temp = {};
+        Object.keys(name).forEach((key) => {
+          temp[name[key]] = item[key];
+        });
+        return temp;
+      });
+      return newValue;
+    }
+    return value;
+  }
+
+  makeNameFieldsValue = () => {
+    const { name } = this.props;
+    const { value } = this.state;
+    let newValue = [...value];
+    if (Object.keys(name).length) {
+      newValue = [];
+      value.forEach((item, i) => {
+        newValue[i] = {};
+        Object.keys(name).forEach((key) => {
+          newValue[i][key] = item[name[key]];
+        });
+      });
+    }
+    return newValue;
   }
 
   makeColumns = () => {
@@ -86,11 +132,13 @@ export default class ModalStaff extends React.PureComponent {
   }
 
   makeModalProps = () => {
-    const { visible } = this.props;
+    const { visible, onCancel } = this.props;
     const response = {
       visible,
       width: 950,
       title: '选择参与人',
+      onOk: this.handleOnChange,
+      onCancel: () => onCancel(false),
     };
     return response;
   }
@@ -106,6 +154,6 @@ export default class ModalStaff extends React.PureComponent {
   }
 }
 ModalStaff.defaultProps = {
+  name: {},
   onChange: () => { },
-  visible: false,
 };
