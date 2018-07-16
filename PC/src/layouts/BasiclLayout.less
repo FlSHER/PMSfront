@@ -86,26 +86,7 @@
     min-width: 900px;
     background: @body-background
   }
-  .ant-layout {
-    background-color: inherit;
-  }
   /*form*/
-  .ant-input:focus,
-  .ant-input:hover,
-  .ant-select-selection:hover,
-  .ant-select-focused .ant-select-selection,
-  .ant-select-selection:focus,
-  .ant-select-selection:active {
-    border-color: @template-background-color  !important;
-  }
-  .ant-input:focus,
-  .ant-select-selection:focus,
-  .ant-select-selection:active {
-    box-shadow: 2px 2px 4px 0px @template-background-color  !important;
-  }
-  .ant-calendar-picker:hover .ant-calendar-picker-input:not(.ant-input-disabled) {
-    border-color: @template-background-color  !important;
-  }
   .ant-form-item-label label:after {
     margin: 0 10px 0 4px !important;
   }
@@ -116,22 +97,6 @@
   .ant-btn {
     height: 30px;
     line-height: 30px;
-  }
-  .ant-btn-primary:focus,
-  .ant-btn-primary {
-    background: @template-background-color;
-    border-color: @template-background-color;
-  }
-  .ant-btn-primary:hover,
-  .ant-btn-primary:active,
-  .ant-btn-primary.active {
-    color: @template-background-color;
-    background: @template-hover-active;
-    border-color: @template-background-color;
-  }
-  .cust-button {
-    background: @template-background-color;
-    color: #fff;
   }
   /*modal*/
   .ant-modal-content {
@@ -153,6 +118,9 @@
     margin: 0 20px;
     line-height: 49px;
     padding: 0 !important;
+    .ant-btn {
+      position: inherit;
+    }
   }
   .ant-modal-close-x {
     width: 26px !important;

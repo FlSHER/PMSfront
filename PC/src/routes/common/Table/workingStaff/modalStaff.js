@@ -90,6 +90,7 @@ export default class ModalStaff extends React.PureComponent {
     const response = {
       visible,
       width: 950,
+      title: '选择参与人',
     };
     return response;
   }

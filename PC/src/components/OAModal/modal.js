@@ -7,12 +7,24 @@ export default class OAModal extends React.PureComponent {
     return (
       <Modal
         {...this.props}
-        title={(<div style={titleStyle || { width: '100%', height: '100%', textAlign: 'center' }}>{title}</div>)}
+        title={(
+          <div style={{
+            width: '100%',
+            height: '100%',
+            textAlign: 'center',
+            lineHeight: '40px',
+            color: '#fff',
+            ...titleStyle,
+          }}
+          >
+            {title}
+          </div>
+        )}
       />
     );
   }
 }
 OAModal.defaultProps = {
   title: '',
-  titleStyle: null,
+  titleStyle: {},
 };
