@@ -26,7 +26,6 @@ export default class ModalStaff extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps.value, this.props.value);
     if (JSON.stringify(nextProps.value) !== JSON.stringify(this.props.value)) {
       const value = this.makeInitialValue(nextProps.value || []);
       this.setState({ value: [...value] });
