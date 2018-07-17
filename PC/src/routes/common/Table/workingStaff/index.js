@@ -3,6 +3,7 @@ import { Button, Icon } from 'antd';
 import { connect } from 'dva';
 import OATable from '../../../../components/OATable';
 import ModalStaff from './modalStaff';
+import BatchForm from './batchForm';
 
 const { EdiTableCell } = OATable;
 
@@ -19,12 +20,44 @@ export default class WorkingStaff extends React.PureComponent {
     super(props);
     this.state = {
       value: props.value || [],
+      batchInitValue: [],
       visible: false,
+      batchVisible: false,
     };
   }
 
-  handleModalVisible = (flag) => {
-    this.setState({ visible: !!flag });
+  verifyCurrentUser = () => {
+    const { value } = this.state;
+    const { user } = window;
+    const deleteUserStatus = value.find(item => item.staff_sn === user.staff_sn);
+    return deleteUserStatus;
+  }
+
+  handleBatch = (staffSn) => {
+    this.setState({ batchInitValue: [...staffSn] }, () => this.handleModalVisible('batchVisible', true));
+  }
+
+  handleBatchChange = (params) => {
+    const { value, batchInitValue } = this.state;
+    const newValue = value.map((item) => {
+      if (batchInitValue.indexOf(item.staff_sn) !== -1) {
+        return {
+          ...item,
+          point_a: params.point_a || item.point_a,
+          point_b: params.point_b || item.point_b,
+          number: params.number || item.number,
+        };
+      }
+      return item;
+    });
+    this.setState({ value: [...newValue] }, () => {
+      this.handleModalVisible('batchVisible');
+      this.handleOnChange();
+    });
+  }
+
+  handleModalVisible = (visible, flag) => {
+    this.setState({ [visible]: !!flag });
   }
 
   handleOnChange = () => {
@@ -40,7 +73,10 @@ export default class WorkingStaff extends React.PureComponent {
         ...valueDefault,
       };
     });
-    this.setState({ value: newValue }, () => this.handleModalVisible());
+    this.setState({ value: newValue }, () => {
+      this.handleModalVisible('visible');
+      this.handleOnChange();
+    });
   }
 
   handleTableOnChange = (staffSn, dataIndex) => {
@@ -63,9 +99,18 @@ export default class WorkingStaff extends React.PureComponent {
     this.oatable.state.selectedRowKeys = selectedRowKeys.filter(item =>
       (staffSn.indexOf(item.staff_sn) !== -1)
     );
-    this.setState({ value: newDataSource });
+    this.setState({ value: newDataSource }, this.handleOnChange);
   }
 
+  addCurrentUser = () => {
+    const { value } = this.state;
+    const { user } = window;
+    value.push({
+      ...user,
+      ...valueDefault,
+    });
+    this.setState({ value: [...value] }, this.handleOnChange);
+  }
 
   ediTableCell = (dataIndex) => {
     return (value, record) => {
@@ -116,7 +161,7 @@ export default class WorkingStaff extends React.PureComponent {
           const aPoint = parseInt(record.point_a, 10) * number;
           const bPoint = parseInt(record.point_b, 10) * number;
           return (
-            <div style={{ color: ' #c8c8c8' }}>
+            <div style={{ color: 'rgb(150, 150, 150)' }}>
               <span style={{ marginRight: '20px' }}>{`A:${aPoint}`}</span>
               <span>{`B:${bPoint}`}</span>
             </div>
@@ -127,6 +172,7 @@ export default class WorkingStaff extends React.PureComponent {
     return columns;
   }
 
+
   makeTableProps = () => {
     const { value } = this.state;
     const extraOperator = [(
@@ -135,21 +181,21 @@ export default class WorkingStaff extends React.PureComponent {
         icon="user-add"
         type="primary"
         style={{ fontSize: 12 }}
-        onClick={() => { this.handleModalVisible(true); }}
+        onClick={() => { this.handleModalVisible('visible', true); }}
       >
         添加参与人
       </Button>
     )];
 
     const multiOperator = [
+      { text: '批量修改', action: selectedRows => this.handleBatch(selectedRows.map(row => row.staff_sn)) },
       { text: '批量删除', action: selectedRows => this.handleDelete(selectedRows.map(row => row.staff_sn)) },
     ];
 
-
-    // const { user } = window;
-    // const deleteUserStatus = value.find(item => item.staff_sn === user.staff_sn);
+    const deleteUserStatus = this.verifyCurrentUser();
+    const userAddClick = !deleteUserStatus ? { onClick: this.addCurrentUser } : null;
     const extraOperatorRight = (
-      <span style={{ color: '#59c3c3', fontSize: '12px', cursor: 'pointer' }}>
+      <span style={{ color: '#59c3c3', fontSize: '12px', cursor: 'pointer' }} {...userAddClick} >
         <Icon type="user-add" style={{ marginRight: '5px' }} />添加本人
       </span>
     );
@@ -170,19 +216,24 @@ export default class WorkingStaff extends React.PureComponent {
   }
 
   render() {
-    const { visible, value } = this.state;
+    const { visible, value, batchVisible } = this.state;
 
     return (
-      <div style={{ paddingTop: 5, width: 560 }}>
+      <div style={{ width: 560 }}>
         <OATable
-          ref={(e) => { this.oatable = e; }}
+          // ref={(e) => { this.oatable = e; }}
           {...this.makeTableProps()}
         />
         <ModalStaff
           visible={visible}
           value={value}
           onChange={this.handleModalStaffOnChange}
-          onCancel={this.handleModalVisible}
+          onCancel={() => this.handleModalVisible('visible', false)}
+        />
+        <BatchForm
+          visible={batchVisible}
+          handleChange={this.handleBatchChange}
+          onCancel={() => this.handleModalVisible('batchVisible', false)}
         />
       </div>
     );

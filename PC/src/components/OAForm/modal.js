@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
-import { Modal, notification } from 'antd';
+import { notification } from 'antd';
 import OAForm from './index';
+import OAModal from '../OAModal';
 import './notification.less';
 
 const defaultProps = {
@@ -17,7 +18,7 @@ const defaultProps = {
 
   },
 };
-export default class OAModal extends PureComponent {
+export default class Modal extends PureComponent {
   handleSubmit = () => {
     const { form, onSubmit } = this.props;
     form.validateFields((err, values) => {
@@ -72,7 +73,7 @@ export default class OAModal extends PureComponent {
   render() {
     const { children } = this.props;
     return (
-      <Modal
+      <OAModal
         {...this.makeModalProps()}
       >
         <OAForm
@@ -80,8 +81,8 @@ export default class OAModal extends PureComponent {
         >
           {children}
         </OAForm>
-      </Modal>
+      </OAModal>
     );
   }
 }
-OAModal.defaultProps = defaultProps;
+Modal.defaultProps = defaultProps;

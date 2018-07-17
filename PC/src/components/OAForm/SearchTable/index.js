@@ -3,6 +3,8 @@ import { Modal } from 'antd';
 import SelectTable from './selectTable';
 import RadioInput from './input';
 import CheckBoxTag from './tag';
+import CheckBoxCustomer from './staff';
+import RadioCustomer from './radioStaff';
 import Staff from './Model/Staff';
 import Shop from './Model/Shop';
 import './index.less';
@@ -146,8 +148,40 @@ export default class SearchTable extends PureComponent {
       );
   };
 
+  makeUserView = () => {
+    const { multiple, placeholder, disabled, showName, tableProps } = this.props;
+    const { visible, value } = this.state;
+    const commonProps = {
+      value,
+      disabled,
+      placeholder,
+      showName,
+      valueName: tableProps.index,
+      handleModelVisble: this.handleModelVisble,
+    };
+    return multiple ? (
+      <CheckBoxCustomer
+        {...commonProps}
+        setTagSelectedValue={(removeIndex) => {
+          const newValue = value.filter((_, index) => index !== removeIndex);
+          this.setTableValue(newValue);
+          this.handleOk();
+        }}
+      />
+    ) : (
+      <RadioCustomer
+        {...commonProps}
+        modalVisible={visible}
+        clearValue={() => {
+        this.setTableValue([]);
+      }}
+      />
+    );
+  }
+
+
   render() {
-    const { multiple, name, title, tableProps } = this.props;
+    const { mode, multiple, name, title, tableProps } = this.props;
     const { visible, modelStyle: { width }, value } = this.state;
     const footer = multiple ? null : { footer: null };
     let selectValue = [];
@@ -158,7 +192,8 @@ export default class SearchTable extends PureComponent {
     }
     return (
       <div>
-        {this.makeSearchView()}
+        { mode === 'default' && this.makeSearchView()}
+        { mode === 'user' && this.makeUserView()}
         <Modal
           destroyOnClose
           style={this.state.modelStyle}
@@ -185,6 +220,7 @@ export default class SearchTable extends PureComponent {
 }
 SearchTable.defaultProps = {
   title: '列表',
+  mode: 'default',
   onChange: () => { },
 };
 SearchTable.Staff = Staff;

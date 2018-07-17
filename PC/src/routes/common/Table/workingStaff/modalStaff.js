@@ -138,7 +138,6 @@ export default class ModalStaff extends React.PureComponent {
       width: 950,
       title: '选择参与人',
       onOk: this.handleOnChange,
-      destroyOnClose: false,
       onCancel: () => onCancel(false),
     };
     return response;
