@@ -221,6 +221,7 @@ export default class SearchTable extends PureComponent {
 SearchTable.defaultProps = {
   title: '列表',
   mode: 'default',
+  tableProps: { index: 'id' },
   onChange: () => { },
 };
 SearchTable.Staff = Staff;

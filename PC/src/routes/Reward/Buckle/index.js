@@ -9,6 +9,7 @@ const { TextArea } = Input;
 const FormItem = OAForm.Item;
 const {
   DatePicker,
+  SearchTable,
 } = OAForm;
 @connect()
 @OAForm.create()
@@ -60,6 +61,13 @@ export default class extends React.PureComponent {
           </FormItem>
           <FormItem label="事件配置" {...formItemLayout} >
             <WorkingStaff />
+          </FormItem>
+          <FormItem label="初审人" {...formItemLayout} >
+            <SearchTable
+              name={{}}
+              value={{}}
+              mode="user"
+            />
           </FormItem>
         </OAForm>
       </div>
