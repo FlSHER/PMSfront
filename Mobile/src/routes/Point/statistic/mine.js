@@ -2,17 +2,31 @@ import React from 'react';
 import {
   connect,
 } from 'dva';
+import ReactDOM from 'react-dom';
 import echarts from 'echarts';
 import moment from 'moment';
 import { Flex, WhiteSpace, WingBlank, List } from 'antd-mobile';
 import { PersonIcon } from '../../../components/index.js';
+import CheckBox from '../../../components/ModalFilters/CheckBox';
 import MonthPicker from '../../../components/General/MonthPicker';
 import { userStorage } from '../../../utils/util';
 
 import style from '../index.less';
 
+const pointCount = {
+  value: 0,
+  name: '1548',
+  selected: true,
+  label: {
+    show: true,
+    position: 'center',
+    fontSize: 24,
+    padding: [23, 0, 0, 0],
+  },
+};
+
 const awardOption = {
-  color: ['#66cbff', '#b4e682', '#fff04c', '#ffb266', '#ff7f94'],
+  color: ['#000', '#66cbff', '#b4e682', '#fff04c', '#ffb266', '#ff7f94'],
   legend: {
     type: 'scroll',
     orient: 'vertical',
@@ -23,13 +37,12 @@ const awardOption = {
   series: [
     {
       name: '访问来源',
-      center: [50, '50%'],
+      center: [72, '50%'],
       type: 'pie',
-      radius: ['50%', '70%'],
+      radius: ['60%', '61px'],
       label: {
         normal: {
           show: false,
-          position: 'center center',
         },
         emphasis: {
           show: true,
@@ -40,13 +53,19 @@ const awardOption = {
           show: false,
         },
       },
-      data: [
-
-      ],
+      data: [],
     },
   ],
 };
 
+const tabOptions = [
+  { label: 'A分', value: 1 },
+  { label: 'B分', value: 2 },
+];
+const pointConfig = [
+  { key: 'add_point', title: '当月奖分', total: 'add_point_total' },
+  { key: 'sub_point', title: '当月扣分', total: 'sub_point_total' },
+];
 @connect(({ statistic }) => ({
   data: statistic.data,
 }))
@@ -55,6 +74,7 @@ export default class Statistic extends React.Component {
     super(props);
     this.state = {
       userInfo: userStorage('userInfo'),
+      checked: 2,
     };
   }
 
@@ -64,22 +84,13 @@ export default class Statistic extends React.Component {
   }
 
   componentDidMount() {
-    this.award = echarts.init(document.getElementById('award'));
+    pointConfig.forEach((item) => {
+      this[`echarts${item.key}`] = echarts.init(this[item.key]);
+    });
   }
 
-  componentWillReceiveProps(props) {
-    const { award } = this;
-    const { data: { monthly } } = props;
 
-    const sourceBMonthly = monthly.source_b_monthly;
-    awardOption.legend.data = this.makeLegendData(sourceBMonthly, 'point_b_total');
-    awardOption.legend.formatter = name => this.makeLegendPercent(name, sourceBMonthly, 'point_b_total', Math.abs(monthly.point_b_monthly));
-    awardOption.series[0].data = this.makeSeriesData(sourceBMonthly, 'point_b_total', Math.abs(monthly.point_b_monthly));
-
-    award.setOption(awardOption);
-  }
-
-  getStatisticData =(params) => {
+  getStatisticData = (params) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'statistic/pointStatistic',
@@ -106,29 +117,26 @@ export default class Statistic extends React.Component {
   }
 
   makeSeriesData = (data, key, total) => {
-    const extra = [
-      { value: 0,
-        name: total,
-        selected: true,
-        label: {
-          show: true,
-          normal: {
-            show: true,
-            position: 'center',
-          },
-        } }];
+    const extra = pointCount;
+    extra.name = total;
     let newData = (data || []).map((item) => {
       const obj = {};
       obj.value = item[key];
       obj.name = item.name;
       return obj;
     });
-    newData = [...extra, ...newData];
-
+    newData = [extra, ...newData];
     return newData;
   }
 
   monthChange = (v) => {
+    this.getStatisticData({ datetime: v });
+  }
+
+  tabChange = (v) => {
+    this.setState({
+      checked: v,
+    });
     this.getStatisticData({ datetime: v });
   }
 
@@ -137,10 +145,22 @@ export default class Statistic extends React.Component {
     history.push('/point_list');
   }
 
+  renderEsChart = (elementChart, key, total) => {
+    const { data: { monthly } } = this.props;
+    const sourceBMonthly = monthly.source_b_monthly;
+    const count = Math.abs(monthly[total]);
+    awardOption.legend.data = this.makeLegendData(sourceBMonthly, key);
+    awardOption.legend.formatter = (name) => {
+      return this.makeLegendPercent(name, sourceBMonthly, key, count);
+    };
+    awardOption.series[0].data = this.makeSeriesData(sourceBMonthly, key, count);
+    elementChart.setOption(awardOption);
+  }
+
   render() {
     const { data: { monthly } } = this.props;
     const sourceBMonthly = monthly.source_b_monthly;
-    const { userInfo = {} } = this.state;
+    const { userInfo = {}, checked } = this.state;
     return (
       <Flex direction="column">
         <Flex.Item
@@ -179,6 +199,12 @@ export default class Statistic extends React.Component {
               </Flex>
             </div>
             <div className={style.players} style={{ padding: '0.4rem' }}>
+              <CheckBox
+                options={tabOptions}
+                multiple={false}
+                value={checked}
+                onChange={this.tabChange}
+              />
               <Flex align="start" className={style.data_item}>
                 <div className={style.aside}>
                   <div className={style.aside_title}>当月得分</div>
@@ -192,16 +218,26 @@ export default class Statistic extends React.Component {
                 </div>
               </Flex>
             </div>
-            <div
-              className={style.players}
-              ref={(e) => { this.ptr = e; }}
-            >
-              <div className={style.aside_title}>当月得分</div>
-              <div
-                id="award"
-                style={{ height: '3.28rem', ...(this.ptr && { width: this.ptr.offsetWidth }) }}
-              />
-            </div>
+            {pointConfig.map((item) => {
+              if (this[`echarts${item.key}`]) {
+                this.renderEsChart(this[`echarts${item.key}`], item.key, item.total);
+              }
+              return (
+                <div
+                  key={item.key}
+                  className={style.players}
+                >
+                  <div className={style.aside_title}>{item.title}</div>
+                  <div
+                    ref={(e) => {
+                      this[item.key] = ReactDOM.findDOMNode(e);
+                    }}
+                    style={{ height: '3.8133rem', width: '100%' }}
+                  />
+                </div>
+              );
+            })}
+
           </WingBlank>
         </Flex.Item>
       </Flex>
