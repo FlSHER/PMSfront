@@ -43,7 +43,14 @@ class Operator extends PureComponent {
       .length > 0;
     return (
       <div style={{ display: 'flex' }}>
-        <div className={styles.filterTableOperator} style={{ display: 'flex', flex: 1 }}>
+        <div
+          className={styles.filterTableOperator}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            flexGrow: 1,
+          }}
+        >
           {extraOperator || null}
           {sync && (
             <Tooltip title="数据同步">
