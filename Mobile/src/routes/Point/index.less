@@ -6,12 +6,40 @@
 
 .players {
   background: #fff;
-  padding: 0 22/75rem;
+  padding: 0 36/75rem;
   font-size: 14px;
   color: #000;
   .title {
     height: 70/75rem;
     border-bottom: 2px solid rgb(245, 245, 245);
+  }
+  .time_sel {
+    padding: 26/75rem;
+    border-bottom: 2px solid rgb(245, 245, 245);
+  }
+  .aside {
+    margin-right: 176/75rem;
+    flex-grow: 1;
+    .get_point {
+      .base(#000, 36px);
+      height: 100/75rem;
+      line-height: 100/75rem;
+      margin-top: 14/75rem;
+    }
+  }
+  .data_item {
+    margin-bottom: 60/75rem;
+    .base(rgb(155, 155, 155), 12px);
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.point_type {
+  margin-right: 76/75rem;
+  div + div {
+    margin-top: 20/75rem;
   }
 }
 
@@ -326,11 +354,19 @@
   border-radius: 4/75rem;
 }
 
+.header_info {
+  padding: 40/75rem 36/75rem;
+  background: #fff;
+  border-bottom: 1px solid rgb(250, 250, 250);
+}
+
+.point_total {
+  margin-top: 40/75rem;
+}
+
 .ranking_user_info {
-  padding: 36/75rem 40/75rem;
   display: flex;
   align-items: center;
-  background: #fff;
 }
 
 :global {

@@ -101,6 +101,12 @@ export const getRouterData = (app) => {
     '/ranking_group': {
       component: dynamicWrapper(app, ['ranking'], () => import('../routes/Point/ranking/rankingGroup')),
     },
+    '/point_statistic': {
+      component: dynamicWrapper(app, ['statistic'], () => import('../routes/Point/statistic/mine')),
+    },
+    '/month_picker': {
+      component: dynamicWrapper(app, [], () => import('../components/General/MonthPicker')),
+    },
     '/my': {
       component: dynamicWrapper(app, [], () => import('../routes/My/my')),
     },

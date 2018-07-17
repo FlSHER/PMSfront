@@ -4,6 +4,7 @@ import ListFilter from '../Filter/ListFilter';
 import { makerFilters } from '../../utils/util';
 import InputRange from './InputRange';
 import CheckBox from './CheckBox';
+import PickerRange from './PickerRange';
 import ModalSorter from './ModalSorter';
 import style from './index.less';
 
@@ -83,6 +84,20 @@ class ModalFilters extends React.Component {
     );
   }
 
+  makeTimeRangeFilter = (props) => {
+    const { name, min, max } = props;
+    const rangaValue = this.state.filters[name];
+    return (
+      <PickerRange
+        {...props}
+        value={rangaValue}
+        min={min}
+        max={max}
+        onChange={value => this.handleFiltersOnChange(name, value)}
+      />
+    );
+  }
+
   makeFilterComponent = (item) => {
     let component;
     switch (item.type) {
@@ -91,6 +106,9 @@ class ModalFilters extends React.Component {
         break;
       case 'checkBox':
         component = this.makeCheckFilter(item);
+        break;
+      case 'timerange':
+        component = this.makeTimeRangeFilter(item);
         break;
       default:
         break;
@@ -182,6 +200,19 @@ class ModalFilters extends React.Component {
 ModalFilters.defaultProps = {
   model: 'filter',
   filterColumns: [
+    {
+      title: '记录时间',
+      name: 'changed_at',
+      type: 'timerange',
+      addonBefore: (
+        <CheckBoxs
+          itemStyle={{ marginBottom: 0, marginRight: '0.1333rem' }}
+          option={[{ name: 'A分', value: 'point_a' }]}
+        />
+      ),
+      min: null,
+      max: new Date(),
+    },
     {
       title: '分值类型',
       name: 'point_a',

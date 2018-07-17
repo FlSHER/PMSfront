@@ -12,9 +12,11 @@ import { makerFilters, getUrlParams } from '../../../utils/util';
 import style from '../index.less';
 
 const sortList = [
-  { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
-  { name: '时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
-  { name: '时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
+  { name: '默认排序', value: 'changed_at-desc', icon: import('../../../assets/filter/default_sort.svg') },
+  { name: '生效时间升序', value: 'changed_at-asc', icon: import('../../../assets/filter/asc.svg') },
+  { name: '生效时间降序', value: 'changed_at-desc', icon: import('../../../assets/filter/desc.svg') },
+  { name: '记录时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
+  { name: '记录时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
   { name: 'A分升序', value: 'point_a-asc', icon: import('../../../assets/filter/asc.svg') },
   { name: 'A分降序', value: 'point_a_-desc', icon: import('../../../assets/filter/desc.svg') },
   { name: 'B分升序', value: 'point_b_-asc', icon: import('../../../assets/filter/asc.svg') },
@@ -72,17 +74,19 @@ export default class PointList extends React.Component {
       filterModal: false,
       sortModal: false,
     },
-    sortItem: { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
+    sortItem: { name: '默认排序', value: 'changed_at-desc', icon: import('../../../assets/filter/default_sort.svg') },
   }
 
   componentWillMount() {
     const { dispatch, location } = this.props;
+    const { sortItem } = this.state;
     this.urlParams = getUrlParams(location.search);
     dispatch({
       type: 'point/getPointLog',
       payload: {
         pagesize: 10,
         page: 1,
+        sort: sortItem.value,
         ...this.urlParams,
       },
     });
@@ -230,7 +234,7 @@ export default class PointList extends React.Component {
   timeChange = (date, key, range) => {
     const { filters } = this.state;
     const newFilter = { ...filters };
-    newFilter[key][range] = moment(date).format('YYYY/MM/DD');
+    newFilter[key][range] = moment(date).format('YYYY-MM-DD');
     this.setNewState('filter', newFilter);
   }
 
@@ -314,6 +318,7 @@ export default class PointList extends React.Component {
                 overflow: 'auto',
                 background: 'rgba(0, 0, 0, 0.1)',
               }}
+              top="1.17333rem"
               visible={this.state.modal.sortModal}
               onCancel={this.onCancel}
               filterKey="sortModal"
@@ -430,18 +435,18 @@ export default class PointList extends React.Component {
                 <DatePicker
                   mode="date"
                   format="YYYY-MM-DD"
-                  onChange={date => this.timeChange(date, 'changed_at', 'min')}
+                  onChange={date => this.timeChange(date, 'created_at', 'min')}
                 >
-                  <div className={style.some_time}>{filters.changed_at.min}</div>
+                  <div className={style.some_time}>{filters.created_at.min}</div>
                 </DatePicker>
               </Flex.Item>
               <Flex.Item>
                 <DatePicker
                   mode="date"
                   format="YYYY-MM-DD"
-                  onChange={date => this.timeChange(date, 'changed_at', 'max')}
+                  onChange={date => this.timeChange(date, 'created_at', 'max')}
                 >
-                  <div className={style.some_time}>{filters.changed_at.max}</div>
+                  <div className={style.some_time}>{filters.created_at.max}</div>
                 </DatePicker>
               </Flex.Item>
             </Flex>
@@ -456,18 +461,18 @@ export default class PointList extends React.Component {
                 <DatePicker
                   mode="date"
                   format="YYYY/MM/DD"
-                  onChange={date => this.timeChange(date, 'created_at', 'min')}
+                  onChange={date => this.timeChange(date, 'changed_at', 'min')}
                 >
-                  <div className={style.some_time}>{filters.created_at.min}</div>
+                  <div className={style.some_time}>{filters.changed_at.min}</div>
                 </DatePicker>
               </Flex.Item>
               <Flex.Item>
                 <DatePicker
                   mode="date"
                   format="YYYY-MM-DD"
-                  onChange={date => this.timeChange(date, 'created_at', 'max')}
+                  onChange={date => this.timeChange(date, 'changed_at', 'max')}
                 >
-                  <div className={style.some_time}>{filters.created_at.max}</div>
+                  <div className={style.some_time}>{filters.changed_at.max}</div>
                 </DatePicker>
               </Flex.Item>
             </Flex>

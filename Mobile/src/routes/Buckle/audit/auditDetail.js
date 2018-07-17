@@ -280,7 +280,7 @@ export default class AuditDetail extends React.Component {
           {approvers.map(item => this.makeApprover(item))}
           {detail.status_id === 2 ?
             <WhiteSpace size="sm" /> : null}
-          {detail.status_id === 2 ? (
+          {(detail.status_id === 2 || detail.status_id === -3) ? (
             <WingBlank className={style.parcel}>
               <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
                 <Flex className={style.title}> 配置分值</Flex>
