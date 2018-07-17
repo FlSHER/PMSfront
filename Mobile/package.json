@@ -23,6 +23,7 @@
     "classnames": "^2.2.5",
     "dva": "^2.3.0",
     "dva-loading": "^2.0.2",
+    "echarts": "^4.1.0",
     "moment": "^2.22.2",
     "rc-animate": "^2.4.4",
     "rc-queue-anim": "^1.5.0",
