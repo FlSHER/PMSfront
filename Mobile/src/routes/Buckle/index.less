@@ -11,7 +11,7 @@
       font-size: 16px;
     }
     @media (-webkit-min-device-pixel-ratio: 2),
-      (min-resolution: 2dppx) {
+    (min-resolution: 2dppx) {
       .am-list-body::before {
         background-color: #fff !important;
       }
@@ -335,4 +335,18 @@
 
 .opt_all {
   background: #badcff;
+}
+
+.all_info {
+  display: flex;
+  height: 140/75rem;
+  align-items: center;
+  .left {
+    flex-grow: 1;
+  }
+  :global {
+    .am-button-ghost::before {
+      border: none !important;
+    }
+  }
 }

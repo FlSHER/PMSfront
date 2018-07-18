@@ -18,22 +18,31 @@ import styles from '../../common.less';
   group: ranking.group,
 }))
 export default class PointRanking extends React.Component {
-  state = {
-    modal: {// 模态框
-      filterModal: false,
-      sortModal: false,
-      offsetBottom: 0,
-    },
-  }
-
-
   render() {
     return (
       <div
         className={styles.con}
       >
         <div className={styles.header}>
-11
+          <div className={style.all_info}>
+            <div className={style.left}>
+              <span>事件数量</span>
+              <span>总人次</span>
+            </div>
+            <div className={style.add}>
+              <Button
+                type="ghost"
+                inline
+                size="small"
+                style={{
+                  border: '1px dashed rgb(199,199,199)',
+                  color: 'rgb(155,155,155)',
+                }}
+              >
+            添加事件
+              </Button>
+            </div>
+          </div>
         </div>
         <div className={styles.con_content}>
           <WhiteSpace size="sm" />
