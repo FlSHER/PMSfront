@@ -111,7 +111,9 @@ export default class extends React.PureComponent {
             )}
           </FormItem>
           <FormItem label="事件配置" {...formItemLayout} >
-            <WorkingStaff />
+            {getFieldDecorator('workingStaff', {})(
+              <WorkingStaff />
+            )}
           </FormItem>
           <FormItem label="初审人" {...formItemLayout} >
             <SearchTable
