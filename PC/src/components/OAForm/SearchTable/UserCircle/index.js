@@ -3,7 +3,7 @@ import { Icon } from 'antd';
 import styles from '../index.less';
 
 function CircleTag(props) {
-  const { afterClose, closable, style, onClick, children } = props;
+  const { afterClose, closable, style, onClick, children, index } = props;
   return (
     <div
       onClick={onClick}
@@ -12,7 +12,7 @@ function CircleTag(props) {
     >
       <div className={styles.iconfont}>
         <Icon type="user" />
-        {closable && <Icon type="close" className={styles.close} onClick={() => afterClose} />}
+        {closable && <Icon type="close" className={styles.close} onClick={() => afterClose(index)} />}
       </div>
       <div style={{ lineHeight: '16px', paddingTop: 3 }}>{children}</div>
     </div>

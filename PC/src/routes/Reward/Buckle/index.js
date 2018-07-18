@@ -5,6 +5,18 @@ import OAForm from '../../../components/OAForm';
 import WorkingStaff from '../../common/Table/workingStaff';
 import styles from './index.less';
 
+const data = [
+  {
+    staff_sn: 110105,
+    realname: '张博涵',
+    brand_id: '总监',
+    position_id: '总监',
+    department_id: '总监',
+    status_id: '在职',
+  },
+];
+
+
 const { TextArea } = Input;
 const FormItem = OAForm.Item;
 const {
@@ -26,6 +38,37 @@ export default class extends React.PureComponent {
       form,
     };
     return response;
+  }
+
+  makeColumns = () => {
+    return [
+      {
+        title: '编号',
+        dataIndex: 'staff_sn',
+        searcher: true,
+      }, {
+        title: '姓名',
+        align: 'center',
+        dataIndex: 'realname',
+        searcher: true,
+      }, {
+        title: '品牌',
+        align: 'center',
+        dataIndex: 'brand_id',
+      }, {
+        title: '职位',
+        dataIndex: 'position_id',
+      }, {
+        title: '部门',
+        dataIndex: 'department_id',
+        width: 200,
+      },
+      {
+        title: '状态',
+        dataIndex: 'status_id',
+        align: 'center',
+      },
+    ];
   }
 
   render() {
@@ -64,9 +107,34 @@ export default class extends React.PureComponent {
           </FormItem>
           <FormItem label="初审人" {...formItemLayout} >
             <SearchTable
-              name={{}}
-              value={{}}
               mode="user"
+              name={{ staff_sn: 'staff_sn', realname: 'realname' }}
+              value={{}}
+              showName="realname"
+              tableProps={{
+                index: 'staff_sn',
+                data,
+                total: null,
+                loading: false,
+                multiple: true,
+                columns: this.makeColumns(),
+              }}
+            />
+          </FormItem>
+          <FormItem label="终审人" {...formItemLayout} >
+            <SearchTable
+              mode="user"
+              name={{ staff_sn: 'staff_sn', realname: 'realname' }}
+              value={{}}
+              showName="realname"
+              tableProps={{
+                index: 'staff_sn',
+                data,
+                total: null,
+                loading: false,
+                multiple: true,
+                columns: this.makeColumns(),
+              }}
             />
           </FormItem>
         </OAForm>

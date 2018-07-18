@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Modal } from 'antd';
+import OAModal from '../../OAModal';
 import SelectTable from './selectTable';
 import RadioInput from './input';
 import CheckBoxTag from './tag';
@@ -71,14 +71,18 @@ export default class SearchTable extends PureComponent {
       newValue = value.map((item) => {
         const temp = {};
         Object.keys(name).forEach((key) => {
-          temp[name[key]] = item[key];
+          if (item[key]) {
+            temp[name[key]] = item[key];
+          }
         });
         return temp;
       });
     } else {
       newValue = {};
       Object.keys(name).forEach((key) => {
-        newValue[name[key]] = value[key];
+        if (value[key]) {
+          newValue[name[key]] = value[key];
+        }
       });
     }
     return newValue;
@@ -168,15 +172,16 @@ export default class SearchTable extends PureComponent {
           this.handleOk();
         }}
       />
-    ) : (
-      <RadioCustomer
-        {...commonProps}
-        modalVisible={visible}
-        clearValue={() => {
-        this.setTableValue([]);
-      }}
-      />
-    );
+    ) :
+      (
+        <RadioCustomer
+          {...commonProps}
+          modalVisible={visible}
+          clearValue={() => {
+            this.setTableValue([]);
+          }}
+        />
+      );
   }
 
 
@@ -192,9 +197,9 @@ export default class SearchTable extends PureComponent {
     }
     return (
       <div>
-        { mode === 'default' && this.makeSearchView()}
-        { mode === 'user' && this.makeUserView()}
-        <Modal
+        {mode === 'default' && this.makeSearchView()}
+        {mode === 'user' && this.makeUserView()}
+        <OAModal
           destroyOnClose
           style={this.state.modelStyle}
           width={width}
@@ -213,7 +218,7 @@ export default class SearchTable extends PureComponent {
               setSelectedValue={this.setTableValue}
             />
           )}
-        </Modal>
+        </OAModal>
       </div>
     );
   }
