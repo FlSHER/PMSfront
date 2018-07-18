@@ -684,30 +684,28 @@ class OATable extends PureComponent {
     return (
       <Spin spinning={loading !== false} tip={`${loading}`}>
         <div className={styles.filterTable}>
-          <QueueAnim type={['right', 'left']}>
-            <QueueAnim key="hearderBoor" type="top">
-              <Operator
-                {...this.state}
-                sync={sync}
-                multiOperator={multiOperator}
-                extraOperator={this.makeExtraOperator()}
-                extraOperatorRight={extraOperatorRight}
-                fetchTableDataSource={this.fetchTableDataSource}
-                resetFilter={this.resetFilter}
-                clearSelectedRows={this.clearSelectedRows}
-              />
-            </QueueAnim>
+          <QueueAnim type={['right', 'left']} >
+            <Operator
+              {...this.state}
+              sync={sync}
+              key="Operator"
+              multiOperator={multiOperator}
+              extraOperator={this.makeExtraOperator()}
+              extraOperatorRight={extraOperatorRight}
+              fetchTableDataSource={this.fetchTableDataSource}
+              resetFilter={this.resetFilter}
+              clearSelectedRows={this.clearSelectedRows}
+            />
             {(tableVisible === true) && (
-              <QueueAnim key="table" type="bottom">
-                <Table
-                  {...this.makeTableProps()}
-                // components={{
-                //   body: {
-                //     wrapper: this.getBodyWrapper,
-                //   },
-                // }}
-                />
-              </QueueAnim>
+              <Table
+                {...this.makeTableProps()}
+                key="table"
+              // components={{
+              //   body: {
+              //     wrapper: this.getBodyWrapper,
+              //   },
+              // }}
+              />
             )}
           </QueueAnim>
         </div>

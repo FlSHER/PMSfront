@@ -86,20 +86,27 @@ export default class GlobalHeader extends PureComponent {
         />
         <div className={styles.right}>
           <div className={styles.icon}>
-            <Icon type="message" className={`${styles.action} ${styles.account}`} />
-            <Icon type="setting" className={`${styles.action} ${styles.account}`} />
+            <span className={`${styles.action}`}>
+              <Icon type="message" />
+            </span>
+            <span className={`${styles.action}`}>
+              <Icon type="setting" />
+            </span>
           </div>
           {currentUser.realname ? (
             <Dropdown overlay={menu}>
-              <span className={`${styles.action} ${styles.account}`} style={{ width: '180px', padding: '0 20px' }}>
+              <span className={`${styles.action} ${styles.account}`}>
                 <Avatar size="small" className={styles.avatar} src={currentUser.avatar || '/default_avatar.png'} />
-                <span className={styles.name}>
-                  <Ellipsis tooltip length={5}>{currentUser.realname}</Ellipsis>
-                </span>
-                <Icon type="caret-down" style={{ marginRight: '5px', fontSize: '12px', float: 'right', lineHeight: '60px' }} />
+                <Ellipsis
+                  tooltip
+                  length={5}
+                  className={styles.name}
+                >
+                  {currentUser.realname}
+                </Ellipsis>
               </span>
             </Dropdown>
-          ) : <Spin size="small" style={{ marginLeft: 8, lineHeight: '60px', width: 80 }} />}
+          ) : <Spin size="small" style={{ marginLeft: 8, width: 80 }} />}
         </div>
       </Header>
     );

@@ -147,7 +147,7 @@ export default class SiderMenu extends PureComponent {
   }
   render() {
     return (
-      <div className={styles.siderMenu}>
+      <div className={styles.headerMenu}>
         {this.getNavMenuItems(this.menus)}
       </div>
     );

@@ -36,8 +36,7 @@ export default class extends React.PureComponent {
       onClick: () => handleModelVisble(true),
     };
     return (
-      <React.Fragment>
-
+      <div style={{ ...style }}>
         {plusAble ? (
           <QueueAnim>
             {tags}
@@ -50,7 +49,6 @@ export default class extends React.PureComponent {
                 style={{
                   cursor: mouseStyle,
                   background: color,
-                  ...style,
                 }}
                 {...click}
               >
@@ -59,7 +57,7 @@ export default class extends React.PureComponent {
             </QueueAnim>
           )
         }
-      </React.Fragment>
+      </div>
     );
   }
 }

@@ -52,7 +52,7 @@ export default class extends React.PureComponent {
     });
 
     return (
-      <React.Fragment>
+      <div style={{ ...style }}>
         <QueueAnim>
           {tags}
         </QueueAnim>
@@ -62,13 +62,12 @@ export default class extends React.PureComponent {
             cursor: mouseStyle,
             background: color,
             float: 'left',
-            ...style,
           }}
           {...click}
         >
           <Icon type="plus" />
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }

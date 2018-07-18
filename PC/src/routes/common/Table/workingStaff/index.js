@@ -93,11 +93,15 @@ export default class WorkingStaff extends React.PureComponent {
 
   handleDelete = (staffSn) => {
     const dataSource = this.state.value;
-    const newDataSource = dataSource.filter(item => item.staff_sn === staffSn);
+    const newDataSource = dataSource.filter((item) => {
+      return staffSn.indexOf(item.staff_sn) === -1;
+    });
     const { selectedRows, selectedRowKeys } = this.oatable.state;
-    this.oatable.state.selectedRows = selectedRows.filter(item => staffSn.indexOf(item) !== -1);
+    this.oatable.state.selectedRows = selectedRows.filter((item) => {
+      return staffSn.indexOf(item.staff_sn) === -1;
+    });
     this.oatable.state.selectedRowKeys = selectedRowKeys.filter(item =>
-      (staffSn.indexOf(item.staff_sn) !== -1)
+      (staffSn.indexOf(item) === -1)
     );
     this.setState({ value: newDataSource }, this.handleOnChange);
   }
@@ -155,7 +159,7 @@ export default class WorkingStaff extends React.PureComponent {
       {
         title: '总分',
         dataIndex: 'count',
-        width: 150,
+        width: 100,
         render: (_, record) => {
           const number = parseInt(record.number, 10);
           const aPoint = parseInt(record.point_a, 10) * number;
@@ -165,6 +169,19 @@ export default class WorkingStaff extends React.PureComponent {
               <span style={{ marginRight: '20px' }}>{`A:${aPoint}`}</span>
               <span>{`B:${bPoint}`}</span>
             </div>
+          );
+        },
+      },
+      {
+        dataIndex: 'staff_sn',
+        render: (staffSn) => {
+          return (
+            <span
+              style={{ cursor: 'pointer', color: 'red', lineHeight: '22px' }}
+              onClick={() => this.handleDelete([staffSn])}
+            >
+              删除
+            </span>
           );
         },
       },
@@ -219,9 +236,9 @@ export default class WorkingStaff extends React.PureComponent {
     const { visible, value, batchVisible } = this.state;
 
     return (
-      <div style={{ width: 560 }}>
+      <div style={{ width: 540 }}>
         <OATable
-          // ref={(e) => { this.oatable = e; }}
+          ref={(e) => { this.oatable = e; }}
           {...this.makeTableProps()}
         />
         <ModalStaff

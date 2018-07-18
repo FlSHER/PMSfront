@@ -1,9 +1,9 @@
 import React from 'react';
-import { Input, Select } from 'antd';
+import { Input } from 'antd';
 import { connect } from 'dva';
 import OAForm from '../../../components/OAForm';
-import WorkingStaff from '../../common/Table/workingStaff';
-import styles from './index.less';
+import ListForm from './listForm';
+
 
 const data = [
   {
@@ -25,7 +25,6 @@ const data = [
 ];
 
 
-const { TextArea } = Input;
 const FormItem = OAForm.Item;
 const {
   DatePicker,
@@ -81,90 +80,94 @@ export default class extends React.PureComponent {
 
   render() {
     const { form: { getFieldDecorator } } = this.props;
-    const style = { style: { width: 560 } };
     const formItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 18 },
+      labelCol: { span: 3 },
+      wrapperCol: { span: 21 },
     };
+    const width = 670;
     return (
-      <div style={{ padding: 10 }}>
-        <OAForm {...this.makeFormProps()}>
-          <FormItem label="事件标题" {...formItemLayout}>
-            {getFieldDecorator('Select', {})(
-              <Select placeholder="请输入" {...style} />
-            )}
-          </FormItem>
-          <FormItem label="事件描述" {...formItemLayout}>
-            {getFieldDecorator('textArea', {})(
-              <TextArea placeholder="请输入" {...style} />
-            )}
-          </FormItem>
-          <FormItem label="事件时间" {...formItemLayout}>
-            {getFieldDecorator('datePicker', {})(
-              <DatePicker
-                placeholder="请输入"
-                {...style}
-                showToday={false}
-                dropdownClassName={styles.calendar}
-                popupStyle={{ width: 560 }}
+      <div style={{ marginTop: 20 }}>
+        <div style={{ width, margin: '0 auto' }}>
+          <ListForm
+            style={{ width, marginTop: 10 }}
+            placeholder="添加事件"
+            initialValue={[{ key: 0 }]}
+          />
+          <div style={{ fontSize: 12, color: '#969696', padding: '20px 0 20px 100px' }}>
+            <span style={{ marginRight: 30 }}>事件数量：0</span>
+            <span>总人次：0</span>
+          </div>
+          <OAForm {...this.makeFormProps()} style={{ padding: 10, width }}>
+            <FormItem label="主题" {...formItemLayout}>
+              {getFieldDecorator('input', {})(
+                <Input placeholder="请输入" />
+              )}
+            </FormItem>
+            <FormItem label="事件时间" {...formItemLayout}>
+              {getFieldDecorator('datePicker', {})(
+                <DatePicker
+                  placeholder="请输入"
+                  showToday={false}
+                  style={{ width: '100%' }}
+                />
+              )}
+            </FormItem>
+            <FormItem label="初审人" {...formItemLayout} >
+              <SearchTable
+                mode="user"
+                name={{ staff_sn: 'staff_sn', realname: 'realname' }}
+                value={{}}
+                showName="realname"
+                tableProps={{
+                  index: 'staff_sn',
+                  data,
+                  total: null,
+                  loading: false,
+                  multiple: true,
+                  columns: this.makeColumns(),
+                }}
               />
-            )}
-          </FormItem>
-          <FormItem label="事件配置" {...formItemLayout} >
-            {getFieldDecorator('workingStaff', {})(
-              <WorkingStaff />
-            )}
-          </FormItem>
-          <FormItem label="初审人" {...formItemLayout} >
-            <SearchTable
-              mode="user"
-              name={{ staff_sn: 'staff_sn', realname: 'realname' }}
-              value={{}}
-              showName="realname"
-              tableProps={{
-                index: 'staff_sn',
-                data,
-                total: null,
-                loading: false,
-                multiple: true,
-                columns: this.makeColumns(),
-              }}
-            />
-          </FormItem>
-          <FormItem label="终审人" {...formItemLayout} >
-            <SearchTable
-              mode="user"
-              name={{ staff_sn: 'staff_sn', realname: 'realname' }}
-              value={{}}
-              showName="realname"
-              tableProps={{
-                index: 'staff_sn',
-                data,
-                total: null,
-                loading: false,
-                multiple: true,
-                columns: this.makeColumns(),
-              }}
-            />
-          </FormItem>
-          <FormItem label="参与人" {...formItemLayout} >
-            <SearchTable
-              mode="user"
-              multiple
-              name={{ staff_sn: 'staff_sn', realname: 'realname' }}
-              value={[]}
-              showName="realname"
-              tableProps={{
-                index: 'staff_sn',
-                data,
-                total: null,
-                loading: false,
-                multiple: true,
-                columns: this.makeColumns(),
-              }}
-            />
-          </FormItem>
-        </OAForm>
+            </FormItem>
+            <FormItem label="终审人" {...formItemLayout} >
+              <SearchTable
+                mode="user"
+                name={{ staff_sn: 'staff_sn', realname: 'realname' }}
+                value={{}}
+                showName="realname"
+                tableProps={{
+                  index: 'staff_sn',
+                  data,
+                  total: null,
+                  loading: false,
+                  multiple: true,
+                  columns: this.makeColumns(),
+                }}
+              />
+            </FormItem>
+            <FormItem label="参与人" {...formItemLayout} >
+              <SearchTable
+                mode="user"
+                multiple
+                name={{ staff_sn: 'staff_sn', realname: 'realname' }}
+                value={[]}
+                showName="realname"
+                tableProps={{
+                  index: 'staff_sn',
+                  data,
+                  total: null,
+                  loading: false,
+                  multiple: true,
+                  columns: this.makeColumns(),
+                }}
+              />
+            </FormItem>
+            <FormItem label="备注" {...formItemLayout}>
+              {getFieldDecorator('textArea', {})(
+                <Input.TextArea placeholder="请输入备注说明......" style={{ height: 90 }} />
+              )}
+            </FormItem>
+          </OAForm>
+        </div>
       </div>
     );
   }

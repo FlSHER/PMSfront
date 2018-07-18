@@ -2,13 +2,13 @@ import React from 'react';
 import {
   Icon,
   Button,
-  Tooltip,
 } from 'antd';
+import QueueAnim from 'rc-queue-anim';
 import update from 'immutability-helper';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import CustomerCard from './Drag';
-import './index.less';
+import styles from './index.less';
 
 export default (CustomerFrom) => {
   @DragDropContext(HTML5Backend)
@@ -60,13 +60,11 @@ export default (CustomerFrom) => {
 
     makeRmoveIcon = (k) => {
       return (
-        <Tooltip title="删除">
-          <Icon
-            className="dynamic-delete-button"
-            type="close"
-            onClick={() => this.remove(k)}
-          />
-        </Tooltip>
+        <Icon
+          className="dynamic-delete-button"
+          type="close"
+          onClick={() => this.remove(k)}
+        />
       );
     }
 
@@ -88,37 +86,51 @@ export default (CustomerFrom) => {
     }
 
     makeNewCustomerFroms = () => {
-      const { sorter, name } = this.props;
+      const { sorter, name, style } = this.props;
       const newList = this.state.dataSource.map((item, i) => {
         const key = `${item.key}`;
         const newName = `${name}[${i}]`;
+        // const content = (
+        //   <div
+        //     key={key}
+        //     style={{
+        //       flexGrow: 1,
+        //       display: 'flex',
+        //       ...(!sorter ? {
+        //         borderBottom: '1px solid #ccc',
+        //         marginTop: '8px',
+        //         paddingBottom: '8px',
+        //       } : null),
+        //     }}
+        //   >
+        //     <div style={{ flexGrow: 1 }}>
+        //       <CustomerFrom
+        //         {...this.props}
+        //         value={item}
+        //         name={newName}
+        //       />
+        //     </div>
+        //     <div style={{
+        //       display: 'flex',
+        //       flexDirection: 'column',
+        //       paddingLeft: '10px',
+        //     }}
+        //     >
+        //       {this.makeRmoveIcon(item.key)}
+        //     </div>
+        //   </div>
+        // );
         const content = (
-          <div
-            key={key}
-            style={{
-              flexGrow: 1,
-              display: 'flex',
-              ...(!sorter ? {
-                borderBottom: '1px solid #ccc',
-                marginTop: '8px',
-                paddingBottom: '8px',
-              } : null),
-            }}
-          >
-            <div style={{ flexGrow: 1 }}>
+          <div key={key} className={styles.container} style={style}>
+            <div className={styles.header}>
+              {this.makeRmoveIcon(item.key)}
+            </div>
+            <div className={styles.content}>
               <CustomerFrom
                 {...this.props}
                 value={item}
                 name={newName}
               />
-            </div>
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              paddingLeft: '10px',
-            }}
-            >
-              {this.makeRmoveIcon(item.key)}
             </div>
           </div>
         );
@@ -137,12 +149,23 @@ export default (CustomerFrom) => {
     }
 
     render() {
+      const { width, style, placeholder } = this.props;
+      const btnWidth = { width: width || (style && style.width) };
       return (
         <React.Fragment>
-          {this.makeNewCustomerFroms()}
-          <div style={{ textAlign: 'center', marginTop: 12, height: 32, lineHeight: '32px' }}>
-            <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>
-              <Icon type="plus" /> 添加
+          <QueueAnim>
+            {this.makeNewCustomerFroms()}
+          </QueueAnim>
+          <div
+            style={{
+              textAlign: 'center',
+              marginTop: 12,
+              height: 32,
+              lineHeight: '32px',
+            }}
+          >
+            <Button type="dashed" onClick={this.add} style={{ ...btnWidth }}>
+              <Icon type="plus" /> {placeholder || '添加'}
             </Button>
           </div>
         </React.Fragment>
