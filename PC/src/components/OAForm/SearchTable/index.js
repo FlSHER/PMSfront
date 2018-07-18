@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Modal } from 'antd';
+import OAModal from '../../OAModal';
 import SelectTable from './selectTable';
 import RadioInput from './input';
 import CheckBoxTag from './tag';
@@ -71,14 +71,18 @@ export default class SearchTable extends PureComponent {
       newValue = value.map((item) => {
         const temp = {};
         Object.keys(name).forEach((key) => {
-          temp[name[key]] = item[key];
+          if (item[key]) {
+            temp[name[key]] = item[key];
+          }
         });
         return temp;
       });
     } else {
       newValue = {};
       Object.keys(name).forEach((key) => {
-        newValue[name[key]] = value[key];
+        if (value[key]) {
+          newValue[name[key]] = value[key];
+        }
       });
     }
     return newValue;
@@ -149,13 +153,14 @@ export default class SearchTable extends PureComponent {
   };
 
   makeUserView = () => {
-    const { multiple, placeholder, disabled, showName, tableProps } = this.props;
+    const { multiple, placeholder, disabled, showName, tableProps, style } = this.props;
     const { visible, value } = this.state;
     const commonProps = {
       value,
       disabled,
       placeholder,
       showName,
+      style,
       valueName: tableProps.index,
       handleModelVisble: this.handleModelVisble,
     };
@@ -168,15 +173,16 @@ export default class SearchTable extends PureComponent {
           this.handleOk();
         }}
       />
-    ) : (
-      <RadioCustomer
-        {...commonProps}
-        modalVisible={visible}
-        clearValue={() => {
-        this.setTableValue([]);
-      }}
-      />
-    );
+    ) :
+      (
+        <RadioCustomer
+          {...commonProps}
+          modalVisible={visible}
+          clearValue={() => {
+            this.setTableValue([]);
+          }}
+        />
+      );
   }
 
 
@@ -192,10 +198,9 @@ export default class SearchTable extends PureComponent {
     }
     return (
       <div>
-        { mode === 'default' && this.makeSearchView()}
-        { mode === 'user' && this.makeUserView()}
-        <Modal
-          destroyOnClose
+        {mode === 'default' && this.makeSearchView()}
+        {mode === 'user' && this.makeUserView()}
+        <OAModal
           style={this.state.modelStyle}
           width={width}
           title={title}
@@ -213,7 +218,7 @@ export default class SearchTable extends PureComponent {
               setSelectedValue={this.setTableValue}
             />
           )}
-        </Modal>
+        </OAModal>
       </div>
     );
   }
@@ -221,6 +226,7 @@ export default class SearchTable extends PureComponent {
 SearchTable.defaultProps = {
   title: '列表',
   mode: 'default',
+  tableProps: { index: 'id' },
   onChange: () => { },
 };
 SearchTable.Staff = Staff;

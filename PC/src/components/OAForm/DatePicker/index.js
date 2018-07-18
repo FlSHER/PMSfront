@@ -8,22 +8,11 @@ import './index.less';
 export default class DataPicker extends PureComponent {
   render() {
     const { value, onChange, format } = this.props;
-    const momentValue = value ? { value: moment(value, format || 'YYYY-MM-DD') } : null;
+    const momentValue = value && value.length ? { value: moment(value, format || 'YYYY-MM-DD') } : {};
     return (
       <DatePicker
         {...this.props}
         {...momentValue}
-        dateRender={(current, today) => {
-          let className = 'ant-calendar-date';
-          if (current.date() === today.date()) {
-            className = 'ant-calendar-date customer-today';
-          }
-          return (
-            <div className={className}>
-              {current.date()}
-            </div>
-          );
-        }}
         onChange={(_, dateString) => {
           onChange(dateString);
         }}
