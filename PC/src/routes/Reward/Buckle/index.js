@@ -14,6 +14,14 @@ const data = [
     department_id: '总监',
     status_id: '在职',
   },
+  {
+    staff_sn: 110106,
+    realname: '蒋玉元',
+    brand_id: '总监',
+    position_id: '总监',
+    department_id: '总监',
+    status_id: '在职',
+  },
 ];
 
 

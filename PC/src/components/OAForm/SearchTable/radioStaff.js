@@ -3,6 +3,7 @@ import {
   Tooltip,
   Icon,
 } from 'antd';
+import QueueAnim from 'rc-queue-anim';
 import UserCircle from './UserCircle';
 import styles from './index.less';
 
@@ -36,19 +37,28 @@ export default class extends React.PureComponent {
     };
     return (
       <React.Fragment>
-        {plusAble ? tags : (
-          <div
-            className={styles.dashed}
-            style={{
-              cursor: mouseStyle,
-              background: color,
-              ...style,
-            }}
-            {...click}
-          >
-            <Icon type="plus" />
-          </div>
-        )}
+
+        {plusAble ? (
+          <QueueAnim>
+            {tags}
+          </QueueAnim>
+        ) :
+          (
+            <QueueAnim>
+              <div
+                className={styles.dashed}
+                style={{
+                  cursor: mouseStyle,
+                  background: color,
+                  ...style,
+                }}
+                {...click}
+              >
+                <Icon type="plus" />
+              </div>
+            </QueueAnim>
+          )
+        }
       </React.Fragment>
     );
   }

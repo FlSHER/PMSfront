@@ -200,7 +200,6 @@ export default class SearchTable extends PureComponent {
         {mode === 'default' && this.makeSearchView()}
         {mode === 'user' && this.makeUserView()}
         <OAModal
-          destroyOnClose
           style={this.state.modelStyle}
           width={width}
           title={title}
