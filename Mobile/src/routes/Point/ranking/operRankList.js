@@ -193,77 +193,13 @@ export default class PointRanking extends React.Component {
     //   this.dealFilter();
     // });
   }
+
   toPointList = (item) => {
     const { history, ranking } = this.props;
     const groupId = ranking.group_id;
     history.push(`/point_list?staff_sn=${item.staff_sn}&group_id=${groupId}`);
   }
-  renderRankingItem = (item) => {
-    const { userInfo } = this;
-    if (item.staff_sn === userInfo.staff_sn) {
-      return (
-        <Flex
-          justify="between"
-          key={item.staff_sn}
-          style={{
-            borderBottom: '1px solid rgb(250,250,250)',
-            position: 'relative',
-            height: '50px',
-            padding: '0 0.48rem',
-          }}
-        >
-          <Flex.Item
-            style={{ fontSize: '16px', color: 'rgb(24,116,208)' }}
-          >
-            <span>{item.rank}&nbsp;&nbsp;{item.staff_name}</span>
-            <span
-              id="my"
-              style={{ position: 'absolute', top: '-40px' }}
-            >看不见我
-            </span>
-          </Flex.Item>
-          <Flex.Item
-            style={{
-              color: 'rgb(24,116,208)',
-              fontSize: '16px',
-              textAlign: 'right',
-            }}
-          >
-            {item.total}
-          </Flex.Item>
-        </Flex>
-      );
-    }
-    return (
-      <Flex
-        key={item.staff_sn}
 
-        justify="between"
-        style={{
-          height: '50px',
-          padding: '0 0.48rem',
-          borderBottom: '1px solid rgb(250,250,250)',
-        }}
-      >
-        <Flex.Item
-          style={{
-            fontSize: '16px',
-          }}
-        >
-          {item.rank}&nbsp;&nbsp;{item.staff_name}
-        </Flex.Item>
-        <Flex.Item
-          style={{
-            color: 'rgb(155,155,155)',
-            fontSize: '16px',
-            textAlign: 'right',
-          }}
-        >
-          {item.total}
-        </Flex.Item>
-      </Flex>
-    );
-  }
   render() {
     const { ranking, loading, group } = this.props;
     const statisGroup = group.statis_group || [];

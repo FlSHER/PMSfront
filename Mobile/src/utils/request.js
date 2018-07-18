@@ -138,7 +138,6 @@ export default function request(uri, params, loading = true) {
     })
     .catch((error) => { // 加上catch
       Toast.hide();
-      console.log('hide', Toast);
       return error;
     });
 }

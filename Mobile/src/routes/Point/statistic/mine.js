@@ -15,7 +15,7 @@ import style from '../index.less';
 
 const pointCount = {
   value: 0,
-  name: '1548',
+  name: '0',
   selected: true,
   label: {
     show: true,
@@ -25,8 +25,9 @@ const pointCount = {
   },
 };
 
-const awardOption = {
-  color: ['#000', '#66cbff', '#b4e682', '#fff04c', '#ffb266', '#ff7f94'],
+const colorStyle = ['#000', '#66cbff', '#b4e682', '#fff04c', '#ffb266', '#ff7f94'];
+const pieOption = {
+  color: colorStyle,
   legend: {
     type: 'scroll',
     orient: 'vertical',
@@ -46,6 +47,7 @@ const awardOption = {
         },
         emphasis: {
           show: true,
+          color: '#000',
         },
       },
       labelLine: {
@@ -57,11 +59,87 @@ const awardOption = {
     },
   ],
 };
+const lineOption = {
+  color: colorStyle.slice(1),
+  tooltip: {
+    trigger: 'axis',
+  },
+  legend: {
+    type: 'scroll',
+    orient: 'vertical',
+    right: 0,
+    top: 0,
+    data: [
+      'A分',
+      'B分',
+    ],
+  },
+  grid: {
+    left: '8%',
+    right: '4%',
+    bottom: '3%',
+    top: 20,
+    containLabel: true,
+  },
+  xAxis: {
+    type: 'category',
+    boundaryGap: false,
+    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+    axisLine: { // x轴
+      lineStyle: {
+        color: 'rgb(199,199,199)',
+        width: 2,
+      },
+      symbol: ['none', 'arrow'],
+    },
+    axisLabel: {
+      color: 'rgb(74,74,74)',
+    },
+    axisTick: { // x轴刻度线
+      show: false,
+    },
+  },
+  yAxis: {
+    type: 'value',
+    axisTick: { // y轴刻度线
+      show: false,
+    },
+    splitNumber: 3,
+    minInterval: 1,
+    scale: true,
+    splitLine: false,
+    axisLine: { // x轴
+      lineStyle: {
+        color: 'rgb(199,199,199)',
+        width: 2,
+      },
+      symbol: ['none', 'arrow'],
+    },
+    axisLabel: {
+      color: 'rgb(74,74,74)',
+    },
+  },
+  series: [
+    {
+      name: '邮件营销',
+      type: 'line',
+      stack: '总量',
+      data: [500, 500, 500, 134, 0, -100, 210],
+    },
+    {
+      name: '联盟广告',
+      type: 'line',
+      stack: '总量',
+      data: [220, 182, 191, 234, 290, 330, 310],
+    },
+  ],
+};
 
 const tabOptions = [
-  { label: 'A分', value: 1 },
-  { label: 'B分', value: 2 },
+  { label: 'A分', value: 1, key: 'point_a' },
+  { label: 'B分', value: 2, key: 'total' },
 ];
+
 const pointConfig = [
   { key: 'add_point', title: '当月奖分', total: 'add_point_total' },
   { key: 'sub_point', title: '当月扣分', total: 'sub_point_total' },
@@ -87,8 +165,8 @@ export default class Statistic extends React.Component {
     pointConfig.forEach((item) => {
       this[`echarts${item.key}`] = echarts.init(this[item.key]);
     });
+    this.echartsLine = echarts.init(this.line);
   }
-
 
   getStatisticData = (params) => {
     const { dispatch } = this.props;
@@ -103,7 +181,7 @@ export default class Statistic extends React.Component {
     let desc = '';
     newData.forEach((item) => {
       if (item.name === name) {
-        const percent = (item[key] / total).toFixed(2) * 100;
+        const percent = Math.abs((item[key] / total).toFixed(2)) * 100;
         const des = `${item.name}:${percent}%`;
         desc = des;
       }
@@ -116,17 +194,44 @@ export default class Statistic extends React.Component {
     return legend;
   }
 
-  makeSeriesData = (data, key, total) => {
-    const extra = pointCount;
-    extra.name = total;
-    let newData = (data || []).map((item) => {
+  makePieSeriesData = (data, key, total) => {
+    const extra = { ...pointCount };
+    if (total === 0) {
+      extra.label.color = '#000';
+      extra.selected = false;
+    }
+    extra.name = total !== null && total !== undefined && total.toString();
+    let newData = (data || []).filter(item => item[key]).map((item) => {
       const obj = {};
       obj.value = item[key];
       obj.name = item.name;
       return obj;
     });
+
     newData = [extra, ...newData];
     return newData;
+  }
+
+  makeLineSeriesData = (lineData) => {
+    const point = {};
+    tabOptions.forEach((item) => {
+      point[item.key] = [];
+    });
+    lineData.forEach((item) => {
+      tabOptions.forEach(its => point[its.key].push(item[its.key]));
+    });
+    const seriesData = tabOptions.map((item) => {
+      const obj = { type: 'line' };
+      obj.name = item.label;
+      obj.center = [72, '30%'];
+      obj.data = [...point[item.key]];
+      return obj;
+    });
+    return seriesData;
+  }
+
+  makexAxisData = (xAxis) => {
+    return xAxis.map(item => item.month);
   }
 
   monthChange = (v) => {
@@ -148,19 +253,33 @@ export default class Statistic extends React.Component {
   renderEsChart = (elementChart, key, total) => {
     const { data: { monthly } } = this.props;
     const sourceBMonthly = monthly.source_b_monthly;
-    const count = Math.abs(monthly[total]);
-    awardOption.legend.data = this.makeLegendData(sourceBMonthly, key);
-    awardOption.legend.formatter = (name) => {
+    const count = Math.abs(monthly[total] ? monthly[total] : 0);
+    const newpieOption = { ...pieOption };
+    newpieOption.legend.data = this.makeLegendData(sourceBMonthly, key);
+    newpieOption.legend.formatter = (name) => {
       return this.makeLegendPercent(name, sourceBMonthly, key, count);
     };
-    awardOption.series[0].data = this.makeSeriesData(sourceBMonthly, key, count);
-    elementChart.setOption(awardOption);
+    if (count === 0) {
+      newpieOption.color = '#fff';
+    }
+    newpieOption.series[0].data = this.makePieSeriesData(sourceBMonthly, key, count);
+    elementChart.setOption(newpieOption);
+  }
+
+  renderChartLine = () => {
+    const { data: { trend } } = this.props;
+    lineOption.series = this.makeLineSeriesData(trend);
+    lineOption.xAxis.data = this.makexAxisData(trend);
+    this.echartsLine.setOption(lineOption);
   }
 
   render() {
     const { data: { monthly } } = this.props;
     const sourceBMonthly = monthly.source_b_monthly;
     const { userInfo = {}, checked } = this.state;
+    if (this.echartsLine) {
+      this.renderChartLine();
+    }
     return (
       <Flex direction="column">
         <Flex.Item
@@ -211,7 +330,7 @@ export default class Statistic extends React.Component {
                   <div className={style.get_point}>{monthly.point_b_monthly}</div>
                 </div>
                 <div className={style.point_type}>
-                  {(sourceBMonthly || []).map((item, i) => {
+                  {((sourceBMonthly && sourceBMonthly.slice(1, 4)) || []).map((item, i) => {
                     const idx = i;
                     return (<div key={idx}>{item.name}：{item.add_point}</div>);
                   })}
@@ -226,6 +345,7 @@ export default class Statistic extends React.Component {
                 <div
                   key={item.key}
                   className={style.players}
+                  style={{ padding: '0.4rem' }}
                 >
                   <div className={style.aside_title}>{item.title}</div>
                   <div
@@ -237,7 +357,18 @@ export default class Statistic extends React.Component {
                 </div>
               );
             })}
-
+            <div
+              className={style.players}
+              style={{ padding: '0.4rem' }}
+            >
+              <div className={style.aside_title}>变化趋势</div>
+              <div
+                ref={(e) => {
+                this.line = ReactDOM.findDOMNode(e);
+              }}
+                style={{ height: '3.8133rem', width: '100%' }}
+              />
+            </div>
           </WingBlank>
         </Flex.Item>
       </Flex>

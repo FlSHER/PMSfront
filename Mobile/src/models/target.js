@@ -1,27 +1,22 @@
 import { Toast } from 'antd-mobile';
 import {
-  pointStatistic,
-} from '../services/statistic';
+  userTarget,
+} from '../services/target';
 import defaultReducers from './reducers/default';
 
 export default {
-  namespace: 'statistic',
+  namespace: 'target',
   state: {
-    data: {
-      monthly: {},
-      trend: [
-        { month: 6, point_a: 100, total: 30 },
-      ],
-    },
+    target: {},
   },
   effects: {
-    *pointStatistic({ payload }, { call, put }) {
-      const response = yield call(pointStatistic, payload);
+    *getTarget({ payload }, { call, put }) {
+      const response = yield call(userTarget, payload);
       if (response && !response.error) {
         yield put({
           type: 'save',
           payload: {
-            store: 'data',
+            store: 'target',
             data: response,
           },
         });
