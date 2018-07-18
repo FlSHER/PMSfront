@@ -137,6 +137,23 @@ export default class extends React.PureComponent {
               }}
             />
           </FormItem>
+          <FormItem label="参与人" {...formItemLayout} >
+            <SearchTable
+              mode="user"
+              multiple
+              name={{ staff_sn: 'staff_sn', realname: 'realname' }}
+              value={[]}
+              showName="realname"
+              tableProps={{
+                index: 'staff_sn',
+                data,
+                total: null,
+                loading: false,
+                multiple: true,
+                columns: this.makeColumns(),
+              }}
+            />
+          </FormItem>
         </OAForm>
       </div>
     );

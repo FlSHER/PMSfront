@@ -2,26 +2,10 @@ import React from 'react';
 import {
   Tooltip,
   Icon,
-  Button,
 } from 'antd';
 import styles from './index.less';
+import UserCircle from './UserCircle';
 
-
-function CircleTag(props) {
-  const { afterClose, closable, style, onClick, children } = props;
-  return (
-    <div
-      onClick={onClick}
-      className={styles.circlContent}
-      style={style}
-    >
-      {closable && <span onClick={() => afterClose}><Icon type="close" /></span>}
-      <div>
-        {children}
-      </div>
-    </div>
-  );
-}
 
 export default class extends React.PureComponent {
   handleTagRemove = (removedTag) => {
@@ -29,11 +13,12 @@ export default class extends React.PureComponent {
   };
 
   render() {
-    const { value, showName, valueName } = this.props;
+    const { value, showName, valueName, style } = this.props;
     let tagsData = [];
     if (value && value.length > 0) {
       tagsData = value.map((item, index) => {
         return {
+          disabled: item.disabled || false,
           value: item[valueName],
           label: item[showName] || '',
           key: index,
@@ -53,29 +38,34 @@ export default class extends React.PureComponent {
       const key = `tag${item.value}-${index}`;
       // const TooltipKey = `${tag}-${item.value}`;
       const tagElem = (
-        <CircleTag
+        <UserCircle
           key={key}
           style={{ cursor: mouseStyle, background: color }}
-          closable={!this.props.disabled}
+          closable={!this.props.disabled || !item.disabled}
           afterClose={() => this.handleTagRemove(item.key)}
         >
           {isLongTag ? `${tag.slice(0, 20)}...` : tag}
-        </CircleTag>
+        </UserCircle>
       );
       return isLongTag ? <Tooltip title={tag} key={key}>{tagElem}</Tooltip> : tagElem;
     });
 
     return (
-      <div>
+      <React.Fragment>
         {tags}
-        <CircleTag
-          key="tag.add"
+        <div
+          className={styles.dashed}
+          style={{
+            cursor: mouseStyle,
+            background: color,
+            float: 'left',
+            ...style,
+          }}
           {...click}
-          style={{ cursor: mouseStyle, background: color, borderStyle: 'dashed' }}
         >
-          <Button Icon="plus" shape="circle" />
-        </CircleTag>
-      </div>
+          <Icon type="plus" />
+        </div>
+      </React.Fragment>
     );
   }
 }
