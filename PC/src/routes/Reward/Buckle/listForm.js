@@ -2,16 +2,18 @@ import React from 'react';
 import { Input, Select } from 'antd';
 import OAForm from '../../../components/OAForm';
 import WorkingStaff from '../../common/Table/workingStaff';
-import styles from './index.less';
 
 const { TextArea } = Input;
 const FormItem = OAForm.Item;
 const {
   FormList,
-  DatePicker,
 } = OAForm;
 @FormList
-@OAForm.create()
+@OAForm.create({
+  onValuesChange(props, changedValues, allValues) {
+    props.onChange(allValues, props.index);
+  },
+})
 export default class extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -37,7 +39,7 @@ export default class extends React.PureComponent {
     return (
       <OAForm {...this.makeFormProps()} style={{ padding: 10, width: 670 }}>
         <FormItem label="事件标题" {...formItemLayout}>
-          {getFieldDecorator('Select', {})(
+          {getFieldDecorator('select', {})(
             <Select placeholder="请输入" style={style} />
           )}
         </FormItem>

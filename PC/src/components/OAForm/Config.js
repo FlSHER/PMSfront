@@ -68,9 +68,9 @@ export default (FormComponet) => {
       }
     }
 
-    handleOnChange = (changedFields) => {
+    handleOnChange = (changedFields, index) => {
       const { onChange } = this.props;
-      if (onChange) onChange();
+      if (onChange) onChange(changedFields, index);
       if (!this.autoSave) return;
       clearInterval(this.localSavingInterval);
       const fieldsValue = {};

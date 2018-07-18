@@ -37,6 +37,20 @@ export default class extends React.PureComponent {
     super(props);
     const { form, bindForm } = props;
     bindForm(form);
+    this.state = {
+      eventNumber: 1,
+      listFormValue: [{ key: 1 }],
+    };
+  }
+
+  countEventNumber = (eventNumber) => {
+    this.setState({ eventNumber });
+  }
+
+  handleListFormChange = (params, index) => {
+    const newListValue = [...this.state.listFormValue];
+    newListValue[index] = params;
+    this.setState({ listFormValue: [...newListValue] });
   }
 
   makeFormProps = () => {
@@ -80,22 +94,31 @@ export default class extends React.PureComponent {
 
   render() {
     const { form: { getFieldDecorator } } = this.props;
+    const { listFormValue, eventNumber } = this.state;
     const formItemLayout = {
       labelCol: { span: 3 },
       wrapperCol: { span: 21 },
     };
     const width = 670;
+    let staffNumber = 0;
+    listFormValue.forEach((item) => {
+      if (item.workingStaff) {
+        staffNumber += item.workingStaff.length;
+      }
+    });
     return (
       <div style={{ marginTop: 20 }}>
         <div style={{ width, margin: '0 auto' }}>
           <ListForm
+            countNumber={this.countEventNumber}
+            initialValue={listFormValue}
+            onChange={this.handleListFormChange}
             style={{ width, marginTop: 10 }}
             placeholder="添加事件"
-            initialValue={[{ key: 0 }]}
           />
           <div style={{ fontSize: 12, color: '#969696', padding: '20px 0 20px 100px' }}>
-            <span style={{ marginRight: 30 }}>事件数量：0</span>
-            <span>总人次：0</span>
+            <span style={{ marginRight: 30 }}>事件数量：{eventNumber}</span>
+            <span>总人次：{staffNumber}</span>
           </div>
           <OAForm {...this.makeFormProps()} style={{ padding: 10, width }}>
             <FormItem label="主题" {...formItemLayout}>
