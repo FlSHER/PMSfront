@@ -158,8 +158,8 @@ export default function ListView(ListItem) {
 
 
     pullDownToRefresh = () => {
-      const { onRefresh } = this.props;
-      const { height } = this.state;
+      const { onRefresh, offsetBottom } = this.props;
+      const height = this.state.height - (offsetBottom || 0);
       return (
         <PullToRefresh
           onRefresh={onRefresh}

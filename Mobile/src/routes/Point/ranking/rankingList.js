@@ -63,6 +63,7 @@ export default class PointRanking extends React.Component {
     if (this.ptr) {
       const htmlDom = ReactDOM.findDOMNode(this.ptr);
       const offsetBottom = htmlDom.offsetHeight;
+      console.log(offsetBottom);
       setTimeout(() => this.setState({
         offsetBottom,
       }), 0);
