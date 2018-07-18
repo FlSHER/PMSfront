@@ -37,7 +37,7 @@ export default class EditableCell extends React.PureComponent {
 
   render() {
     const { value, editable } = this.state;
-    const { type } = this.props;
+    const { type, style } = this.props;
     return (
       <div className="editable-cell" onClick={this.edit}>
         {
@@ -49,6 +49,7 @@ export default class EditableCell extends React.PureComponent {
               onChange={this.handleChange}
               onPressEnter={this.check}
               onBlur={this.check}
+              style={{ ...style }}
             />
           ) : (
               value
