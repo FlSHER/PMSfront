@@ -7,7 +7,7 @@ export async function loginByTelephone(params) {
   });
 }
 export async function queryCurrent() {
-  const response = request('/api/oa/current-user').catch(() => {
+  const response = request('/api/current-user').catch(() => {
     return undefined;
   });
   return response;

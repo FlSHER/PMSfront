@@ -106,7 +106,7 @@ export default class GlobalHeader extends PureComponent {
                 </Ellipsis>
               </span>
             </Dropdown>
-          ) : <Spin size="small" style={{ marginLeft: 8, width: 80 }} />}
+          ) : <Spin size="small" style={{ marginLeft: 8, width: 80, lineHeight: 'inherit' }} />}
         </div>
       </Header>
     );

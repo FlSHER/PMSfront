@@ -135,18 +135,17 @@ class BasicLayout extends React.PureComponent {
       currentUser, routerData, match, location, location: { pathname },
     } = this.props;
     const layout = (
-      <Layout>
-        <Layout>
-          <GlobalHeader
-            logo={logo}
-            currentUser={currentUser}
-            location={location}
-            menuData={getMenuData()}
-          />
-          <Content className={styles.container}>
-            <PageHeader />
-            <Layout className={styles.content} style={{ height: 'calc(100vh - 260px)' }}>
-              {
+      <Layout style={{ height: '100%' }}>
+        <GlobalHeader
+          logo={logo}
+          currentUser={currentUser}
+          location={location}
+          menuData={getMenuData()}
+        />
+        <Content className={styles.container}>
+          <PageHeader />
+          <Layout className={styles.content}>
+            {
                 pathname !== '/index' && (
                 <SiderMenu
                   location={location}
@@ -154,11 +153,11 @@ class BasicLayout extends React.PureComponent {
                 />
                 )
               }
-              <Content className={styles.contentView}>
-                <div>
-                  <Switch>
-                    {
-                      getRoutes(match.path, routerData).map(item =>
+            <Content className={styles.contentView}>
+              <div>
+                <Switch>
+                  {
+                    getRoutes(match.path, routerData).map(item =>
                         (
                           <AuthorizedRoute
                             key={item.key}
@@ -171,19 +170,19 @@ class BasicLayout extends React.PureComponent {
                         )
                       )
                     }
-                    {
+                  {
                       redirectData.map(item =>
                         <Redirect key={item.from} exact from={item.from} to={item.to} />
                       )
                     }
-                    <Redirect exact from="/" to="/index" />
-                    <Route render={NotFound} />
-                  </Switch>
-                </div>
-              </Content>
-            </Layout>
-          </Content>
-        </Layout>
+                  <Redirect exact from="/" to="/index" />
+                  <Route render={NotFound} />
+                </Switch>
+              </div>
+            </Content>
+          </Layout>
+        </Content>
+        <GlobalFooter copyright={<React.Fragment> Copyright <Icon type="copyright" /> 2018 喜歌实业IT部出品</React.Fragment>} />
       </Layout>
     );
 
@@ -193,7 +192,6 @@ class BasicLayout extends React.PureComponent {
           {params => (
             <div className={classNames(params)} style={{ height: '100%' }}>
               {layout}
-              <GlobalFooter copyright={<React.Fragment> Copyright <Icon type="copyright" /> 2018 喜歌实业IT部出品</React.Fragment>} />
             </div>
           )}
         </ContainerQuery>
