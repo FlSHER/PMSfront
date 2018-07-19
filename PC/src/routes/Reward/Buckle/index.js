@@ -102,7 +102,7 @@ export default class extends React.PureComponent {
     const width = 670;
     let staffNumber = 0;
     listFormValue.forEach((item) => {
-      if (item.workingStaff) {
+      if (item && item.workingStaff) {
         staffNumber += item.workingStaff.length;
       }
     });

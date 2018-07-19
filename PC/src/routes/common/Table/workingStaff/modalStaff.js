@@ -12,6 +12,77 @@ const data = [
     department_id: '总监',
     status_id: '在职',
   },
+  {
+    staff_sn: 110106,
+    realname: '张博涵1',
+    brand_id: '总监',
+    position_id: '总监',
+    department_id: '总监',
+    status_id: '在职',
+  },
+  {
+    staff_sn: 110107,
+    realname: '张博涵2',
+    brand_id: '总监',
+    position_id: '总监',
+    department_id: '总监',
+    status_id: '在职',
+  },
+  {
+    staff_sn: 110108,
+    realname: '张博涵3',
+    brand_id: '总监',
+    position_id: '总监',
+    department_id: '总监',
+    status_id: '在职',
+  },
+  {
+    staff_sn: 110109,
+    realname: '张博涵4',
+    brand_id: '总监',
+    position_id: '总监',
+    department_id: '总监',
+    status_id: '在职',
+  },
+  {
+    staff_sn: 1101010,
+    realname: '张博涵5',
+    brand_id: '总监',
+    position_id: '总监',
+    department_id: '总监',
+    status_id: '在职',
+  },
+  {
+    staff_sn: 1101011,
+    realname: '张博涵6',
+    brand_id: '总监',
+    position_id: '总监',
+    department_id: '总监',
+    status_id: '在职',
+  },
+  {
+    staff_sn: 1101012,
+    realname: '张博涵7',
+    brand_id: '总监',
+    position_id: '总监',
+    department_id: '总监',
+    status_id: '在职',
+  },
+  {
+    staff_sn: 1101013,
+    realname: '张博涵8',
+    brand_id: '总监',
+    position_id: '总监',
+    department_id: '总监',
+    status_id: '在职',
+  }, {
+    staff_sn: 1101014,
+    realname: '张博涵9',
+    brand_id: '总监',
+    position_id: '总监',
+    department_id: '总监',
+    status_id: '在职',
+  },
 ];
 
 @connect()
@@ -124,6 +195,7 @@ export default class ModalStaff extends React.PureComponent {
       total: null,
       loading: false,
       multiple: true,
+      scroll: { x: 760 },
       columns: this.makeColumns(),
       fetchDataSource: this.fetchStaff,
       setSelectedValue: this.setSelectedValue,
@@ -135,7 +207,7 @@ export default class ModalStaff extends React.PureComponent {
     const { visible, onCancel } = this.props;
     const response = {
       visible,
-      width: 950,
+      width: 800,
       title: '选择参与人',
       onOk: this.handleOnChange,
       onCancel: () => onCancel(false),
@@ -145,11 +217,9 @@ export default class ModalStaff extends React.PureComponent {
 
   render() {
     return (
-      <div style={{ paddingTop: 5, width: 560 }}>
-        <OAModal {...this.makeModalProps()} >
-          <SelectTable {...this.makeTableProps()} />
-        </OAModal>
-      </div>
+      <OAModal {...this.makeModalProps()} >
+        <SelectTable {...this.makeTableProps()} />
+      </OAModal>
     );
   }
 }

@@ -145,7 +145,7 @@ class BasicLayout extends React.PureComponent {
           />
           <Content className={styles.container}>
             <PageHeader />
-            <Layout className={styles.content}>
+            <Layout className={styles.content} style={{ height: 'calc(100vh - 260px)' }}>
               {
                 pathname !== '/index' && (
                 <SiderMenu
@@ -155,7 +155,7 @@ class BasicLayout extends React.PureComponent {
                 )
               }
               <Content className={styles.contentView}>
-                <div style={{ minHeight: 'calc(100vh - 260px)' }}>
+                <div>
                   <Switch>
                     {
                       getRoutes(match.path, routerData).map(item =>
@@ -180,7 +180,6 @@ class BasicLayout extends React.PureComponent {
                     <Route render={NotFound} />
                   </Switch>
                 </div>
-                <GlobalFooter copyright={<React.Fragment> Copyright <Icon type="copyright" /> 2018 喜歌实业IT部出品</React.Fragment>} />
               </Content>
             </Layout>
           </Content>
@@ -194,6 +193,7 @@ class BasicLayout extends React.PureComponent {
           {params => (
             <div className={classNames(params)} style={{ height: '100%' }}>
               {layout}
+              <GlobalFooter copyright={<React.Fragment> Copyright <Icon type="copyright" /> 2018 喜歌实业IT部出品</React.Fragment>} />
             </div>
           )}
         </ContainerQuery>
