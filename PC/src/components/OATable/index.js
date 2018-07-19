@@ -114,8 +114,8 @@ class OATable extends PureComponent {
 
 
   showTotal = (total, range) => {
-    const { filtered } = this.props;
-    return <div style={{ color: '#969696' }}>{`显示 ${range[0]} - ${range[1]} 项 , 共 ${filtered} 项 (由 ${total} 项结果过滤)`}</div>;
+    // const { filtered } = this.props;
+    return <div style={{ color: '#969696' }}>{`显示 ${range[0]} - ${range[1]} 项 , 共 ${total} 项`}</div>;
   }
 
   fetchTableDataSource = (fetch) => {

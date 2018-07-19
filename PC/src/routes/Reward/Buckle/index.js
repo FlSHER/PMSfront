@@ -1,36 +1,13 @@
 import React from 'react';
 import { Input } from 'antd';
-import { connect } from 'dva';
 import OAForm from '../../../components/OAForm';
 import ListForm from './listForm';
-
-
-const data = [
-  {
-    staff_sn: 110105,
-    realname: '张博涵',
-    brand_id: '总监',
-    position_id: '总监',
-    department_id: '总监',
-    status_id: '在职',
-  },
-  {
-    staff_sn: 110106,
-    realname: '蒋玉元',
-    brand_id: '总监',
-    position_id: '总监',
-    department_id: '总监',
-    status_id: '在职',
-  },
-];
-
 
 const FormItem = OAForm.Item;
 const {
   DatePicker,
   SearchTable,
 } = OAForm;
-@connect()
 @OAForm.create()
 export default class extends React.PureComponent {
   constructor(props) {
@@ -136,53 +113,38 @@ export default class extends React.PureComponent {
               )}
             </FormItem>
             <FormItem label="初审人" {...formItemLayout} >
-              <SearchTable
-                mode="user"
-                name={{ staff_sn: 'staff_sn', realname: 'realname' }}
-                value={{}}
-                showName="realname"
-                tableProps={{
-                  index: 'staff_sn',
-                  data,
-                  total: null,
-                  loading: false,
-                  multiple: true,
-                  columns: this.makeColumns(),
-                }}
-              />
+              {getFieldDecorator('first', {
+                initialValue: {},
+              })(
+                <SearchTable.Staff
+                  mode="user"
+                  name={{ staff_sn: 'staff_sn', realname: 'realname' }}
+                  showName="realname"
+                />
+              )}
             </FormItem>
             <FormItem label="终审人" {...formItemLayout} >
-              <SearchTable
-                mode="user"
-                name={{ staff_sn: 'staff_sn', realname: 'realname' }}
-                value={{}}
-                showName="realname"
-                tableProps={{
-                  index: 'staff_sn',
-                  data,
-                  total: null,
-                  loading: false,
-                  multiple: true,
-                  columns: this.makeColumns(),
-                }}
-              />
+              {getFieldDecorator('last', {
+                initialValue: {},
+              })(
+                <SearchTable.Staff
+                  mode="user"
+                  name={{ staff_sn: 'staff_sn', realname: 'realname' }}
+                  showName="realname"
+                />
+              )}
             </FormItem>
             <FormItem label="参与人" {...formItemLayout} >
-              <SearchTable
-                mode="user"
-                multiple
-                name={{ staff_sn: 'staff_sn', realname: 'realname' }}
-                value={[]}
-                showName="realname"
-                tableProps={{
-                  index: 'staff_sn',
-                  data,
-                  total: null,
-                  loading: false,
-                  multiple: true,
-                  columns: this.makeColumns(),
-                }}
-              />
+              {getFieldDecorator('working', {
+                initialValue: [],
+              })(
+                <SearchTable.Staff
+                  mode="user"
+                  multiple
+                  name={{ staff_sn: 'staff_sn', realname: 'realname' }}
+                  showName="realname"
+                />
+              )}
             </FormItem>
             <FormItem label="备注" {...formItemLayout}>
               {getFieldDecorator('textArea', {})(

@@ -81,6 +81,7 @@ export default class OATreeSelect extends PureComponent {
     const response = {
       ...this.props,
       value: this.makeTreeValue(),
+      dropdownStyle: { maxLength: '400px' },
       treeData: markTreeData(data, fields, parentValue),
     };
     Object.keys(defaultProps).forEach((key) => {

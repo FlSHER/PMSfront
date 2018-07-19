@@ -67,10 +67,18 @@ function getFlatMenuData(menus) {
   return keys;
 }
 
+const model = [
+  'currentUser',
+  'brand',
+  'position',
+  'department',
+  'staffs',
+];
+
 export const getRouterData = (app) => {
   const routerConfig = {
     '/': {
-      component: dynamicWrapper(app, ['currentUser'], () => import('../layouts/BasicLayout')),
+      component: dynamicWrapper(app, [...model], () => import('../layouts/BasicLayout')),
     },
     '/index': {
       component: dynamicWrapper(app, [], () => import('../routes/Index')),
@@ -78,8 +86,6 @@ export const getRouterData = (app) => {
     '/reward/buckle': {
       component: dynamicWrapper(app, [], () => import('../routes/Reward/Buckle')),
     },
-
-
     '/exception/403': {
       component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
     },
