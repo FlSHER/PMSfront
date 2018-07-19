@@ -116,6 +116,7 @@ export default class SelectTable extends React.Component {
       fetchDataSource,
       total,
       index,
+      scroll,
     } = this.props;
 
     const { value } = this.state;
@@ -132,6 +133,7 @@ export default class SelectTable extends React.Component {
     return (
       <div style={{ cursor: this.state.cursor }}>
         <OATable
+          {...{ scroll }}
           {...selection}
           columns={columns}
           data={data}

@@ -681,6 +681,7 @@ class OATable extends PureComponent {
   render() {
     const { multiOperator, tableVisible, extraOperatorRight, sync } = this.props;
     const { loading } = this.state;
+
     return (
       <Spin spinning={loading !== false} tip={`${loading}`}>
         <div className={styles.filterTable}>

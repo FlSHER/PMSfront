@@ -245,6 +245,7 @@ export default class WorkingStaff extends React.PureComponent {
           visible={visible}
           value={value}
           onChange={this.handleModalStaffOnChange}
+          filters={{ content: 'status_id>=0;', status: [1, 2, 3] }}
           onCancel={() => this.handleModalVisible('visible', false)}
         />
         <BatchForm

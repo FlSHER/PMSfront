@@ -124,6 +124,7 @@ export default class Shop extends PureComponent {
       data: shop,
       total: shopTotal,
       index: 'shop_sn',
+      scroll: { x: 760 },
       loading: (shopLoading || brandLoading || departmentLoading),
     };
 

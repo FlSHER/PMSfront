@@ -219,6 +219,7 @@ export default class Staff extends PureComponent {
     } = this.props;
     const tableProps = {
       index: 'staff_sn',
+      scroll: { x: 760 },
       total: staffSearcherTotal[staffSearcherParams],
       data: staffSearcherResult[staffSearcherParams],
       loading: (staffsLoading || brandLoading || departmentLoading || positionLoading),
