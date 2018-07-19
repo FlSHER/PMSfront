@@ -10,7 +10,7 @@ const {
 } = OAForm;
 @FormList
 @OAForm.create({
-  onValuesChange(props, changedValues, allValues) {
+  onValuesChange(props, _, allValues) {
     props.onChange(allValues, props.index);
   },
 })
