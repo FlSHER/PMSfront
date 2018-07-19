@@ -46,6 +46,43 @@
   }
 }
 
+.preview {
+  background: #fff;
+  padding-left: 36/75rem;
+  .pre_title {
+    .text-overflow();
+    line-height: 44/75rem;
+    height: 118/75rem;
+    padding-top: 30/75rem;
+    padding-right: 60/75rem;
+    .base(rgb(0, 0, 0), @detail-title-size);
+  }
+  .predec {
+    .textLineOverFlow();
+    .base(@base-text-color, @list-text-size);
+    line-height: 40/75rem;
+    padding-bottom: 30/75rem;
+    padding-right: 60/75rem;
+  }
+}
+
+.person_point {
+  padding: 20/75rem 0;
+  .item {
+    .base(@base-text-color, @list-text-size);
+    margin-bottom: 20/75rem;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    span {
+      margin-right: 66/75rem;
+      i {
+        font-style: normal;
+      }
+    }
+  }
+}
+
 .queue-demo-wrapper {
   position: relative;
   background: #cce9f9;

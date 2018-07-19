@@ -16,11 +16,20 @@ import { makerFilters } from '../utils/util.js';
 export default {
   namespace: 'buckle',
   state: {
-    selectStaff: [],
+    // selectStaff: [],
     info: {
       executedAt: new Date(),
       description: '',
       participants: [],
+    },
+    infos: {
+
+    },
+    selectStaff: {
+      first: [],
+      final: [],
+      participants: [],
+      copy: [],
     },
     optAll: {
       pointA: '',

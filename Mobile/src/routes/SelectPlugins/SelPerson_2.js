@@ -14,27 +14,11 @@ import style from './index.less';
   finalStaff: searchStaff.finalStaff,
   searStaff: searchStaff.searStaff,
   breadCrumb: searchStaff.breadCrumb,
-  selectStaff: searchStaff.selectStaff,
   loading1: loading.effects['searchStaff/fetchSearchStaff'],
   loading2: loading.effects['searchStaff/fetchSelfDepStaff'],
   loading3: loading.effects['searchStaff/fetchFirstDepartment'],
   searchLoding: loading.effects['searchStaff/serachStaff'],
 }))
-
-// @connect(props => ({
-//   department: props.searchStaff.department,
-//   staff: props.searchStaff.staff,
-//   finalStaff: props.searchStaff.finalStaff,
-//   searStaff: props.searchStaff.searStaff,
-//   breadCrumb: props.searchStaff.breadCrumb,
-//   // selectStaff: props.searchStaff.selectStaff,
-//   selectStaff: props[type].selectStaff,
-
-//   loading1: props.loading.effects['searchStaff/fetchSearchStaff'],
-//   loading2: props.loading.effects['searchStaff/fetchSelfDepStaff'],
-//   loading3: props.loading.effects['searchStaff/fetchFirstDepartment'],
-//   searchLoding: props.loading.effects['searchStaff/serachStaff'],
-// }))
 export default class SelPerson extends Component {
   state = {
     selected: {
@@ -251,7 +235,7 @@ export default class SelPerson extends Component {
   }
 
   selectOk = () => {
-    const { history, selectStaff, dispatch } = this.props;
+    const { dispatch } = this.props;
     const { selected, key } = this.state;
     const newSelectstaff = { ...selectStaff };
     const tmpSelected = selectStaff[key].concat(selected.data);
