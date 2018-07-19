@@ -25,8 +25,12 @@ export default class extends React.PureComponent {
   }
 
   handleListFormChange = (params, index) => {
-    const newListValue = [...this.state.listFormValue];
-    newListValue[index] = params;
+    let newListValue = [...this.state.listFormValue];
+    if (!params) {
+      newListValue = newListValue.filter((_, i) => i === index);
+    } else {
+      newListValue[index] = params;
+    }
     this.setState({ listFormValue: [...newListValue] });
   }
 

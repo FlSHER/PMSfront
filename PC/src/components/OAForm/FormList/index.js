@@ -48,7 +48,11 @@ export default (CustomerFrom) => {
     remove = (key) => {
       const { dataSource } = this.state;
       const newDataSource = dataSource.filter(item => item.key !== key);
-      this.setState({ dataSource: [...newDataSource] }, this.countNumber);
+      this.setState({ dataSource: [...newDataSource] }, () => {
+        const { onChange } = this.props;
+        onChange(null, key);
+        this.countNumber();
+      });
     }
 
     add = () => {
@@ -58,7 +62,7 @@ export default (CustomerFrom) => {
       this.setState({ dataSource: [...dataSource] }, this.countNumber);
     }
 
-    countNumber=() => {
+    countNumber = () => {
       const { countNumber } = this.props;
       if (countNumber) countNumber(this.state.dataSource.length);
     }
