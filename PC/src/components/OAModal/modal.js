@@ -1,26 +1,33 @@
 import React from 'react';
 import { Modal } from 'antd';
+import styles from './modal.less';
+import { getModalToAndHeight, getModalBodyHeight } from '../../utils/utils';
 
 export default class OAModal extends React.PureComponent {
   render() {
-    const { title, titleStyle } = this.props;
+    const { title, titleStyle, bodyStyle } = this.props;
+    const titleView = (
+      <div
+        className={styles.titleContent}
+        style={titleStyle}
+      >
+        {title}
+      </div>
+    );
     return (
       <Modal
         destroyOnClose
+        style={{
+          ...getModalToAndHeight(),
+          overflow: 'hidden',
+        }}
         {...this.props}
-        title={(
-          <div style={{
-            width: '100%',
-            height: '100%',
-            textAlign: 'center',
-            lineHeight: '40px',
-            color: '#fff',
-            ...titleStyle,
-          }}
-          >
-            {title}
-          </div>
-        )}
+        bodyStyle={{
+          ...bodyStyle,
+          height: getModalBodyHeight(),
+          overflowY: 'auto',
+        }}
+        title={titleView}
       />
     );
   }

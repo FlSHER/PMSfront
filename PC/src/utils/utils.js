@@ -375,3 +375,52 @@ export function dontInitialValue(name, value, multiple = false) {
   }
   return newValue;
 }
+
+
+/**
+ * 屏幕高度，是否大屏
+ */
+export function getClientRatio() {
+  const { height } = document.body.getBoundingClientRect();
+  return {
+    height,
+    isBigRatio: height > 660,
+  };
+}
+/**
+ * 弹窗高度
+ */
+export function getModalToAndHeight() {
+  const { height, isBigRatio } = getClientRatio();
+  const style = {};
+  const maxHeight = 600;
+  const minTo = 30;
+  if (isBigRatio) {
+    style.height = maxHeight;
+    style.top = (height - maxHeight) / 2;
+  } else {
+    style.height = height - (minTo * 2);
+    style.top = minTo;
+  }
+  return style;
+}
+/**
+ * 弹窗内容高度
+ */
+export function getModalBodyHeight() {
+  const { height } = getModalToAndHeight();
+  const modalTitleHeight = 40;
+  const bodyHeight = height - modalTitleHeight;
+  return bodyHeight;
+}
+
+/**
+ * 弹窗内表格高度
+ */
+export function getTableBodyHeight() {
+  const modalBodyHeight = getModalBodyHeight();
+  const tableHeader = 46;
+  const tableeExtarHegiht = 60;
+  const tablePaginatiopnBottom = 55;
+  return modalBodyHeight - (tableHeader + tableeExtarHegiht + tablePaginatiopnBottom);
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import OAModal from '../modal';
 import SelectTable from '../../OAForm/SearchTable/selectTable';
-import { makeInitialValue, dontInitialValue } from '../../../utils/utils';
+import { makeInitialValue, dontInitialValue, getTableBodyHeight } from '../../../utils/utils';
 
 const defaultProps = {
   name: {},
@@ -45,11 +45,19 @@ export default class ModalStaff extends React.PureComponent {
     });
   }
 
+
   makeTableProps = () => {
+    const scrollHegiht = getTableBodyHeight();
     const response = {
       ...this.props,
+      scroll: { x: 1000, y: scrollHegiht },
       setSelectedValue: this.setSelectedValue,
     };
+
+    if (this.props.scroll) {
+      response.scroll.x = this.props.scroll.x || 1000;
+    }
+
     Object.keys(defaultProps).forEach((key) => {
       delete response[key];
     });
@@ -57,10 +65,10 @@ export default class ModalStaff extends React.PureComponent {
   }
 
   makeModalProps = () => {
-    const { visible, onCancel, multiple } = this.props;
+    const { visible, onCancel, multiple, modalProps } = this.props;
     const response = {
       visible,
-      ...this.props.modalProps,
+      ...modalProps,
     };
     response.onCancel = () => onCancel(false);
     if (multiple) {
@@ -73,7 +81,9 @@ export default class ModalStaff extends React.PureComponent {
 
   render() {
     return (
-      <OAModal {...this.makeModalProps()} >
+      <OAModal
+        {...this.makeModalProps()}
+      >
         <SelectTable {...this.makeTableProps()} />
       </OAModal>
     );

@@ -37,7 +37,7 @@ export default class extends PureComponent {
     const { onSearchRange } = this.props;
     const { value } = this.state;
     return (
-      <div className="ant-table-filter-dropdown">
+      <div className="ant-table-filter-dropdown" style={{ minWidth: 260 }}>
         <InputRange
           value={value[0]}
           onChange={this.onChange}

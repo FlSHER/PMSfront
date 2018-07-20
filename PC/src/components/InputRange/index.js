@@ -32,9 +32,9 @@ export default class InputBetween extends PureComponent {
     const { addonAfter } = this.props;
     return (
       <React.Fragment>
-        <InputGroup compact>
+        <InputGroup compact style={{ display: 'flex' }}>
           <Input
-            style={{ width: 100, textAlign: 'center' }}
+            style={{ flexGrow: 1, textAlign: 'center' }}
             placeholder="最小值"
             value={min ? min.toString() : ''}
             onChange={e => this.handleOnChange(e, 'min')}
@@ -42,8 +42,8 @@ export default class InputBetween extends PureComponent {
           />
           <Input
             style={{
-              width: 30,
               borderLeft: 0,
+              width: 30,
               pointerEvents: 'none',
               backgroundColor: '#fff',
             }}
@@ -52,7 +52,7 @@ export default class InputBetween extends PureComponent {
           />
           <Input
             style={{
-              width: 100,
+              flexGrow: 1,
               textAlign: 'center',
               borderLeft: 0,
             }}

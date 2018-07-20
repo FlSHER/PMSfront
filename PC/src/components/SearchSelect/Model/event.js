@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
+import Ellipsis from 'ant-design-pro/lib/Ellipsis';
 import SearchSelect from '../SearchSelect';
 import { ModalSelect } from '../../OAModal';
 import { makerFilters } from '../../../utils/utils';
@@ -50,20 +51,30 @@ export default class Event extends React.Component {
 
   makeColumns = () => {
     const { eventType } = this.props;
+    // const { isBigRatio } = getClientRatio();
     const columns = [
       {
         dataIndex: 'id',
         title: '编号',
         searcher: true,
+        sorter: true,
+        width: 100,
       },
       {
         dataIndex: 'name',
         title: '名称',
         searcher: true,
+        width: 280,
+        render: (name) => {
+          return (
+            <Ellipsis length={4} tooltip>{name}</Ellipsis>
+          );
+        },
       },
       {
         dataIndex: 'type_id',
         title: '事件类型',
+        width: 280,
         treeFilters: {
           title: 'name',
           value: 'id',
@@ -79,19 +90,25 @@ export default class Event extends React.Component {
       {
         dataIndex: 'point_a_default',
         title: 'A分',
+        rangeFilters: true,
+        width: 100,
       },
       {
         dataIndex: 'point_b_default',
         title: 'B分',
+        width: 100,
+        rangeFilters: true,
       },
       {
         dataIndex: 'first_approver_name',
         title: '初审人',
+        width: 100,
         searcher: true,
       },
       {
         dataIndex: 'final_approver_name',
         title: '终审人',
+        width: 100,
         searcher: true,
       },
     ];
@@ -104,16 +121,13 @@ export default class Event extends React.Component {
     const response = {
       ...this.props,
       value,
-      afterClick: () => this.handleVisible(true),
       dataSource: [],
+      afterClick: () => this.handleVisible(true),
       fetchDataSource: this.fetchEvent,
     };
     if (Array.isArray(dataSource)) {
       response.dataSource = dataSource.map(item => ({ value: item.id, text: item.name }));
-    } else if (typeof dataSource === 'object') {
-      response.dataSource = dataSource.data.map(item => ({ value: item.id, text: item.name }));
     }
-
     return response;
   }
 
@@ -121,6 +135,7 @@ export default class Event extends React.Component {
   makeModalSelectProps = () => {
     const { visible } = this.state;
     const { dataSource, loading } = this.props;
+
     const response = {
       visible,
       index: 'id',
@@ -129,6 +144,7 @@ export default class Event extends React.Component {
       columns: this.makeColumns(),
       onCancel: this.handleVisible,
       fetchDataSource: this.fetchEvent,
+      scroll: { x: 1000 },
       modalProps: {
         title: '选择事件',
         width: 800,
