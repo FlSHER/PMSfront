@@ -133,15 +133,15 @@ export default class SelectTable extends React.Component {
     return (
       <div style={{ cursor: this.state.cursor }}>
         <OATable
-          {...{ scroll }}
+          serverSide
+          {...{ scroll: scroll || { x: 760 } }}
           {...selection}
           columns={columns}
           data={data}
           total={total}
           loading={loading}
-          fetchDataSource={fetchDataSource}
-          serverSide
           onRow={this.handleRow}
+          fetchDataSource={fetchDataSource}
         />
       </div>
     );

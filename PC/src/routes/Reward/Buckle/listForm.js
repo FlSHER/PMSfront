@@ -1,6 +1,7 @@
 import React from 'react';
-import { Input, Select } from 'antd';
+import { Input } from 'antd';
 import OAForm from '../../../components/OAForm';
+import { EventSearch } from '../../../components/SearchSelect';
 import WorkingStaff from '../../common/Table/workingStaff';
 
 const { TextArea } = Input;
@@ -39,9 +40,7 @@ export default class extends React.PureComponent {
     return (
       <OAForm {...this.makeFormProps()} style={{ padding: 10, width: 670 }}>
         <FormItem label="事件标题" {...formItemLayout}>
-          {getFieldDecorator('select', {})(
-            <Select placeholder="请输入" style={style} />
-          )}
+          <EventSearch style={style} />
         </FormItem>
         <FormItem label="事件描述" {...formItemLayout}>
           {getFieldDecorator('textArea', {})(

@@ -48,23 +48,20 @@ export default (CustomerFrom) => {
     remove = (key) => {
       const { dataSource } = this.state;
       const newDataSource = dataSource.filter(item => item.key !== key);
-      this.setState({ dataSource: [...newDataSource] }, () => {
-        const { onChange } = this.props;
-        onChange(null, key);
-        this.countNumber();
-      });
+      this.setState({ dataSource: [...newDataSource] }, () => this.countNumber(null));
     }
 
     add = () => {
       const { dataSource } = this.state;
       this.uuid += 1;
       dataSource.push({ key: this.uuid });
-      this.setState({ dataSource: [...dataSource] }, this.countNumber);
+      this.setState({ dataSource: [...dataSource] }, () => this.countNumber({}));
     }
 
-    countNumber = () => {
-      const { countNumber } = this.props;
+    countNumber = (params) => {
+      const { countNumber, onChange } = this.props;
       if (countNumber) countNumber(this.state.dataSource.length);
+      onChange(params, this.state.dataSource.length - 1);
     }
 
     makeRmoveIcon = (k) => {

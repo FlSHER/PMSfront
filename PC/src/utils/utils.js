@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from '../../node_modules/_moment@2.22.2@moment';
 
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
@@ -318,4 +318,60 @@ export function getUrlString(name) {
   const r = window.location.search.substr(1).match(reg);
   if (r != null) return unescape(r[2]);
   return null;
+}
+
+/**
+ * 重组属性值
+ * @param {名} name
+ * @param {读取值}} value
+ * @param {多选}} multiple
+ */
+export function makeInitialValue(name, value, multiple = false) {
+  if (!name) return value;
+  let newValue = [];
+  if (multiple) {
+    newValue = value.map((item) => {
+      const temp = {};
+      Object.keys(name).forEach((key) => {
+        if (item[key]) {
+          temp[name[key]] = item[key];
+        }
+      });
+      return temp;
+    });
+  } else {
+    newValue = {};
+    Object.keys(name).forEach((key) => {
+      if (value[key]) {
+        newValue[name[key]] = value[key];
+      }
+    });
+  }
+  return newValue;
+}
+
+/**
+ *
+ * @param {属性}} name
+ * @param {值} value
+ * @param {单选多选} multiple
+ */
+export function dontInitialValue(name, value, multiple = false) {
+  if (!name) return value;
+  let newValue;
+  if (multiple) {
+    newValue = [];
+    value.forEach((item, i) => {
+      newValue[i] = {};
+      Object.keys(name).forEach((key) => {
+        newValue[i][key] = item[name[key]];
+      });
+    });
+  } else {
+    newValue = {};
+    Object.keys(name).forEach((key) => {
+      newValue[key] = value[name[key]];
+    });
+  }
+  return newValue;
 }

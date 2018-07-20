@@ -38,12 +38,12 @@ export default class Staff extends PureComponent {
     };
   }
 
-  componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({ type: 'brand/fetchBrand' });
-    dispatch({ type: 'position/fetchPosition' });
-    dispatch({ type: 'department/fetchDepartment', payload: {} });
-  }
+  // componentDidMount() {
+  //   const { dispatch } = this.props;
+  //   dispatch({ type: 'brand/fetchBrand' });
+  //   dispatch({ type: 'position/fetchPosition' });
+  //   dispatch({ type: 'department/fetchDepartment', payload: {} });
+  // }
 
 
   /**
@@ -60,7 +60,9 @@ export default class Staff extends PureComponent {
       newParams.filters += this.props.filters.content;
     }
     dispatch({ type: 'staffs/fetchStaff', payload: newParams });
-
+    dispatch({ type: 'brand/fetchBrand' });
+    dispatch({ type: 'position/fetchPosition' });
+    dispatch({ type: 'department/fetchDepartment', payload: {} });
     if (params.filters && params.filters.brand_id) {
       const pushPosition = this.makePositionData(params.filters.brand_id);
       if (pushPosition.length > 0) {

@@ -154,9 +154,8 @@ class BasicLayout extends React.PureComponent {
                 )
               }
             <Content className={styles.contentView}>
-              <div>
-                <Switch>
-                  {
+              <Switch>
+                {
                     getRoutes(match.path, routerData).map(item =>
                         (
                           <AuthorizedRoute
@@ -170,15 +169,15 @@ class BasicLayout extends React.PureComponent {
                         )
                       )
                     }
-                  {
+                {
                       redirectData.map(item =>
                         <Redirect key={item.from} exact from={item.from} to={item.to} />
                       )
                     }
-                  <Redirect exact from="/" to="/index" />
-                  <Route render={NotFound} />
-                </Switch>
-              </div>
+                <Redirect exact from="/" to="/index" />
+                <Route render={NotFound} />
+              </Switch>
+              <div className={styles.selectDom} id="selectDom" />
             </Content>
           </Layout>
         </Content>

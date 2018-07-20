@@ -73,6 +73,7 @@ const model = [
   'position',
   'department',
   'staffs',
+  'event',
 ];
 
 export const getRouterData = (app) => {

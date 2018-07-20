@@ -8,7 +8,7 @@ import RadioCustomer from './radioStaff';
 import Staff from './Model/Staff';
 import Shop from './Model/Shop';
 import './index.less';
-
+import { makeInitialValue, dontInitialValue } from '../../../utils/utils';
 
 /**
  *  props {
@@ -66,25 +66,7 @@ export default class SearchTable extends PureComponent {
 
   makeInitialValue = (value) => {
     const { name, multiple } = this.props;
-    let newValue = [];
-    if (multiple) {
-      newValue = value.map((item) => {
-        const temp = {};
-        Object.keys(name).forEach((key) => {
-          if (item[key]) {
-            temp[name[key]] = item[key];
-          }
-        });
-        return temp;
-      });
-    } else {
-      newValue = {};
-      Object.keys(name).forEach((key) => {
-        if (value[key]) {
-          newValue[name[key]] = value[key];
-        }
-      });
-    }
+    const newValue = makeInitialValue(name, value, multiple);
     return newValue;
   }
 
@@ -101,21 +83,12 @@ export default class SearchTable extends PureComponent {
     const { onChange, multiple, name } = this.props;
     const { value } = this.state;
     this.handleModelVisble(false);
+    let result = value;
     if (multiple) {
-      const newValue = [];
-      this.pushValue.forEach((item, i) => {
-        newValue[i] = {};
-        Object.keys(name).forEach((key) => {
-          newValue[i][key] = item[name[key]];
-        });
-      });
-      this.setState({ value: [...newValue] }, () => onChange(newValue));
-      return;
+      result = this.pushValue;
     }
-    const newValue = {};
-    Object.keys(name).forEach((key) => {
-      newValue[key] = value[name[key]];
-    });
+    const newValue = dontInitialValue(name, result, multiple);
+    this.setState({ value: newValue });
     onChange(newValue);
   };
 
