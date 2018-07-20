@@ -136,7 +136,6 @@ export default class PointRanking extends React.Component {
     const { history } = this.props;
     const stage = item.value;
     const params = this[stage];
-    console.log('params', item, params);
     const url = `/ranking${params}`;
     history.replace(url);
   }

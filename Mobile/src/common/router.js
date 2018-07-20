@@ -71,6 +71,9 @@ export const getRouterData = (app) => {
     '/buckle_preview': {
       component: dynamicWrapper(app, ['buckle', 'record'], () => import('../routes/Buckle/record/preview')),
     },
+    '/buckle_submit': {
+      component: dynamicWrapper(app, ['buckle', 'record', 'submit'], () => import('../routes/Buckle/record/submit')),
+    },
     '/record_point': {
       component: dynamicWrapper(app, ['buckle', 'record'], () => import('../routes/Buckle/record/recordPoint')),
     },
@@ -122,7 +125,7 @@ export const getRouterData = (app) => {
     '/sel_person/:key/:type': {
       component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/SelectPlugins/SelPerson')),
     },
-    '/sel_person2/:key/:type': {
+    '/sel_person2/:key/:type/:modal': {
       component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/SelectPlugins/SelPerson_2')),
     },
     '/sel_event': {

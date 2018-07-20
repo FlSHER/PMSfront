@@ -63,7 +63,6 @@ export default class PointRanking extends React.Component {
     if (this.ptr) {
       const htmlDom = ReactDOM.findDOMNode(this.ptr);
       const offsetBottom = htmlDom.offsetHeight;
-      console.log(offsetBottom);
       setTimeout(() => this.setState({
         offsetBottom,
       }), 0);
@@ -154,7 +153,6 @@ export default class PointRanking extends React.Component {
   }
 
   sortReasult = (filters) => {
-    console.log('filters', filters);
     this.urlParams = {
       ...this.urlParams,
       ...filters,
@@ -162,7 +160,6 @@ export default class PointRanking extends React.Component {
     let url = '/ranking';
     const params = this.urlParamsUnicode(this.urlParams);
     url += params ? `?${params}` : '';
-    console.log('params', params);
     this[this.urlParams.stage || 'month'] = params ? `?${params}` : '';
     this.props.history.replace(url);
 
@@ -183,7 +180,6 @@ export default class PointRanking extends React.Component {
     const { history } = this.props;
     const stage = item.value;
     const params = this[stage];
-    console.log('params', item, params);
     const url = `/ranking${params}`;
     history.replace(url);
   }

@@ -2,7 +2,7 @@ export default {
   namespace: 'record',
   state: {
     eventIndex: -1,
-    participants: {},
+    eventStaff: [],
     optAll: [],
     eventAll: [],
     events: [],
@@ -50,18 +50,6 @@ export default {
       };
     },
 
-    deleteEvents(state, action) {
-      const { index } = action.payload;
-      const { events, participants } = state;
-      const newEvents = events.filter((item, i) => i !== index);
-      delete participants[index];
-      return {
-        ...state,
-        events: newEvents,
-        participants,
-      };
-    },
-
     saveEventKey(state, action) {
       const index = action.payload;
       return {
@@ -70,51 +58,31 @@ export default {
       };
     },
 
-    saveStaff(state, action) {
-      const { value, key } = action.payload;
-      const { eventIndex, events } = state;
-      const newEvents = [...events];
-      const eventStaff = state[key];
+    saveEventStaff(state, action) {
+      const { value } = action.payload;
+      const { eventStaff, eventIndex } = state;
       const staffSn = value.map(item => item.staff_sn);
       if (eventIndex.toString().length) {
-        Object.keys(eventStaff).forEach((k, i) => {
+        Object.keys(eventStaff).forEach((key, i) => {
           if (i.toString() === eventIndex.toString()) {
-            const staff = eventStaff[k];
-            let temp = value.map((_) => {
-              const obj = { staff_sn: _.staff_sn, realname: _.realname, staff_name: _.staff_name };
-              return obj;
+            const staff = eventStaff[key];
+            const temp = [...staff];
+            staff.forEach((item) => {
+              const valueIndex = staffSn.indexOf(item.staff_sn);
+              if (valueIndex === -1) {
+                temp.push([value[valueIndex]]);
+              }
             });
-            if (staff.length) {
-              staff.forEach((item) => {
-                const valueIndex = staffSn.indexOf(item.staff_sn);
-                if (valueIndex !== -1) {
-                  temp = temp.filter((its, idx) => idx !== valueIndex);
-                }
-              });
-              eventStaff[k] = [...eventStaff[k], ...temp];
-            } else {
-              eventStaff[k] = [...temp];
-            }
+            eventStaff[key] = temp;
           }
         });
       }
-      newEvents[eventIndex].participants = eventStaff[eventIndex];
       return {
         ...state,
-        [key]: eventStaff,
-        events: newEvents,
+        eventStaff,
       };
     },
 
-    saveEventStaff(state, action) {
-      const { index, value } = action.payload;
-      const newStaff = state.participants;
-      newStaff[index] = [...value];
-      return {
-        ...state,
-        participants: newStaff,
-      };
-    },
 
     saveData(state, action) {
       const newState = { ...state };
@@ -123,7 +91,6 @@ export default {
         ...state, ...newState,
       };
     },
-
     saveList(state, action) {
       const info = { ...action.payload.value };
       const newList = { ...state[action.payload.key] };

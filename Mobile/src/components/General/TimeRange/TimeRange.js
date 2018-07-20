@@ -9,7 +9,6 @@ export default class TimeRange extends React.Component {
     const { value, distance } = props;
     this.monthData = this.calculateDate(value.max, value.min);
     const valueMin = distance > this.monthData.length ? this.monthData.length : distance;
-    console.log(valueMin);
     this.state = {
       date: [valueMin > 0 ? valueMin - 1 : 0, 0],
     };

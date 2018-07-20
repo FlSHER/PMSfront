@@ -26,18 +26,18 @@ export default class BuckleRecord extends React.Component {
     info: {
       description: '',
       participants: [],
-      event: null,
+      event_id: null,
+      name: '',
     },
+    event: {},
   }
 
   componentWillMount() {
-    const { record: { events, event, eventStaff, eventIndex } } = this.props;
-    if (eventIndex !== -1) { // 新加
-      const info = { ...events[eventIndex] };
-      this.setState({
-        info,
-      });
+    const { record: { eventIndex }, history } = this.props;
+    if (eventIndex === -1) {
+      history.replace('/buckle_preview');
     }
+    this.initInfo();
   }
 
   componentDidMount() {
@@ -47,39 +47,49 @@ export default class BuckleRecord extends React.Component {
     scrollToAnchor(link);
   }
 
-  remove = (e, item, name) => {
-    e.stopPropagation();
-    const { searchStaff: { selectStaff }, dispatch } = this.props;
+  initInfo =() => {
+    const { record: { events, eventIndex, optAll, eventAll } } = this.props;
+    const initInfo = {
+      description: '',
+      participants: [],
+      event_id: null,
+      name: '',
+    };
+    const info = { ...events[eventIndex] || initInfo };
+    const optItem = { ...optAll[eventIndex] };
+    const event = { ...eventAll[eventIndex] };
+    const { participants } = info;
+    const newParticipant = this.initParticipants(participants, optItem, event);
+    info.participants = newParticipant;
+    this.setState({
+      info,
+      optAll: optItem,
+      event,
+    });
+  }
+
+  initParticipants=(participants, optAll, event) => {
+    const newParticipant = (participants || []).map((item) => {
+      const obj = { ...item };
+      obj.realname = item.staff_name || item.realname;
+      obj.point_a = (item.point_a === '' || item.point_a === undefined) ?
+        (optAll.pointA !== '' ? optAll.pointA : event.point_a_default) : item.point_a;
+      obj.point_b = (item.point_b === '' || item.point_b === undefined) ?
+        (optAll.pointB !== '' ? optAll.pointB : event.point_b_default) : item.point_b;
+      obj.count = item.count === undefined ? optAll.count : item.count;
+      return obj;
+    });
+    return newParticipant;
+  }
+
+  remove = (e, item) => {
     const { info } = this.state;
     const { participants } = info;
-    let newParti = [...participants];
-    if (name === 'participants') {
-      newParti = participants.filter(its => its.staff_sn !== item.staff_sn);
-      this.setState({
-        info: {
-          ...info,
-          participants: newParti,
-        },
-      });
-    }
-    const newSelectStaff = { ...selectStaff };
-    newSelectStaff[name] = selectStaff[name].filter(its => its.staff_sn !== item.staff_sn);
-
-    dispatch({
-      type: 'buckle/saveData',
-      payload: {
-        key: 'info',
-        value: {
-          ...info,
-          participants: newParti,
-        },
-      },
-    });
-    dispatch({
-      type: 'searchStaff/saveSelectStaff',
-      payload: {
-        key: 'selectStaff',
-        value: newSelectStaff,
+    const newParticipants = participants.filter(its => its.staff_sn !== item.staff_sn);
+    this.setState({
+      info: {
+        ...info,
+        participants: newParticipants,
       },
     });
   }
@@ -87,30 +97,22 @@ export default class BuckleRecord extends React.Component {
   changePerson = (name, type) => {
     const { history } = this.props;
     this.saveAllData();
-    history.push(`/sel_person/${name}/${type}`);
+    history.push(`/sel_person2/${name}/${type}/record`);
   }
 
   addMore = (name, type) => {
-    const { event } = this.props;
-    if (name === 'final') {
-      if (!Object.keys(event || {}).length) {
-        Toast.info('请选择事件，记录分值');
-        return;
-      }
-    }
     const { history } = this.props;
     this.saveAllData();
-    history.replace(`/buckle_record#${name}`);
-    history.push(`/sel_person/${name}/${type}`);
+    history.replace(`/record_point#${name}`);
+    history.push(`/sel_person2/${name}/${type}/record`);
   }
 
   savePointData = (newPoint, kind, el) => {
-    const { event } = this.props;
+    const { info, optAll, event } = this.state;
     let error = false;
-    if ((Number(newPoint) > Number(event[`${kind}_max`])) || (Number(newPoint) < Number(event[`${kind}_min`]))) {
+    if (kind !== 'count' && ((Number(newPoint) > Number(event[`${kind}_max`])) || (Number(newPoint) < Number(event[`${kind}_min`])))) {
       error = true;
     }
-    const { optAll, info } = this.state;
     const newOpt = { ...optAll };
     const tempKey = kind === 'point_a' ?
       'pointA' : kind === 'point_b' ?
@@ -161,6 +163,7 @@ export default class BuckleRecord extends React.Component {
     const newPoint = point;
     this.savePointData(newPoint, kind, el);
   }
+
   stateChange = (v, key) => {
     const { info } = this.state;
     if (key === 'description') {
@@ -176,91 +179,29 @@ export default class BuckleRecord extends React.Component {
   }
 
   saveAllData = () => {
-    const { dispatch, searchStaff: { selectStaff } } = this.props;
-    const { info, optAll } = this.state;
-    const newSelectStaff = { ...selectStaff };
-    newSelectStaff.participants = info.participants;
+    const { dispatch } = this.props;
+    const { info } = this.state;
+    const { participants } = info;
     dispatch({
-      type: 'searchStaff/saveSelectStaff',
+      type: 'record/saveEvents',
       payload: {
-        key: 'selectStaff',
-        value: newSelectStaff,
-      },
-    });
-    dispatch({
-      type: 'buckle/saveData',
-      payload: {
-        key: 'info',
+        index: sessionStorage.getItem('eventIndex'),
         value: { ...info },
       },
     });
     dispatch({
-      type: 'buckle/saveData',
+      type: 'record/saveEventStaff',
       payload: {
-        key: 'optAll',
-        value: { ...optAll },
+        value: participants,
+        index: sessionStorage.getItem('eventIndex'),
       },
     });
   }
+
   record = () => {
+    const { history } = this.props;
     this.saveAllData();
-    const { info } = this.state;
-    const { searchStaff: { selectStaff }, event, dispatch, history } = this.props;
-    const { first, final, copy } = selectStaff;
-    const newCopy = copy.map((item) => {
-      const obj = {};
-      obj.staff_sn = item.staff_sn;
-      obj.staff_name = item.realname;
-      return obj;
-    });
-    const newParticipant = info.participants.map((item) => {
-      const obj = {};
-      obj.staff_sn = item.staff_sn;
-      obj.staff_name = item.realname;
-      obj.point_a = item.point_a;
-      obj.point_b = item.point_b;
-      obj.count = item.count;
-      return obj;
-    });
-    let msg = '';
-    msg = event.id === undefined ?
-      '请选择事件' : !info.participants.length ?
-        '请选择参与人' : !first.length ?
-          '请选择初审人' : !final.length ?
-            '请选择终审人' : '';
-    if (msg) {
-      Toast.fail(msg);
-      return;
-    }
-
-    const pointError = newParticipant.filter(item =>
-      isNaN(item.point_a) || isNaN(item.point_b)
-    );
-
-    if (pointError.length) {
-      Toast.fail('请输入正确格式的数字');
-      return;
-    }
-    dispatch({
-      type: 'buckle/recordBuckle',
-      payload: {
-        data: {
-          event_id: event.id,
-          participants: newParticipant,
-          description: info.description,
-          first_approver_sn: first[0].staff_sn,
-          first_approver_name: first[0].realname,
-          final_approver_sn: final[0].staff_sn,
-          final_approver_name: final[0].staff_name,
-          executed_at: moment(info.executedAt).format('YYYY-MM-DD'),
-          addressees: newCopy,
-        },
-        cb: () => {
-          this.clearModal();
-          history.replace('/home');
-        },
-      },
-    });
+    history.goBack(-1);
   }
 
   clearModal = () => {
@@ -277,29 +218,21 @@ export default class BuckleRecord extends React.Component {
   }
 
   selEvent = () => {
-    const { history, dispatch, searchStaff: { selectStaff } } = this.props;
+    const { history, dispatch } = this.props;
     const { info } = this.state;
-    const newSelectStaff = { ...selectStaff };
-    newSelectStaff.participants = info.participants;
+    const eventIndex = sessionStorage.getItem('eventIndex');
     dispatch({
-      type: 'searchStaff/saveSelectStaff',
+      type: 'record/saveEvents',
       payload: {
-        key: 'selectStaff',
-        value: newSelectStaff,
-      },
-    });
-    dispatch({
-      type: 'buckle/saveData',
-      payload: {
-        key: 'info',
+        index: eventIndex,
         value: { ...info },
       },
     });
-    history.replace('/buckle_record#event');
-    history.push('/sel_event');
+    history.replace('/record_point#event');
+    history.push('/sel_event2/record');
   }
+
   addMySelf = () => {
-    const { event } = this.props;
     const { info, optAll } = this.state;
     const userInfo = userStorage('userInfo');
     const { participants } = info;
@@ -310,8 +243,8 @@ export default class BuckleRecord extends React.Component {
     const myself = {
       staff_sn: userInfo.staff_sn,
       realname: userInfo.realname,
-      point_a: optAll.pointA ? optAll.pointA : event.point_a_default,
-      point_b: optAll.pointB ? optAll.pointB : event.point_b_default,
+      point_a: optAll.pointA ? optAll.pointA : info.point_a_default,
+      point_b: optAll.pointB ? optAll.pointB : info.point_b_default,
       count: optAll.count ? optAll.count : 1,
     };
     newParticipants.push(myself);
@@ -322,8 +255,9 @@ export default class BuckleRecord extends React.Component {
       },
     });
   }
+
   infoToast = () => {
-    const { event } = this.props;
+    const { event } = this.state;
     if (event.id) {
       Toast.info(
         <div>
@@ -338,9 +272,10 @@ export default class BuckleRecord extends React.Component {
       Toast.info('请先选择事件');
     }
   }
+
   render() {
     const {
-      info: { participants, description, executedAt },
+      info: { participants, description, name },
       optAll,
     } = this.state;
     let tmpPointA = participants[0] ? participants[0].point_a : '';
@@ -357,9 +292,10 @@ export default class BuckleRecord extends React.Component {
     if ((participants || []).filter(item => item.count !== tmpCount).length) {
       tmpCount = '';
     }
-    this.state.optAll.pointA = tmpPointA;
-    this.state.optAll.pointB = tmpPointB;
-    this.state.optAll.count = tmpCount || 1;
+
+    // this.state.optAll.pointA = tmpPointA;
+    // this.state.optAll.pointB = tmpPointB;
+    // this.state.optAll.count = tmpCount || 1;
     return (
       <div
         className={styles.con}
@@ -371,7 +307,7 @@ export default class BuckleRecord extends React.Component {
           <WingBlank className={style.parcel}>
             <List>
               <List.Item arrow="horizontal" onClick={this.selEvent}>
-                {event && event.name ? <span id="event">{event.name}</span> : <span style={{ color: 'rgb(150,150,150)' }}>请选择事件</span>}
+                {name ? <span id="event">{name}</span> : <span style={{ color: 'rgb(150,150,150)' }}>请选择事件</span>}
               </List.Item>
               <TextareaItem
                 placeholder="输入事件描述"
@@ -386,19 +322,7 @@ export default class BuckleRecord extends React.Component {
             </List>
           </WingBlank>
           <WhiteSpace size="sm" />
-
-          <WingBlank className={style.parcel}>
-            <DatePicker
-              mode="date"
-              value={executedAt}
-              maxDate={new Date()}
-              onChange={e => this.stateChange(e, 'executedAt')}
-            >
-              <List.Item arrow="horizontal">事件时间</List.Item>
-            </DatePicker>
-
-          </WingBlank>
-          <div style={{ ...((event && !Object.keys(event).length) || !event ? { display: 'none' } : null) }}>
+          <div style={{ ...(!name ? { display: 'none' } : null) }}>
             <WhiteSpace size="sm" />
             <WingBlank className={style.parcel}>
               <div className={style.players}>

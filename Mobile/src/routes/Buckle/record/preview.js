@@ -9,8 +9,7 @@ import { scrollToAnchor } from '../../../utils/util';
 import style from '../index.less';
 import styles from '../../common.less';
 
-@connect(({ event, record }) => ({
-  event,
+@connect(({ record }) => ({
   record,
 }))
 
@@ -22,18 +21,51 @@ export default class PointRanking extends React.Component {
     scrollToAnchor(link);
   }
 
-  redirectEvent = () => {
-    const { history, dispatch } = this.props;
-    dispatch({
-      type: 'record/saveEventKey',
-      payload: -1,
+  getCount = () => {
+    const { record: { participants } } = this.props;
+    let count = 0;
+    Object.keys(participants || {}).forEach((item) => {
+      count += item.length;
     });
+    return count;
+  }
+
+  pointRedirect = (e, i) => {
+    e.stopPropagation();
+    const { history } = this.props;
+    sessionStorage.eventIndex = i;
     history.push('/record_point');
   }
 
+  deleteEventItem = (e, i) => {
+    e.stopPropagation();
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'record/deleteEvents',
+      payload: {
+        index: i,
+      },
+    });
+  }
+
+  redirectEvent = () => {
+    const { history, dispatch, record: { events } } = this.props;
+    dispatch({
+      type: 'record/saveEventKey',
+      payload: events.length,
+    });
+    sessionStorage.eventIndex = events.length;
+    history.push('/record_point');
+  }
+
+  nextStep = () => {
+    const { history } = this.props;
+    history.push('/buckle_submit');
+  }
+
   render() {
-    const { record: { event, eventStaff } } = this.props;
-    const count = Object.keys(eventStaff || {}).length;
+    const { record: { events } } = this.props;
+    const count = this.getCount();
     return (
       <div
         className={styles.con}
@@ -42,7 +74,7 @@ export default class PointRanking extends React.Component {
           <WingBlank>
             <div id="event" className={style.all_info}>
               <div className={style.left}>
-                <span>事件数量：{event.length}</span>
+                <span>事件数量：{events.length}</span>
                 <span>总人次：{count}</span>
               </div>
               <div className={style.add}>
@@ -64,15 +96,20 @@ export default class PointRanking extends React.Component {
         </div>
         <div className={styles.con_content}>
           <WingBlank>
-            {event.map(item => (
-              <React.Fragment key={item.id}>
-                <WhiteSpace />
-                <RecordPreview
-                  value={item}
-                />
-              </React.Fragment>
-
-            ))}
+            {events.map((item, i) => {
+              const key = i;
+              return (
+                <React.Fragment key={key}>
+                  <WhiteSpace />
+                  <RecordPreview
+                    handleClick={e => this.pointRedirect(e, i)}
+                    extraClick={e => this.deleteEventItem(e, i)}
+                    value={item}
+                  />
+                </React.Fragment>
+              );
+            }
+            )}
           </WingBlank>
         </div>
         <div className={styles.footer}>
@@ -80,7 +117,7 @@ export default class PointRanking extends React.Component {
             <div className={style.opt}>
               <Button
                 type="primary"
-                onClick={this.next}
+                onClick={this.nextStep}
               >下一步
               </Button>
             </div>

@@ -37,7 +37,6 @@ export default class SelEvent extends Component {
     searchValue: '',
   }
   componentWillMount() {
-    console.log(this.props);
     this.props.dispatch({
       type: 'event/getEvent',
       payload: {

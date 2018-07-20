@@ -75,10 +75,20 @@
       margin-bottom: 0;
     }
     span {
-      margin-right: 66/75rem;
+      display: inline-block;
+      width: 220/75rem;
+      margin-right: 40/75rem;
+      .textLineOverFlow();
       i {
         font-style: normal;
       }
+    }
+    span:last-child {
+      margin-right: 0;
+    }
+    span:first-child {
+      width: 140/75rem;
+      margin-right: 0;
     }
   }
 }

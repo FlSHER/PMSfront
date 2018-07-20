@@ -4,7 +4,7 @@ import {
 } from 'dva';
 import { SearchList, Nothing } from '../../components/index';
 import { Department, Staff, SeStaff, FinalStaff } from '../../common/ListView/index.js';
-import { analyzePath, unique, userStorage, isArray } from '../../utils/util';
+import { analyzePath, userStorage, isArray } from '../../utils/util';
 import styles from '../common.less';
 import style from './index.less';
 
@@ -126,15 +126,15 @@ export default class SelPerson extends Component {
   }
 
   getSingleSelect = (result) => {
-    const { history, selectStaff, dispatch } = this.props;
-    const { key } = this.state;
-    const newSelectstaff = { ...selectStaff };
-    newSelectstaff[key] = [result];
+    const { dispatch, history, match: { params } } = this.props;
+    const { modal } = params;
+    const { key, type } = this.state;
     dispatch({
-      type: 'searchStaff/saveSelectStaff',
+      type: `${modal}/saveStaff`,
       payload: {
-        key: 'selectStaff',
-        value: newSelectstaff,
+        key,
+        type,
+        value: result,
       },
     });
     history.goBack(-1);
@@ -235,15 +235,15 @@ export default class SelPerson extends Component {
   }
 
   selectOk = () => {
-    const { dispatch } = this.props;
-    const { selected, key } = this.state;
-    const newSelectstaff = { ...selectStaff };
-    const tmpSelected = selectStaff[key].concat(selected.data);
-    newSelectstaff[key] = unique(tmpSelected, 'staff_sn');
+    const { dispatch, history, match: { params } } = this.props;
+    const { modal } = params;
+    const { selected, key, type } = this.state;
+    const newSelectstaff = selected.data;
     dispatch({
-      type: 'searchStaff/saveSelectStaff',
+      type: `${modal}/saveStaff`,
       payload: {
-        key: 'selectStaff',
+        key,
+        type,
         value: newSelectstaff,
       },
     });
