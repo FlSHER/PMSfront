@@ -103,7 +103,7 @@ export default class TreeFilter extends PureComponent {
             onChange={this.handleSwitchOnChange}
           />
         </div>
-        <div className="scroll-bar" style={{ maxHeight: 200 }}>
+        <div className="scroll-bar" style={{ maxHeight: 300 }}>
           <Tree
             checkable
             checkStrictly={!selectChild}
