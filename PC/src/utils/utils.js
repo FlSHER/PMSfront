@@ -417,12 +417,13 @@ export function getModalBodyHeight() {
 /**
  * 弹窗内表格高度
  */
-export function getTableBodyHeight() {
+export function getTableBodyHeight(footerAble) {
   const modalBodyHeight = getModalBodyHeight();
   const tableHeader = 46;
   const tableeExtarHegiht = 60;
-  const tablePaginatiopnBottom = 55;
-  return modalBodyHeight - (tableHeader + tableeExtarHegiht + tablePaginatiopnBottom);
+  const tablePaginatiopnBottom = 35;
+  const footer = footerAble ? 50 : 0;
+  return modalBodyHeight - (tableHeader + tableeExtarHegiht + tablePaginatiopnBottom + footer);
 }
 
 /**

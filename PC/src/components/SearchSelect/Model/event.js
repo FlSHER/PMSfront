@@ -1,8 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Tooltip } from 'antd';
-import SearchSelect from '../SearchSelect';
-import { ModalSelect } from '../../OAModal';
+import SearchSelectRadio from '../Radio';
 import { makerFilters, findTreePerant } from '../../../utils/utils';
 import './ellipsis.less';
 
@@ -14,14 +13,6 @@ import './ellipsis.less';
 }))
 
 export default class Event extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: props.value || null,
-      visible: false,
-    };
-  }
-
   fetchEventType = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -33,22 +24,20 @@ export default class Event extends React.Component {
   fetchEvent = (params) => {
     let newParams;
     const { dispatch } = this.props;
-    if (params && !params.page) {
+    if (params.length && !params.page) {
       newParams = makerFilters({
         filters: { name: { like: params } },
       });
-    } else if (params) {
+    } else if (Object.keys(params).length) {
       newParams = params;
       this.fetchEventType();
     }
-    dispatch({
-      type: 'event/fetchEvent',
-      payload: newParams,
-    });
-  }
-
-  handleVisible = (flag) => {
-    this.setState({ visible: !!flag });
+    if (newParams) {
+      dispatch({
+        type: 'event/fetchEvent',
+        payload: newParams,
+      });
+    }
   }
 
   makeColumns = () => {
@@ -126,37 +115,31 @@ export default class Event extends React.Component {
   }
 
   makeSearchSelectProps = () => {
-    const { dataSource } = this.props;
-    const { value } = this.state;
+    const { dataSource, value } = this.props;
     const response = {
       ...this.props,
-      value,
-      dataSource: [],
-      afterClick: () => this.handleVisible(true),
+      valueOBJ: value,
       fetchDataSource: this.fetchEvent,
     };
     if (Array.isArray(dataSource)) {
-      response.dataSource = dataSource.map(item => ({ value: item.id, text: item.name }));
+      response.dataSource = dataSource;
+      response.selectedData = dataSource;
+    } else if (Object.keys(dataSource).length) {
+      response.selectedData = dataSource.data;
     }
     return response;
   }
 
-
   makeModalSelectProps = () => {
-    const { visible } = this.state;
     const { dataSource, loading } = this.props;
     const response = {
-      visible,
       index: 'id',
       data: [],
       loading,
       columns: this.makeColumns(),
-      onCancel: this.handleVisible,
-      fetchDataSource: this.fetchEvent,
       scroll: { x: 1000 },
       modalProps: {
         title: '选择事件',
-        width: 800,
       },
     };
     if (Array.isArray(dataSource)) {
@@ -170,10 +153,10 @@ export default class Event extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
-        <SearchSelect {...this.makeSearchSelectProps()} />
-        <ModalSelect {...this.makeModalSelectProps()} />
-      </React.Fragment>
+      <SearchSelectRadio
+        {...this.makeSearchSelectProps()}
+        modalSelectProps={{ ...this.makeModalSelectProps() }}
+      />
     );
   }
 }

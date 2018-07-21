@@ -234,7 +234,6 @@ export default class WorkingStaff extends React.PureComponent {
 
   render() {
     const { visible, value, batchVisible } = this.state;
-
     return (
       <div style={{ width: 540 }}>
         <OATable

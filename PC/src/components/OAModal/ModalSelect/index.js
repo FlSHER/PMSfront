@@ -4,7 +4,6 @@ import SelectTable from '../../OAForm/SearchTable/selectTable';
 import { makeInitialValue, dontInitialValue, getTableBodyHeight } from '../../../utils/utils';
 
 const defaultProps = {
-  name: {},
   visible: false,
   modalProps: {},
   onChange: () => { },
@@ -14,7 +13,7 @@ export default class ModalStaff extends React.PureComponent {
   constructor(props) {
     super(props);
     this.pushValue = [];
-    const value = makeInitialValue(props.name, props.value || [], props.multiple);
+    const value = makeInitialValue(props.name, props.value, props.multiple);
     this.state = {
       value,
     };
@@ -31,7 +30,7 @@ export default class ModalStaff extends React.PureComponent {
     this.pushValue = rowDatas;
     const { onCancel, onChange, name, multiple } = this.props;
     if (!multiple) {
-      const value = dontInitialValue(name, this.state.value, multiple);
+      const value = dontInitialValue(name, rowDatas[0], multiple);
       onCancel(false);
       onChange(value);
     }
@@ -39,15 +38,17 @@ export default class ModalStaff extends React.PureComponent {
 
   handleOnChange = () => {
     this.setState({ value: [...this.pushValue] }, () => {
-      const { onChange, name, multiple } = this.props;
+      const { onCancel, onChange, name, multiple } = this.props;
       const value = dontInitialValue(name, this.state.value, multiple);
+      onCancel(false);
       onChange(value);
     });
   }
 
 
   makeTableProps = () => {
-    const scrollHegiht = getTableBodyHeight();
+    const { multiple } = this.props;
+    const scrollHegiht = getTableBodyHeight(multiple);
     const response = {
       ...this.props,
       scroll: { x: 1000, y: scrollHegiht },

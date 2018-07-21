@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-import OAModal from '../../OAModal';
-import SelectTable from './selectTable';
+import { ModalSelect } from '../../OAModal';
+// import SelectTable from './selectTable';
 import RadioInput from './input';
 import CheckBoxTag from './tag';
 import CheckBoxCustomer from './staff';
@@ -8,7 +8,6 @@ import RadioCustomer from './radioStaff';
 import Staff from './Model/Staff';
 import Shop from './Model/Shop';
 import './index.less';
-import { makeInitialValue, dontInitialValue } from '../../../utils/utils';
 
 /**
  *  props {
@@ -28,28 +27,23 @@ import { makeInitialValue, dontInitialValue } from '../../../utils/utils';
  *
  */
 
-const defaultStyle = {
-  width: '800px',
-  height: '400px',
-};
-
 export default class SearchTable extends PureComponent {
   constructor(props) {
     super(props);
     const { value } = props;
-    const newValue = this.makeInitialValue(value);
+    // const newValue = this.makeInitialValue(value);
     this.state = {
       visible: false,
-      value: newValue,
-      modelStyle: props.modelStyle || defaultStyle,
+      value: value || [],
+      // modelStyle: props.modelStyle || defaultStyle,
     };
   }
 
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.value !== this.props.value) {
-      const newValue = this.makeInitialValue(nextProps.value);
-      this.setState({ value: newValue });
+      // const newValue = this.makeInitialValue(nextProps.value);
+      this.setState({ value: nextProps.value });
     }
   }
 
@@ -64,11 +58,6 @@ export default class SearchTable extends PureComponent {
     this.pushValue = changeValue;
   };
 
-  makeInitialValue = (value) => {
-    const { name, multiple } = this.props;
-    const newValue = makeInitialValue(name, value, multiple);
-    return newValue;
-  }
 
   handleModelVisble = (flag) => {
     const { modalVisible } = this.props;
@@ -80,16 +69,16 @@ export default class SearchTable extends PureComponent {
   };
 
   handleOk = () => {
-    const { onChange, multiple, name } = this.props;
+    const { onChange, multiple } = this.props;
     const { value } = this.state;
     this.handleModelVisble(false);
     let result = value;
     if (multiple) {
       result = this.pushValue;
+      this.setState({ value: result });
     }
-    const newValue = dontInitialValue(name, result, multiple);
-    this.setState({ value: newValue });
-    onChange(newValue);
+    // const newValue = dontInitialValue(name, result, multiple);
+    onChange(result);
   };
 
 
@@ -152,7 +141,7 @@ export default class SearchTable extends PureComponent {
           {...commonProps}
           modalVisible={visible}
           clearValue={() => {
-            this.setTableValue([]);
+            this.setTableValue({});
           }}
         />
       );
@@ -160,9 +149,8 @@ export default class SearchTable extends PureComponent {
 
 
   render() {
-    const { mode, multiple, name, title, tableProps } = this.props;
-    const { visible, modelStyle: { width }, value } = this.state;
-    const footer = multiple ? null : { footer: null };
+    const { mode, multiple, name, title, tableProps, onChange, width } = this.props;
+    const { visible, value } = this.state;
     let selectValue = [];
     if (multiple) {
       selectValue = [...value];
@@ -173,25 +161,20 @@ export default class SearchTable extends PureComponent {
       <div>
         {mode === 'default' && this.makeSearchView()}
         {mode === 'user' && this.makeUserView()}
-        <OAModal
-          style={this.state.modelStyle}
-          width={width}
-          title={title}
-          visible={visible}
-          onOk={() => this.handleOk()}
-          onCancel={() => this.handleModelVisble(false)}
-          {...footer}
-        >
-          {visible && (
-            <SelectTable
-              {...tableProps}
-              name={name}
-              multiple={multiple}
-              selectValue={selectValue}
-              setSelectedValue={this.setTableValue}
-            />
-          )}
-        </OAModal>
+        <ModalSelect
+          modalProps={{
+            width,
+            title,
+            visible,
+          }}
+          onChange={onChange}
+          onCancel={this.handleModelVisble}
+          name={name}
+          value={value}
+          {...tableProps}
+          multiple={multiple}
+          selectValue={selectValue}
+        />
       </div>
     );
   }

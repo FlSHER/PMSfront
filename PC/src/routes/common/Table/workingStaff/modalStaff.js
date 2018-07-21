@@ -1,8 +1,7 @@
 import React from 'react';
 import { Tooltip } from 'antd';
 import { connect } from 'dva';
-import OAModal from '../../../../components/OAModal';
-import SelectTable from '../../../../components/OAForm/SearchTable/selectTable';
+import { ModalSelect } from '../../../../components/OAModal';
 import { getBrandAuthority, getDepartmentAuthority } from '../../../../utils/utils';
 /**
  * 定制插件开发的数据模型
@@ -32,9 +31,8 @@ export default class ModalStaff extends React.PureComponent {
   constructor(props) {
     super(props);
     this.pushValue = [];
-    const value = this.makeInitialValue(props.value || []);
     this.state = {
-      value,
+      value: props.value || [],
       filterPosition: [],
       staffSearcherParams: '',
     };
@@ -49,8 +47,7 @@ export default class ModalStaff extends React.PureComponent {
 
   componentWillReceiveProps(nextProps) {
     if (JSON.stringify(nextProps.value) !== JSON.stringify(this.props.value)) {
-      const value = this.makeInitialValue(nextProps.value || []);
-      this.setState({ value: [...value] });
+      this.setState({ value: [...nextProps.value] });
     }
   }
 
@@ -223,45 +220,13 @@ export default class ModalStaff extends React.PureComponent {
     ];
   }
 
-  handleOnChange = () => {
-    this.setState({ value: this.pushValue }, () => {
+  handleOnChange = (value) => {
+    this.setState({ value }, () => {
       const { onChange } = this.props;
-      const value = this.makeNameFieldsValue();
       onChange(value);
     });
   }
 
-  makeInitialValue = (value) => {
-    const { name } = this.props;
-    if (Object.keys(name).length) {
-      let newValue = [];
-      newValue = value.map((item) => {
-        const temp = {};
-        Object.keys(name).forEach((key) => {
-          temp[name[key]] = item[key];
-        });
-        return temp;
-      });
-      return newValue;
-    }
-    return value;
-  }
-
-  makeNameFieldsValue = () => {
-    const { name } = this.props;
-    const { value } = this.state;
-    let newValue = [...value];
-    if (Object.keys(name).length) {
-      newValue = [];
-      value.forEach((item, i) => {
-        newValue[i] = {};
-        Object.keys(name).forEach((key) => {
-          newValue[i][key] = item[name[key]];
-        });
-      });
-    }
-    return newValue;
-  }
 
   makeTableProps = () => {
     const { staffSearcherParams, value } = this.state;
@@ -282,30 +247,32 @@ export default class ModalStaff extends React.PureComponent {
       data: staffSearcherResult[staffSearcherParams],
       loading: (staffsLoading || brandLoading || departmentLoading || positionLoading),
       fetchDataSource: this.fetchStaff,
-      setSelectedValue: this.setSelectedValue,
     };
     tableProps.columns = this.makeColumns();
     return tableProps;
   };
 
-
   makeModalProps = () => {
     const { visible, onCancel } = this.props;
+    const { value } = this.state;
     const response = {
-      visible,
-      width: 800,
-      title: '选择参与人',
-      onOk: this.handleOnChange,
-      onCancel: () => onCancel(false),
+      modalProps: {
+        visible,
+        width: 800,
+        title: '选择参与人',
+      },
+      value,
+      onCancel: () => onCancel(),
+      multiple: true,
+      onChange: this.handleOnChange,
+      ...this.makeTableProps(),
     };
     return response;
   }
 
   render() {
     return (
-      <OAModal {...this.makeModalProps()} >
-        <SelectTable {...this.makeTableProps()} />
-      </OAModal>
+      <ModalSelect {...this.makeModalProps()} />
     );
   }
 }

@@ -38,20 +38,6 @@ export default class Staff extends PureComponent {
     };
   }
 
-  // componentDidMount() {
-  //   const { dispatch } = this.props;
-  //   dispatch({ type: 'brand/fetchBrand' });
-  //   dispatch({ type: 'position/fetchPosition' });
-  //   dispatch({ type: 'department/fetchDepartment', payload: {} });
-  // }
-
-
-  /**
-   *
-   *定制开发插件内容：
-   * 员工staff 搜索
-   */
-
   fetchStaff = (params) => {
     const { dispatch, position } = this.props;
     let { filterPosition } = this.state;

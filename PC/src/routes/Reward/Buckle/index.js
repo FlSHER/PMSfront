@@ -122,8 +122,8 @@ export default class extends React.PureComponent {
               })(
                 <SearchTable.Staff
                   mode="user"
-                  name={{ staff_sn: 'staff_sn', realname: 'realname' }}
-                  showName="realname"
+                  name={{ staff_sn1: 'staff_sn', realname2: 'realname' }}
+                  showName="realname2"
                 />
               )}
             </FormItem>
