@@ -95,7 +95,6 @@ export default class PageHeader extends Component {
       const extraBreadcrumbItems = pathSnippets.map((_, index) => {
         const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
         const currentBreadcrumb = getBreadcrumb(breadcrumbNameMap, url);
-
         const isLinkable = (index !== pathSnippets.length - 1) && currentBreadcrumb.component;
         return currentBreadcrumb.name && !currentBreadcrumb.hideInBreadcrumb ? (
           <Breadcrumb.Item key={url}>
@@ -107,13 +106,7 @@ export default class PageHeader extends Component {
           </Breadcrumb.Item>
         ) : null;
       });
-      const breadcrumbItems = [(
-        <Breadcrumb.Item key="home">
-          {createElement(linkElement, {
-            [linkElement === 'a' ? 'href' : 'to']: '/',
-          }, '首页')}
-        </Breadcrumb.Item>
-      )].concat(extraBreadcrumbItems);
+      const breadcrumbItems = extraBreadcrumbItems;
       breadcrumb = (
         <Breadcrumb className={basiclLayouts.creadcrumb}>
           {breadcrumbItems}

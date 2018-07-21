@@ -1,9 +1,11 @@
 import React from 'react';
 import { connect } from 'dva';
-import Ellipsis from 'ant-design-pro/lib/Ellipsis';
+import { Tooltip } from 'antd';
 import SearchSelect from '../SearchSelect';
 import { ModalSelect } from '../../OAModal';
-import { makerFilters } from '../../../utils/utils';
+import { makerFilters, findTreePerant } from '../../../utils/utils';
+import './ellipsis.less';
+
 
 @connect(({ event, loading }) => ({
   dataSource: event.event,
@@ -15,7 +17,7 @@ export default class Event extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.value || '',
+      value: props.value || null,
       visible: false,
     };
   }
@@ -64,17 +66,19 @@ export default class Event extends React.Component {
         dataIndex: 'name',
         title: '名称',
         searcher: true,
-        width: 280,
+        width: 230,
         render: (name) => {
           return (
-            <Ellipsis length={4} tooltip>{name}</Ellipsis>
+            <Tooltip title={name}>
+              <div className="ellipsis" style={{ width: 230 }}>{name}</div>
+            </Tooltip>
           );
         },
       },
       {
         dataIndex: 'type_id',
         title: '事件类型',
-        width: 280,
+        width: 230,
         treeFilters: {
           title: 'name',
           value: 'id',
@@ -83,8 +87,14 @@ export default class Event extends React.Component {
           data: eventType,
         },
         render: (typeId) => {
-          const evetType = eventType.find(item => item.id === typeId);
-          return evetType && evetType.name;
+          const findData = findTreePerant(eventType, typeId);
+          const listName = findData.reverse().map(item => item.name);
+          const name = listName.join('>');
+          return (
+            <Tooltip title={name}>
+              <div className="ellipsis" style={{ width: 230 }}>{name}</div>
+            </Tooltip>
+          );
         },
       },
       {
@@ -135,7 +145,6 @@ export default class Event extends React.Component {
   makeModalSelectProps = () => {
     const { visible } = this.state;
     const { dataSource, loading } = this.props;
-
     const response = {
       visible,
       index: 'id',

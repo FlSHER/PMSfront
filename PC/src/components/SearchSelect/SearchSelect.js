@@ -19,7 +19,6 @@ export default class SearchSelect extends React.Component {
   }
 
   handleSearch = (value) => {
-    // fetch(value, data => this.setState({ data }));
     if (this.setInterval) {
       clearInterval(this.setInterval);
     }

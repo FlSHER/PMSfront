@@ -424,3 +424,21 @@ export function getTableBodyHeight() {
   const tablePaginatiopnBottom = 55;
   return modalBodyHeight - (tableHeader + tableeExtarHegiht + tablePaginatiopnBottom);
 }
+
+/**
+ * 获取id的所有上级数据
+ * @param {数据源} data
+ * @param {查找的id} id
+ */
+export function findTreePerant(data, id, key = 'id', pid = 'parent_id') {
+  const result = [];
+  const findData = data.find((item) => {
+    return item[key] === id;
+  });
+  if (!findData || !id) return result;
+  result.push(findData);
+  let perantItem = [];
+  perantItem = findTreePerant(data, findData[pid], key, pid);
+  return result.concat(perantItem);
+}
+
