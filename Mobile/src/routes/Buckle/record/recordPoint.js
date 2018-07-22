@@ -303,23 +303,24 @@ export default class BuckleRecord extends React.Component {
       >
         <div className={styles.con_content}>
           <WhiteSpace size="sm" />
-
-          <WingBlank className={style.parcel}>
+          <WingBlank className={[style.parcel, style.bottom].join(' ')}>
             <List>
               <List.Item arrow="horizontal" onClick={this.selEvent}>
                 {name ? <span id="event">{name}</span> : <span style={{ color: 'rgb(150,150,150)' }}>请选择事件</span>}
               </List.Item>
-              <TextareaItem
-                placeholder="输入事件描述"
-                rows={5}
-                labelNumber={5}
-                value={description}
-                onChange={e => this.stateChange(e, 'description')}
-              />
-              <div className={style.textinfo}>
-                还可输入{100 - description.length}字
-              </div>
             </List>
+          </WingBlank>
+          <WingBlank className={style.parcel}>
+            <TextareaItem
+              placeholder="输入事件描述"
+              rows={5}
+              labelNumber={5}
+              value={description}
+              onChange={e => this.stateChange(e, 'description')}
+            />
+            <div className={style.textinfo}>
+                还可输入{100 - description.length}字
+            </div>
           </WingBlank>
           <WhiteSpace size="sm" />
           <div style={{ ...(!name ? { display: 'none' } : null) }}>
@@ -414,7 +415,7 @@ export default class BuckleRecord extends React.Component {
                     const idx = i;
                     return (
                       <Flex key={idx}>
-                        <Flex.Item className={style.table_item}>{item.realname}</Flex.Item>
+                        <Flex.Item className={style.table_item}>{item.staff_name}</Flex.Item>
                         <Flex.Item className={style.table_item}>
                           <Input
                             value={`${item.point_a}`}

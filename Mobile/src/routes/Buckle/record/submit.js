@@ -2,7 +2,7 @@ import React from 'react';
 import {
   connect,
 } from 'dva';
-import { List, Flex, WingBlank, WhiteSpace, Button, DatePicker } from 'antd-mobile';
+import { List, Flex, WingBlank, WhiteSpace, Button, DatePicker, TextareaItem } from 'antd-mobile';
 import { PersonIcon, PersonAdd } from '../../../components/index.js';
 import { scrollToAnchor } from '../../../utils/util';
 
@@ -132,8 +132,6 @@ export default class BuckleRecord extends React.Component {
     const submitInfo = this.state.info;
     const params = {
       events,
-      title: 'xx',
-      remark: '',
       first_approver_sn: first.staff_sn,
       first_approver_name: first.realname,
       final_approver_sn: final.staff_sn,
@@ -153,20 +151,6 @@ export default class BuckleRecord extends React.Component {
     });
   }
 
-  clearModal = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'buckle/clearModal',
-    });
-    dispatch({
-      type: 'event/clearModal',
-    });
-    dispatch({
-      type: 'searchStaff/clearSelectStaff',
-    });
-  }
-
-
   render() {
     const { submit } = this.props;
     const { first, final, addressees } = submit;
@@ -180,6 +164,16 @@ export default class BuckleRecord extends React.Component {
         direction="column"
       >
         <div className={styles.con_content}>
+          <WingBlank className={style.parcel}>
+            <TextareaItem
+              title="主题"
+              placeholder="请输入主题"
+              autoHeight
+              onChange={v => this.stateChange(v, 'title')}
+            />
+          </WingBlank>
+          <WhiteSpace size="sm" />
+
           <WingBlank className={style.parcel}>
             <DatePicker
               mode="date"
@@ -257,6 +251,21 @@ export default class BuckleRecord extends React.Component {
             </div>
           </WingBlank>
           <WhiteSpace size="lg" />
+          <WingBlank className={style.parcel}>
+            <div className={style.players} id="copy">
+              <Flex className={style.title}>备注</Flex>
+              <TextareaItem
+                placeholder="输入备注"
+                rows={5}
+                labelNumber={5}
+                value={info.remark}
+                onChange={e => this.stateChange(e, 'remark')}
+              />
+              <div className={style.textinfo}>
+          还可输入{100 - info.remark.length}字
+              </div>
+            </div>
+          </WingBlank>
         </div>
         <div className={styles.footer}>
           <WingBlank>
