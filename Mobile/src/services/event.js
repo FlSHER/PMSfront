@@ -13,5 +13,5 @@ export async function searchEventName(params) {
   return request('/api/event', {
     body: params,
     method: 'GET',
-  });
+  }, false);
 }

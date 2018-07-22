@@ -242,7 +242,7 @@ export default class BuckleRecord extends React.Component {
     }
     const myself = {
       staff_sn: userInfo.staff_sn,
-      realname: userInfo.realname,
+      staff_name: userInfo.realname,
       point_a: optAll.pointA ? optAll.pointA : info.point_a_default,
       point_b: optAll.pointB ? optAll.pointB : info.point_b_default,
       count: optAll.count ? optAll.count : 1,
@@ -349,7 +349,7 @@ export default class BuckleRecord extends React.Component {
                         key={idx}
                         value={item}
                         type="2"
-                        nameKey="realname"
+                        nameKey="staff_name"
                         showNum={2}
                         handleDelClick={(e, v) => this.remove(e, v, 'participants')}
                       />

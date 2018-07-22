@@ -10,7 +10,7 @@ export default {
     data: {
       monthly: {},
       trend: [
-        { month: 6, point_a: 100, total: 30 },
+        { month: new Date().getMonth() + 1, point_a: 0, point_b: 0 },
       ],
     },
   },

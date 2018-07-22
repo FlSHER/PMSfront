@@ -9,8 +9,7 @@ import { Flex, WhiteSpace, WingBlank, List } from 'antd-mobile';
 import { PersonIcon } from '../../../components/index.js';
 import CheckBox from '../../../components/ModalFilters/CheckBox';
 import MonthPicker from '../../../components/General/MonthPicker';
-import { userStorage } from '../../../utils/util';
-
+import { userStorage, getUrlParams, urlParamsUnicode } from '../../../utils/util';
 import style from '../index.less';
 
 const pointCount = {
@@ -24,7 +23,6 @@ const pointCount = {
     padding: [23, 0, 0, 0],
   },
 };
-
 const colorStyle = ['#000', '#66cbff', '#b4e682', '#fff04c', '#ffb266', '#ff7f94'];
 const pieOption = {
   color: colorStyle,
@@ -119,31 +117,42 @@ const lineOption = {
       color: 'rgb(74,74,74)',
     },
   },
-  series: [
-    {
-      name: '邮件营销',
-      type: 'line',
-      stack: '总量',
-      data: [500, 500, 500, 134, 0, -100, 210],
-    },
-    {
-      name: '联盟广告',
-      type: 'line',
-      stack: '总量',
-      data: [220, 182, 191, 234, 290, 330, 310],
-    },
-  ],
+  series: [],
 };
 
+const defaultMonthly = [
+  {
+    id: 0, name: '基础', add_point: 0, sub_point: 0, point_b_total: 0,
+  },
+  {
+    id: 1, name: '工作', add_point: 0, sub_point: 0, point_b_total: 0,
+  },
+  {
+    id: 2, name: '行政', add_point: 0, sub_point: 0, point_b_total: 0,
+  },
+  {
+    id: 3, name: '创新', add_point: 0, sub_point: 0, point_b_total: 0,
+  },
+  {
+    id: 4, name: '其他', add_point: 0, sub_point: 0, point_b_total: 0,
+  },
+];
 const tabOptions = [
   { label: 'A分', value: 1, key: 'point_a' },
-  { label: 'B分', value: 2, key: 'total' },
+  { label: 'B分', value: 2, key: 'point_b' },
 ];
 
-const pointConfig = [
-  { key: 'add_point', title: '当月奖分', total: 'add_point_total' },
-  { key: 'sub_point', title: '当月扣分', total: 'sub_point_total' },
+const pointBConfig = [
+  { key: 'add_point', title: '当月奖分', total: 'monthly_add_b_total' },
+  { key: 'sub_point', title: '当月扣分', total: 'monthly_sub_b_total' },
 ];
+
+const pointAConfig = [
+  { key: 'add_point', title: '当月奖分', total: 'monthly_sub_a_total' },
+  { key: 'sub_point', title: '当月扣分', total: 'monthly_sub_a_total' },
+];
+
+
 @connect(({ statistic }) => ({
   data: statistic.data,
 }))
@@ -151,21 +160,30 @@ export default class Statistic extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userInfo: userStorage('userInfo'),
       checked: 2,
     };
   }
 
   componentWillMount() {
+    const { location } = this.props;
     const datetime = moment(new Date()).format('YYYY-MM');
-    this.getStatisticData({ datetime });
+    this.urlParams = getUrlParams(location.search);
+    this.getStatisticData({ datetime, ...this.urlParams });
   }
 
   componentDidMount() {
-    pointConfig.forEach((item) => {
+    pointAConfig.forEach((item) => {
       this[`echarts${item.key}`] = echarts.init(this[item.key]);
     });
     this.echartsLine = echarts.init(this.line);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { location: { search } } = nextProps;
+    if (search !== this.props.location.search) {
+      this.urlParams = getUrlParams(search);
+      this.getStatisticData(this.urlParams);
+    }
   }
 
   getStatisticData = (params) => {
@@ -213,11 +231,13 @@ export default class Statistic extends React.Component {
   }
 
   makeLineSeriesData = (lineData) => {
+    const reverseLineData = [...lineData];
+    reverseLineData.reverse();
     const point = {};
     tabOptions.forEach((item) => {
       point[item.key] = [];
     });
-    lineData.forEach((item) => {
+    reverseLineData.forEach((item) => {
       tabOptions.forEach(its => point[its.key].push(item[its.key]));
     });
     const seriesData = tabOptions.map((item) => {
@@ -231,18 +251,26 @@ export default class Statistic extends React.Component {
   }
 
   makexAxisData = (xAxis) => {
-    return xAxis.map(item => item.month);
+    const reverseXAxis = [...xAxis];
+    reverseXAxis.reverse();
+    return reverseXAxis.map(item => item.month);
   }
 
   monthChange = (v) => {
-    this.getStatisticData({ datetime: v });
+    this.urlParams = {
+      ...this.urlParams,
+      ...v,
+    };
+    let url = '/point_statistic';
+    const params = urlParamsUnicode(this.urlParams);
+    url += params ? `?${params}` : '';
+    this.props.history.replace(url);
   }
 
   tabChange = (v) => {
     this.setState({
       checked: v,
     });
-    this.getStatisticData({ datetime: v });
   }
 
   pointRedirect = () => {
@@ -252,17 +280,22 @@ export default class Statistic extends React.Component {
 
   renderEsChart = (elementChart, key, total) => {
     const { data: { monthly } } = this.props;
-    const sourceBMonthly = monthly.source_b_monthly;
+    const sourceBMonthly = monthly.source_b_monthly || defaultMonthly;
+    const sourceAMonthly = monthly.source_a_monthly || defaultMonthly;
+    const { checked } = this.state;
+    const renderMonthly = checked === 1 ? sourceAMonthly : sourceBMonthly;
     const count = Math.abs(monthly[total] ? monthly[total] : 0);
     const newpieOption = { ...pieOption };
-    newpieOption.legend.data = this.makeLegendData(sourceBMonthly, key);
+    newpieOption.legend.data = this.makeLegendData(renderMonthly, key);
     newpieOption.legend.formatter = (name) => {
-      return this.makeLegendPercent(name, sourceBMonthly, key, count);
+      return this.makeLegendPercent(name, renderMonthly, key, count);
     };
     if (count === 0) {
       newpieOption.color = '#fff';
     }
-    newpieOption.series[0].data = this.makePieSeriesData(sourceBMonthly, key, count);
+    newpieOption.series[0].data = this.makePieSeriesData(renderMonthly, key, count);
+    console.log('newpieOption', newpieOption);
+
     elementChart.setOption(newpieOption);
   }
 
@@ -275,8 +308,12 @@ export default class Statistic extends React.Component {
 
   render() {
     const { data: { monthly } } = this.props;
-    const sourceBMonthly = monthly.source_b_monthly;
-    const { userInfo = {}, checked } = this.state;
+    const sourceBMonthly = monthly.source_b_monthly || defaultMonthly;
+    const sourceAMonthly = monthly.source_a_monthly || defaultMonthly;
+    const { checked } = this.state;
+    const renderMonthly = checked === 1 ? sourceAMonthly : sourceBMonthly;
+    const pointConfig = checked === 1 ? pointAConfig : pointBConfig;
+    console.log('pointConfig', pointConfig);
     if (this.echartsLine) {
       this.renderChartLine();
     }
@@ -290,14 +327,14 @@ export default class Statistic extends React.Component {
             <div className={style.header_info}>
               <div className={style.ranking_user_info}>
                 <PersonIcon
-                  value={userInfo}
+                  value={monthly}
                   footer={false}
-                  nameKey="realname"
+                  nameKey="staff_name"
                   itemStyle={{ marginBottom: 0, marginRight: '0.5333rem' }}
                 />
                 <div>
-                  <p style={{ fontSize: '14px' }}>{userInfo.realname}({userInfo.staff_sn})</p>
-                  <p style={{ fontSize: '12px', marginTop: '0.26667rem' }}>{userInfo.department && userInfo.department.full_name}/{userInfo.brand && userInfo.brand.name}</p>
+                  <p style={{ fontSize: '14px' }}>{monthly.staff_name}({monthly.staff_sn})</p>
+                  <p style={{ fontSize: '12px', marginTop: '0.26667rem' }}>{monthly.department_name}/{monthly.brand_name}</p>
                 </div>
               </div>
               <div className={style.point_total}>
@@ -313,7 +350,7 @@ export default class Statistic extends React.Component {
             <div className={style.players}>
               <Flex className={style.time_sel}>
                 <MonthPicker
-                  onChange={this.monthChange}
+                  onChange={v => this.monthChange({ datetime: v })}
                 />
               </Flex>
             </div>
@@ -330,7 +367,7 @@ export default class Statistic extends React.Component {
                   <div className={style.get_point}>{monthly.point_b_monthly}</div>
                 </div>
                 <div className={style.point_type}>
-                  {((sourceBMonthly && sourceBMonthly.slice(1, 4)) || []).map((item, i) => {
+                  {(renderMonthly || []).map((item, i) => {
                     const idx = i;
                     return (<div key={idx}>{item.name}：{item.add_point}</div>);
                   })}

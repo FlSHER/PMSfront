@@ -80,14 +80,14 @@ export default class BuckleRecord extends React.Component {
   changePerson = (name, type) => {
     const { history } = this.props;
     this.saveAllData();
-    history.push(`/sel_person/${name}/${type}`);
+    history.push(`/sel_person2/${name}/${type}/sumbit`);
   }
 
   addMore = (name, type) => {
     const { history } = this.props;
     this.saveAllData();
-    history.replace(`/record_point#${name}`);
-    history.push(`/sel_person2/${name}/${type}/sumbit`);
+    history.replace(`/buckle_submit#${name}`);
+    history.push(`/sel_person2/${name}/${type}/submit`);
   }
 
   stateChange = (v, key) => {
@@ -117,7 +117,40 @@ export default class BuckleRecord extends React.Component {
   }
 
   record = () => {
-
+    const {
+      record: { events },
+      submit: { addressees, final, first },
+      dispatch, history,
+    } = this.props;
+    const newAddressees = addressees.map((item) => {
+      const obj = {
+        staff_sn: item.staff_sn,
+        staff_name: item.staff_sn,
+      };
+      return obj;
+    });
+    const submitInfo = this.state.info;
+    const params = {
+      events,
+      title: 'xx',
+      remark: '',
+      first_approver_sn: first.staff_sn,
+      first_approver_name: first.realname,
+      final_approver_sn: final.staff_sn,
+      final_approver_name: final.staff_name,
+      ...submitInfo,
+      addressees: newAddressees,
+    };
+    console.log('params', params);
+    dispatch({
+      type: 'submit/recordBuckle',
+      payload: {
+        data: params,
+        cb: () => {
+          history.replace('/home');
+        },
+      },
+    });
   }
 
   clearModal = () => {
@@ -150,9 +183,9 @@ export default class BuckleRecord extends React.Component {
           <WingBlank className={style.parcel}>
             <DatePicker
               mode="date"
-              value={info.executed_at}
+              value={new Date(info.executed_at)}
               maxDate={new Date()}
-              onChange={e => this.stateChange(e, 'executed_at')}
+              onChange={e => this.stateChange(moment(e).format('YYYY-MM-DD'), 'executed_at')}
             >
               <List.Item arrow="horizontal">事件时间</List.Item>
             </DatePicker>

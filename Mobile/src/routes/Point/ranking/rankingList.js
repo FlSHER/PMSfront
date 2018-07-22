@@ -38,13 +38,6 @@ export default class PointRanking extends React.Component {
       sortModal: false,
       offsetBottom: 0,
     },
-    // params: {
-    //   stage: 'month',
-    //   datetime: moment(new Date()).format('YYYY-MM-DD'),
-    //   group_id: '',
-    //   start_at: '',
-    //   end_at: '',
-    // },
   }
   componentWillMount() {
     const { dispatch, location } = this.props;
@@ -104,23 +97,6 @@ export default class PointRanking extends React.Component {
     newModal[feild] = !newModal[feild];
     this.setNewState('modal', newModal);
   }
-  // dealFilter = () => {
-  //   const { params } = this.state;
-  //   const { dispatch } = this.props;
-  //   const newParams = {};
-  //   for (const key in params) {
-  //     if (key !== undefined) {
-  //       if (params[key]) {
-  //         newParams[key] = params[key];
-  //       }
-  //     }
-  //   }
-  //   dispatch({
-  //     type: 'ranking/getRanking',
-  //     payload: { ...newParams },
-  //   });
-  // }
-
 
   fetchRanking = (params) => {
     const { dispatch } = this.props;
@@ -129,18 +105,6 @@ export default class PointRanking extends React.Component {
       payload: params,
     });
   }
-
-  // timeChange = (v, key) => {
-
-  //   // const { params } = this.state;
-  //   // const newParams = { ...params };
-  //   // newParams[key] = moment(v).format('YYYY-MM-DD');
-  //   // this.setState({
-  //   //   params: newParams,
-  //   // }, () => {
-  //   //   this.dealFilter();
-  //   // });
-  // }
 
   urlParamsUnicode = (params) => {
     const url = [];
@@ -162,18 +126,6 @@ export default class PointRanking extends React.Component {
     url += params ? `?${params}` : '';
     this[this.urlParams.stage || 'month'] = params ? `?${params}` : '';
     this.props.history.replace(url);
-
-    // const { modal, params } = this.state;
-    // const newModal = { ...modal };
-    // const newParams = { ...params };
-    // newModal.sortModal = false;
-    // newParams.group_id = item.id;
-    // this.setState({
-    //   modal: { ...newModal },
-    //   params: newParams,
-    // }, () => {
-    //   this.dealFilter();
-    // });
   }
 
   tabChange = (item) => {
@@ -185,9 +137,8 @@ export default class PointRanking extends React.Component {
   }
 
   toPointList = (item) => {
-    const { history, ranking } = this.props;
-    const groupId = ranking.group_id;
-    history.push(`/point_list?staff_sn=${item.staff_sn}&group_id=${groupId}`);
+    const { history } = this.props;
+    history.push(`/point_statistic?staff_sn=${item.staff_sn}`);
   }
 
   render() {

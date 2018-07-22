@@ -1,3 +1,9 @@
+
+import moment from 'moment';
+import {
+  recordBuckle,
+} from '../services/buckle';
+
 export default {
   namespace: 'submit',
   state: {
@@ -7,10 +13,18 @@ export default {
     info: {
       title: '',
       remark: '',
-      executed_at: new Date(),
+      executed_at: moment(new Date()).format('YYYY-MM-DD'),
     },
   },
   effects: {
+    *recordBuckle({ payload }, { call }) {
+      const response = yield call(recordBuckle, payload.data);
+      if (response && !response.error) {
+        if (payload.cb) {
+          payload.cb();
+        }
+      }
+    },
   },
   reducers: {
     // ...defaultReducers,
@@ -33,14 +47,14 @@ export default {
           const obj = { staff_sn: _.staff_sn, realname: _.realname, staff_name: _.staff_name };
           return obj;
         });
-        const newStaff = [...state[key]];
+        let newStaff = [...state[key]];
         newStaff.forEach((item) => {
           const valueIndex = staffSn.indexOf(item.staff_sn);
           if (valueIndex !== -1) {
             temp = temp.filter((its, idx) => idx !== valueIndex);
           }
         });
-        newStaff.concat(temp);
+        newStaff = newStaff.concat(temp);
         staff = [...newStaff];
       }
       return {

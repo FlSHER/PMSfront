@@ -81,7 +81,7 @@ export default {
           if (i.toString() === eventIndex.toString()) {
             const staff = eventStaff[k];
             let temp = value.map((_) => {
-              const obj = { staff_sn: _.staff_sn, realname: _.realname, staff_name: _.staff_name };
+              const obj = { staff_sn: _.staff_sn, staff_name: _.staff_name || _.realname };
               return obj;
             });
             if (staff.length) {
@@ -98,6 +98,7 @@ export default {
           }
         });
       }
+      console.log(eventStaff);
       newEvents[eventIndex].participants = eventStaff[eventIndex];
       return {
         ...state,

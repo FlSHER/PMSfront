@@ -351,3 +351,12 @@ export function makeMonthData(arr) {
   return dateData;
 }
 
+export function urlParamsUnicode(params) {
+  const url = [];
+  Object.keys(params).forEach((item) => {
+    if (params[item]) {
+      url.push(`${item}=${params[item]}`);
+    }
+  });
+  return url.join('&');
+}
