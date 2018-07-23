@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import moment from 'moment';
 import OAForm from '../../../components/OAForm';
 import ListForm from './listForm';
+import { dotFieldsValue } from '../../../utils/utils';
 
 const FormItem = OAForm.Item;
 const {
@@ -14,6 +15,7 @@ const {
 @connect(({ event, loading }) => ({
   listFormValue: event.listFormValue,
   finalStaff: event.finalStaff,
+  loading: loading.effects['buckle/addBuckle'],
   finalLoading: loading.effects['event/fetchFinalStaff'],
 }))
 export default class extends React.PureComponent {
@@ -38,7 +40,8 @@ export default class extends React.PureComponent {
   }
 
   handleError = (error) => {
-    console.log(error);
+    const fieldError = dotFieldsValue(error);
+    console.log(fieldError);
   }
 
   handleSubmit = () => {
@@ -52,14 +55,26 @@ export default class extends React.PureComponent {
             ...item,
             event_id: item.event_id.event_id,
           });
+        } else {
+          events.push({
+            description: '',
+            event_id: '',
+            participants: [],
+          });
         }
       });
       const params = {
         events,
         ...values,
       };
+      params.first_approver_sn = params.first.first_approver_sn || '';
+      params.first_approver_name = params.first.first_approver_name || '';
+      params.final_approver_sn = params.last.final_approver_sn || '';
+      params.final_approver_name = params.last.final_approver_name || '';
+      delete params.first;
+      delete params.last;
       dispatch({
-        type: 'event/addBuckle',
+        type: 'buckle/addBuckle',
         payload: params,
         onError: this.handleError,
       });
@@ -73,9 +88,10 @@ export default class extends React.PureComponent {
   }
 
   makeFormProps = () => {
-    const { form } = this.props;
+    const { form, loading } = this.props;
     const response = {
       form,
+      loading,
     };
     return response;
   }
@@ -233,7 +249,7 @@ export default class extends React.PureComponent {
                 <SearchTable
                   mode="user"
                   name={{
-                    first_approver_name: 'staff_sn',
+                    final_approver_sn: 'staff_sn',
                     final_approver_name: 'staff_name',
                   }}
                   showName="final_approver_name"

@@ -6,15 +6,25 @@ import moment from 'moment';
 import styles from './index.less';
 
 export default class DataPicker extends PureComponent {
+  makeProps = () => {
+    const { value, format } = this.props;
+    const momentValue = value && value.length ? { value: moment(value, format || 'YYYY-MM-DD') } : null;
+    const temp = { ...this.props };
+    delete temp.value;
+    const response = {
+      ...temp,
+      ...momentValue,
+    };
+    return response;
+  }
+
   render() {
-    const { value, onChange, format } = this.props;
-    const momentValue = value && value.length ? { value: moment(value, format || 'YYYY-MM-DD') } : {};
+    const { onChange } = this.props;
     return (
       <DatePicker
         dropdownClassName={styles.calendar}
         getCalendarContainer={trigger => (trigger)}
-        {...this.props}
-        {...momentValue}
+        {...this.makeProps()}
         onChange={(_, dateString) => {
           onChange(dateString);
         }}
