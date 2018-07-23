@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 import { Tooltip } from 'antd';
 import SearchSelectRadio from '../Radio';
-import { makerFilters, findTreePerant } from '../../../utils/utils';
+import { makerFilters, findTreeParent } from '../../../utils/utils';
 import './ellipsis.less';
 
 
@@ -12,7 +12,7 @@ import './ellipsis.less';
   loading: loading.models.event,
 }))
 
-export default class Event extends React.Component {
+export default class extends React.Component {
   fetchEventType = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -42,7 +42,6 @@ export default class Event extends React.Component {
 
   makeColumns = () => {
     const { eventType } = this.props;
-    // const { isBigRatio } = getClientRatio();
     const columns = [
       {
         dataIndex: 'id',
@@ -76,7 +75,7 @@ export default class Event extends React.Component {
           data: eventType,
         },
         render: (typeId) => {
-          const findData = findTreePerant(eventType, typeId);
+          const findData = findTreeParent(eventType, typeId);
           const listName = findData.reverse().map(item => item.name);
           const name = listName.join('>');
           return (
@@ -131,11 +130,13 @@ export default class Event extends React.Component {
   }
 
   makeModalSelectProps = () => {
-    const { dataSource, loading } = this.props;
+    const { dataSource, loading, name, value } = this.props;
     const response = {
+      loading,
+      name,
+      value,
       index: 'id',
       data: [],
-      loading,
       columns: this.makeColumns(),
       scroll: { x: 1000 },
       modalProps: {

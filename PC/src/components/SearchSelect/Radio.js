@@ -2,7 +2,7 @@ import React from 'react';
 import SearchSelect from '../SearchSelect';
 import { ModalSelect } from '../OAModal';
 
-export default class Event extends React.Component {
+export default class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

@@ -40,17 +40,27 @@ export default class extends React.PureComponent {
     return (
       <OAForm {...this.makeFormProps()} style={{ padding: 10, width: 670 }}>
         <FormItem label="事件标题" {...formItemLayout}>
-          {getFieldDecorator('eventSearch', {})(
-            <EventSearch style={style} />
+          {getFieldDecorator('event_id', {
+            initialValue: { event_id: '' },
+          })(
+            <EventSearch
+              style={style}
+              valueIndex="event_id"
+              name={{ event_id: 'id' }}
+            />
           )}
         </FormItem>
         <FormItem label="事件描述" {...formItemLayout}>
-          {getFieldDecorator('textArea', {})(
+          {getFieldDecorator('description', {
+            initialValue: '',
+          })(
             <TextArea placeholder="请输入" style={style} />
           )}
         </FormItem>
         <FormItem label="事件配置" {...formItemLayout} >
-          {getFieldDecorator('workingStaff', {})(
+          {getFieldDecorator('participants', {
+            initialValue: [],
+          })(
             <WorkingStaff />
           )}
         </FormItem>

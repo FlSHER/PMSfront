@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, Select, Button, Spin } from 'antd';
-import { dontInitialValue, makeInitialValue } from '../../utils/utils';
+import { dontInitialValue } from '../../utils/utils';
 
 
 const { Option } = Select;
@@ -10,7 +10,8 @@ const defaultProps = {
   fetchDataSource: () => { },
   onChange: () => { },
   valueIndex: 'id',
-  valueText: 'name',
+  labelValue: 'id',
+  labelText: 'name',
   valueOBJ: {},
   dataSource: [],
   selectedData: [],
@@ -21,9 +22,7 @@ const defaultProps = {
 export default class SearchSelect extends React.Component {
   constructor(props) {
     super(props);
-    const { valueIndex } = props;
-    let { valueOBJ } = props;
-    valueOBJ = makeInitialValue(props.name, valueOBJ || {});
+    const { valueOBJ, valueIndex } = props;
     const newValue = valueOBJ[valueIndex];
     this.state = {
       value: newValue || '',
@@ -31,10 +30,8 @@ export default class SearchSelect extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { name, valueIndex } = nextProps;
-    let { valueOBJ } = nextProps;
+    const { valueOBJ, valueIndex } = nextProps;
     if (JSON.stringify(valueOBJ) !== JSON.stringify(this.props.valueOBJ)) {
-      valueOBJ = makeInitialValue(name, valueOBJ);
       const newValue = valueOBJ[valueIndex] || '';
       this.setState({ value: newValue });
     }
@@ -97,32 +94,32 @@ export default class SearchSelect extends React.Component {
   }
 
   renderOption = () => {
-    const { dataSource, renderOption, valueIndex, valueText } = this.props;
+    const { dataSource, renderOption, labelValue, labelText } = this.props;
     return dataSource.map((item, index) => {
       return renderOption ? renderOption(item, index) : (
         <Option
-          key={item[valueIndex]}
-          value={item[valueIndex]}
+          key={item[labelValue]}
+          value={item[labelValue]}
           data={item}
         >
-          {item[valueText]}
+          {item[labelText]}
         </Option>
       );
     });
   }
 
   renderHiddenOption = () => {
-    const { selectedData, valueIndex, valueText } = this.props;
+    const { selectedData, labelValue, labelText } = this.props;
     return selectedData.map((item, index) => {
-      const key = `selected${item[valueIndex]}-${index}`;
+      const key = `selected-${index}`;
       return (
         <Option
           style={{ display: 'none' }}
           key={key}
-          value={item[valueIndex]}
+          value={item[labelValue]}
           data={item}
         >
-          {item[valueText]}
+          {item[labelText]}
         </Option>
       );
     });

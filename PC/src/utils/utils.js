@@ -431,7 +431,7 @@ export function getTableBodyHeight(footerAble) {
  * @param {数据源} data
  * @param {查找的id} id
  */
-export function findTreePerant(data, id, key = 'id', pid = 'parent_id') {
+export function findTreeParent(data, id, key = 'id', pid = 'parent_id') {
   const result = [];
   const findData = data.find((item) => {
     return item[key] === id;
@@ -439,7 +439,7 @@ export function findTreePerant(data, id, key = 'id', pid = 'parent_id') {
   if (!findData || !id) return result;
   result.push(findData);
   let perantItem = [];
-  perantItem = findTreePerant(data, findData[pid], key, pid);
+  perantItem = findTreeParent(data, findData[pid], key, pid);
   return result.concat(perantItem);
 }
 

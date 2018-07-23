@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Icon } from 'antd';
-import { connect } from 'dva';
 import OATable from '../../../../components/OATable';
 import ModalStaff from './modalStaff';
 import BatchForm from './batchForm';
@@ -14,7 +13,6 @@ const valueDefault = {
   count: 0,
 };
 
-@connect()
 export default class WorkingStaff extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -69,7 +67,8 @@ export default class WorkingStaff extends React.PureComponent {
   handleModalStaffOnChange = (value) => {
     const newValue = value.map((item) => {
       return {
-        ...item,
+        staff_sn: item.staff_sn,
+        staff_name: item.realname,
         ...valueDefault,
       };
     });
@@ -110,7 +109,8 @@ export default class WorkingStaff extends React.PureComponent {
     const { value } = this.state;
     const { user } = window;
     value.push({
-      ...user,
+      staff_sn: user.staff_sn,
+      staff_name: user.realname,
       ...valueDefault,
     });
     this.setState({ value: [...value] }, this.handleOnChange);
@@ -134,9 +134,6 @@ export default class WorkingStaff extends React.PureComponent {
         title: '姓名',
         dataIndex: 'staff_name',
         width: 150,
-        render: (_, record) => {
-          return record.realname;
-        },
       },
       {
         title: '单次A分',
@@ -233,7 +230,7 @@ export default class WorkingStaff extends React.PureComponent {
   }
 
   render() {
-    const { visible, value, batchVisible } = this.state;
+    const { visible, batchVisible } = this.state;
     return (
       <div style={{ width: 540 }}>
         <OATable
@@ -242,7 +239,7 @@ export default class WorkingStaff extends React.PureComponent {
         />
         <ModalStaff
           visible={visible}
-          value={value}
+          // value={value}
           onChange={this.handleModalStaffOnChange}
           filters={{ content: 'status_id>=0;', status: [1, 2, 3] }}
           onCancel={() => this.handleModalVisible('visible', false)}

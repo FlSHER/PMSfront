@@ -16,3 +16,7 @@ export async function fetchEvent(params) {
     method: 'GET',
   });
 }
+
+export async function fetchFinalStaff() {
+  return request('/api/PMS/event/final-staff');
+}
