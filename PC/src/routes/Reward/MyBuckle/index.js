@@ -12,9 +12,12 @@ export default class extends React.PureComponent {
           <TabPane
             tab="我参与的"
             key="1"
-            style={{ width: 56 }}
-           />
-          <TabPane tab="我记录的" key="3">Tab 3</TabPane>
+          >
+            <Partake type="participant" forceRender />
+          </TabPane>
+          <TabPane tab="我记录的" key="2">
+            <Partake type="recorded" forceRender />
+          </TabPane>
         </Tabs>
       </div>
     );

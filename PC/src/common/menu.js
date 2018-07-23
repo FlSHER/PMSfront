@@ -19,12 +19,12 @@ const menuData = [
     path: 'check',
     children: [
       {
-        name: '待审核',
+        name: '奖扣审核',
         path: 'audit',
       },
       {
-        name: '已审核',
-        path: 'my-audit',
+        name: '抄送我的',
+        path: 'my-peruser',
       },
     ],
   },

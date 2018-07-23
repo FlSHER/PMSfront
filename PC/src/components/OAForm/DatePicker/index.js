@@ -3,7 +3,7 @@ import {
   DatePicker,
 } from 'antd';
 import moment from 'moment';
-import styles from './index.less';
+// import styles from './index.less';
 
 export default class DataPicker extends PureComponent {
   makeProps = () => {
@@ -22,7 +22,6 @@ export default class DataPicker extends PureComponent {
     const { onChange } = this.props;
     return (
       <DatePicker
-        dropdownClassName={styles.calendar}
         getCalendarContainer={trigger => (trigger)}
         {...this.makeProps()}
         onChange={(_, dateString) => {

@@ -5,23 +5,24 @@ import {
 } from '../services/buckle';
 import defaultReducers from './reducers';
 
-
+const store = 'buckle';
 export default {
   namespace: 'buckle',
   state: {
-    buckle: {},
+    recorded: {},
+    participant: {},
   },
   effects: {
     * fetch({ payload }, { call, put }) {
       try {
         const params = { ...payload };
-        const { id } = params;
+        const { id, type } = params;
         delete params.id;
-        const response = yield call(fetchBuckle, params, id);
+        const response = yield call(fetchBuckle, params, id || '');
         yield put({
           type: 'save',
           payload: {
-            store,
+            store: type,
             id,
             data: response,
           },
