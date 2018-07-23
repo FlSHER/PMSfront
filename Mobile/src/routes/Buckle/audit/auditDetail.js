@@ -30,22 +30,26 @@ const person = [
 export default class AuditDetail extends React.Component {
   state = {
     eventId: '',
+    index: '',
     userInfo: {},
   }
+
   componentWillMount() {
-    const { dispatch, location } = this.props;
-    const eventId = analyzePath(location.pathname, 1);
+    const { dispatch, match: { params } } = this.props;
+    const { id, index } = params;
     const newInfo = userStorage('userInfo');
     this.setState({
-      eventId,
+      eventId: id,
+      index,
       userInfo: newInfo,
     }, () => {
       dispatch({
         type: 'buckle/getBuckleDetail',
-        payload: { eventId },
+        payload: { eventId: id },
       });
     });
   }
+
   withDraw = () => {
     const { dispatch, history } = this.props;
     const { eventId } = this.state;
@@ -60,14 +64,17 @@ export default class AuditDetail extends React.Component {
       },
     });
   }
+
   submitAgain = (item) => {
     const { history } = this.props;
     history.push(`/buckle_record/${item.id}`);
   }
+
   doAudit = (type, state) => {
     const { history } = this.props;
     history.push(`/audit_reason/${type}/${state}/-2`);
   }
+
   makeApprover = (approver) => {
     const { detail } = this.props;
     return (
@@ -122,8 +129,16 @@ export default class AuditDetail extends React.Component {
       </div>
     );
   }
+
   render() {
     const { detail } = this.props;
+    const { logs } = detail;
+    const { index } = this.state;
+    let participant = detail.participant;
+    if (index !== undefined) {
+      participant = logs[index].participants;
+    }
+    console.log('participant', participant);
     const { userInfo } = this.state;
     const approvers = [
       {
@@ -253,7 +268,7 @@ export default class AuditDetail extends React.Component {
                 <Flex.Item className={style.table_item}>次数</Flex.Item>
               </Flex>
               <div className={style.table_body}>
-                {(detail.participant || []).map((item, i) => {
+                {(participant || []).map((item, i) => {
                   const idx = i;
                   return (
                     <Flex key={idx}>

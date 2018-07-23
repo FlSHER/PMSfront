@@ -7,7 +7,7 @@ import { Flex, SearchBar } from 'antd-mobile';
 import { EventType, EventName, SearchEvent } from '../../common/ListView/index.js';
 import { Bread } from '../../components/General/index';
 import { Nothing } from '../../components/index';
-import { markTreeData, userStorage } from '../../utils/util';
+import { markTreeData } from '../../utils/util';
 import nothing from '../../assets/nothing.png';
 
 import style from './index.less';
@@ -229,7 +229,9 @@ export default class SelEvent extends Component {
 
   render() {
     const { eventList, selected, searchValue } = this.state;
-    const { breadCrumb, evtName, loading, loadingName, searchEvent, loadingSearch } = this.props;
+    const { breadCrumb, evtName, loading,
+      loadingName, searchEvent, loadingSearch, evtAll,
+    } = this.props;
     const isLoading = loading || loadingName;
     const { page, totalpage, data = [] } = searchEvent;
     return (
@@ -286,6 +288,7 @@ export default class SelEvent extends Component {
             <SearchEvent
               name="name"
               heightNone
+              breadData={evtAll}
               selected={selected.data}
               dataSource={data || []}
               onChange={this.getSelectResult}

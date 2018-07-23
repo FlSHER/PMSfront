@@ -212,6 +212,18 @@ export function markTreeData(data, pid = null, { parentId, key }) {
   return tree;
 }
 
+export function findTreeParent(data, id, key = 'id', pid = 'parent_id') {
+  const result = [];
+  const [findData] = data.filter((item) => {
+    return item[key] === id;
+  });
+  if (!findData || !id) return result;
+  result.push(findData);
+  let perantItem = [];
+  perantItem = findTreeParent(data, findData[pid], key, pid);
+  return result.concat(perantItem);
+}
+
 const whereConfig = {
   in: '=',
   like: '~',
@@ -359,4 +371,11 @@ export function urlParamsUnicode(params) {
     }
   });
   return url.join('&');
+}
+
+
+export function sum(arr) {
+  return arr.reduce((prev, curr) => {
+    return Number(prev) + Number(curr);
+  });
 }

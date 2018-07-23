@@ -40,7 +40,12 @@ export default {
       const { key, type, value } = action.payload;
       let staff = null;
       if (type.toString() === '1') {
-        staff = { ...value };
+        const obj = {
+          staff_sn: value.staff_sn,
+          realname: value.realname,
+          staff_name: value.staff_name,
+        };
+        staff = { ...obj };
       } else {
         const staffSn = value.map((item) => { return item.staff_sn; });
         let temp = value.map((_) => {

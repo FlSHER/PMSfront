@@ -24,7 +24,7 @@ export default class Buckle extends Component {
           onClick={() => handleClick(value)}
         >
           <div className={style.event_title}>
-            <span className={style.event_name}>{value.event_name}</span>
+            <span className={style.event_name}>{value.title}</span>
             {label.map((its, i) => {
               const idx = i;
               return (
@@ -38,7 +38,7 @@ export default class Buckle extends Component {
             })}
           </div>
           <div className={style.time}>
-            {value.description}
+            {value.remark}
           </div>
           <div className={style.desc}>
             记录人：{value.recorder_name}

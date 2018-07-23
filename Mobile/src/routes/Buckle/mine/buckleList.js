@@ -269,7 +269,12 @@ export default class BuckleList extends React.Component {
     });
   }
   toLookDetail = (item) => {
-    this.props.history.push(`/audit_detail/${item.id}`);
+    const { checkState } = this.state;
+    if (checkState.value === 'participant') {
+      this.props.history.push(`/audit_detail/${item.id}`);
+    } else {
+      this.props.history.push(`/event_preview/${item.id}`);
+    }
   }
   rangeChange = (v, key) => {
     const { filter } = this.state;

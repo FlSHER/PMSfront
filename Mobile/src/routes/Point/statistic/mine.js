@@ -9,7 +9,7 @@ import { Flex, WhiteSpace, WingBlank, List } from 'antd-mobile';
 import { PersonIcon } from '../../../components/index.js';
 import CheckBox from '../../../components/ModalFilters/CheckBox';
 import MonthPicker from '../../../components/General/MonthPicker';
-import { userStorage, getUrlParams, urlParamsUnicode } from '../../../utils/util';
+import { sum, getUrlParams, urlParamsUnicode } from '../../../utils/util';
 import style from '../index.less';
 
 const pointCount = {
@@ -122,36 +122,37 @@ const lineOption = {
 
 const defaultMonthly = [
   {
-    id: 0, name: '基础', add_point: 0, sub_point: 0, point_b_total: 0,
+    id: 0, name: '基础', add_point: 0, sub_point: 0, add_a_point: 0, sub_a_point: 0, point_b_total: 0,
   },
   {
-    id: 1, name: '工作', add_point: 0, sub_point: 0, point_b_total: 0,
+    id: 1, name: '工作', add_point: 0, sub_point: 0, add_a_point: 0, sub_a_point: 0, point_b_total: 0,
   },
   {
-    id: 2, name: '行政', add_point: 0, sub_point: 0, point_b_total: 0,
+    id: 2, name: '行政', add_point: 0, sub_point: 0, add_a_point: 0, sub_a_point: 0, point_b_total: 0,
   },
   {
-    id: 3, name: '创新', add_point: 0, sub_point: 0, point_b_total: 0,
+    id: 3, name: '创新', add_point: 0, sub_point: 0, add_a_point: 0, sub_a_point: 0, point_b_total: 0,
   },
   {
-    id: 4, name: '其他', add_point: 0, sub_point: 0, point_b_total: 0,
+    id: 4, name: '其他', add_point: 0, sub_point: 0, add_a_point: 0, sub_a_point: 0, point_b_total: 0,
   },
 ];
+
+
 const tabOptions = [
   { label: 'A分', value: 1, key: 'point_a' },
   { label: 'B分', value: 2, key: 'point_b' },
 ];
 
 const pointBConfig = [
-  { key: 'add_point', title: '当月奖分', total: 'monthly_add_b_total' },
-  { key: 'sub_point', title: '当月扣分', total: 'monthly_sub_b_total' },
+  { key: 'add_point', title: '当月奖分', name: 'add_point' },
+  { key: 'sub_point', title: '当月扣分', name: 'sub_point' },
 ];
 
 const pointAConfig = [
-  { key: 'add_point', title: '当月奖分', total: 'monthly_sub_a_total' },
-  { key: 'sub_point', title: '当月扣分', total: 'monthly_sub_a_total' },
+  { key: 'add_a_point', title: '当月奖分', name: 'add_point' },
+  { key: 'sub_a_point', title: '当月扣分', name: 'sub_point' },
 ];
-
 
 @connect(({ statistic }) => ({
   data: statistic.data,
@@ -160,20 +161,20 @@ export default class Statistic extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      checked: 2,
+      checked: 1,
     };
   }
 
   componentWillMount() {
     const { location } = this.props;
-    const datetime = moment(new Date()).format('YYYY-MM');
+    // const datetime = moment(new Date()).format('YYYY-MM');
     this.urlParams = getUrlParams(location.search);
-    this.getStatisticData({ datetime, ...this.urlParams });
+    this.getStatisticData({ ...this.urlParams });
   }
 
   componentDidMount() {
-    pointAConfig.forEach((item) => {
-      this[`echarts${item.key}`] = echarts.init(this[item.key]);
+    pointBConfig.forEach((item) => {
+      this[`echarts${item.name}`] = echarts.init(this[item.name]);
     });
     this.echartsLine = echarts.init(this.line);
   }
@@ -278,14 +279,15 @@ export default class Statistic extends React.Component {
     history.push('/point_list');
   }
 
-  renderEsChart = (elementChart, key, total) => {
+  renderEsChart = (elementChart, key) => {
     const { data: { monthly } } = this.props;
     const sourceBMonthly = monthly.source_b_monthly || defaultMonthly;
     const sourceAMonthly = monthly.source_a_monthly || defaultMonthly;
     const { checked } = this.state;
     const renderMonthly = checked === 1 ? sourceAMonthly : sourceBMonthly;
-    const count = Math.abs(monthly[total] ? monthly[total] : 0);
-    const newpieOption = { ...pieOption };
+    const countArr = renderMonthly.map(item => item[key]);
+    const count = sum(countArr);
+    const newpieOption = JSON.parse(JSON.stringify(pieOption));
     newpieOption.legend.data = this.makeLegendData(renderMonthly, key);
     newpieOption.legend.formatter = (name) => {
       return this.makeLegendPercent(name, renderMonthly, key, count);
@@ -294,8 +296,6 @@ export default class Statistic extends React.Component {
       newpieOption.color = '#fff';
     }
     newpieOption.series[0].data = this.makePieSeriesData(renderMonthly, key, count);
-    console.log('newpieOption', newpieOption);
-
     elementChart.setOption(newpieOption);
   }
 
@@ -313,7 +313,8 @@ export default class Statistic extends React.Component {
     const { checked } = this.state;
     const renderMonthly = checked === 1 ? sourceAMonthly : sourceBMonthly;
     const pointConfig = checked === 1 ? pointAConfig : pointBConfig;
-    console.log('pointConfig', pointConfig);
+    const currentPoint = checked === 1 ? monthly.point_a_monthly : monthly.point_b_monthly;
+    const totalPoint = checked === 1 ? monthly.point_a_total : monthly.point_b_total;
     if (this.echartsLine) {
       this.renderChartLine();
     }
@@ -338,7 +339,7 @@ export default class Statistic extends React.Component {
                 </div>
               </div>
               <div className={style.point_total}>
-                累计积分：{monthly.point_b_total}
+                累计积分：{totalPoint}
               </div>
             </div>
             <List>
@@ -364,7 +365,7 @@ export default class Statistic extends React.Component {
               <Flex align="start" className={style.data_item}>
                 <div className={style.aside}>
                   <div className={style.aside_title}>当月得分</div>
-                  <div className={style.get_point}>{monthly.point_b_monthly}</div>
+                  <div className={style.get_point}>{currentPoint}</div>
                 </div>
                 <div className={style.point_type}>
                   {(renderMonthly || []).map((item, i) => {
@@ -375,19 +376,19 @@ export default class Statistic extends React.Component {
               </Flex>
             </div>
             {pointConfig.map((item) => {
-              if (this[`echarts${item.key}`]) {
-                this.renderEsChart(this[`echarts${item.key}`], item.key, item.total);
+              if (this[`echarts${item.name}`]) {
+                this.renderEsChart(this[`echarts${item.name}`], item.key);
               }
               return (
                 <div
-                  key={item.key}
+                  key={item.name}
                   className={style.players}
                   style={{ padding: '0.4rem' }}
                 >
                   <div className={style.aside_title}>{item.title}</div>
                   <div
                     ref={(e) => {
-                      this[item.key] = ReactDOM.findDOMNode(e);
+                      this[item.name] = ReactDOM.findDOMNode(e);
                     }}
                     style={{ height: '3.8133rem', width: '100%' }}
                   />

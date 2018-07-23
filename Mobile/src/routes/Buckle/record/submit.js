@@ -3,6 +3,7 @@ import {
   connect,
 } from 'dva';
 import { List, Flex, WingBlank, WhiteSpace, Button, DatePicker, TextareaItem } from 'antd-mobile';
+import moment from 'moment';
 import { PersonIcon, PersonAdd } from '../../../components/index.js';
 import { scrollToAnchor } from '../../../utils/util';
 
@@ -13,11 +14,6 @@ import styles from '../../common.less';
   record,
 }))
 export default class BuckleRecord extends React.Component {
-  state = {
-    title: '',
-    remark: '',
-    executed_at: '',
-  }
   componentWillMount() {
     const { record: { eventIndex }, history } = this.props;
     if (eventIndex === -1) {
@@ -33,46 +29,35 @@ export default class BuckleRecord extends React.Component {
     scrollToAnchor(link);
   }
 
-  initInfo =() => {
+  initInfo = () => {
     const { submit: { info } } = this.props;
+    console.log('info', info);
     this.setState({
       info,
     });
   }
 
-  remove = (e, item, name) => {
+  remove = (e, item, name, idx) => {
     e.stopPropagation();
-    const { searchStaff: { selectStaff }, dispatch } = this.props;
-    const { info } = this.state;
-    const { participants } = info;
-    let newParti = [...participants];
-    if (name === 'participants') {
-      newParti = participants.filter(its => its.staff_sn !== item.staff_sn);
-      this.setState({
-        info: {
-          ...info,
-          participants: newParti,
-        },
-      });
+    const { dispatch } = this.props;
+    const person = null;
+    const params = {
+      key: name,
+      value: person,
+    };
+    if (idx !== undefined) {
+      let newPerson = [...this.props.submit[name] || []];
+      if (idx === newPerson.length - 1) {
+        newPerson = newPerson.slice(0, idx);
+      } else {
+        newPerson = newPerson.slice(0, idx).concat(newPerson.slice(idx + 1));
+      }
+      params.value = [...newPerson];
     }
-    const newSelectStaff = { ...selectStaff };
-    newSelectStaff[name] = selectStaff[name].filter(its => its.staff_sn !== item.staff_sn);
-
     dispatch({
-      type: 'buckle/saveData',
+      type: 'submit/saveData',
       payload: {
-        key: 'info',
-        value: {
-          ...info,
-          participants: newParti,
-        },
-      },
-    });
-    dispatch({
-      type: 'searchStaff/saveSelectStaff',
-      payload: {
-        key: 'selectStaff',
-        value: newSelectStaff,
+        ...params,
       },
     });
   }
@@ -106,6 +91,7 @@ export default class BuckleRecord extends React.Component {
 
   saveAllData = () => {
     const { info } = this.state;
+    console.log(info);
     const { dispatch } = this.props;
     dispatch({
       type: 'submit/saveData',
@@ -139,7 +125,6 @@ export default class BuckleRecord extends React.Component {
       ...submitInfo,
       addressees: newAddressees,
     };
-    console.log('params', params);
     dispatch({
       type: 'submit/recordBuckle',
       payload: {
@@ -157,24 +142,24 @@ export default class BuckleRecord extends React.Component {
     const {
       info,
     } = this.state;
-
     return (
       <div
         className={styles.con}
         direction="column"
       >
         <div className={styles.con_content}>
+          <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
             <TextareaItem
               title="主题"
+              value={info.title}
               placeholder="请输入主题"
               autoHeight
               onChange={v => this.stateChange(v, 'title')}
             />
           </WingBlank>
           <WhiteSpace size="sm" />
-
-          <WingBlank className={style.parcel}>
+          <WingBlank className={[style.parcel, style.nobottom].join(' ')} >
             <DatePicker
               mode="date"
               value={new Date(info.executed_at)}
@@ -221,7 +206,7 @@ export default class BuckleRecord extends React.Component {
                     handleClick={() => this.changePerson('final', 1)}
                     handleDelClick={(e, v) => this.remove(e, v, 'final')}
                   />
-                  )}
+                )}
               </Flex>
             </div>
           </WingBlank>
@@ -242,7 +227,7 @@ export default class BuckleRecord extends React.Component {
                       nameKey="realname"
                       showNum={2}
                       type="2"
-                      handleDelClick={(e, v) => this.remove(e, v, 'addressees')}
+                      handleDelClick={(e, v) => this.remove(e, v, 'addressees', idx)}
                     />
                   );
                 })}
@@ -252,7 +237,7 @@ export default class BuckleRecord extends React.Component {
           </WingBlank>
           <WhiteSpace size="lg" />
           <WingBlank className={style.parcel}>
-            <div className={style.players} id="copy">
+            <div className={[style.players, style.nopaddingl].join(' ')} id="copy">
               <Flex className={style.title}>备注</Flex>
               <TextareaItem
                 placeholder="输入备注"
@@ -262,7 +247,7 @@ export default class BuckleRecord extends React.Component {
                 onChange={e => this.stateChange(e, 'remark')}
               />
               <div className={style.textinfo}>
-          还可输入{100 - info.remark.length}字
+                还可输入{100 - info.remark.length}字
               </div>
             </div>
           </WingBlank>

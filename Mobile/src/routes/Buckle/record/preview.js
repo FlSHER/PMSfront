@@ -13,7 +13,7 @@ import styles from '../../common.less';
   record,
 }))
 
-export default class PointRanking extends React.Component {
+export default class Preview extends React.Component {
   componentDidMount() {
     const { location } = this.props;
     const { hash } = location;
@@ -38,6 +38,7 @@ export default class PointRanking extends React.Component {
   }
 
   deleteEventItem = (e, i) => {
+    console.log();
     e.stopPropagation();
     const { dispatch } = this.props;
     dispatch({
@@ -66,6 +67,10 @@ export default class PointRanking extends React.Component {
   render() {
     const { record: { events } } = this.props;
     const count = this.getCount();
+    const extra = {
+      text: '删除',
+      style: { backgroundColor: 'rgb(218,81,85)', minWidth: '1.6rem', color: 'white', fontSize: '12px', borderTopRightRadius: '2px' },
+    };
     return (
       <div
         className={styles.con}
@@ -97,19 +102,20 @@ export default class PointRanking extends React.Component {
         <div className={styles.con_content}>
           <WingBlank>
             {events.map((item, i) => {
-              const key = i;
-              return (
-                <React.Fragment key={key}>
-                  <WhiteSpace />
-                  <RecordPreview
-                    handleClick={e => this.pointRedirect(e, i)}
-                    extraClick={e => this.deleteEventItem(e, i)}
-                    value={item}
-                  />
-                </React.Fragment>
-              );
-            }
-            )}
+            const key = i;
+            extra.onPress = e => this.deleteEventItem(e, i);
+          return (
+            <React.Fragment key={key}>
+              <WhiteSpace />
+              <RecordPreview
+                extra={extra}
+                handleClick={e => this.pointRedirect(e, i)}
+                value={item}
+              />
+            </React.Fragment>
+          );
+        }
+        )}
           </WingBlank>
         </div>
         <div className={styles.footer}>

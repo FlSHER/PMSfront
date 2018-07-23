@@ -211,16 +211,18 @@
 }
 
 .action_item {
-  padding: 24/75rem 16/75rem 24/75rem 36/75rem;
+  padding: 12/75rem 16/75rem 12/75rem 36/75rem;
   background: #fff;
   font-size: 16px;
   border-bottom: 1px solid rgb(250, 250, 250);
   .single_item {
+    height: 48/75rem;
+    line-height: 48/75rem;
     .textLineOverFlow()
   }
   .item {
     display: flex;
-    height: 50/75rem;
+    height: 48/75rem;
     align-items: center;
     background: url(../../assets/select_icon/unseled.png) no-repeat right center;
     background-size: 44/75rem;
@@ -235,6 +237,38 @@
   color: rgb(155, 155, 155);
   font-size: 14px;
   margin-top: 20/75rem;
+}
+
+.extra_info {
+  display: flex;
+  min-height: 40/75rem;
+  line-height: 40/75rem;
+  .base(rgb(150, 150, 150),
+  12px);
+}
+
+.event_bread {
+  line-height: 34/75rem;
+  height: 34/75rem;
+  width: 440/75rem;
+  .textLineOverFlow();
+}
+
+.department_title {
+  span {
+    padding-left: 36/75rem;
+  }
+  span+span {
+    margin-left: 20/75rem;
+  }
+  span:first-child {
+    background: url('../../assets/icon-初@2x.png') no-repeat left center;
+    background-size: 32/75rem;
+  }
+  span:last-child {
+    background: url('../../assets/icon-终@2x.png') no-repeat left center;
+    background-size: 32/75rem;
+  }
 }
 
 // 事件列表样式
@@ -263,7 +297,9 @@
     .label_state_1 {
       margin-left: 20/75rem;
       padding: 6/75rem 16/75rem;
-      .label(rgb(229, 27, 35),
+      .label(rgb(229,
+      27,
+      35),
       12px,
       20/75rem,
       #fff);
@@ -271,7 +307,9 @@
     .label_state_2 {
       margin-left: 20/75rem;
       padding: 6/75rem 16/75rem;
-      .label(rgb(0, 150, 136),
+      .label(rgb(0,
+      150,
+      136),
       12px,
       20/75rem,
       #fff);
@@ -279,7 +317,9 @@
     .label_state_3 {
       margin-left: 20/75rem;
       padding: 6/75rem 16/75rem;
-      .label(rgb(255, 152, 0),
+      .label(rgb(255,
+      152,
+      0),
       12px,
       20/75rem,
       #fff);
@@ -295,7 +335,9 @@
     .label_state_first {
       margin-left: 20/75rem;
       padding: 6/75rem 16/75rem;
-      .label(rgb(74, 144, 226),
+      .label(rgb(74,
+      144,
+      226),
       12px,
       20/75rem,
       #fff);
@@ -303,7 +345,9 @@
     .label_state_final {
       margin-left: 20/75rem;
       padding: 6/75rem 16/75rem;
-      .label(rgb(99, 40, 160),
+      .label(rgb(99,
+      40,
+      160),
       12px,
       20/75rem,
       #fff);
@@ -318,13 +362,17 @@
   .time {
     margin: 20/75rem 0 10/75rem;
     height: 36/75rem;
-    .base(rgb(155, 155, 155),
+    .base(rgb(155,
+    155,
+    155),
     @list-text-size);
   }
   .desc {
     width: 540/75rem;
     height: 36/75rem;
-    .base(rgb(155, 155, 155),
+    .base(rgb(155,
+    155,
+    155),
     @list-text-size);
     .textLineOverFlow();
   }
@@ -346,11 +394,4 @@
       color: rgb(0, 150, 136);
     }
   }
-}
-
-.department_title {
-  font-size: 12px;
-  color: rgb(150, 150, 150);
-  width: 560/75rem;
-  .textLineOverFlow();
 }

@@ -148,18 +148,6 @@ export default class PointRanking extends React.Component {
     });
   }
 
-  // timeChange = (v, key) => {
-
-  //   // const { params } = this.state;
-  //   // const newParams = { ...params };
-  //   // newParams[key] = moment(v).format('YYYY-MM-DD');
-  //   // this.setState({
-  //   //   params: newParams,
-  //   // }, () => {
-  //   //   this.dealFilter();
-  //   // });
-  // }
-
   urlParamsUnicode = (params) => {
     const url = [];
     Object.keys(params).forEach((item) => {
@@ -179,24 +167,11 @@ export default class PointRanking extends React.Component {
     const params = this.urlParamsUnicode(this.urlParams);
     url += params ? `?${params}` : '';
     this.props.history.push(url);
-
-    // const { modal, params } = this.state;
-    // const newModal = { ...modal };
-    // const newParams = { ...params };
-    // newModal.sortModal = false;
-    // newParams.group_id = item.id;
-    // this.setState({
-    //   modal: { ...newModal },
-    //   params: newParams,
-    // }, () => {
-    //   this.dealFilter();
-    // });
   }
 
   toPointList = (item) => {
-    const { history, ranking } = this.props;
-    const groupId = ranking.group_id;
-    history.push(`/point_list?staff_sn=${item.staff_sn}&group_id=${groupId}`);
+    const { history } = this.props;
+    history.push(`/point_statistic?staff_sn=${item.staff_sn}`);
   }
 
   render() {

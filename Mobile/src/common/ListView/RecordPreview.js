@@ -22,26 +22,24 @@ export default class Preview extends Component {
     const {
       value,
       handleClick,
-      extraClick,
+      extra,
     } = this.props;
-    const extra = {
-      text: '删除',
-      onPress: extraClick,
-      style: { backgroundColor: 'rgb(218,81,85)', minWidth: '1.6rem', color: 'white', fontSize: '12px', borderTopRightRadius: '2px' },
+    const prop = {
+      autoClose: true,
     };
+    if (extra) {
+      prop.right = [extra];
+    }
     return (
       <div
         className={style.preview}
         onClick={handleClick}
       >
         <SwipeAction
-          autoClose
-          right={[
-            extra,
-              ]}
+          {...prop}
         >
           <div className={style.pre_title}>
-            {value.name}
+            {value.name || value.event_name}
           </div>
           <div className={style.predec}>
             {value.description}
