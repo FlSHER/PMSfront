@@ -17,7 +17,7 @@ export default class BuckleRecord extends React.Component {
   componentWillMount() {
     const { record: { eventIndex }, history } = this.props;
     if (eventIndex === -1) {
-      history.replace('/buckle_preview');
+      history.goBack(-1);
     }
     this.initInfo();
   }
@@ -31,7 +31,6 @@ export default class BuckleRecord extends React.Component {
 
   initInfo = () => {
     const { submit: { info } } = this.props;
-    console.log('info', info);
     this.setState({
       info,
     });

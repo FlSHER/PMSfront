@@ -4,7 +4,7 @@ import {
 } from 'dva';
 import { WingBlank, WhiteSpace, Flex } from 'antd-mobile';
 import nothing from '../../../assets/nothing.png';
-import { Buckle } from '../../../common/ListView/index';
+import { Buckle, PaticipantBuckle } from '../../../common/ListView/index';
 import {
   convertStyle,
   auditFinishedState,
@@ -68,7 +68,7 @@ export default class BuckleList extends React.Component {
       userInfo: newInfo,
     }, () => {
       dispatch({
-        type: 'buckle/getLogsList',
+        type: 'buckle/getLogsGroupList',
         payload: {
           pagesize: 10,
           sort: sortItem.value,
@@ -82,7 +82,7 @@ export default class BuckleList extends React.Component {
     const { dispatch, logList } = this.props;
     const { checkState, sortItem } = this.state;
     dispatch({
-      type: 'buckle/getLogsList',
+      type: 'buckle/getLogsGroupList',
       payload: {
         pagesize: 10,
         type: checkState.value,
@@ -101,7 +101,7 @@ export default class BuckleList extends React.Component {
     const { dispatch } = this.props;
     const { checkState, sortItem } = this.state;
     dispatch({
-      type: 'buckle/getLogsList',
+      type: 'buckle/getLogsGroupList',
       payload: {
         pagesize: 10,
         page: 1,
@@ -126,7 +126,7 @@ export default class BuckleList extends React.Component {
         eventState: '',
       } }, () => {
         dispatch({
-          type: 'buckle/getLogsList',
+          type: 'buckle/getLogsGroupList',
           payload: {
             pagesize: 10,
             type: checkState.value,
@@ -150,7 +150,7 @@ export default class BuckleList extends React.Component {
     //   max: filter.range.max,
     // };
     dispatch({
-      type: 'buckle/getLogsList',
+      type: 'buckle/getLogsGroupList',
       payload: {
         pagesize: 10,
         type: checkState.value,
@@ -199,7 +199,7 @@ export default class BuckleList extends React.Component {
       sortItem: item,
     }, () => {
       dispatch({
-        type: 'buckle/getLogsList',
+        type: 'buckle/getLogsGroupList',
         payload: {
           pagesize: 10,
           type: checkState.value,
@@ -259,7 +259,7 @@ export default class BuckleList extends React.Component {
         return;
       }
       dispatch({
-        type: 'buckle/getLogsList',
+        type: 'buckle/getLogsGroupList',
         payload: {
           pagesize: 10,
           type: item.value,
@@ -268,14 +268,16 @@ export default class BuckleList extends React.Component {
       });
     });
   }
+
   toLookDetail = (item) => {
     const { checkState } = this.state;
     if (checkState.value === 'participant') {
-      this.props.history.push(`/audit_detail/${item.id}`);
+      this.props.history.push(`/audit_detail/${item.id}/-1`);
     } else {
       this.props.history.push(`/event_preview/${item.id}`);
     }
   }
+
   rangeChange = (v, key) => {
     const { filter } = this.state;
     const { range } = filter;
@@ -424,17 +426,33 @@ export default class BuckleList extends React.Component {
               </div>
             ) : (
               <WingBlank>
-                <Buckle
+                {checkState.value === 'participant' && (
+                <PaticipantBuckle
                   dataSource={logList[checkState.value] ? logList[checkState.value].data : []}
                   handleClick={this.toLookDetail}
                   onRefresh={this.onRefresh}
                   onPageChange={this.onPageChange}
                   label={this.renderLalbel()}
                   page={logList[checkState.value] ?
-                    logList[checkState.value].page : 1}
+                logList[checkState.value].page : 1}
                   totalpage={logList[checkState.value] ?
-                    logList[checkState.value].totalpage : 10}
+                logList[checkState.value].totalpage : 10}
                 />
+                ) }
+                {checkState.value !== 'participant' && (
+                  <Buckle
+                    dataSource={logList[checkState.value] ? logList[checkState.value].data : []}
+                    handleClick={this.toLookDetail}
+                    onRefresh={this.onRefresh}
+                    onPageChange={this.onPageChange}
+                    label={this.renderLalbel()}
+                    page={logList[checkState.value] ?
+                    logList[checkState.value].page : 1}
+                    totalpage={logList[checkState.value] ?
+                    logList[checkState.value].totalpage : 10}
+                  />
+                )}
+
               </WingBlank>
             )}
 

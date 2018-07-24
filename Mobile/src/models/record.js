@@ -11,6 +11,42 @@ export default {
   },
   reducers: {
     // ...defaultReducers,
+    saveRecordInfo(state, action) {
+      const { value } = action.payload;
+      const { logs } = value;
+      const participants = {};
+      const eventAll = [];
+      const optAll = [];
+      const events = logs.map((item, i) => {
+        const eventItem = item.event;
+        const opt = {
+          pointA: eventItem.point_a_default,
+          pointB: eventItem.point_b_default,
+          count: 1,
+        };
+        const event = {
+          event_id: item.event_id,
+          name: item.event_name,
+        };
+        const obj = {
+          description: item.description,
+          ...event,
+          participants: item.participants,
+        };
+        optAll[i] = { ...opt };
+        participants[i] = [...item.participants];
+        eventAll[i] = { ...eventItem };
+        return obj;
+      });
+      console.log('events', events, participants, eventAll, optAll);
+      return {
+        ...state,
+        events,
+        participants,
+        eventAll,
+        optAll,
+      };
+    },
     saveEvent(state, action) {
       const event = action.payload.value;
       const opt = {
@@ -18,16 +54,19 @@ export default {
         pointB: event.point_b_default,
         count: 1,
       };
-      const tmpEvent = {
-        event_id: event.id,
-        name: event.name,
-        description: '',
-        participants: [],
-      };
       const eventIndex = sessionStorage.getItem('eventIndex');
       const newEvents = state.events;
       const newEventAll = state.eventAll;
       const newOptAll = state.optAll;
+      const info = newEvents[eventIndex];
+      const tmpEvent = {
+        description: '',
+        participants: [],
+        ...info,
+        event_id: event.id,
+        name: event.name,
+      };
+
       newEvents[eventIndex] = { ...newEvents[eventIndex], ...tmpEvent };
       newOptAll[eventIndex] = { ...opt };
       newEventAll[eventIndex] = { ...event };

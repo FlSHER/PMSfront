@@ -6,7 +6,7 @@ import { List, Flex, WingBlank, WhiteSpace, Button } from 'antd-mobile';
 import { PersonIcon } from '../../../components/index.js';
 import { Label } from '../../../components/General/index';
 import { buckleState } from '../../../utils/convert.js';
-import { analyzePath, userStorage } from '../../../utils/util';
+import { userStorage } from '../../../utils/util';
 import style from '../index.less';
 import styles from '../../common.less';
 
@@ -26,27 +26,38 @@ const person = [
 ];
 @connect(({ buckle }) => ({
   detail: buckle.detail,
+  groupDetail: buckle.groupDetail,
 }))
 export default class AuditDetail extends React.Component {
   state = {
     eventId: '',
     index: '',
     userInfo: {},
+    isGroup: false,
   }
 
   componentWillMount() {
-    const { dispatch, match: { params } } = this.props;
+    const { dispatch, history, match: { params }, groupDetail } = this.props;
     const { id, index } = params;
     const newInfo = userStorage('userInfo');
+    const isGroup = !(index === '-1');
+    if (isGroup) {
+      if (groupDetail && !Object.keys(groupDetail).length) {
+        history.goBack(-1);
+      }
+    }
     this.setState({
       eventId: id,
       index,
       userInfo: newInfo,
+      isGroup,
     }, () => {
-      dispatch({
-        type: 'buckle/getBuckleDetail',
-        payload: { eventId: id },
-      });
+      if (!isGroup) {
+        dispatch({
+          type: 'buckle/getBuckleDetail',
+          payload: { eventId: id },
+        });
+      }
     });
   }
 
@@ -76,7 +87,9 @@ export default class AuditDetail extends React.Component {
   }
 
   makeApprover = (approver) => {
-    const { detail } = this.props;
+    const { detail, groupDetail } = this.props;
+    const { isGroup } = this.state;
+    const newDetail = isGroup ? groupDetail : detail;
     return (
       <div key={approver.key}>
         <WhiteSpace size="sm" />
@@ -90,7 +103,7 @@ export default class AuditDetail extends React.Component {
             >
               <div style={{ marginRight: '0.64rem' }}>
                 <PersonIcon
-                  value={detail}
+                  value={newDetail}
                   type="1"
                   nameKey={approver.key}
                   showNum={2}
@@ -108,7 +121,7 @@ export default class AuditDetail extends React.Component {
                   </div>
                   <div className={style.approver_time}>{approver.time}</div>
                 </div>
-              ) : detail.rejected_at ?
+              ) : newDetail.rejected_at ?
                   (
                     <div className={style.dec}>
                       <div
@@ -120,7 +133,7 @@ export default class AuditDetail extends React.Component {
                         <p style={{ color: 'rgb(74,74,74)' }}>驳回</p>
                         <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{detail.reject_remark}</p>
                       </div>
-                      <div className={style.approver_time}>{detail.rejected_at}</div>
+                      <div className={style.approver_time}>{newDetail.rejected_at}</div>
                     </div>
                   ) : null}
             </Flex>
@@ -131,31 +144,37 @@ export default class AuditDetail extends React.Component {
   }
 
   render() {
-    const { detail } = this.props;
-    const { logs } = detail;
+    const { detail, groupDetail } = this.props;
+    const { isGroup } = this.state;
+    let newDetail = detail;
+    const { logs } = groupDetail;
     const { index } = this.state;
-    let participant = detail.participant;
-    if (index !== undefined) {
-      participant = logs[index].participants;
+    let participant = detail.participants;
+    let addresseess = [...((detail.group && detail.group.addressees) || [])];
+    let eventItem = {};
+    if (isGroup) {
+      newDetail = groupDetail;
+      eventItem = logs[index];
+      participant = eventItem.participants;
+      addresseess = eventItem.addressees;
     }
-    console.log('participant', participant);
     const { userInfo } = this.state;
     const approvers = [
       {
-        sn: detail.first_approver_sn,
+        sn: newDetail.first_approver_sn,
         title: '初审人',
-        name: detail.first_approver_name,
-        description: detail.first_approve_remark,
+        name: newDetail.first_approver_name,
+        description: newDetail.first_approve_remark,
         key: 'first_approver_name',
-        time: detail.first_approved_at,
+        time: newDetail.first_approved_at,
       },
       {
-        sn: detail.final_approver_sn,
+        sn: newDetail.final_approver_sn,
         title: '终审人',
-        name: detail.final_approver_name,
-        description: detail.final_approve_remark,
+        name: newDetail.final_approver_name,
+        description: newDetail.final_approve_remark,
         key: 'final_approver_name',
-        time: detail.final_approved_at,
+        time: newDetail.final_approved_at,
       },
     ];
     // if (detail.status_id === 1 || (detail.first_approved_at && detail.status_id === -2)) {
@@ -175,9 +194,9 @@ export default class AuditDetail extends React.Component {
     //   approvers = [...temp];
     // }
     const footerBtn = [];
-    if (Object.keys(detail).length) {
-      if (detail.recorder_sn === userInfo.staff_sn) {
-        if ([0, 1].indexOf(detail.status_id) !== -1) {
+    if (Object.keys(newDetail).length) {
+      if (newDetail.recorder_sn === userInfo.staff_sn) {
+        if ([0, 1].indexOf(newDetail.status_id) !== -1) {
           // 撤回
           footerBtn.push(
             <Flex.Item key="withdraw">
@@ -186,18 +205,18 @@ export default class AuditDetail extends React.Component {
               </Button>
             </Flex.Item>);
         }
-        if ([-1, -2].indexOf(detail.status_id) !== -1) {
+        if ([-1, -2].indexOf(newDetail.status_id) !== -1) {
           // 再次提交
           footerBtn.push(
             <Flex.Item key="submit">
-              <Button type="primary" onClick={() => this.submitAgain(detail)}>
+              <Button type="primary" onClick={() => this.submitAgain(newDetail)}>
                 再次提交
               </Button>
             </Flex.Item>);
         }
       }
 
-      const type = detail.status_id.toString();
+      const type = newDetail.status_id.toString();
       const reject = (
         <Flex.Item key="reject">
           <Button type="ghost" onClick={() => this.doAudit(type, 'no')}>
@@ -214,9 +233,9 @@ export default class AuditDetail extends React.Component {
       );
 
       if (
-        (detail.first_approver_sn === userInfo.staff_sn && detail.status_id === 0)
+        (newDetail.first_approver_sn === userInfo.staff_sn && newDetail.status_id === 0)
         ||
-        (detail.final_approver_sn === userInfo.staff_sn && detail.status_id === 1)
+        (newDetail.final_approver_sn === userInfo.staff_sn && newDetail.status_id === 1)
       ) {
         // 初审 || 终审
         footerBtn.push(reject);
@@ -235,12 +254,12 @@ export default class AuditDetail extends React.Component {
             <List>
               <div style={{ padding: '0.4rem 15px' }}>
                 <div className={style.event_title}>
-                  {detail.event_name}
-                  <Label value={detail} content={buckleState(detail.status_id)} />
+                  {isGroup ? eventItem.event_name : newDetail.event_name}
+                  <Label value={newDetail} content={buckleState(newDetail.status_id)} />
                 </div>
               </div>
               <div style={{ padding: '0.4rem 15px' }}>
-                {detail.description ? detail.description : '暂无'}
+                {isGroup ? eventItem.description : newDetail.description}
               </div>
             </List>
           </WingBlank>
@@ -248,7 +267,7 @@ export default class AuditDetail extends React.Component {
 
           <WingBlank className={style.parcel}>
             <List>
-              <List.Item extra={detail.executed_at}>
+              <List.Item extra={newDetail.executed_at}>
                 事件时间
               </List.Item>
             </List>
@@ -293,9 +312,9 @@ export default class AuditDetail extends React.Component {
           </WingBlank>
           <WhiteSpace size="sm" />
           {approvers.map(item => this.makeApprover(item))}
-          {detail.status_id === 2 ?
+          {newDetail.status_id === 2 ?
             <WhiteSpace size="sm" /> : null}
-          {(detail.status_id === 2 || detail.status_id === -3) ? (
+          {(newDetail.status_id === 2 || newDetail.status_id === -3) ? (
             <WingBlank className={style.parcel}>
               <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
                 <Flex className={style.title}> 配置分值</Flex>
@@ -314,8 +333,8 @@ export default class AuditDetail extends React.Component {
                     return (
                       <Flex key={idx}>
                         <Flex.Item className={style.table_item}>{item.name}</Flex.Item>
-                        <Flex.Item className={style.table_item}>{detail[item.value]}</Flex.Item>
-                        <Flex.Item className={style.table_item}>{detail[item.key]}</Flex.Item>
+                        <Flex.Item className={style.table_item}>{newDetail[item.value]}</Flex.Item>
+                        <Flex.Item className={style.table_item}>{newDetail[item.key]}</Flex.Item>
 
                       </Flex>);
                   })
@@ -332,7 +351,7 @@ export default class AuditDetail extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                {(detail.addressee || []).map((item, i) => {
+                {(addresseess || []).map((item, i) => {
                   const idx = i;
                   return (
                     <PersonIcon
@@ -355,7 +374,7 @@ export default class AuditDetail extends React.Component {
                 wrap="wrap"
               >
                 <PersonIcon
-                  value={detail}
+                  value={newDetail}
                   type="1"
                   nameKey="recorder_name"
                 />
@@ -365,7 +384,7 @@ export default class AuditDetail extends React.Component {
           <WhiteSpace size="lg" />
         </div>
 
-        {footerAble && (
+        {false && footerAble && (
           <div className={styles.footer}>
             <WingBlank>
               <Flex className={style.opt}>

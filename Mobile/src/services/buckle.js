@@ -25,9 +25,22 @@ export async function getLogsList(params) {
 }
 
 
+export async function getLogsGroupList(params) {
+  return request('/api/event-logs/groups', {
+    method: 'GET',
+    body: params,
+    json: true,
+  }, false);
+}
+
 export async function getBuckleDetail(id) {
   return request(`/api/event-logs/${id}`);
 }
+
+export async function getLogGroupDetail(id) {
+  return request(`/api/event-logs/groups/${id}`);
+}
+
 
 export async function withdrawBuckle(id) {
   return request(`/api/event-logs/${id}/withdraw`, {

@@ -277,10 +277,10 @@ export default class AuditList extends React.Component {
       });
     });
   }
-  toLookDetail = (item) => {
-    this.props.history.push(`/audit_detail/${item.id}`);
-  }
 
+  toLookDetail = (item) => {
+    this.props.history.push(`/event_preview/${item.id}`);
+  }
 
   renderLalbel = () => {
     const { checkState } = this.state;

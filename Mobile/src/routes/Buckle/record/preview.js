@@ -4,7 +4,7 @@ import {
 } from 'dva';
 import { WingBlank, Button, WhiteSpace } from 'antd-mobile';
 import { RecordPreview } from '../../../common/ListView';
-import { scrollToAnchor } from '../../../utils/util';
+import { scrollToAnchor, getUrlParams } from '../../../utils/util';
 
 import style from '../index.less';
 import styles from '../../common.less';
@@ -14,6 +14,30 @@ import styles from '../../common.less';
 }))
 
 export default class Preview extends React.Component {
+  componentWillMount() {
+    const { location: { search }, dispatch, record: { events } } = this.props;
+    this.urlParams = getUrlParams(search);
+    const { id } = this.urlParams;
+    if (id !== undefined && !(events && events.length)) {
+      dispatch({
+        type: 'buckle/getLogGroupDetail',
+        payload: {
+          eventId: id,
+          cb: (detail) => {
+            dispatch({
+              type: 'record/saveRecordInfo',
+              payload: { value: detail },
+            });
+            dispatch({
+              type: 'submit/saveSubmitInfo',
+              payload: { value: detail },
+            });
+          },
+        },
+      });
+    }
+  }
+
   componentDidMount() {
     const { location } = this.props;
     const { hash } = location;
@@ -32,13 +56,16 @@ export default class Preview extends React.Component {
 
   pointRedirect = (e, i) => {
     e.stopPropagation();
-    const { history } = this.props;
+    const { history, dispatch } = this.props;
     sessionStorage.eventIndex = i;
+    dispatch({
+      type: 'record/saveEventKey',
+      payload: i,
+    });
     history.push('/record_point');
   }
 
   deleteEventItem = (e, i) => {
-    console.log();
     e.stopPropagation();
     const { dispatch } = this.props;
     dispatch({
@@ -60,7 +87,11 @@ export default class Preview extends React.Component {
   }
 
   nextStep = () => {
-    const { history } = this.props;
+    const { history, dispatch } = this.props;
+    dispatch({
+      type: 'record/saveEventKey',
+      payload: 0,
+    });
     history.push('/buckle_submit');
   }
 
@@ -102,20 +133,20 @@ export default class Preview extends React.Component {
         <div className={styles.con_content}>
           <WingBlank>
             {events.map((item, i) => {
-            const key = i;
-            extra.onPress = e => this.deleteEventItem(e, i);
-          return (
-            <React.Fragment key={key}>
-              <WhiteSpace />
-              <RecordPreview
-                extra={extra}
-                handleClick={e => this.pointRedirect(e, i)}
-                value={item}
-              />
-            </React.Fragment>
-          );
-        }
-        )}
+              const key = i;
+              const newExtra = { onPress: e => this.deleteEventItem(e, i) };
+              return (
+                <React.Fragment key={key}>
+                  <WhiteSpace />
+                  <RecordPreview
+                    extra={{ ...extra, ...newExtra }}
+                    handleClick={e => this.pointRedirect(e, i)}
+                    value={item}
+                  />
+                </React.Fragment>
+              );
+            }
+            )}
           </WingBlank>
         </div>
         <div className={styles.footer}>

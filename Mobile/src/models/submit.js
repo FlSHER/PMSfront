@@ -28,7 +28,35 @@ export default {
   },
   reducers: {
     // ...defaultReducers,
-
+    saveSubmitInfo(state, action) {
+      const { value } = action.payload;
+      const addressees = (value.addressees || []).map((_) => {
+        const obj = { staff_sn: _.staff_sn, realname: _.realname, staff_name: _.staff_name };
+        return obj;
+      });
+      const final = {
+        staff_sn: value.final_approver_sn,
+        realname: value.final_approver_name,
+        staff_name: value.final_approver_name,
+      };
+      const first = {
+        staff_sn: value.first_approver_sn,
+        realname: value.first_approver_name,
+        staff_name: value.first_approver_name,
+      };
+      const info = {
+        title: value.title,
+        remark: value.remark,
+        executed_at: value.executed_at || moment(new Date()).format('YYYY-MM-DD'),
+      };
+      return {
+        ...state,
+        addressees,
+        final,
+        first,
+        info,
+      };
+    },
     saveData(state, action) {
       const newState = { ...state };
       newState[action.payload.key] = action.payload.value;

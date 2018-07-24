@@ -1,12 +1,11 @@
 import React from 'react';
-import moment from 'moment';
 import {
   connect,
 } from 'dva';
-import { List, TextareaItem, Flex, WingBlank, WhiteSpace, Button, DatePicker, Toast } from 'antd-mobile';
+import { List, TextareaItem, Flex, WingBlank, WhiteSpace, Button, Toast } from 'antd-mobile';
 import { PersonIcon, PersonAdd } from '../../../components/index.js';
 import Input from '../../../components/General/Input/input.js';
-import { analyzePath, userStorage, scrollToAnchor } from '../../../utils/util';
+import { userStorage, scrollToAnchor } from '../../../utils/util';
 
 import style from '../index.less';
 import styles from '../../common.less';
@@ -35,7 +34,7 @@ export default class BuckleRecord extends React.Component {
   componentWillMount() {
     const { record: { eventIndex }, history } = this.props;
     if (eventIndex === -1) {
-      history.replace('/buckle_preview');
+      history.goBack(-1);
     }
     this.initInfo();
   }
@@ -57,6 +56,7 @@ export default class BuckleRecord extends React.Component {
     };
     const info = { ...events[eventIndex] || initInfo };
     const optItem = { ...optAll[eventIndex] };
+    console.log('optItem', optAll, optAll[eventIndex]);
     const event = { ...eventAll[eventIndex] };
     const { participants } = info;
     const newParticipant = this.initParticipants(participants, optItem, event);
@@ -218,16 +218,8 @@ export default class BuckleRecord extends React.Component {
   }
 
   selEvent = () => {
-    const { history, dispatch } = this.props;
-    const { info } = this.state;
-    const eventIndex = sessionStorage.getItem('eventIndex');
-    dispatch({
-      type: 'record/saveEvents',
-      payload: {
-        index: eventIndex,
-        value: { ...info },
-      },
-    });
+    const { history } = this.props;
+    this.saveAllData();
     history.replace('/record_point#event');
     history.push('/sel_event2/record');
   }

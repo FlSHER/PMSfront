@@ -8,6 +8,8 @@ import {
   firstApprove,
   finalApprove,
   getLogsList,
+  getLogsGroupList,
+  getLogGroupDetail,
 } from '../services/buckle';
 import defaultReducers from './reducers/default';
 import { makerFilters } from '../utils/util.js';
@@ -41,6 +43,7 @@ export default {
     },
     auditList: {},
     detail: {},
+    groupDetail: {},
     used: false,
   },
   effects: {
@@ -86,7 +89,7 @@ export default {
     },
     *getAuditList({ payload }, { call, put }) {
       const newPayload = makerFilters(payload);
-      const response = yield call(getAuditList, newPayload);
+      const response = yield call(getLogsGroupList, newPayload);
       if (response && !response.error) {
         yield put({
           type: 'saveList',
@@ -110,6 +113,37 @@ export default {
             value: response,
           },
         });
+      }
+    },
+
+    *getLogsGroupList({ payload }, { call, put }) {
+      const newPayload = makerFilters(payload);
+      const response = yield call(getLogsGroupList, newPayload);
+      if (response && !response.error) {
+        yield put({
+          type: 'saveList',
+          payload: {
+            key: 'logList',
+            type: payload.type,
+            value: response,
+          },
+        });
+      }
+    },
+
+    *getLogGroupDetail({ payload }, { call, put }) {
+      const response = yield call(getLogGroupDetail, payload.eventId);
+      if (response && !response.error) {
+        yield put({
+          type: 'saveData',
+          payload: {
+            key: 'groupDetail',
+            value: response,
+          },
+        });
+        if (payload.cb) {
+          payload.cb(response);
+        }
       }
     },
     *getBuckleDetail({ payload }, { call, put }) {

@@ -12,7 +12,7 @@ import styles from '../../common.less';
 
 @connect(({ buckle, record }) => ({
   record,
-  detail: buckle.detail,
+  detail: buckle.groupDetail,
 }))
 
 export default class EventPreview extends React.Component {
@@ -29,7 +29,7 @@ export default class EventPreview extends React.Component {
       userInfo: newInfo,
     }, () => {
       dispatch({
-        type: 'buckle/getBuckleDetail',
+        type: 'buckle/getLogGroupDetail',
         payload: { eventId: id },
       });
     });
@@ -57,6 +57,11 @@ export default class EventPreview extends React.Component {
     history.push('/buckle_submit');
   }
 
+  submitAgain = (item) => {
+    const { history } = this.props;
+    history.push(`/buckle_preview?id=${item.id}`);
+  }
+
   withDraw = () => {
     const { dispatch, history } = this.props;
     const { id } = this.state;
@@ -70,6 +75,11 @@ export default class EventPreview extends React.Component {
         },
       },
     });
+  }
+
+  doAudit = (type, state) => {
+    const { history } = this.props;
+    history.push(`/audit_reason/${type}/${state}/-1`);
   }
 
   render() {

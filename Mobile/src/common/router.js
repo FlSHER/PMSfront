@@ -71,9 +71,7 @@ export const getRouterData = (app) => {
     '/buckle_preview': {
       component: dynamicWrapper(app, ['buckle', 'record'], () => import('../routes/Buckle/record/preview')),
     },
-    '/event_preview/:id': {
-      component: dynamicWrapper(app, ['buckle', 'record'], () => import('../routes/Buckle/record/eventPreview')),
-    },
+
     '/buckle_submit': {
       component: dynamicWrapper(app, ['buckle', 'record', 'submit'], () => import('../routes/Buckle/record/submit')),
     },
@@ -92,12 +90,10 @@ export const getRouterData = (app) => {
     '/audit_reason/:type/:state/:level': {
       component: dynamicWrapper(app, [], () => import('../routes/Buckle/audit/auditReason')),
     },
-    '/audit_detail/:id': {
-      component: dynamicWrapper(app, ['buckle', 'oauth'], () => import('../routes/Buckle/audit/auditDetail')),
-    },
     '/audit_detail/:id/:index': {
       component: dynamicWrapper(app, ['buckle', 'oauth'], () => import('../routes/Buckle/audit/auditDetail')),
     },
+
     '/point_detail/:id': {
       component: dynamicWrapper(app, ['point'], () => import('../routes/Point/survey/pointDetail')),
     },
