@@ -40,8 +40,8 @@ export default class SearchEvent extends Component {
             {this.renderBread(bread)}
           </div>
           <div className={style.department_title}>
-            <span>{value.first_approver_name}</span>
-            <span style={{ marginLeft: '10px' }}>{value.final_approver_name}</span>
+            {value.first_approver_name && <span>{value.first_approver_name}</span> }
+            {value.final_approver_name && <span style={{ marginLeft: '10px' }}>{value.final_approver_name}</span>}
           </div>
         </div>
 

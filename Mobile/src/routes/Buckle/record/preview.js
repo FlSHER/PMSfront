@@ -48,8 +48,8 @@ export default class Preview extends React.Component {
   getCount = () => {
     const { record: { participants } } = this.props;
     let count = 0;
-    Object.keys(participants || {}).forEach((item) => {
-      count += item.length;
+    Object.keys(participants || {}).forEach((key) => {
+      count += participants[key].length;
     });
     return count;
   }

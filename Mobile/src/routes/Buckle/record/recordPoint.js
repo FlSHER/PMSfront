@@ -46,7 +46,7 @@ export default class BuckleRecord extends React.Component {
     scrollToAnchor(link);
   }
 
-  initInfo =() => {
+  initInfo = () => {
     const { record: { events, eventIndex, optAll, eventAll } } = this.props;
     const initInfo = {
       description: '',
@@ -56,7 +56,6 @@ export default class BuckleRecord extends React.Component {
     };
     const info = { ...events[eventIndex] || initInfo };
     const optItem = { ...optAll[eventIndex] };
-    console.log('optItem', optAll, optAll[eventIndex]);
     const event = { ...eventAll[eventIndex] };
     const { participants } = info;
     const newParticipant = this.initParticipants(participants, optItem, event);
@@ -68,7 +67,7 @@ export default class BuckleRecord extends React.Component {
     });
   }
 
-  initParticipants=(participants, optAll, event) => {
+  initParticipants = (participants, optAll, event) => {
     const newParticipant = (participants || []).map((item) => {
       const obj = { ...item };
       obj.realname = item.staff_name || item.realname;
@@ -200,8 +199,42 @@ export default class BuckleRecord extends React.Component {
 
   record = () => {
     const { history } = this.props;
+    if (this.validHasError()) {
+      return;
+    }
     this.saveAllData();
     history.goBack(-1);
+  }
+  validHasError = () => {
+    const { info } = this.state;
+    const eventId = info.event_id;
+    const { participants } = info;
+    let msg = '';
+    if (eventId === null) {
+      msg = '请选择事件';
+    }
+    if (!participants && !participants.length) {
+      msg = '请选择参与人';
+    }
+    if (participants.length && this.validPointError()) {
+      msg = '请填写正确范围的分数';
+    }
+    if (msg) {
+      Toast.fail(msg);
+    }
+    return msg;
+  }
+
+  validPointError = () => {
+    const { info: { participants } } = this.state;
+    let hasError = false;
+    participants.forEach((item) => {
+      hasError = item.point_a_error || item.point_b_error;
+      if (hasError) {
+        return true;
+      }
+    });
+    return hasError;
   }
 
   clearModal = () => {
@@ -311,7 +344,7 @@ export default class BuckleRecord extends React.Component {
               onChange={e => this.stateChange(e, 'description')}
             />
             <div className={style.textinfo}>
-                还可输入{100 - description.length}字
+              还可输入{100 - description.length}字
             </div>
           </WingBlank>
           <WhiteSpace size="sm" />
