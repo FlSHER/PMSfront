@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import OATable from '../../../components/OATable';
-// import BuckleInfo from './info';
+import BuckleInfo from './info';
 
 const status = [
   { value: 0, text: '待审核' },
@@ -17,19 +17,14 @@ const status = [
   loading: loading.effects['buckle/fetchBuckleGroups'],
 }))
 export default class extends React.PureComponent {
-  // state = { visible: false };
+  state = { visible: false };
 
-  // onClose = () => {
-  //   this.setState({
-  //     visible: false,
-  //   });
-  // };
 
-  // showDrawer = () => {
-  //   this.setState({
-  //     visible: true,
-  //   });
-  // };
+  handleDrawerVisible = (flag) => {
+    this.setState({
+      visible: !!flag,
+    });
+  };
 
   fetch = (params) => {
     const { dispatch, type } = this.props;
@@ -86,7 +81,16 @@ export default class extends React.PureComponent {
       {
         title: '操作',
         render: () => {
-          return <a style={{ color: '#59c3c3' }}>查看</a>;
+          return (
+            <a
+              style={{ color: '#59c3c3' }}
+              onClick={() => {
+                this.handleDrawerVisible(true);
+              }}
+            >
+              查看
+            </a>
+          );
         },
       },
     ];
@@ -95,7 +99,7 @@ export default class extends React.PureComponent {
 
   render() {
     const { buckle, loading, type } = this.props;
-    // const { visible } = this.state;
+    const { visible } = this.state;
     const reuslt = buckle[type];
     return (
       <React.Fragment>
@@ -107,7 +111,10 @@ export default class extends React.PureComponent {
           total={reuslt && reuslt.total}
           fetchDataSource={this.fetch}
         />
-
+        <BuckleInfo
+          visible={visible}
+          onClose={() => this.handleDrawerVisible()}
+        />
       </React.Fragment>
     );
   }
