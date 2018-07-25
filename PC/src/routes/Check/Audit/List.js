@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import OATable from '../../../components/OATable';
+// import BuckleInfo from './info';
 
 const status = [
   { value: 0, text: '待审核' },
@@ -16,6 +17,20 @@ const status = [
   loading: loading.effects['buckle/fetchBuckleGroups'],
 }))
 export default class extends React.PureComponent {
+  state = { visible: false };
+
+  onClose = () => {
+    this.setState({
+      visible: false,
+    });
+  };
+
+  showDrawer = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
   fetch = (params) => {
     const { dispatch, type } = this.props;
     dispatch({
@@ -80,16 +95,20 @@ export default class extends React.PureComponent {
 
   render() {
     const { buckle, loading, type } = this.props;
+    const { visible } = this.state;
     const reuslt = buckle[type];
     return (
-      <OATable
-        serverSide
-        loading={loading}
-        columns={this.makeColums()}
-        data={reuslt && reuslt.data}
-        total={reuslt && reuslt.total}
-        fetchDataSource={this.fetch}
-      />
+      <React.Fragment>
+        <OATable
+          serverSide
+          loading={loading}
+          columns={this.makeColums()}
+          data={reuslt && reuslt.data}
+          total={reuslt && reuslt.total}
+          fetchDataSource={this.fetch}
+        />
+
+      </React.Fragment>
     );
   }
 }
