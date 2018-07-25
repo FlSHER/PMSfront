@@ -88,6 +88,9 @@ export const getRouterData = (app) => {
     '/reward/buckle': {
       component: dynamicWrapper(app, [], () => import('../routes/Reward/Buckle')),
     },
+    '/reward/buckle/success': {
+      component: dynamicWrapper(app, [], () => import('../routes/Reward/Success')),
+    },
     '/reward/my': {
       component: dynamicWrapper(app, [], () => import('../routes/Reward/MyBuckle')),
     },
@@ -135,5 +138,6 @@ export const getRouterData = (app) => {
       authority: routerConfig[item].authority || menuItem.authority,
     };
   });
+
   return routerData;
 };

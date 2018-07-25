@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'dva';
 import { Tooltip } from 'antd';
 import SearchSelectRadio from '../Radio';
-import { makerFilters, findTreeParent } from '../../../utils/utils';
-import './ellipsis.less';
+import { makerFilters, findTreeParent, getLetfEllipsis } from '../../../utils/utils';
+import styles from './ellipsis.less';
 
 
 @connect(({ event, loading }) => ({
@@ -24,13 +24,13 @@ export default class extends React.Component {
   fetchEvent = (params) => {
     let newParams;
     const { dispatch } = this.props;
+    this.fetchEventType();
     if (params.length && !params.page) {
       newParams = makerFilters({
         filters: { name: { like: params } },
       });
     } else if (Object.keys(params).length) {
       newParams = params;
-      this.fetchEventType();
     }
     if (newParams) {
       dispatch({
@@ -77,10 +77,10 @@ export default class extends React.Component {
         render: (typeId) => {
           const findData = findTreeParent(eventType, typeId);
           const listName = findData.reverse().map(item => item.name);
-          const name = listName.join('>');
+          const name = listName.join(' > ');
           return (
             <Tooltip title={name}>
-              <div className="ellipsis" style={{ width: 230 }}>{name}</div>
+              <div style={{ width: 230 }}>{getLetfEllipsis(name, 230, 14)}</div>
             </Tooltip>
           );
         },
@@ -113,11 +113,13 @@ export default class extends React.Component {
     return columns;
   }
 
+
   makeSearchSelectProps = () => {
     const { dataSource, value } = this.props;
     const response = {
       ...this.props,
       valueOBJ: value,
+      renderOption: this.renderOption,
       fetchDataSource: this.fetchEvent,
     };
     if (Array.isArray(dataSource)) {
@@ -150,6 +152,26 @@ export default class extends React.Component {
       response.total = dataSource && dataSource.total;
     }
     return response;
+  }
+
+  renderOption = (item) => {
+    const { eventType } = this.props;
+    const findData = findTreeParent(eventType, item.type_id);
+    const eventTypeName = findData.reverse().map(data => data.name);
+    return (
+      <React.Fragment>
+        {item.name}
+        <div className={styles.optionEventType}>
+          <span>{getLetfEllipsis(eventTypeName.join(' > '), 240, 12)}</span>
+          {item.final_approver_name && (
+            <span className="ellipsis">终审人：{item.final_approver_name}</span>
+          )}
+          {item.first_approver_name && (
+            <span className="ellipsis">初审人：{item.first_approver_name}</span>
+          )}
+        </div>
+      </React.Fragment>
+    );
   }
 
   render() {

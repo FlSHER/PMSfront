@@ -7,6 +7,13 @@ const menuData = [
       {
         name: '记录奖扣',
         path: 'buckle',
+        children: [
+          {
+            name: '提交成功',
+            path: 'success',
+            hiddenMenu: true,
+          },
+        ],
       },
       {
         name: '我的奖扣',

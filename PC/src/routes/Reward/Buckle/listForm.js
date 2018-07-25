@@ -4,6 +4,7 @@ import OAForm from '../../../components/OAForm';
 import { EventSearch } from '../../../components/SearchSelect';
 import WorkingStaff from '../../common/Table/workingStaff';
 
+
 const { TextArea } = Input;
 const FormItem = OAForm.Item;
 const {
@@ -11,8 +12,10 @@ const {
 } = OAForm;
 @FormList
 @OAForm.create({
-  onValuesChange(props, _, allValues) {
+  onValuesChange(props, fieldValue, allValues) {
     props.onChange(allValues, props.index);
+    const [name] = Object.keys(fieldValue);
+    props.setFiedError(name, null);
   },
 })
 export default class extends React.PureComponent {
@@ -20,6 +23,32 @@ export default class extends React.PureComponent {
     super(props);
     const { form, bindForm } = props;
     bindForm(form);
+    this.state = {
+      defaultPoint: {
+        point_b: 0,
+        point_a: 0,
+      },
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { errors, index, onError } = nextProps;
+    if (errors[index] && JSON.stringify(nextProps.errors) !== JSON.stringify(this.props.errors)) {
+      onError(errors[index], null, false);
+    }
+  }
+
+  handleChange = (value) => {
+    const a = parseFloat(value.point_a_default);
+    const pointA = Math.floor(value.point_a_default) === a;
+    const b = parseFloat(value.point_b_default);
+    const pointB = Math.floor(value.point_b_default) === b;
+    this.setState({
+      defaultPoint: {
+        point_a: pointA ? a : value.point_a_default,
+        point_b: pointB ? b : value.point_b_default,
+      },
+    });
   }
 
   makeFormProps = () => {
@@ -32,6 +61,7 @@ export default class extends React.PureComponent {
 
   render() {
     const { form: { getFieldDecorator } } = this.props;
+    const { defaultPoint } = this.state;
     const style = { width: 540 };
     const formItemLayout = {
       labelCol: { span: 3 },
@@ -41,12 +71,11 @@ export default class extends React.PureComponent {
       <OAForm {...this.makeFormProps()} style={{ padding: 10, width: 670 }}>
         <FormItem label="事件标题" {...formItemLayout}>
           {getFieldDecorator('event_id', {
-            initialValue: { event_id: '' },
+            initialValue: {},
           })(
             <EventSearch
               style={style}
-              valueIndex="event_id"
-              name={{ event_id: 'id' }}
+              onChange={this.handleChange}
             />
           )}
         </FormItem>
@@ -61,7 +90,7 @@ export default class extends React.PureComponent {
           {getFieldDecorator('participants', {
             initialValue: [],
           })(
-            <WorkingStaff />
+            <WorkingStaff defaultPoint={defaultPoint} />
           )}
         </FormItem>
       </OAForm>

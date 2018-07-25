@@ -4,14 +4,19 @@ import { connect } from 'dva';
 import moment from 'moment';
 import OAForm from '../../../components/OAForm';
 import ListForm from './listForm';
-import { dotFieldsValue } from '../../../utils/utils';
+// import { unicodeFieldsError } from '../../../utils/utils';
 
 const FormItem = OAForm.Item;
 const {
   DatePicker,
   SearchTable,
 } = OAForm;
-@OAForm.create()
+@OAForm.create({
+  onValuesChange(props, fieldValue) {
+    const [name] = Object.keys(fieldValue);
+    props.setFiedError(name, null);
+  },
+})
 @connect(({ event, loading }) => ({
   listFormValue: event.listFormValue,
   finalStaff: event.finalStaff,
@@ -25,6 +30,7 @@ export default class extends React.PureComponent {
     bindForm(form);
     this.state = {
       listFormValue: [{}],
+      eventsError: {},
     };
   }
 
@@ -34,14 +40,43 @@ export default class extends React.PureComponent {
     if (!params) {
       newListValue = newListValue.filter((_, i) => i !== index);
     } else {
-      newListValue[index] = params;
+      newListValue[index] = {
+        ...params,
+        event_id: params.event_id ? params.event_id.id : '',
+      };
     }
     this.setState({ listFormValue: [...newListValue] });
   }
 
+  // listFormOnError = (field, index) => {
+  //   const newError = { ...eventsError[index] };
+  //   if (newError[field]) {
+  //     delete newError[field];
+  //     this.setState({
+  //       eventsError: {
+  //         ...eventsError,
+  //         [index]: {
+  //           ...newError,
+  //         },
+  //       },
+  //     });
+  //   }
+  // };
+
+  extraError = (name, error) => {
+    const { setFields } = this.props.form;
+    if (name === 'final_approver_name') {
+      setFields({ last: error });
+    } else if (name === 'first_approver_name') {
+      setFields({ first: error });
+    } else if (name === 'events') {
+      this.setState({ eventsError: error });
+    }
+  }
+
   handleError = (error) => {
-    const fieldError = dotFieldsValue(error);
-    console.log(fieldError);
+    const { onError } = this.props;
+    onError(error, this.extraError);
   }
 
   handleSubmit = () => {
@@ -51,10 +86,7 @@ export default class extends React.PureComponent {
       const events = [];
       listFormValue.forEach((item) => {
         if (Object.keys(item).length) {
-          events.push({
-            ...item,
-            event_id: item.event_id.event_id,
-          });
+          events.push(item);
         } else {
           events.push({
             description: '',
@@ -77,6 +109,7 @@ export default class extends React.PureComponent {
         type: 'buckle/addBuckle',
         payload: params,
         onError: this.handleError,
+        onSuccess: this.props.history.replace('/reward/buckle/success'),
       });
     });
   }
@@ -181,7 +214,8 @@ export default class extends React.PureComponent {
 
   render() {
     const { form: { getFieldDecorator } } = this.props;
-    const { listFormValue } = this.state;
+    const { listFormValue, eventsError } = this.state;
+    const userInfo = window.user || {};
     const formItemLayout = {
       labelCol: { span: 3 },
       wrapperCol: { span: 21 },
@@ -189,14 +223,16 @@ export default class extends React.PureComponent {
     const width = 670;
     let staffNumber = 0;
     listFormValue.forEach((item) => {
-      if (item && item.workingStaff) {
-        staffNumber += item.workingStaff.length;
+      if (item && item.participants) {
+        staffNumber += item.participants.length;
       }
     });
     return (
       <div style={{ marginTop: 20 }}>
         <div style={{ width, margin: '0 auto' }}>
           <ListForm
+            errors={eventsError}
+            // onError={this.listFormOnError}
             initialValue={listFormValue}
             onChange={this.handleListFormChange}
             style={{ width, marginTop: 10 }}
@@ -230,7 +266,10 @@ export default class extends React.PureComponent {
             </FormItem>
             <FormItem label="初审人" {...formItemLayout} >
               {getFieldDecorator('first', {
-                initialValue: {},
+                initialValue: {
+                  first_approver_sn: userInfo.staff_sn || '',
+                  first_approver_name: userInfo.realname || '',
+                },
               })(
                 <SearchTable.Staff
                   mode="user"
@@ -259,7 +298,7 @@ export default class extends React.PureComponent {
                 />
               )}
             </FormItem>
-            <FormItem label="参与人" {...formItemLayout} >
+            <FormItem label="抄送人" {...formItemLayout} >
               {getFieldDecorator('addressees', {
                 initialValue: [],
               })(

@@ -96,13 +96,14 @@ export default class SearchSelect extends React.Component {
   renderOption = () => {
     const { dataSource, renderOption, labelValue, labelText } = this.props;
     return dataSource.map((item, index) => {
-      return renderOption ? renderOption(item, index) : (
+      return (
         <Option
           key={item[labelValue]}
           value={item[labelValue]}
+          title={item[labelText]}
           data={item}
         >
-          {item[labelText]}
+          {renderOption(item, index) || item[labelText]}
         </Option>
       );
     });
@@ -117,6 +118,7 @@ export default class SearchSelect extends React.Component {
           style={{ display: 'none' }}
           key={key}
           value={item[labelValue]}
+          title={item[labelText]}
           data={item}
         >
           {item[labelText]}
@@ -132,6 +134,7 @@ export default class SearchSelect extends React.Component {
       <div style={{ position: 'relative', ...style }}>
         <InputGroup compact style={{ display: 'flex' }}>
           <Select
+            optionLabelProp="title"
             {...this.makeSelectProps()}
             style={{ flexGrow: 1 }}
           >

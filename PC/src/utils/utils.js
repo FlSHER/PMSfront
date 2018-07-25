@@ -1,4 +1,4 @@
-import moment from '../../node_modules/_moment@2.22.2@moment';
+import moment from 'moment';
 
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
@@ -202,7 +202,27 @@ export function makePositionData(brandId, brand) {
 }
 
 
-export function undotFieldsValue(fieldsValue) {
+// export function undotFieldsValue(fieldsValue) {
+//   const params = {};
+//   Object.keys(fieldsValue).forEach((key) => {
+//     const value = fieldsValue[key];
+//     const keyGroup = key.split('.');
+//     let fieldsValueMd = params;
+//     keyGroup.forEach((item, index) => {
+//       if (index === keyGroup.length - 1) {
+//         fieldsValueMd[item] = value;
+//       } else {
+//         fieldsValueMd[item] = fieldsValueMd[item] || {};
+//         fieldsValueMd = fieldsValueMd[item];
+//       }
+//     });
+//   });
+//   return params;
+// }
+
+export function unicodeFieldsError(temp, isUnicode = true) {
+  if (!isUnicode) return temp;
+  const fieldsValue = { ...temp };
   const params = {};
   Object.keys(fieldsValue).forEach((key) => {
     const value = fieldsValue[key];
@@ -210,7 +230,7 @@ export function undotFieldsValue(fieldsValue) {
     const keyGroup = key.split('.');
     keyGroup.forEach((item, index) => {
       if (index === keyGroup.length - 1) {
-        fieldsValueMd[item] = value;
+        fieldsValueMd[item] = { errors: [new Error(value[0])] };
       } else {
         fieldsValueMd[item] = fieldsValueMd[item] || {};
         fieldsValueMd = fieldsValueMd[item];
@@ -219,6 +239,7 @@ export function undotFieldsValue(fieldsValue) {
   });
   return params;
 }
+
 
 export function dotFieldsValue(fieldsValue, parentKey) {
   let response = {};
@@ -443,3 +464,13 @@ export function findTreeParent(data, id, key = 'id', pid = 'parent_id') {
   return result.concat(perantItem);
 }
 
+/**
+ * str 截取字符串
+ * width 容器宽度
+ * fontSize 字数
+ */
+export function getLetfEllipsis(str, width, fontSize) {
+  const numberStr = Math.floor(width / fontSize);
+  if (str.length < numberStr) return str;
+  return `...${str.substr(-numberStr + 3)}`;
+}

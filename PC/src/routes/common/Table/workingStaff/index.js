@@ -7,9 +7,7 @@ import BatchForm from './batchForm';
 const { EdiTableCell } = OATable;
 
 const valueDefault = {
-  point_a: 0,
-  point_b: 0,
-  number: 0,
+  number: 1,
   count: 0,
 };
 
@@ -65,14 +63,19 @@ export default class WorkingStaff extends React.PureComponent {
   }
 
   handleModalStaffOnChange = (value) => {
-    const newValue = value.map((item) => {
-      return {
+    const stateValue = [...this.state.value];
+    const { defaultPoint } = this.props;
+    const staffSn = stateValue.map(item => item.staff_sn);
+    const pushValue = value.filter(item => staffSn.indexOf(item.staff_sn) === -1);
+    pushValue.forEach((item) => {
+      stateValue.push({
         staff_sn: item.staff_sn,
         staff_name: item.realname,
         ...valueDefault,
-      };
+        ...defaultPoint,
+      });
     });
-    this.setState({ value: newValue }, () => {
+    this.setState({ value: stateValue }, () => {
       this.handleModalVisible('visible');
       this.handleOnChange();
     });
@@ -108,10 +111,12 @@ export default class WorkingStaff extends React.PureComponent {
   addCurrentUser = () => {
     const { value } = this.state;
     const { user } = window;
+    const { defaultPoint } = this.props;
     value.push({
       staff_sn: user.staff_sn,
       staff_name: user.realname,
       ...valueDefault,
+      ...defaultPoint,
     });
     this.setState({ value: [...value] }, this.handleOnChange);
   }
@@ -163,8 +168,8 @@ export default class WorkingStaff extends React.PureComponent {
           const bPoint = parseInt(record.point_b, 10) * number;
           return (
             <div style={{ color: 'rgb(150, 150, 150)' }}>
-              <span style={{ marginRight: '20px' }}>{`A:${aPoint}`}</span>
-              <span>{`B:${bPoint}`}</span>
+              <span style={{ marginRight: '20px' }}>{`A：${aPoint}`}</span>
+              <span>{`B：${bPoint}`}</span>
             </div>
           );
         },

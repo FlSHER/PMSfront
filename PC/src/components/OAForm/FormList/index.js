@@ -96,36 +96,6 @@ export default (CustomerFrom) => {
       const newList = this.state.dataSource.map((item, i) => {
         const key = `${item.key}`;
         const newName = `${name}[${i}]`;
-        // const content = (
-        //   <div
-        //     key={key}
-        //     style={{
-        //       flexGrow: 1,
-        //       display: 'flex',
-        //       ...(!sorter ? {
-        //         borderBottom: '1px solid #ccc',
-        //         marginTop: '8px',
-        //         paddingBottom: '8px',
-        //       } : null),
-        //     }}
-        //   >
-        //     <div style={{ flexGrow: 1 }}>
-        //       <CustomerFrom
-        //         {...this.props}
-        //         value={item}
-        //         name={newName}
-        //       />
-        //     </div>
-        //     <div style={{
-        //       display: 'flex',
-        //       flexDirection: 'column',
-        //       paddingLeft: '10px',
-        //     }}
-        //     >
-        //       {this.makeRmoveIcon(item.key)}
-        //     </div>
-        //   </div>
-        // );
         const content = (
           <div key={key} className={styles.container} style={style}>
             <div className={styles.header}>

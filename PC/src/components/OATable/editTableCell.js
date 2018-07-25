@@ -25,7 +25,14 @@ export default class EditableCell extends React.PureComponent {
   check = () => {
     this.setState({ editable: false });
     if (this.props.onChange) {
-      this.props.onChange(this.state.value);
+      let value;
+      const numberValue = parseFloat(this.state.value);
+      if (Math.floor(numberValue) === numberValue) {
+        value = Number(this.state.value);
+      } else {
+        ({ value } = this.state);
+      }
+      this.props.onChange(value);
     }
   }
 

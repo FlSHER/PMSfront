@@ -78,9 +78,11 @@ export default class OAForm extends PureComponent {
 
   handleOnError = (error, message) => {
     if (Object.keys(error).length) {
-      Object.keys(error).forEach((i) => {
+      const errResult = unicodeFieldsError(error);
+      Object.keys(errResult).forEach((name) => {
+        const errValue = errResult[name];
         this.props.form.setFields({
-          [i]: { errors: [new Error(error[i][0])] },
+          [name]: errValue,
         });
       });
       this.props.onError(error);

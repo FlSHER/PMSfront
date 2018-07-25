@@ -3,7 +3,7 @@ import {
   message,
 } from 'antd';
 import './message.less';
-import { undotFieldsValue } from '../../utils/utils';
+import { unicodeFieldsError } from '../../utils/utils';
 
 
 export default (FormComponet) => {
@@ -13,9 +13,9 @@ export default (FormComponet) => {
       const { id } = props;
       this.state = {
         localSavingKey: `${location.href}${id || 'StandardForm'}`,
-        fieldsError: {},
+        autoSave: false,
+        // fieldsError: {},
       };
-      this.autoSave = false;
     }
 
     bindForm = (form) => {
@@ -23,11 +23,11 @@ export default (FormComponet) => {
     }
 
     bindAutoSave = () => {
-      this.autoSave = true;
+      this.setState({ autoSave: true });
     }
 
     saveByLocal = (fieldsValue) => {
-      if (!this.autoSave) return;
+      if (!this.state.autoSave) return;
       message.destroy();
       const saveLoading = message.loading('备份中', 1);
       const { localSavingKey } = this.state;
@@ -55,23 +55,15 @@ export default (FormComponet) => {
     }
 
 
-    handleFieldsError = (name) => {
-      const { setFields, getFieldsError } = this.form;
-      const err = getFieldsError();
-      if (err[name]) {
-        setFields({ [name]: undefined });
-      }
-      const { fieldsError } = this.state;
-      if (fieldsError[name]) {
-        delete fieldsError[name];
-        this.setState({ fieldsError });
-      }
+    handleFieldsError = (name, error) => {
+      const { setFields } = this.form;
+      setFields({ [name]: error });
     }
 
     handleOnChange = (changedFields, index) => {
       const { onChange } = this.props;
       if (onChange) onChange(changedFields, index);
-      if (!this.autoSave) return;
+      if (!this.state.autoSave) return;
       clearInterval(this.localSavingInterval);
       const fieldsValue = {};
       Object.keys(changedFields).forEach((key) => {
@@ -82,27 +74,35 @@ export default (FormComponet) => {
       }, 4000);
     }
 
-    handleOnError = (error) => {
-      const newError = undotFieldsValue(error);
-      this.setState({ fieldsError: newError });
+    handleOnError = (error, callback, isUnicode) => {
+      const errResult = unicodeFieldsError(error, isUnicode);
+      const { setFields } = this.form;
+      Object.keys(errResult).forEach((name) => {
+        const errValue = errResult[name];
+        setFields({ [name]: errValue });
+        if (callback) callback(name, errValue, error);
+      });
     }
 
     makeNewFormComponetProps = () => {
-      const { fieldsError } = this.state;
+      // const { fieldsError } = this.state;
       const respone = {
         ...this.props,
         bindForm: this.bindForm,
         bindAutoSave: this.bindAutoSave,
-        handleFieldsError: this.handleFieldsError,
-        fieldsError,
+        // handleFieldsError: this.handleFieldsError,
+        // fieldsError,
         onError: this.handleOnError,
+        setFiedError: this.handleFieldsError,
         onChange: this.handleOnChange,
       };
-      respone.autoSave = {
-        getLocal: this.fetchLocalSaving,
-        saveLocal: this.saveByLocal,
-        clearLocal: this.clearFormAndLocalSaving,
-      };
+      if (this.state.autoSave) {
+        respone.autoSave = {
+          getLocal: this.fetchLocalSaving,
+          saveLocal: this.saveByLocal,
+          clearLocal: this.clearFormAndLocalSaving,
+        };
+      }
       return respone;
     }
 

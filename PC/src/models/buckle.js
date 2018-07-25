@@ -9,6 +9,7 @@ const store = 'buckle';
 export default {
   namespace: 'buckle',
   state: {
+    buckle: {},
     recorded: {},
     participant: {},
   },
@@ -47,7 +48,7 @@ export default {
           });
           onSuccess(response);
         }
-      } catch (err) { console.log(err); }
+      } catch (err) { return err; }
     },
     // * edit({ payload, onSuccess, onError }, { call, put }) {
     //   try {
