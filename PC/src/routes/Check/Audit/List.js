@@ -17,19 +17,19 @@ const status = [
   loading: loading.effects['buckle/fetchBuckleGroups'],
 }))
 export default class extends React.PureComponent {
-  state = { visible: false };
+  // state = { visible: false };
 
-  onClose = () => {
-    this.setState({
-      visible: false,
-    });
-  };
+  // onClose = () => {
+  //   this.setState({
+  //     visible: false,
+  //   });
+  // };
 
-  showDrawer = () => {
-    this.setState({
-      visible: true,
-    });
-  };
+  // showDrawer = () => {
+  //   this.setState({
+  //     visible: true,
+  //   });
+  // };
 
   fetch = (params) => {
     const { dispatch, type } = this.props;
@@ -95,7 +95,7 @@ export default class extends React.PureComponent {
 
   render() {
     const { buckle, loading, type } = this.props;
-    const { visible } = this.state;
+    // const { visible } = this.state;
     const reuslt = buckle[type];
     return (
       <React.Fragment>
