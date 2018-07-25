@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'antd';
-import Partake from './partake';
+import CheckList from './List';
 import styles from './index.less';
 
 const { TabPane } = Tabs;
@@ -13,10 +13,10 @@ export default class extends React.PureComponent {
             tab="待审核"
             key="1"
           >
-            <Partake type="processing" forceRender />
+            <CheckList type="processing" forceRender />
           </TabPane>
           <TabPane tab="已审核" key="2">
-            <Partake type="approved" forceRender />
+            <CheckList type="approved" forceRender />
           </TabPane>
         </Tabs>
       </div>
