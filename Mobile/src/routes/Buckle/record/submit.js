@@ -170,6 +170,22 @@ export default class BuckleRecord extends React.Component {
           </WingBlank>
           <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
+            <div className={[style.players, style.nopaddingl].join(' ')} id="copy">
+              <Flex className={style.title}>备注</Flex>
+              <TextareaItem
+                placeholder="输入备注"
+                rows={5}
+                labelNumber={5}
+                value={info.remark}
+                onChange={e => this.stateChange(e, 'remark')}
+              />
+              <div className={style.textinfo}>
+                还可输入{100 - info.remark.length}字
+              </div>
+            </div>
+          </WingBlank>
+          <WhiteSpace size="sm" />
+          <WingBlank className={style.parcel}>
             <div className={style.players} id="first">
               <Flex className={style.title} > 初审人</Flex>
               <Flex
@@ -234,22 +250,7 @@ export default class BuckleRecord extends React.Component {
               </Flex>
             </div>
           </WingBlank>
-          <WhiteSpace size="lg" />
-          <WingBlank className={style.parcel}>
-            <div className={[style.players, style.nopaddingl].join(' ')} id="copy">
-              <Flex className={style.title}>备注</Flex>
-              <TextareaItem
-                placeholder="输入备注"
-                rows={5}
-                labelNumber={5}
-                value={info.remark}
-                onChange={e => this.stateChange(e, 'remark')}
-              />
-              <div className={style.textinfo}>
-                还可输入{100 - info.remark.length}字
-              </div>
-            </div>
-          </WingBlank>
+
         </div>
         <div className={styles.footer}>
           <WingBlank>

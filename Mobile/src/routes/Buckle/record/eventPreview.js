@@ -45,13 +45,6 @@ export default class EventPreview extends React.Component {
     return count;
   }
 
-  pointRedirect = (e, i) => {
-    e.stopPropagation();
-    const { history } = this.props;
-    const { id } = this.state;
-    history.push(`/audit_detail/${id}/${i}`);
-  }
-
   nextStep = () => {
     const { history } = this.props;
     history.push('/buckle_submit');
@@ -97,7 +90,7 @@ export default class EventPreview extends React.Component {
               </Button>
             </Flex.Item>);
         }
-        if ([-1, -2].indexOf(detail.status_id) !== -1) {
+        if ([-1, -2, -3].indexOf(detail.status_id) !== -1) {
           // 再次提交
           footerBtn.push(
             <Flex.Item key="submit">
@@ -159,7 +152,7 @@ export default class EventPreview extends React.Component {
                 <React.Fragment key={key}>
                   <WhiteSpace />
                   <RecordPreview
-                    handleClick={e => this.pointRedirect(e, i)}
+                    // handleClick={e => this.pointRedirect(e, i)}
                     value={item}
                   />
                 </React.Fragment>

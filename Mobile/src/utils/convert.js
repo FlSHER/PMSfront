@@ -106,6 +106,8 @@ export const buckleState = (state) => {
       return '已驳回';
     case -2:
       return '已撤回';
+    case -3:
+      return '已撤销';
     default:
   }
 };
@@ -132,6 +134,7 @@ export const auditLabel = (state) => {
 // 状态标签颜色
 export const convertStyle = (status) => {
   switch (status) {
+    case -3: return 'label_state_0';
     case -2: return 'label_state_0';
     case -1: return 'label_state_1';
     case 0: return 'label_state_3';
@@ -178,36 +181,31 @@ export function reAgainImg(url, str) {
   return newImg;
 }
 
-
 export const pointSource = [
   {
-    name: '系统分', value: 0,
+    name: '基础', value: 0,
   },
   {
-    name: '固定分', value: 1,
+    name: '工作', value: 1,
   },
   {
-    name: '奖扣分', value: 2,
+    name: '行政', value: 2,
   },
   {
-    name: '任务分', value: 3,
+    name: '创新', value: 3,
   },
   {
-    name: '考勤分', value: 4,
-  },
-  {
-    name: '日志分', value: 5,
+    name: '其他', value: 4,
   },
 ];
 
 export const convertPointSource = (id) => {
   switch (id) {
-    case 0: return '系统分';
-    case 1: return '固定分';
-    case 2: return '奖扣分';
-    case 3: return '任务分';
-    case 4: return '考勤分';
-    case 5: return '日志分';
+    case 0: return '基础';
+    case 1: return '工作';
+    case 2: return '行政';
+    case 3: return '创新';
+    case 4: return '其他';
     default:
   }
 };

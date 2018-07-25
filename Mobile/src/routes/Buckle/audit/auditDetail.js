@@ -25,39 +25,26 @@ const person = [
   },
 ];
 @connect(({ buckle }) => ({
-  detail: buckle.detail,
+  buckleDetail: buckle.buckleDetails,
   groupDetail: buckle.groupDetail,
 }))
 export default class AuditDetail extends React.Component {
   state = {
     eventId: '',
-    index: '',
     userInfo: {},
-    isGroup: false,
   }
 
   componentWillMount() {
-    const { dispatch, history, match: { params }, groupDetail } = this.props;
-    const { id, index } = params;
+    const { dispatch, match: { params } } = this.props;
+    const { id } = params;
     const newInfo = userStorage('userInfo');
-    const isGroup = !(index === '-1');
-    if (isGroup) {
-      if (groupDetail && !Object.keys(groupDetail).length) {
-        history.goBack(-1);
-      }
-    }
     this.setState({
       eventId: id,
-      index,
       userInfo: newInfo,
-      isGroup,
-    }, () => {
-      if (!isGroup) {
-        dispatch({
-          type: 'buckle/getBuckleDetail',
-          payload: { eventId: id },
-        });
-      }
+    });
+    dispatch({
+      type: 'buckle/getBuckleDetail',
+      payload: { eventId: id },
     });
   }
 
@@ -87,9 +74,9 @@ export default class AuditDetail extends React.Component {
   }
 
   makeApprover = (approver) => {
-    const { detail, groupDetail } = this.props;
-    const { isGroup } = this.state;
-    const newDetail = isGroup ? groupDetail : detail;
+    const { buckleDetail = {} } = this.props;
+    const { eventId } = this.state;
+    const newDetail = { ...buckleDetail[eventId] || {} };
     return (
       <div key={approver.key}>
         <WhiteSpace size="sm" />
@@ -144,20 +131,14 @@ export default class AuditDetail extends React.Component {
   }
 
   render() {
-    const { detail, groupDetail } = this.props;
-    const { isGroup } = this.state;
-    let newDetail = detail;
-    const { logs } = groupDetail;
-    const { index } = this.state;
-    let participant = detail.participants;
-    let addresseess = [...((detail.group && detail.group.addressees) || [])];
-    let eventItem = {};
-    if (isGroup) {
-      newDetail = groupDetail;
-      eventItem = logs[index];
-      participant = eventItem.participants;
-      addresseess = eventItem.addressees;
-    }
+    const { buckleDetail = {} } = this.props;
+    const { eventId } = this.state;
+    console.log(buckleDetail);
+    
+    const detail = buckleDetail[eventId] || {};
+    const newDetail = { ...detail || {} };
+    const participant = detail.participants;
+    const addresseess = [...((detail.group && detail.group.addressees) || [])];
     const { userInfo } = this.state;
     const approvers = [
       {
@@ -254,12 +235,12 @@ export default class AuditDetail extends React.Component {
             <List>
               <div style={{ padding: '0.4rem 15px' }}>
                 <div className={style.event_title}>
-                  {isGroup ? eventItem.event_name : newDetail.event_name}
+                  {newDetail.event_name}
                   <Label value={newDetail} content={buckleState(newDetail.status_id)} />
                 </div>
               </div>
               <div style={{ padding: '0.4rem 15px' }}>
-                {isGroup ? eventItem.description : newDetail.description}
+                {newDetail.description}
               </div>
             </List>
           </WingBlank>

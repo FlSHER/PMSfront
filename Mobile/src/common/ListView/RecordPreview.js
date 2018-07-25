@@ -52,3 +52,6 @@ export default class Preview extends Component {
     );
   }
 }
+Preview.defaultProps = {
+  handleClick: () => {},
+};

@@ -72,9 +72,9 @@ export default class BuckleRecord extends React.Component {
       const obj = { ...item };
       obj.realname = item.staff_name || item.realname;
       obj.point_a = (item.point_a === '' || item.point_a === undefined) ?
-        (optAll.pointA !== '' ? optAll.pointA : event.point_a_default) : item.point_a;
+        (optAll.pointA !== '' ? Number(optAll.pointA) : Number(event.point_a_default)) : item.point_a;
       obj.point_b = (item.point_b === '' || item.point_b === undefined) ?
-        (optAll.pointB !== '' ? optAll.pointB : event.point_b_default) : item.point_b;
+        (optAll.pointB !== '' ? Number(optAll.pointB) : Number(event.point_b_default)) : item.point_b;
       obj.count = item.count === undefined ? optAll.count : item.count;
       return obj;
     });
@@ -181,30 +181,59 @@ export default class BuckleRecord extends React.Component {
     const { dispatch } = this.props;
     const { info } = this.state;
     const { participants } = info;
+    const newParticipants = this.convertPointToInt(participants);
     dispatch({
       type: 'record/saveEvents',
       payload: {
         index: sessionStorage.getItem('eventIndex'),
-        value: { ...info },
+        value: { ...info, participants: newParticipants },
       },
     });
     dispatch({
       type: 'record/saveEventStaff',
       payload: {
-        value: participants,
+        value: newParticipants,
         index: sessionStorage.getItem('eventIndex'),
       },
     });
   }
 
   record = () => {
-    const { history } = this.props;
+    const { history, dispatch } = this.props;
+    const { info } = this.state;
     if (this.validHasError()) {
       return;
     }
-    this.saveAllData();
+    const { participants } = info;
+    const newParticipants = this.convertPointToInt(participants);
+    dispatch({
+      type: 'record/saveRecords',
+      payload: {
+        key: 'records',
+        index: sessionStorage.getItem('eventIndex'),
+        value: { ...info, participants: newParticipants },
+      },
+    });
+
     history.goBack(-1);
   }
+
+  convertPointToInt =(participants) => {
+    const newParticipants = participants.map((item) => {
+      const obj = { ...item };
+      const point = ['point_a', 'point_b'];
+      point.forEach((key) => {
+        const value = Number(item[key]);
+        if (Math.floor(item[key]) === value) {
+          obj[key] = value;
+        }
+      });
+      return obj;
+    });
+
+    return newParticipants;
+  }
+
   validHasError = () => {
     const { info } = this.state;
     const eventId = info.event_id;
@@ -268,8 +297,8 @@ export default class BuckleRecord extends React.Component {
     const myself = {
       staff_sn: userInfo.staff_sn,
       staff_name: userInfo.realname,
-      point_a: optAll.pointA ? optAll.pointA : info.point_a_default,
-      point_b: optAll.pointB ? optAll.pointB : info.point_b_default,
+      point_a: optAll.pointA ? Number(optAll.pointA) : Number(info.point_a_default),
+      point_b: optAll.pointB ? Number(optAll.pointB) : Number(info.point_b_default),
       count: optAll.count ? optAll.count : 1,
     };
     newParticipants.push(myself);
@@ -419,6 +448,12 @@ export default class BuckleRecord extends React.Component {
                         value={tmpPointA}
                         style={{ background: '#badcff', ...(optAll.point_a_error ? { color: 'red' } : null) }}
                         onChange={v => this.pointChange(v, 'point_a')}
+                        onBlur={(v) => {
+                          if (Math.floor(v) === v) {
+                            this.pointChange(Number(v), 'point_a');
+                          }
+                        }
+                        }
                       />
                     </Flex.Item>
                     <Flex.Item className={[style.table_item, style.opt_all].join(' ')} >
@@ -446,6 +481,12 @@ export default class BuckleRecord extends React.Component {
                             value={`${item.point_a}`}
                             style={{ ...(item.point_a_error ? { color: 'red' } : null) }}
                             onChange={v => this.pointChange(v, 'point_a', item)}
+                            onBlur={(v) => {
+                              if (Math.floor(v) === Number(v)) {
+                                this.pointChange(Number(v), 'point_a', item);
+                              }
+                            }
+                            }
                           />
                         </Flex.Item>
                         <Flex.Item className={style.table_item}>

@@ -15,10 +15,10 @@ import styles from '../../common.less';
 
 export default class Preview extends React.Component {
   componentWillMount() {
-    const { location: { search }, dispatch, record: { events } } = this.props;
+    const { location: { search }, dispatch, record: { records } } = this.props;
     this.urlParams = getUrlParams(search);
     const { id } = this.urlParams;
-    if (id !== undefined && !(events && events.length)) {
+    if (id !== undefined && !(records && records.length)) {
       dispatch({
         type: 'buckle/getLogGroupDetail',
         payload: {
@@ -77,12 +77,12 @@ export default class Preview extends React.Component {
   }
 
   redirectEvent = () => {
-    const { history, dispatch, record: { events } } = this.props;
+    const { history, dispatch, record: { records } } = this.props;
     dispatch({
       type: 'record/saveEventKey',
-      payload: events.length,
+      payload: records.length,
     });
-    sessionStorage.eventIndex = events.length;
+    sessionStorage.eventIndex = records.length;
     history.push('/record_point');
   }
 
@@ -96,7 +96,7 @@ export default class Preview extends React.Component {
   }
 
   render() {
-    const { record: { events } } = this.props;
+    const { record: { records } } = this.props;
     const count = this.getCount();
     const extra = {
       text: '删除',
@@ -110,7 +110,7 @@ export default class Preview extends React.Component {
           <WingBlank>
             <div id="event" className={style.all_info}>
               <div className={style.left}>
-                <span>事件数量：{events.length}</span>
+                <span>事件数量：{records.length}</span>
                 <span>总人次：{count}</span>
               </div>
               <div className={style.add}>
@@ -121,7 +121,7 @@ export default class Preview extends React.Component {
                   onClick={this.redirectEvent}
                   style={{
                     border: '1px dashed rgb(199,199,199)',
-                    color: 'rgb(155,155,155)',
+                    color: '#000',
                   }}
                 >
                   添加事件
@@ -132,7 +132,7 @@ export default class Preview extends React.Component {
         </div>
         <div className={styles.con_content}>
           <WingBlank>
-            {events.map((item, i) => {
+            {records.map((item, i) => {
               const key = i;
               const newExtra = { onPress: e => this.deleteEventItem(e, i) };
               return (

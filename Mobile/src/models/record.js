@@ -6,6 +6,7 @@ export default {
     optAll: [],
     eventAll: [],
     events: [],
+    records: [],
   },
   effects: {
   },
@@ -38,13 +39,13 @@ export default {
         eventAll[i] = { ...eventItem };
         return obj;
       });
-      console.log('events', events, participants, eventAll, optAll);
       return {
         ...state,
         events,
         participants,
         eventAll,
         optAll,
+        records: events,
       };
     },
     saveEvent(state, action) {
@@ -137,7 +138,6 @@ export default {
           }
         });
       }
-      console.log(eventStaff);
       newEvents[eventIndex].participants = eventStaff[eventIndex];
       return {
         ...state,
@@ -161,6 +161,16 @@ export default {
       newState[action.payload.key] = action.payload.value;
       return {
         ...state, ...newState,
+      };
+    },
+
+    saveRecords(state, action) {
+      const { value, index, key } = action.payload;
+      const newRecord = state[key];
+      newRecord[index] = { ...value };
+      return {
+        ...state,
+        records: newRecord,
       };
     },
 

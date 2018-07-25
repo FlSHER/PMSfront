@@ -272,7 +272,7 @@ export default class BuckleList extends React.Component {
   toLookDetail = (item) => {
     const { checkState } = this.state;
     if (checkState.value === 'participant') {
-      this.props.history.push(`/audit_detail/${item.id}/-1`);
+      this.props.history.push(`/audit_detail/${item.id}`);
     } else {
       this.props.history.push(`/event_preview/${item.id}`);
     }

@@ -3,13 +3,20 @@ import moment from 'moment';
 import {
   recordBuckle,
 } from '../services/buckle';
+import { userStorage } from '../utils/util';
+
+const userInfo = userStorage('userInfo');
 
 export default {
   namespace: 'submit',
   state: {
     addressees: [],
     final: null,
-    first: null,
+    first: {
+      staff_sn: userInfo.staff_sn,
+      realname: userInfo.realname,
+      staff_name: userInfo.realname,
+    },
     info: {
       title: '',
       remark: '',

@@ -43,6 +43,7 @@ export default {
     },
     auditList: {},
     detail: {},
+    buckleDetails: {},
     groupDetail: {},
     used: false,
   },
@@ -150,10 +151,11 @@ export default {
       const response = yield call(getBuckleDetail, payload.eventId);
       if (response && !response.error) {
         yield put({
-          type: 'saveData',
+          type: 'save',
           payload: {
-            key: 'detail',
-            value: response,
+            store: 'buckle',
+            id: response.id,
+            data: response,
           },
         });
         if (payload.cb) {
@@ -187,16 +189,17 @@ export default {
       };
     },
     clearModal(state) {
-      const newState = { info: {
-        executedAt: new Date(),
-        description: '',
-        participants: [],
-      },
-      optAll: {
-        pointA: '',
-        pointB: '',
-        count: '',
-      },
+      const newState = {
+        info: {
+          executedAt: new Date(),
+          description: '',
+          participants: [],
+        },
+        optAll: {
+          pointA: '',
+          pointB: '',
+          count: '',
+        },
       };
       return {
         ...state,

@@ -1,24 +1,15 @@
 import React, { Component } from 'react';
 import ListView from '../../components/ListView';
-import { findTreeParent } from '../../utils/util';
+import { findTreeParent, getLetfEllipsis } from '../../utils/util';
 
 import style from './index.less';
 
 @ListView
 export default class SearchEvent extends Component {
   renderBread = (bread) => {
-    let str = '';
-    bread.forEach((item, i) => {
-      let extra = '';
-      if (i !== bread.length - 1) {
-        extra = '-';
-      }
-      str += `${item.name}${extra}`;
-    });
-    if (str.length > 15) {
-      str = `...${str.slice(0, 15)}`;
-    }
-    return str;
+    const breadStrArr = bread.map(item => item.name);
+    const breadStr = getLetfEllipsis(breadStrArr.join('>'), 220, 12);
+    return breadStr;
   }
   render() {
     const { value, onClick, checked, multiple, breadData } = this.props;

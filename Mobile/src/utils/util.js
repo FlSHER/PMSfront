@@ -379,3 +379,26 @@ export function sum(arr) {
     return Number(prev) + Number(curr);
   });
 }
+
+
+/**
+* str 截取字符串
+* width 容器宽度
+* fontSize 字数
+*/
+export function getLetfEllipsis(str, width, fontSize) {
+  const numberStr = Math.floor(width / fontSize);
+  if (str.length < numberStr) return str;
+  return `...${str.substr(-numberStr + 3)}`;
+}
+
+
+/**
+* arr 原数组
+* sort 排序降序或升序
+*/
+export function sortArr(arr, sort = 'desc') {
+  return arr.sort((a, b) => {
+    return sort === 'desc' ? b - a : a - b;
+  });
+}

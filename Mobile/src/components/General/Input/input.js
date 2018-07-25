@@ -1,13 +1,9 @@
 import React from 'react';
-
-import {
-  connect,
-} from 'dva';
 import './index.less';
 
 class Input extends React.Component {
   render() {
-    const { value, onChange, type, style } = this.props;
+    const { value, onChange, type, style, onBlur } = this.props;
     return (
       <input
         value={value}
@@ -18,6 +14,7 @@ class Input extends React.Component {
         onMouseUp={() => {
           if (this.ptr.focused) { this.ptr.focused = false; this.ptr.select(); return false; }
         }}
+        onBlur={() => onBlur(this.ptr.value)}
         onChange={() => onChange(this.ptr.value)}
       />
     );
@@ -26,6 +23,9 @@ class Input extends React.Component {
 
 Input.defaultProps = {
   type: 'number',
+  onBlur: () => {
+
+  },
 };
 
-export default connect()(Input);
+export default Input;

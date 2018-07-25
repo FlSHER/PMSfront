@@ -9,7 +9,7 @@ import { Flex, WhiteSpace, WingBlank, List } from 'antd-mobile';
 import { PersonIcon } from '../../../components/index.js';
 import CheckBox from '../../../components/ModalFilters/CheckBox';
 import MonthPicker from '../../../components/General/MonthPicker';
-import { sum, getUrlParams, urlParamsUnicode } from '../../../utils/util';
+import { sum, getUrlParams, urlParamsUnicode, sortArr } from '../../../utils/util';
 import style from '../index.less';
 
 const pointCount = {
@@ -81,7 +81,9 @@ const lineOption = {
   },
   xAxis: {
     type: 'category',
-    boundaryGap: false,
+    boundaryGap: true,
+    onZeroAxisIndex: -1,
+    onZero: false,
     data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
     axisLine: { // x轴
       lineStyle: {
@@ -257,6 +259,27 @@ export default class Statistic extends React.Component {
     return reverseXAxis.map(item => item.month);
   }
 
+  makeyAxisRange = (option, trend) => {
+    const yOption = option;
+    const pointMinArr = [];
+    const pointMaxArr = [];
+    trend.forEach((item) => {
+      const min = item.point_a < item.point_b ? item.point_a : item.point_b;
+      const max = item.point_a > item.point_b ? item.point_a : item.point_b;
+      pointMinArr.push(min);
+      pointMaxArr.push(max);
+    });
+    const maxArr = sortArr(pointMaxArr, 'desc');
+    console.log(maxArr)
+    const minArr = sortArr(pointMinArr, 'asc');
+    const [max] = maxArr;
+    const [min] = minArr;
+    yOption.max = max + 2;
+    yOption.min = min - 2;
+    console.log('yOption', yOption);
+    return yOption;
+  }
+
   monthChange = (v) => {
     this.urlParams = {
       ...this.urlParams,
@@ -301,9 +324,11 @@ export default class Statistic extends React.Component {
 
   renderChartLine = () => {
     const { data: { trend } } = this.props;
-    lineOption.series = this.makeLineSeriesData(trend);
-    lineOption.xAxis.data = this.makexAxisData(trend);
-    this.echartsLine.setOption(lineOption);
+    const newLineOption = JSON.parse(JSON.stringify(lineOption));
+    newLineOption.series = this.makeLineSeriesData(trend);
+    newLineOption.xAxis.data = this.makexAxisData(trend);
+    newLineOption.yAxis = this.makeyAxisRange(newLineOption.yAxis, trend);
+    this.echartsLine.setOption(newLineOption);
   }
 
   render() {
@@ -402,8 +427,8 @@ export default class Statistic extends React.Component {
               <div className={style.aside_title}>变化趋势</div>
               <div
                 ref={(e) => {
-                this.line = ReactDOM.findDOMNode(e);
-              }}
+                  this.line = ReactDOM.findDOMNode(e);
+                }}
                 style={{ height: '3.8133rem', width: '100%' }}
               />
             </div>
