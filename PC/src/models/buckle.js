@@ -14,6 +14,7 @@ export default {
     buckleGropusDetails: {},
     recorded: {},
     participant: {},
+    processing: {},
   },
   effects: {
     * fetch({ payload }, { call, put }) {
@@ -35,13 +36,13 @@ export default {
     *fetchBuckleGroups({ payload }, { call, put }) {
       try {
         const params = { ...payload };
-        const { id } = params;
+        const { id, type } = params;
         delete params.id;
         const response = yield call(fetchBuckleGroups, params, id || '');
         yield put({
           type: 'save',
           payload: {
-            store: 'buckleGropus',
+            store: type,
             id,
             data: response,
           },

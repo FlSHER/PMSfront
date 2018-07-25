@@ -13,13 +13,13 @@ const status = [
 
 @connect(({ buckle, loading }) => ({
   buckle,
-  loading: loading.effects['buckle/fetch'],
+  loading: loading.effects['buckle/fetchBuckleGroups'],
 }))
 export default class extends React.PureComponent {
   fetch = (params) => {
     const { dispatch, type } = this.props;
     dispatch({
-      type: 'buckle/fetch',
+      type: 'buckle/fetchBuckleGroups',
       payload: {
         ...params,
         type,
