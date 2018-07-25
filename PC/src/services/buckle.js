@@ -8,6 +8,14 @@ export async function fetchBuckle(params, id) {
   });
 }
 
+export async function fetchBuckleGroups(params, id) {
+  return request(`/api/PMS/event-logs/groups/${id}`, {
+    method: 'GET',
+    body: params,
+  });
+}
+
+
 export async function withdrawBuckle(id) {
   return request(`/api/PMS/event-logs/${id}/withdraw`, {
     method: 'PUT',

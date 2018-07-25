@@ -1,5 +1,6 @@
 import {
   fetchBuckle,
+  fetchBuckleGroups,
   addBuckle,
   // withdrawBuckle,
 } from '../services/buckle';
@@ -9,7 +10,8 @@ const store = 'buckle';
 export default {
   namespace: 'buckle',
   state: {
-    buckle: {},
+    buckleGropus: {},
+    buckleGropusDetails: {},
     recorded: {},
     participant: {},
   },
@@ -24,6 +26,22 @@ export default {
           type: 'save',
           payload: {
             store: type,
+            id,
+            data: response,
+          },
+        });
+      } catch (err) { return err; }
+    },
+    *fetchBuckleGroups({ payload }, { call, put }) {
+      try {
+        const params = { ...payload };
+        const { id } = params;
+        delete params.id;
+        const response = yield call(fetchBuckleGroups, params, id || '');
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'buckleGropus',
             id,
             data: response,
           },

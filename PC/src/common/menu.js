@@ -10,7 +10,7 @@ const menuData = [
         children: [
           {
             name: '提交成功',
-            path: 'success',
+            path: 'success/:id',
             hiddenMenu: true,
           },
         ],

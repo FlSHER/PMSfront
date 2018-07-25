@@ -146,38 +146,39 @@ class BasicLayout extends React.PureComponent {
           <PageHeader />
           <Layout className={styles.content}>
             {
-                pathname !== '/index' && (
+              pathname !== '/index' && (
                 <SiderMenu
                   location={location}
                   menuData={getMenuData()}
                 />
-                )
-              }
+              )
+            }
             <Content className={styles.contentView}>
-              <Switch>
-                {
-                    getRoutes(match.path, routerData).map(item =>
-                        (
-                          <AuthorizedRoute
-                            key={item.key}
-                            path={item.path}
-                            component={item.component}
-                            exact={item.exact}
-                            authority={item.authority}
-                            redirectPath="/exception/403"
-                          />
-                        )
-                      )
-                    }
-                {
-                      redirectData.map(item =>
-                        <Redirect key={item.from} exact from={item.from} to={item.to} />
-                      )
-                    }
-                <Redirect exact from="/" to="/index" />
-                <Route render={NotFound} />
-              </Switch>
-              <div className={styles.selectDom} id="selectDom" />
+              <div className={styles.viewer}>
+                <Switch>
+                  {
+                    getRoutes(match.path, routerData).map((item) => {
+                      return (
+                        <AuthorizedRoute
+                          key={item.key}
+                          path={item.path}
+                          component={item.component}
+                          exact={item.exact}
+                          authority={item.authority}
+                          redirectPath="/exception/403"
+                        />
+                      );
+                    })
+                  }
+                  {
+                    redirectData.map(item =>
+                      <Redirect key={item.from} exact from={item.from} to={item.to} />
+                    )
+                  }
+                  <Route render={NotFound} />
+                </Switch>
+                <div className={styles.selectDom} id="selectDom" />
+              </div>
             </Content>
           </Layout>
         </Content>
