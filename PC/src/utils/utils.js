@@ -465,12 +465,20 @@ export function findTreeParent(data, id, key = 'id', pid = 'parent_id') {
 }
 
 /**
+ * 容器容纳字数
+ * @param {容器宽度} width
+ * @param {字数} fontSize
+ */
+export function countViewFontSize(width, fontSize) {
+  return Math.floor(width / fontSize);
+}
+/**
  * str 截取字符串
  * width 容器宽度
  * fontSize 字数
  */
 export function getLetfEllipsis(str, width, fontSize) {
-  const numberStr = Math.floor(width / fontSize);
+  const numberStr = countViewFontSize(width, fontSize);
   if (str.length < numberStr) return str;
   return `...${str.substr(-numberStr + 3)}`;
 }

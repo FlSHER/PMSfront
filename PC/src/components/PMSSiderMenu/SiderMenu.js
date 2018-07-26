@@ -137,13 +137,6 @@ export default class SiderMenu extends PureComponent {
     if (!selectedKeys.length) {
       selectedKeys = menuData && menuData.children ? [menuData.children[0].path] : ['/'];
     }
-    if (menuData) {
-      menuData.children.forEach((item) => {
-        if (pathname.indexOf(item.path) !== -1) {
-          selectedKeys[0] = item.path;
-        }
-      });
-    }
     return (
       <Sider>
         <Menu

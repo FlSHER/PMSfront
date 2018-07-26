@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
+import moment from 'moment';
 import OATable from '../../../components/OATable';
 import BuckleInfo from './info';
 
@@ -46,16 +47,22 @@ export default class extends React.PureComponent {
       },
       {
         title: '备注',
+        width: 150,
         dataIndex: 'remark',
         searcher: true,
       },
       {
         title: '时间',
         dataIndex: 'executed_at',
+        width: 226,
         dateFilters: true,
+        render: (time) => {
+          return moment(time).format('YYYY-MM-DD HH:MM');
+        },
       },
       {
         title: '事件状态',
+        width: 50,
         dataIndex: 'status_id',
         filters: status,
         render: (statusId) => {
@@ -64,13 +71,17 @@ export default class extends React.PureComponent {
         },
       },
       {
-        title: '初审人',
-        dataIndex: 'first_approver_name',
+        title: '数量',
+        align: 'center',
+        dataIndex: 'event_count',
+        sorter: true,
         searcher: true,
       },
       {
-        title: '终审人',
-        dataIndex: 'final_approver_name',
+        title: '总人次',
+        align: 'center',
+        dataIndex: 'participant_count',
+        sorter: true,
         searcher: true,
       },
       {
@@ -80,6 +91,8 @@ export default class extends React.PureComponent {
       },
       {
         title: '操作',
+        width: 100,
+        fixed: 'right',
         render: () => {
           return (
             <a
@@ -106,6 +119,7 @@ export default class extends React.PureComponent {
         <OATable
           serverSide
           loading={loading}
+          scroll={{ x: 1000 }}
           columns={this.makeColums()}
           data={reuslt && reuslt.data}
           total={reuslt && reuslt.total}
