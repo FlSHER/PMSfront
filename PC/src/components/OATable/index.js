@@ -3,7 +3,7 @@ import { Table, Input, Icon, message, Button, Tooltip, Spin } from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import Ellipsis from 'ant-design-pro/lib/Ellipsis';
 
-import { makerFilters, countViewFontSize } from '../../utils/utils';
+import { makerFilters } from '../../utils/utils';
 
 import TreeFilter from './treeFilter';
 import DateFilter from './dateFilter';
@@ -186,9 +186,11 @@ class OATable extends PureComponent {
       if (column.width !== undefined && column.dataIndex !== undefined && !column.render) {
         response.render = (text) => {
           return (
-            <Ellipsis tooltip title={text} length={countViewFontSize(column.width, 14)}>
-              {text}
-            </Ellipsis>
+            <div style={{ width: column.width }}>
+              <Ellipsis tooltip title={text}>
+                {text}
+              </Ellipsis>
+            </div>
           );
         };
       }
