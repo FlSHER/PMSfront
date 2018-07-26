@@ -52,9 +52,8 @@ export default class extends React.PureComponent {
         searcher: true,
       },
       {
-        title: '时间',
+        title: '事件时间',
         dataIndex: 'executed_at',
-        width: 226,
         dateFilters: true,
         render: (time) => {
           return moment(time).format('YYYY-MM-DD HH:MM');
@@ -88,6 +87,14 @@ export default class extends React.PureComponent {
         title: '记录人',
         dataIndex: 'recorder_name',
         searcher: true,
+      },
+      {
+        title: '记录时间',
+        dataIndex: 'created_at',
+        dateFilters: true,
+        render: (time) => {
+          return moment(time).format('YYYY-MM-DD HH:MM');
+        },
       },
       {
         title: '操作',
