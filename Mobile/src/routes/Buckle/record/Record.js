@@ -337,23 +337,30 @@ export default class BuckleRecord extends React.Component {
       Toast.fail('请输入正确格式的数字');
       return;
     }
+    const eventObj = {
+      description: info.description,
+      event_id: event.id,
+      name: event.name,
+      participants: newParticipant,
+
+    };
     dispatch({
       type: 'buckle/recordBuckle',
       payload: {
         data: {
-          event_id: event.id,
-          participants: newParticipant,
-          description: info.description,
           first_approver_sn: first[0].staff_sn,
           first_approver_name: first[0].realname,
           final_approver_sn: final[0].staff_sn,
           final_approver_name: final[0].staff_name,
           executed_at: moment(info.executedAt).format('YYYY-MM-DD'),
+          remark: info.description,
+          title: event.name,
+          events: [eventObj],
           addressees: newCopy,
         },
         cb: () => {
           this.clearModal();
-          history.replace('/home');
+          history.push('/submitok');
         },
       },
     });
@@ -394,6 +401,7 @@ export default class BuckleRecord extends React.Component {
     history.replace('/buckle_record#event');
     history.push('/sel_event');
   }
+
   addMySelf = () => {
     const { event } = this.props;
     const { info, optAll } = this.state;
@@ -418,6 +426,7 @@ export default class BuckleRecord extends React.Component {
       },
     });
   }
+
   infoToast = () => {
     const { event } = this.props;
     if (event.id) {
@@ -434,6 +443,7 @@ export default class BuckleRecord extends React.Component {
       Toast.info('请先选择事件');
     }
   }
+
   render() {
     const { searchStaff: { selectStaff }, event } = this.props;
     const { first, final, copy } = selectStaff;

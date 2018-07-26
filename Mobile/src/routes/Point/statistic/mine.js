@@ -4,12 +4,11 @@ import {
 } from 'dva';
 import ReactDOM from 'react-dom';
 import echarts from 'echarts';
-import moment from 'moment';
 import { Flex, WhiteSpace, WingBlank, List } from 'antd-mobile';
 import { PersonIcon } from '../../../components/index.js';
 import CheckBox from '../../../components/ModalFilters/CheckBox';
 import MonthPicker from '../../../components/General/MonthPicker';
-import { sum, getUrlParams, urlParamsUnicode, sortArr } from '../../../utils/util';
+import { sum, getUrlParams, urlParamsUnicode, sortArr, monthMessage } from '../../../utils/util';
 import style from '../index.less';
 
 const pointCount = {
@@ -24,12 +23,19 @@ const pointCount = {
   },
 };
 const colorStyle = ['#000', '#66cbff', '#b4e682', '#fff04c', '#ffb266', '#ff7f94'];
+const lineColor = ['#D81E5B', '#0094C6'];
 const pieOption = {
   color: colorStyle,
+  grid: {
+    // top: 18,
+    // right: 0,
+    containLabel: true,
+  },
   legend: {
     type: 'scroll',
     orient: 'vertical',
     right: 0,
+    selectedMode: false,
     top: 0,
     data: [],
   },
@@ -48,6 +54,8 @@ const pieOption = {
           color: '#000',
         },
       },
+      selectedMode: false,
+
       labelLine: {
         normal: {
           show: false,
@@ -58,24 +66,22 @@ const pieOption = {
   ],
 };
 const lineOption = {
-  color: colorStyle.slice(1),
+  color: lineColor,
   tooltip: {
     trigger: 'axis',
   },
   legend: {
     type: 'scroll',
-    orient: 'vertical',
-    right: 0,
-    top: 0,
+    bottom: 0,
+    left: 'center',
     data: [
       'A分',
       'B分',
     ],
   },
   grid: {
-    left: '8%',
-    right: '4%',
-    bottom: '3%',
+    // left: '8%',
+    bottom: '30',
     top: 20,
     containLabel: true,
   },
@@ -221,6 +227,7 @@ export default class Statistic extends React.Component {
       extra.label.color = '#000';
       extra.selected = false;
     }
+
     extra.name = total !== null && total !== undefined && total.toString();
     let newData = (data || []).filter(item => item[key]).map((item) => {
       const obj = {};
@@ -228,7 +235,6 @@ export default class Statistic extends React.Component {
       obj.name = item.name;
       return obj;
     });
-
     newData = [extra, ...newData];
     return newData;
   }
@@ -247,6 +253,7 @@ export default class Statistic extends React.Component {
       const obj = { type: 'line' };
       obj.name = item.label;
       obj.center = [72, '30%'];
+      obj.smooth = true;
       obj.data = [...point[item.key]];
       return obj;
     });
@@ -256,7 +263,7 @@ export default class Statistic extends React.Component {
   makexAxisData = (xAxis) => {
     const reverseXAxis = [...xAxis];
     reverseXAxis.reverse();
-    return reverseXAxis.map(item => item.month);
+    return reverseXAxis.map(item => monthMessage[item.month]);
   }
 
   makeyAxisRange = (option, trend) => {
@@ -270,13 +277,11 @@ export default class Statistic extends React.Component {
       pointMaxArr.push(max);
     });
     const maxArr = sortArr(pointMaxArr, 'desc');
-    console.log(maxArr)
     const minArr = sortArr(pointMinArr, 'asc');
     const [max] = maxArr;
     const [min] = minArr;
     yOption.max = max + 2;
     yOption.min = min - 2;
-    console.log('yOption', yOption);
     return yOption;
   }
 
@@ -316,7 +321,7 @@ export default class Statistic extends React.Component {
       return this.makeLegendPercent(name, renderMonthly, key, count);
     };
     if (count === 0) {
-      newpieOption.color = '#fff';
+      newpieOption.color = '#f0f0f0';
     }
     newpieOption.series[0].data = this.makePieSeriesData(renderMonthly, key, count);
     elementChart.setOption(newpieOption);
@@ -327,7 +332,7 @@ export default class Statistic extends React.Component {
     const newLineOption = JSON.parse(JSON.stringify(lineOption));
     newLineOption.series = this.makeLineSeriesData(trend);
     newLineOption.xAxis.data = this.makexAxisData(trend);
-    newLineOption.yAxis = this.makeyAxisRange(newLineOption.yAxis, trend);
+    // newLineOption.yAxis = this.makeyAxisRange(newLineOption.yAxis, trend);
     this.echartsLine.setOption(newLineOption);
   }
 
@@ -340,6 +345,8 @@ export default class Statistic extends React.Component {
     const pointConfig = checked === 1 ? pointAConfig : pointBConfig;
     const currentPoint = checked === 1 ? monthly.point_a_monthly : monthly.point_b_monthly;
     const totalPoint = checked === 1 ? monthly.point_a_total : monthly.point_b_total;
+    const { datetime } = this.urlParams;
+    const value = datetime ? new Date(datetime) : new Date();
     if (this.echartsLine) {
       this.renderChartLine();
     }
@@ -376,6 +383,7 @@ export default class Statistic extends React.Component {
             <div className={style.players}>
               <Flex className={style.time_sel}>
                 <MonthPicker
+                  value={value}
                   onChange={v => this.monthChange({ datetime: v })}
                 />
               </Flex>
@@ -415,7 +423,7 @@ export default class Statistic extends React.Component {
                     ref={(e) => {
                       this[item.name] = ReactDOM.findDOMNode(e);
                     }}
-                    style={{ height: '3.8133rem', width: '100%' }}
+                    style={{ height: '150px', width: '100%' }}
                   />
                 </div>
               );
@@ -429,7 +437,7 @@ export default class Statistic extends React.Component {
                 ref={(e) => {
                   this.line = ReactDOM.findDOMNode(e);
                 }}
-                style={{ height: '3.8133rem', width: '100%' }}
+                style={{ height: '150px', width: '100%' }}
               />
             </div>
           </WingBlank>

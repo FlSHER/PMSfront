@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { SwipeAction } from 'antd-mobile';
 import style from './index.less';
 
-export default class RecordPreview extends Component {
+export default class RecordDetail extends Component {
   renderPoint = () => {
     const { value } = this.props;
     const { participants } = value;
@@ -21,32 +20,23 @@ export default class RecordPreview extends Component {
   render() {
     const {
       value,
-      handleClick,
-      extra,
       conStyle,
     } = this.props;
-    const prop = {
-      autoClose: true,
-    };
-    if (extra) {
-      prop.right = [extra];
-    }
+
     return (
       <div
         className={style.preview}
         style={conStyle}
-        onClick={handleClick}
       >
-        <SwipeAction
-          {...prop}
-        >
-          <div className={style.pre_title}>
-            {value.name || value.event_name}
-          </div>
-          <div className={style.predec}>
-            {value.description}
-          </div>
-        </SwipeAction>
+        <div className={style.event_pre_title}>
+          {value.name || value.event_name}
+        </div>
+        <div className={style.predecription}>
+          {value.description}
+        </div>
+        <div className={style.predecription}>
+          编号：{value.id}
+        </div>
         <div className={style.person_point}>
           {this.renderPoint()}
         </div>
@@ -54,6 +44,3 @@ export default class RecordPreview extends Component {
     );
   }
 }
-RecordPreview.defaultProps = {
-  handleClick: () => {},
-};

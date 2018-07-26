@@ -35,6 +35,23 @@ export default {
   },
   reducers: {
     // ...defaultReducers,
+    clearModal(state) {
+      return {
+        ...state,
+        addressees: [],
+        final: null,
+        first: {
+          staff_sn: userInfo.staff_sn,
+          realname: userInfo.realname,
+          staff_name: userInfo.realname,
+        },
+        info: {
+          title: '',
+          remark: '',
+          executed_at: moment(new Date()).format('YYYY-MM-DD'),
+        },
+      };
+    },
     saveSubmitInfo(state, action) {
       const { value } = action.payload;
       const addressees = (value.addressees || []).map((_) => {

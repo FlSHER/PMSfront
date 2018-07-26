@@ -53,9 +53,14 @@
     .text-overflow();
     line-height: 44/75rem;
     height: 118/75rem;
-    padding-top: 30/75rem;
+    padding-top: 20/75rem;
     padding-right: 60/75rem;
     .base(rgb(0, 0, 0), @detail-title-size);
+  }
+  .event_pre_title{
+    line-height: 48/75rem;
+    margin-top:20/75rem;
+    .base(rgb(74, 74, 74), @detail-title-size);
   }
   .predec {
     .textLineOverFlow();
@@ -66,11 +71,18 @@
   }
 }
 
+.predecription {
+  .base(@base-text-color, @list-text-size);
+  line-height: 40/75rem;
+  margin-top: 10/75rem;
+}
+
 .person_point {
   padding: 20/75rem 0;
   .item {
     .base(@base-text-color, @list-text-size);
     margin-bottom: 20/75rem;
+    line-height: 18px;
     &:last-child {
       margin-bottom: 0;
     }
@@ -222,7 +234,7 @@
   }
   .item {
     display: flex;
-    height: 48/75rem;
+    height: 24px;
     align-items: center;
     background: url(../../assets/select_icon/unseled.png) no-repeat right center;
     background-size: 44/75rem;

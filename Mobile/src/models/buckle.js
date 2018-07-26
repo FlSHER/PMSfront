@@ -1,7 +1,6 @@
 import { Toast } from 'antd-mobile';
 import {
   recordBuckle,
-  getAuditList,
   buckleReject,
   getBuckleDetail,
   withdrawBuckle,
@@ -44,7 +43,7 @@ export default {
     auditList: {},
     detail: {},
     buckleDetails: {},
-    groupDetail: {},
+    groupDetails: {},
     used: false,
   },
   effects: {
@@ -136,10 +135,11 @@ export default {
       const response = yield call(getLogGroupDetail, payload.eventId);
       if (response && !response.error) {
         yield put({
-          type: 'saveData',
+          type: 'save',
           payload: {
-            key: 'groupDetail',
-            value: response,
+            store: 'group',
+            id: response.id,
+            data: response,
           },
         });
         if (payload.cb) {

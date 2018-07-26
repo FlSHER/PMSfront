@@ -75,8 +75,6 @@ export const getRouterData = (app) => {
     '/buckle_preview/:id': {
       component: dynamicWrapper(app, ['buckle', 'record'], () => import('../routes/Buckle/record/preview')),
     },
-
-
     '/event_preview/:id': {
       component: dynamicWrapper(app, ['buckle', 'record'], () => import('../routes/Buckle/record/eventPreview')),
     },
@@ -84,9 +82,14 @@ export const getRouterData = (app) => {
     '/buckle_submit': {
       component: dynamicWrapper(app, ['buckle', 'record', 'submit'], () => import('../routes/Buckle/record/submit')),
     },
+    '/submitok': {
+      component: dynamicWrapper(app, ['buckle', 'record', 'submit'], () => import('../routes/Buckle/record/recordOk')),
+    },
+
     '/record_point': {
       component: dynamicWrapper(app, ['buckle', 'record'], () => import('../routes/Buckle/record/recordPoint')),
     },
+
     '/buckle_record/:id': {
       component: dynamicWrapper(app, ['buckle'], () => import('../routes/Buckle/record/record')),
     },

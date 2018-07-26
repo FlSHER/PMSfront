@@ -12,6 +12,17 @@ export default {
   },
   reducers: {
     // ...defaultReducers,
+    clearModal(state) {
+      return {
+        ...state,
+        eventIndex: -1,
+        participants: {},
+        optAll: [],
+        eventAll: [],
+        events: [],
+        records: [],
+      };
+    },
     saveRecordInfo(state, action) {
       const { value } = action.payload;
       const { logs } = value;

@@ -14,16 +14,6 @@ import home_ from '../assets/home_.svg';
 import appro from '../assets/appro.svg';
 import appro_ from '../assets/appro_.svg';
 
-export const bankType = [
-  { value: '1', label: '中国工商银行' },
-  { value: '2', label: '中国农业银行' },
-  { value: '3', label: '中国建设银行' },
-  { value: '4', label: '中国银行' },
-  { value: '5', label: '交通银行' },
-  { value: '6', label: '招商银行' },
-  { value: '7', label: '中国邮政储蓄银行' },
-  { value: '8', label: '农村商业银行' },
-];
 // 底部菜单
 export const tabbar = [{
   title: '申请',
@@ -74,7 +64,8 @@ export const indexMenu = [
     name: '奖扣',
     key: '2',
     children: [
-      { text: '记录奖扣', to: '/buckle_preview', icon: import('../assets/jobstation/积分制-icon-记录奖扣.png') },
+      { text: '记录奖扣', to: '/buckle_record', icon: import('../assets/jobstation/积分制-icon-记录奖扣.png') },
+      { text: '批量记录', to: '/buckle_preview', icon: import('../assets/jobstation/积分制-icon-记录奖扣.png') },
       { text: '奖扣审核', to: '/audit_list', icon: import('../assets/jobstation/积分制-icon-奖扣审核.png') },
       { text: '我的奖扣', to: '/buckle_list', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
     ],

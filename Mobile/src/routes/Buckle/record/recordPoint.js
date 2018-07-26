@@ -206,6 +206,7 @@ export default class BuckleRecord extends React.Component {
     }
     const { participants } = info;
     const newParticipants = this.convertPointToInt(participants);
+    this.saveAllData();
     dispatch({
       type: 'record/saveRecords',
       payload: {
@@ -230,7 +231,7 @@ export default class BuckleRecord extends React.Component {
       });
       return obj;
     });
-
+    console.log('newParticipants', newParticipants);
     return newParticipants;
   }
 

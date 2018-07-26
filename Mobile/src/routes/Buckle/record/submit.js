@@ -90,7 +90,6 @@ export default class BuckleRecord extends React.Component {
 
   saveAllData = () => {
     const { info } = this.state;
-    console.log(info);
     const { dispatch } = this.props;
     dispatch({
       type: 'submit/saveData',
@@ -103,20 +102,20 @@ export default class BuckleRecord extends React.Component {
 
   record = () => {
     const {
-      record: { events },
+      record: { records },
       submit: { addressees, final, first },
       dispatch, history,
     } = this.props;
     const newAddressees = addressees.map((item) => {
       const obj = {
         staff_sn: item.staff_sn,
-        staff_name: item.staff_sn,
+        staff_name: item.realname,
       };
       return obj;
     });
     const submitInfo = this.state.info;
     const params = {
-      events,
+      events: records,
       first_approver_sn: first.staff_sn,
       first_approver_name: first.realname,
       final_approver_sn: final.staff_sn,
@@ -129,7 +128,13 @@ export default class BuckleRecord extends React.Component {
       payload: {
         data: params,
         cb: () => {
-          history.replace('/home');
+          dispatch({
+            type: 'submit/clearModal',
+          });
+          dispatch({
+            type: 'record/clearModal',
+          });
+          history.replace('/submitok');
         },
       },
     });

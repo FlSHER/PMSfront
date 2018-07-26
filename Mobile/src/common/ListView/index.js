@@ -12,6 +12,7 @@ import SeStaff from './searchStaff';
 import SearchEvent from './SearchEvent';
 import FinalStaff from './FinalStaff';
 import RecordPreview from './RecordPreview';
+import RecordDetail from './RecordDetail';
 import PaticipantBuckle from './PaticipantBuckle';
 
 export {
@@ -27,6 +28,7 @@ export {
   SearchEvent,
   FinalStaff,
   RecordPreview,
+  RecordDetail,
   PaticipantBuckle,
   // EventList,
 };

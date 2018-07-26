@@ -270,6 +270,7 @@ export function userStorage(key) {
   const newInfo = JSON.parse(info === undefined ? '{}' : info);
   return newInfo;
 }
+
 export function isArray(o) {
   return Object.prototype.toString.call(o) === '[object Array]';
 }
@@ -402,3 +403,18 @@ export function sortArr(arr, sort = 'desc') {
     return sort === 'desc' ? b - a : a - b;
   });
 }
+
+export const monthMessage = {
+  1: '一月',
+  2: '二月',
+  3: '三月',
+  4: '四月',
+  5: '五月',
+  6: '六月',
+  7: '七月',
+  8: '八月',
+  9: '九月',
+  10: '十月',
+  11: '十一月',
+  12: '十二月',
+};

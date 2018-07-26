@@ -60,6 +60,7 @@
       height: 70/75rem;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       border-bottom: 2px solid rgb(245, 245, 245);
     }
     .person_list {
@@ -380,4 +381,33 @@
       border-left: none;
     }
   }
+}
+
+.event_title {
+  .base(rgb(74,
+  74,
+  74),
+  16px);
+  line-height: 48/75rem;
+  margin: 20/75rem 0;
+}
+
+.event_remark {
+  line-height: 44/75rem;
+  .base(rgb(150,
+  150,
+  150),
+  12px);
+  margin-bottom: 10/75rem;
+  &:last-child{
+    margin-bottom: none;
+  }
+}
+
+.submit_ok{
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
