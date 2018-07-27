@@ -18,7 +18,7 @@ const status = [
   loading: loading.effects['buckle/fetchBuckleGroups'],
 }))
 export default class extends React.PureComponent {
-  state = { visible: false };
+  state = { visible: false, editInfo: null };
 
 
   handleDrawerVisible = (flag) => {
@@ -100,12 +100,14 @@ export default class extends React.PureComponent {
         title: '操作',
         width: 100,
         fixed: 'right',
-        render: () => {
+        render: (_, record) => {
           return (
             <a
               style={{ color: '#59c3c3' }}
               onClick={() => {
-                this.handleDrawerVisible(true);
+                this.setState({ editInfo: record.id }, () => {
+                  this.handleDrawerVisible(true);
+                });
               }}
             >
               查看
@@ -119,7 +121,7 @@ export default class extends React.PureComponent {
 
   render() {
     const { buckle, loading, type } = this.props;
-    const { visible } = this.state;
+    const { visible, editInfo } = this.state;
     const reuslt = buckle[type];
     return (
       <React.Fragment>
@@ -134,6 +136,7 @@ export default class extends React.PureComponent {
         />
         <BuckleInfo
           visible={visible}
+          id={editInfo}
           onClose={() => this.handleDrawerVisible()}
         />
       </React.Fragment>

@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Table, Input, Icon, message, Button, Tooltip, Spin } from 'antd';
 import QueueAnim from 'rc-queue-anim';
-import 'antd/dist/antd.css';
 import 'ant-design-pro/dist/ant-design-pro.css';
 import Ellipsis from 'ant-design-pro/lib/Ellipsis';
 
@@ -187,7 +186,6 @@ class OATable extends PureComponent {
       }
       if (column.width !== undefined && column.dataIndex !== undefined && !column.render) {
         response.render = (text) => {
-          console.log(text);
           return (
             <div style={{ width: column.width }}>
               <Ellipsis tooltip title={text} lines={1}>

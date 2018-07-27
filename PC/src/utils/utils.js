@@ -482,3 +482,25 @@ export function getLetfEllipsis(str, width, fontSize) {
   if (str.length < numberStr) return str;
   return `...${str.substr(-numberStr + 3)}`;
 }
+
+/**
+ *  操作状态
+ * @param {状态} status
+ */
+export function getBuckleStatus(status) {
+  switch (status) {
+    case 0:
+      return '审核中';
+    case 1:
+      return '审核中';
+    case 2:
+      return '已通过';
+    case -1:
+      return '已驳回';
+    case -2:
+      return '已撤回';
+    case -3:
+      return '已撤销';
+    default:
+  }
+}

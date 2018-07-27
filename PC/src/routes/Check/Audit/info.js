@@ -1,22 +1,50 @@
 import React from 'react';
-import { Drawer } from 'antd';
-import CheckInfo from '../../common/checkInfo';
+import { connect } from 'dva';
+import Drawer from '../../../components/OADrawer';
+import CheckInfo from './checkInfo';
 import styles from './index.less';
 
+@connect(({ buckle, loading }) => ({
+  buckle: buckle.buckleGropusDetails,
+  loading: loading.effects['buckle/fetchBuckleGroupsInfo'],
+}))
 export default class extends React.Component {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.id !== this.props.id) {
+      this.fetch(nextProps.id);
+    }
+  }
+
+  fetch = (id) => {
+    const { dispatch } = this.props;
+    if (id) {
+      dispatch({
+        type: 'buckle/fetchBuckleGroupsInfo',
+        payload: { id },
+      });
+    }
+  }
+
+  renderFooter = () => {
+    return (
+      <div className={styles.footer}>
+        <div><span>通过</span></div>
+        <div><span>驳回</span></div>
+      </div>
+    );
+  }
   render() {
+    const { id, onClose, loading, buckle, visible } = this.props;
+    const data = buckle[id] || {};
     return (
       <Drawer
-        width={400}
-        mask={false}
-        destroyOnClose
-        placement="right"
+        visible={visible}
         title="事件详情"
-        wrapClassName={styles.eventInfo}
-        onClose={this.props.onClose}
-        visible={this.props.visible}
+        onClose={onClose}
+        loading={loading}
+        footer={this.renderFooter()}
       >
-        <CheckInfo />
+        <CheckInfo data={data} />
       </Drawer>
     );
   }

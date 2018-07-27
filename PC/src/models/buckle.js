@@ -49,6 +49,22 @@ export default {
         });
       } catch (err) { return err; }
     },
+    *fetchBuckleGroupsInfo({ payload }, { call, put }) {
+      try {
+        const params = { ...payload };
+        const { id } = params;
+        delete params.id;
+        const response = yield call(fetchBuckleGroups, params, id || '');
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'buckleGropus',
+            id,
+            data: response,
+          },
+        });
+      } catch (err) { return err; }
+    },
     * addBuckle({ payload, onSuccess, onError }, { call, put }) {
       try {
         const params = {
