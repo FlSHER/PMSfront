@@ -2,11 +2,12 @@ import {
   fetchBuckle,
   fetchBuckleGroups,
   addBuckle,
-  // withdrawBuckle,
+  firstCheck,
+  finalCheck,
+  reject,
 } from '../services/buckle';
 import defaultReducers from './reducers';
 
-const store = 'buckle';
 export default {
   namespace: 'buckle',
   state: {
@@ -15,6 +16,7 @@ export default {
     recorded: {},
     participant: {},
     processing: {},
+    approved: {},
   },
   effects: {
     * fetch({ payload }, { call, put }) {
@@ -65,7 +67,7 @@ export default {
         });
       } catch (err) { return err; }
     },
-    * addBuckle({ payload, onSuccess, onError }, { call, put }) {
+    * addBuckle({ payload, onSuccess, onError }, { call }) {
       try {
         const params = {
           ...payload,
@@ -74,10 +76,31 @@ export default {
         if (response.errors && onError) {
           onError(response.errors);
         } else {
+          onSuccess(response);
+        }
+      } catch (err) { return err; }
+    },
+    * approve({ payload, onSuccess, onError }, { call, put }) {
+      try {
+        const params = {
+          ...payload,
+        };
+        const { id, type } = payload;
+        delete params.id;
+        delete params.type;
+        let response;
+        if (type) {
+          response = yield call(firstCheck, params, id);
+        } else {
+          response = yield call(finalCheck, params, id);
+        }
+        if (response.errors && onError) {
+          onError(response.errors);
+        } else {
           yield put({
-            type: 'add',
+            type: 'approveCheck',
             payload: {
-              store,
+              id,
               data: response,
             },
           });
@@ -85,51 +108,50 @@ export default {
         }
       } catch (err) { return err; }
     },
-    // * edit({ payload, onSuccess, onError }, { call, put }) {
-    //   try {
-    //     const params = {
-    //       ...payload,
-    //     };
-    //     const { id } = payload;
-    //     delete params.id;
-    //     const response = yield call(editEvent, params, id);
-    //     if (response.errors && onError) {
-    //       onError(response.errors);
-    //     } else {
-    //       yield put({
-    //         type: 'update',
-    //         payload: {
-    //           store,
-    //           id,
-    //           data: response,
-    //         },
-    //       });
-    //       onSuccess(response);
-    //     }
-    //   } catch (err) { return err; }
-    // },
-    // * delete({ payload }, { call, put }) {
-    //   try {
-    //     const { id } = payload;
-    //     const response = yield call(deleteEvent, id);
-    //     if (response.error) {
-    //       notification.error({
-    //         message: '删除失败',
-    //         description: response.error,
-    //       });
-    //     } else {
-    //       yield put({
-    //         type: 'delete',
-    //         payload: {
-    //           store,
-    //           id,
-    //         },
-    //       });
-    //     }
-    //   } catch (err) { return err; }
-    // },
+    * reject({ payload, onSuccess, onError }, { call, put }) {
+      try {
+        const params = {
+          ...payload,
+        };
+        const { id } = payload;
+        delete params.id;
+        const response = yield call(reject, params, id);
+        if (response.errors && onError) {
+          onError(response.errors);
+        } else {
+          yield put({
+            type: 'approveCheck',
+            payload: {
+              id,
+              data: response,
+            },
+          });
+          onSuccess(response);
+        }
+      } catch (err) { return err; }
+    },
   },
   reducers: {
     ...defaultReducers,
+    approveCheck(state, action) {
+      const { id } = action.payload;
+      const buckleGropusDetails = { ...state.buckleGropusDetails };
+      const proces = { ...state.processing };
+      Object.keys(buckleGropusDetails).forEach((key) => {
+        if (id === key) {
+          delete buckleGropusDetails[key];
+        }
+      });
+      const processing = proces.data.filter(item => item.id !== id);
+      return {
+        ...state,
+        buckleGropusDetails,
+        processing: {
+          ...proces,
+          total: proces.total - 1,
+          data: processing,
+        },
+      };
+    },
   },
 };

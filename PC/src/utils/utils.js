@@ -487,6 +487,7 @@ export function getLetfEllipsis(str, width, fontSize) {
  *  操作状态
  * @param {状态} status
  */
+
 export function getBuckleStatus(status) {
   switch (status) {
     case 0:
@@ -504,3 +505,22 @@ export function getBuckleStatus(status) {
     default:
   }
 }
+
+export function getBuckleTitle(status) {
+  switch (status) {
+    case 0:
+      return '审核中';
+    case 1:
+      return '初审通过';
+    case 2:
+      return '终审通过';
+    case -1:
+      return '初审驳回';
+    case -2:
+      return '终审驳回';
+    case -3:
+      return '已撤销';
+    default:
+  }
+}
+

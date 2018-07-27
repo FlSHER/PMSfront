@@ -38,17 +38,27 @@ export async function addBuckle(params) {
 /**
  * 奖扣审核
  */
-export async function firstCheck(id) {
+export async function firstCheck(params, id) {
   return request(`/api/PMS/event-logs/${id}/first-approve`, {
     method: 'PUT',
-    body: data.param,
+    body: params,
   });
 }
 
-export async function finalCheck(id) {
+export async function finalCheck(params, id) {
   return request(`/api/PMS/event-logs/${id}/final-approve`, {
     method: 'PUT',
-    body: data.param,
+    body: params,
+  });
+}
+
+/**
+ *  驳回
+ */
+export async function reject(params, id) {
+  return request(`/api/PMS/event-logs/${id}/reject`, {
+    method: 'PUT',
+    body: params,
   });
 }
 

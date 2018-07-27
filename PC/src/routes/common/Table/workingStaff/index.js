@@ -138,30 +138,28 @@ export default class WorkingStaff extends React.PureComponent {
       {
         title: '姓名',
         dataIndex: 'staff_name',
-        width: 150,
       },
       {
         title: '单次A分',
         dataIndex: 'point_a',
-        width: 150,
+        width: 80,
         render: this.ediTableCell('point_a'),
       },
       {
         title: '单次B分',
         dataIndex: 'point_b',
-        width: 150,
+        width: 80,
         render: this.ediTableCell('point_b'),
       },
       {
         title: '次数',
         dataIndex: 'number',
-        width: 150,
+        width: 80,
         render: this.ediTableCell('number'),
       },
       {
         title: '总分',
         dataIndex: 'count',
-        width: 100,
         render: (_, record) => {
           const number = parseInt(record.number, 10);
           const aPoint = parseInt(record.point_a, 10) * number;

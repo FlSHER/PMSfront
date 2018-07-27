@@ -1,5 +1,7 @@
 import React from 'react';
 import DescriptionList from 'ant-design-pro/lib/DescriptionList';
+import 'ant-design-pro/dist/ant-design-pro.css';
+import Ellipsis from 'ant-design-pro/lib/Ellipsis';
 import styles from './index.less';
 import UserCircle from '../../../components/OAForm/SearchTable/UserCircle';
 // import { getBuckleStatus } from '../../../utils/utils';
@@ -28,9 +30,11 @@ function EventInfo({ data }) {
             const key = index;
             return (
               <p key={key}>
-                <span>{item.staff_name}</span>
-                <span>A：{`${item.point_a} (${item.point_a}x${item.count})`}</span>
-                <span>B：{`${item.point_b} (${item.point_b}x${item.count})`}</span>
+                <Ellipsis length={3} className={styles.userName}>
+                  {item.staff_name}
+                </Ellipsis>
+                <span className={styles.userPoint}>A：{`${item.point_a * item.count} (${item.point_a}x${item.count})`}</span>
+                <span className={styles.userPoint}>B：{`${item.point_b * item.count} (${item.point_b}x${item.count})`}</span>
               </p>
             );
           })}
@@ -74,7 +78,6 @@ function Approver({ tip, data }) {
                   {
                     statusId > 0 && data.time && (
                       <p className={styles.description}>
-                        {!data.remark && `记录人为${tip}，系统默认通过`}
                         {data.remark}
                       </p>
                     )
@@ -164,6 +167,11 @@ export default function CheckInfo({ data }) {
   const addrStaff = data.addressees || [];
   const addressees = addrStaff.map(item => item.staff_name);
   const recorder = data.recorder_name ? [data.recorder_name] : [];
+  const logs = data.logs || [];
+  let participantCount = 0;
+  logs.forEach((item) => {
+    participantCount += item.participants.length;
+  });
   return (
     <React.Fragment>
       <div className={styles.contentInfo}>
@@ -183,18 +191,24 @@ export default function CheckInfo({ data }) {
         <div className={styles.eventTitle}>
           <div>事件详情</div>
           <div className={styles.eventCount}>
-            <span>事件数量：{data.event_count}</span>
-            <span>总人次：{data.participant_count}</span>
+            <span>事件数量：{logs.length}</span>
+            <span>总人次：{participantCount}</span>
           </div>
         </div>
-        <EventInfo data={props.logs || {}} />
+        {logs.map((item, index) => {
+          const key = index;
+          return (
+            <EventInfo key={key} data={item} />
+          );
+        })}
+
       </div>
       <div className={styles.contentInfo}>
         <div className={styles.eventTitle}>
           <div>审核进度</div>
         </div>
-        {able && <Approver tip="初审人" data={first} />}
-        {able && <Approver tip="终审人" data={last} />}
+        {able !== 0 && <Approver tip="初审人" data={first} />}
+        {able !== 0 && <Approver tip="终审人" data={last} />}
         <StaffCustormer title="抄送人" data={addressees} />
         <StaffCustormer title="记录人" data={recorder} />
       </div>

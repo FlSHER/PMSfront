@@ -56,28 +56,29 @@ class OATable extends PureComponent {
       sorter: {},
       loading: false,
     };
-    this.enterAnim = [
-      {
-        opacity: 0, x: 30, backgroundColor: '#fffeee', duration: 0,
-      },
-      {
-        height: 0,
-        duration: 200,
-        type: 'from',
-        delay: 250,
-        ease: 'easeOutQuad',
-        onComplete: this.onEnd,
-      },
-      {
-        opacity: 1, x: 0, duration: 250, ease: 'easeOutQuad',
-      },
-      { delay: 1000, backgroundColor: '#fff' },
-    ];
-    this.leaveAnim = [
-      { duration: 250, opacity: 0 },
-      { height: 0, duration: 200, ease: 'easeOutQuad' },
-    ];
-    this.currentPage = 1;
+    // this.enterAnim = [
+    //   {
+    //     opacity: 0, x: 30, backgroundColor: '#fffeee', duration: 0,
+    //   },
+    //   {
+    //     height: 0,
+    //     duration: 200,
+    //     type: 'from',
+    //     delay: 250,
+    //     ease: 'easeOutQuad',
+    //     onComplete: this.onEnd,
+    //   },
+    //   {
+    //     opacity: 1, x: 0, duration: 250, ease: 'easeOutQuad',
+    //   },
+    //   { delay: 1000, backgroundColor: '#fff' },
+    // ];
+    // this.leaveAnim = [
+    //   { duration: 250, opacity: 0 },
+    //   { height: 0, duration: 200, ease: 'easeOutQuad' },
+    // ];
+    // this.currentPage = 1;
+    this.sortOrder = {};
   }
 
   componentDidMount() {
@@ -148,8 +149,13 @@ class OATable extends PureComponent {
           ...searcherParam,
         },
       };
+      const defaultSorter = Object.keys(this.sortOrder);
       if (sorter.field) {
         params.sort = `${sorter.field}-${sorter.order === 'ascend' ? 'asc' : 'desc'}`;
+      } else if (defaultSorter.length) {
+        defaultSorter.forEach((key) => {
+          params.sort = `${key}-${defaultSorter[key] === 'ascend' ? 'asc' : 'desc'}`;
+        });
       }
       params = makerFilters(params);
     }
@@ -171,6 +177,9 @@ class OATable extends PureComponent {
         response.sorter = column.sorter === true ? this.makeDefaultSorter(key) : column.sorter;
       }
       response.filteredValue = filters[key] || null;
+      if (column.dataIndex && column.sorter && column.sortOrder) {
+        this.sortOrder[column.dataIndex] = column.sortOrder;
+      }
       response.sortOrder = sorter.columnKey === key && sorter.order;
       if (column.searcher) {
         Object.assign(response, this.makeSearchFilterOption(key, column));

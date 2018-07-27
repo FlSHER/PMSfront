@@ -104,6 +104,13 @@ export default class extends React.PureComponent {
       params.first_approver_name = params.first.first_approver_name || '';
       params.final_approver_sn = params.last.final_approver_sn || '';
       params.final_approver_name = params.last.final_approver_name || '';
+      params.event_count = events.length;
+      params.participant_count = 0;
+      listFormValue.forEach((item) => {
+        if (item && item.participants) {
+          params.participant_count += item.participants.length;
+        }
+      });
       delete params.first;
       delete params.last;
       dispatch({

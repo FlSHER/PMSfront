@@ -5,12 +5,8 @@ import OATable from '../../../components/OATable';
 import BuckleInfo from './info';
 
 const status = [
-  { value: 0, text: '待审核' },
-  { value: 1, text: '初审通过' },
-  { value: 2, text: '终审通过' },
-  { value: -1, text: '驳回' },
-  { value: -2, text: '撤回' },
-  { value: -3, text: '撤销' },
+  { value: 0, text: '待初审' },
+  { value: 1, text: '待终审' },
 ];
 
 @connect(({ buckle, loading }) => ({
@@ -18,27 +14,28 @@ const status = [
   loading: loading.effects['buckle/fetchBuckleGroups'],
 }))
 export default class extends React.PureComponent {
-  state = { visible: false, editInfo: null };
-
-
-  handleDrawerVisible = (flag) => {
-    this.setState({
-      visible: !!flag,
-    });
-  };
+  state = { editInfo: {} };
 
   fetch = (params) => {
     const { dispatch, type } = this.props;
     dispatch({
       type: 'buckle/fetchBuckleGroups',
       payload: {
-        ...params,
         type,
+        ...params,
       },
     });
   }
 
   makeColums = () => {
+    const user = window.user || {};
+    const radio = [
+      { value: `1;first_approver_sn=${user.staff_sn}`, text: '初审通过' },
+      { value: `2;final_approver_sn=${user.staff_sn}`, text: '终审通过' },
+      { value: `-1;first_approver_sn=${user.staff_sn}`, text: '初审驳回' },
+      { value: `-1;final_approver_sn=${user.staff_sn}`, text: '终审驳回' },
+    ];
+    const { type } = this.props;
     const columns = [
       {
         title: '主题',
@@ -54,6 +51,7 @@ export default class extends React.PureComponent {
       {
         title: '事件时间',
         dataIndex: 'executed_at',
+        sorter: true,
         dateFilters: true,
         render: (time) => {
           return moment(time).format('YYYY-MM-DD HH:MM');
@@ -63,10 +61,23 @@ export default class extends React.PureComponent {
         title: '事件状态',
         width: 50,
         dataIndex: 'status_id',
-        filters: status,
-        render: (statusId) => {
-          const statusText = status.find(item => item.value === statusId);
-          return statusText.text || '';
+        filters: type === 'processing' ? status : radio,
+        filterMultiple: type === 'processing',
+        onFilter: () => {
+          return true;
+        },
+        render: (statusId, record) => {
+          let statusText = type === 'processing' ? status.filter(item => item.value === statusId)[0].text : null;
+          if (statusId === 1 && record.first_approver_sn === user.staff_sn) {
+            statusText = '初审通过';
+          } else if (statusId === 2 && record.final_approver_sn === user.staff_sn) {
+            statusText = '终审通过';
+          }
+          if (statusId === -1) {
+            statusText = record.first_approver_sn === user.staff_sn && '终审驳回';
+            statusText = record.final_approver_sn === user.staff_sn && '初审驳回';
+          }
+          return statusText;
         },
       },
       {
@@ -92,6 +103,8 @@ export default class extends React.PureComponent {
         title: '记录时间',
         dataIndex: 'created_at',
         dateFilters: true,
+        sorter: true,
+        sortOrder: 'descend',
         render: (time) => {
           return moment(time).format('YYYY-MM-DD HH:MM');
         },
@@ -105,8 +118,8 @@ export default class extends React.PureComponent {
             <a
               style={{ color: '#59c3c3' }}
               onClick={() => {
-                this.setState({ editInfo: record.id }, () => {
-                  this.handleDrawerVisible(true);
+                this.setState({ editInfo: record }, () => {
+                  this.props.onClose(true);
                 });
               }}
             >
@@ -120,8 +133,8 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { buckle, loading, type } = this.props;
-    const { visible, editInfo } = this.state;
+    const { buckle, loading, type, visible, onClose } = this.props;
+    const { editInfo } = this.state;
     const reuslt = buckle[type];
     return (
       <React.Fragment>
@@ -130,14 +143,16 @@ export default class extends React.PureComponent {
           loading={loading}
           scroll={{ x: 1000 }}
           columns={this.makeColums()}
-          data={reuslt && reuslt.data}
-          total={reuslt && reuslt.total}
+          data={reuslt.data || []}
+          total={reuslt.total || 0}
           fetchDataSource={this.fetch}
         />
         <BuckleInfo
+          type={type}
           visible={visible}
-          id={editInfo}
-          onClose={() => this.handleDrawerVisible()}
+          id={editInfo.id}
+          editInfo={editInfo}
+          onClose={() => onClose(false)}
         />
       </React.Fragment>
     );
