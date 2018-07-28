@@ -16,7 +16,6 @@ import styles from '../../common.less';
 export default class Preview extends React.Component {
   componentWillMount() {
     const { location: { search }, dispatch, record: { records } } = this.props;
-    console.log('records', records);
     this.urlParams = getUrlParams(search);
     const { id } = this.urlParams;
     if (id !== undefined && !(records && records.length)) {

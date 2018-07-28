@@ -105,7 +105,6 @@ export default class BuckleRecord extends React.Component {
       });
     } else {
       const { participants } = selectStaff;
-      console.log('participants', participants, optAll, event);
       let newParticipant = participants.map((item) => {
         const obj = { ...item };
         obj.realname = item.staff_name || item.realname;

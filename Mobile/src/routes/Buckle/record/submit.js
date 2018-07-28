@@ -31,7 +31,6 @@ export default class BuckleRecord extends React.Component {
 
   initInfo = () => {
     const { submit: { info } } = this.props;
-    console.log('info', info);
     this.setState({
       info,
     });

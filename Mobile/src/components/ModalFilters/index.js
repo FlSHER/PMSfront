@@ -1,6 +1,4 @@
 import React from 'react';
-import moment from 'moment';
-import { CheckBoxs } from '../../components/index';
 import ListFilter from '../Filter/ListFilter';
 import { makerFilters } from '../../utils/util';
 import InputRange from './InputRange';

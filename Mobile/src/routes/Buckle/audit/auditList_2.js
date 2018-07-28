@@ -84,10 +84,6 @@ const auditStates = [
   { name: '待审核', value: 'processing' },
   { name: '已审核', value: 'approved' },
 ];
-const dealtOption = [
-  { name: '已通过', value: 1 },
-  { name: '已驳回', value: -1 },
-];
 const procesingOption = [
   { name: '初审', value: 'first_approver_sn' },
   { name: '终审', value: 'final_approver_sn' },
@@ -107,7 +103,6 @@ export default class AuditList extends React.Component {
 
   componentWillMount() {
     const { auditList } = this.props;
-    console.log('willmount');
     const newInfo = userStorage('userInfo');
     this.urlParams = getUrlParams();
     const { type = 'processing' } = this.urlParams;
@@ -238,7 +233,6 @@ export default class AuditList extends React.Component {
     const filterParams = getUrlString('filters', currentTab);
     this.filters = doConditionValue(filterParams);
     const currentParams = parseParams(currentTab);
-    console.log('currentParams',currentParams)
     const newParams = { ...currentParams, ...params, page: 1, pagesize: 10 };
     const urlparams = parseParamsToUrl(newParams);
     dispatch({
