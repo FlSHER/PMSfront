@@ -33,6 +33,12 @@ export async function getLogsGroupList(params) {
   }, false);
 }
 
+export async function getAuditList2(params) {
+  const url = params ? `?${params}` : '';
+  return request(`/api/event-logs/groups${url}`, null, false);
+}
+
+
 export async function getBuckleDetail(id) {
   return request(`/api/event-logs/${id}`);
 }

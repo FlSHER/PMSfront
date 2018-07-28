@@ -119,24 +119,5 @@ export default {
         [key]: staff,
       };
     },
-
-    clearModal(state) {
-      const newState = {
-        info: {
-          executedAt: new Date(),
-          description: '',
-          participants: [],
-        },
-        optAll: {
-          pointA: '',
-          pointB: '',
-          count: '',
-        },
-      };
-      return {
-        ...state,
-        ...newState,
-      };
-    },
   },
 };

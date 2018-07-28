@@ -10,8 +10,8 @@ export default class RecordDetail extends Component {
       return (
         <div className={style.item} key={key}>
           <span>{item.staff_name}</span>
-          <span>A分:{item.point_a * item.count} <i>({item.point_a}x{item.count})</i></span>
-          <span>B分:{item.point_b * item.count} <i>({item.point_b}x{item.count})</i></span>
+          <span>A:{item.point_a * item.count} <i>({item.point_a}x{item.count})</i></span>
+          <span>B:{item.point_b * item.count} <i>({item.point_b}x{item.count})</i></span>
         </div>
       );
     });

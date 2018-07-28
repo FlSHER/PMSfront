@@ -1,7 +1,7 @@
 import React from 'react';
 import { DatePicker, Flex } from 'antd-mobile';
 import moment from 'moment';
-import style from './index.less';
+import style from '../index.less';
 
 const defaultValue = {
   min: '',
@@ -36,7 +36,7 @@ class PickerRange extends React.Component {
     this.setState({
       value: {
         ...value,
-        [key]: newValue,
+        [key]: moment(newValue).format('YYYY-MM-DD'),
       },
     }, () => {
       onChange(this.state.value);
@@ -49,22 +49,26 @@ class PickerRange extends React.Component {
     return (
       <Flex>
         {addonBefore}
-        <DatePicker
-          mode="date"
-          format="YYYY-MM-DD"
-          onChange={date => this.handleOnChange('min', date)}
-        >
-          <div className={style.some_time}>{min}</div>
-        </DatePicker>
-        <span className={style.rg}>—</span>
-        <DatePicker
-          mode="date"
-          format="YYYY-MM-DD"
-          onChange={date => this.handleOnChange('max', date)}
-        >
-          <div className={style.some_time}>{max}</div>
-        </DatePicker>
+        <Flex.Item>
+          <DatePicker
+            mode="date"
+            format="YYYY-MM-DD"
+            onChange={date => this.handleOnChange('min', date)}
+          >
+            <div className={style.some_time}>{min}</div>
+          </DatePicker>
+        </Flex.Item>
+        <Flex.Item>
+          <DatePicker
+            mode="date"
+            format="YYYY-MM-DD"
+            onChange={date => this.handleOnChange('max', date)}
+          >
+            <div className={style.some_time}>{max}</div>
+          </DatePicker>
+        </Flex.Item>
       </Flex>
+
     );
   }
 }

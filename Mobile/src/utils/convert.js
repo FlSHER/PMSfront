@@ -129,7 +129,7 @@ export const convertStyle = (status) => {
     case -2: return 'label_state_0';
     case -1: return 'label_state_1';
     case 0: return 'label_state_3';
-    case 1:
+    case 1: return 'label_state_3';
     case 2: return 'label_state_2';
     default: return 'label_state_default';
   }
@@ -140,6 +140,16 @@ export const auditFinishedState = (item) => {
     return '初审';
   } else if (item.status_id === 2 || (item.status_id === -1 && !item.final_approved_at)) {
     return '终审';
+  }
+};
+
+// 已审核的列表已操作的结果
+export const auditFinishedResult = (state) => {
+  switch (state) {
+    case 1:
+    case 2:
+      return '已通过';
+    default: return buckleState(state);
   }
 };
 

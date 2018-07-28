@@ -231,7 +231,6 @@ export default class BuckleRecord extends React.Component {
       });
       return obj;
     });
-    console.log('newParticipants', newParticipants);
     return newParticipants;
   }
 
@@ -265,19 +264,6 @@ export default class BuckleRecord extends React.Component {
       }
     });
     return hasError;
-  }
-
-  clearModal = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'buckle/clearModal',
-    });
-    dispatch({
-      type: 'event/clearModal',
-    });
-    dispatch({
-      type: 'searchStaff/clearSelectStaff',
-    });
   }
 
   selEvent = () => {
@@ -449,12 +435,7 @@ export default class BuckleRecord extends React.Component {
                         value={tmpPointA}
                         style={{ background: '#badcff', ...(optAll.point_a_error ? { color: 'red' } : null) }}
                         onChange={v => this.pointChange(v, 'point_a')}
-                        onBlur={(v) => {
-                          if (Math.floor(v) === v) {
-                            this.pointChange(Number(v), 'point_a');
-                          }
-                        }
-                        }
+                        floatNumber={2}
                       />
                     </Flex.Item>
                     <Flex.Item className={[style.table_item, style.opt_all].join(' ')} >
@@ -462,6 +443,7 @@ export default class BuckleRecord extends React.Component {
                         value={tmpPointB}
                         style={{ background: '#badcff', ...(optAll.point_b_error ? { color: 'red' } : null) }}
                         onChange={v => this.pointChange(v, 'point_b')}
+                        floatNumber={2}
                       />
                     </Flex.Item>
                     <Flex.Item className={[style.table_item, style.opt_all].join(' ')}>
@@ -482,12 +464,7 @@ export default class BuckleRecord extends React.Component {
                             value={`${item.point_a}`}
                             style={{ ...(item.point_a_error ? { color: 'red' } : null) }}
                             onChange={v => this.pointChange(v, 'point_a', item)}
-                            onBlur={(v) => {
-                              if (Math.floor(v) === Number(v)) {
-                                this.pointChange(Number(v), 'point_a', item);
-                              }
-                            }
-                            }
+                            floatNumber={2}
                           />
                         </Flex.Item>
                         <Flex.Item className={style.table_item}>

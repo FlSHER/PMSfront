@@ -8,11 +8,11 @@ export function env() {
   if (host.indexOf(config.productitionDomain) >= 0) {
     return 'production';
   } else
-  if (host.indexOf(config.develepDomain) >= 0) {
-    return 'development';
-  } else if (host.indexOf(config.testingDomain) >= 0) {
-    return 'testing';
-  }
+    if (host.indexOf(config.develepDomain) >= 0) {
+      return 'development';
+    } else if (host.indexOf(config.testingDomain) >= 0) {
+      return 'testing';
+    }
   return 'production';
 }
 
@@ -100,7 +100,7 @@ export function dealErrorData(data, code) {
   } else if (code === 401 || code === 400 || code === 403) {
     msg = data.message;
   } else {
-    msg = codeMessage[code];
+    msg = codeMessage[code] || '网络异常';
   }
   Toast.fail(msg);
   return msg;
@@ -225,12 +225,12 @@ export function findTreeParent(data, id, key = 'id', pid = 'parent_id') {
 }
 
 const whereConfig = {
-  in: '=',
   like: '~',
   min: '>=',
   max: '<=',
   lt: '<',
   gt: '>',
+  in: '=',
 };
 
 export function dotWheresValue(fields) {
@@ -251,8 +251,37 @@ export function dotWheresValue(fields) {
       fieldsWhere += `${name}=${fields[key]};`;
     }
   });
-
   return fieldsWhere;
+}
+
+export function doConditionValue(str = '') {
+  // const str = 'point_a>=1;point_a<=10;point_b>=1;
+  // point_b<=10;changed_at>=2018-07-25;changed_at<=2018-07;';
+  let arr = (str || '').split(';');
+  const obj = {};
+
+  for (let i = 0; i < arr.length; i += 1) {
+    const item = arr[i];
+    const keys = Object.keys(whereConfig);
+    for (let j = 0; j < keys.length; j += 1) {
+      const key = keys[j];
+      const name = whereConfig[key];
+      if (item.indexOf(name) > -1) {
+        const itemArr = item.split(name);
+        if (itemArr.length === 2) {
+          const objValue = {};
+          const [a, b] = itemArr;
+          objValue[key] = b;
+          obj[a] = { ...obj[a] || {}, ...objValue };
+          if (i === arr.length) {
+            arr = [...arr.slice(1)];
+          }
+          break;
+        }
+      }
+    }
+  }
+  return obj;
 }
 
 export function makerFilters(params) {
@@ -274,6 +303,27 @@ export function userStorage(key) {
 export function isArray(o) {
   return Object.prototype.toString.call(o) === '[object Array]';
 }
+
+export function parseParams(url) {
+  console.log(url)
+  const keyValue = url.split('&');
+  const obj = {};
+  keyValue.forEach((item) => {
+    let arr = [];
+    const i = item.indexOf('=');
+    if (i > -1 && i < item.length - 1) {
+      arr[0] = item.slice(0, i);
+      arr[1] = item.slice(i + 1)
+    }
+
+    if (arr && arr.length === 2) {
+      const [key, value] = arr;
+      obj[key] = value;
+    }
+  });
+  return obj;
+}
+
 
 export function getUrlParams(url) {
   const d = decodeURIComponent;
@@ -305,6 +355,17 @@ export function getUrlParams(url) {
     }
   }
   return obj;
+}
+
+export function parseParamsToUrl(params) {
+  let url = '';
+  const strArr = [];
+  Object.keys(params).forEach((key) => {
+    const str = `${key}=${params[key]}`;
+    strArr.push(str);
+  });
+  url = strArr.join('&');
+  return url;
 }
 
 export function scrollToAnchor(anchorName) {
@@ -418,3 +479,14 @@ export const monthMessage = {
   11: '十一月',
   12: '十二月',
 };
+
+/**
+* 获取url参数对象
+* @param {参数名称} name
+*/
+export function getUrlString(name, url) {
+  const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
+  const r = (url || window.location.search.substr(1)).match(reg);
+  if (r != null) return unescape(r[2]);
+  return null;
+}

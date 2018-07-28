@@ -4,24 +4,79 @@ import {
 } from 'dva';
 import { WingBlank, WhiteSpace, Flex, Modal } from 'antd-mobile';
 import { Buckle } from '../../../common/ListView/index';
+import ModalFilters from '../../../components/ModalFilters';
+
 import {
   auditState,
   auditLabel,
   convertStyle,
   auditFinishedState,
-  buckleState,
   auditFinishedLabel,
   auditFinishedResult,
 } from '../../../utils/convert.js';
-import { userStorage, makerFilters } from '../../../utils/util';
+import { userStorage, getUrlParams, getUrlString, parseParamsToUrl, doConditionValue, parseParams } from '../../../utils/util';
 
-import { ListFilter, CheckBoxs, ListSort, StateTabs } from '../../../components/index';
+import { StateTabs } from '../../../components/index';
 import style from '../index.less';
 import shortcut from '../../../assets/shortcuts.png';
 
+
+const tabs = {
+  processing: {
+    filterColumns: [
+      {
+        name: 'status_id',
+        type: 'checkBox',
+        title: '审核类型',
+        multiple: false,
+        options: [
+          {
+            label: '初审', value: '0',
+          },
+          {
+            label: '终审', value: '1',
+          },
+        ],
+      },
+    ],
+  },
+  approved: {
+    filterColumns: [
+      {
+        name: 'state',
+        type: 'checkBox',
+        title: '审核类型',
+        multiple: false,
+        notbelong: true,
+        options: [
+          {
+            label: '初审', value: 'first_approved_at',
+          },
+          {
+            label: '终审', value: 'final_approved_at',
+          },
+        ],
+      },
+      {
+        name: 'cate',
+        type: 'checkBox',
+        title: '审核类型',
+        multiple: false,
+        notbelong: true,
+        options: [
+          {
+            label: '已通过', value: 'audit',
+          },
+          {
+            label: '已驳回', value: 'reject',
+          },
+        ],
+      },
+    ],
+  },
+};
+
 const sortList = [
-  // { name: '默认排序', value: 'created_at-asc',
-  // icon: import('../../../assets/filter/default_sort.svg') },
   { name: '时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
   { name: '时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
@@ -37,49 +92,64 @@ const procesingOption = [
   { name: '初审', value: 'first_approver_sn' },
   { name: '终审', value: 'final_approver_sn' },
 ];
-@connect(({ buckle }) => ({
+@connect(({ buckle, alltabs }) => ({
   auditList: buckle.auditList,
+  allTabs: alltabs.tabs,
 }))
 export default class AuditList extends React.Component {
   state = {
-    filter: {// 筛选结果
-      approveType: [],
-      eventState: '',
-    },
-    modal: {// 模态框
-      filterModal: false,
-      sortModal: false,
-    },
-    sortItem: { name: '时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
-    checkState: { name: '待审核', value: 'processing' },
+    visible: false,
+    model: 'filters',
     el: {},
     shortModal: false,
+    sorter: { name: '时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
   }
 
   componentWillMount() {
-    const { dispatch } = this.props;
-    const { checkState, sortItem } = this.state;
+    const { auditList } = this.props;
+    console.log('willmount');
     const newInfo = userStorage('userInfo');
+    this.urlParams = getUrlParams();
+    const { type = 'processing' } = this.urlParams;
+    this.type = type;
     this.setState({
       userInfo: newInfo,
-    }, () => {
-      dispatch({
-        type: 'buckle/getAuditList',
-        payload: {
-          pagesize: 10,
-          page: 1,
-          sort: sortItem.value,
-          type: checkState.value,
-        },
-      });
     });
+    if (auditList[type]) {
+      return;
+    }
+    this.fetchDataSource({});
+    // const currentTab = allTabs[this.type];
+    // const currentParams = getUrlParams(currentTab);
+    // const newParams = { ...currentParams, ...params, page: 1, pagesize: 10 };
+    // const urlparams = parseParamsToUrl(newParams);
+    // dispatch({
+    //   type: 'buckle/getAuditList2',
+    //   payload: {
+    //     url: urlparams,
+    //     type: this.type,
+    //   },
+    // });
+  }
+
+  componentWillReceiveProps(props) {
+    const { location: { search }, auditList } = props;
+    this.urlParams = getUrlParams(search);
+    const { type = 'processing' } = this.urlParams;
+    this.type = type;
+    if (this.props.location.search !== search) {
+      if (auditList[type]) {
+        return;
+      }
+      this.fetchDataSource({});
+    }
   }
 
   onPageChange = () => {
     const { dispatch, auditList } = this.props;
     const { checkState, sortItem } = this.state;
     dispatch({
-      type: 'buckle/getAuditList',
+      type: 'buckle/getAuditList2',
       payload: {
         pagesize: 10,
         type: checkState.value,
@@ -100,7 +170,7 @@ export default class AuditList extends React.Component {
     const { dispatch } = this.props;
     const { checkState, sortItem } = this.state;
     dispatch({
-      type: 'buckle/getAuditList',
+      type: 'buckle/getAuditList2',
       payload: {
         pagesize: 10,
         page: 1,
@@ -123,7 +193,7 @@ export default class AuditList extends React.Component {
     const { dispatch } = this.props;
     this.setState({ filter: {} }, () => {
       dispatch({
-        type: 'buckle/getAuditList',
+        type: 'buckle/getAuditList2',
         payload: {
           pagesize: 10,
           type: checkState.value,
@@ -138,7 +208,7 @@ export default class AuditList extends React.Component {
     const { checkState, sortItem } = this.state;
     const { dispatch } = this.props;
     dispatch({
-      type: 'buckle/getAuditList',
+      type: 'buckle/getAuditList2',
       payload: {
         pagesize: 10,
         type: checkState.value,
@@ -159,6 +229,31 @@ export default class AuditList extends React.Component {
   setNewState = (key, newValue) => {
     this.setState({
       [key]: newValue,
+    });
+  }
+
+  fetchDataSource = (params) => {
+    const { dispatch, allTabs } = this.props;
+    const currentTab = allTabs[this.type];
+    const filterParams = getUrlString('filters', currentTab);
+    this.filters = doConditionValue(filterParams);
+    const currentParams = parseParams(currentTab);
+    console.log('currentParams',currentParams)
+    const newParams = { ...currentParams, ...params, page: 1, pagesize: 10 };
+    const urlparams = parseParamsToUrl(newParams);
+    dispatch({
+      type: 'alltabs/saveKey',
+      payload: {
+        type: this.type,
+        value: urlparams,
+      },
+    });
+    dispatch({
+      type: 'buckle/getAuditList2',
+      payload: {
+        url: urlparams,
+        type: this.type,
+      },
     });
   }
 
@@ -248,24 +343,8 @@ export default class AuditList extends React.Component {
   }
 
   tabChange = (item) => {
-    const { dispatch, auditList } = this.props;
-    const { sortItem } = this.state;
-    this.setState({
-      checkState: item,
-    }, () => {
-      if (auditList[item.value]) {
-        return;
-      }
-      dispatch({
-        type: 'buckle/getAuditList',
-        payload: {
-          pagesize: 10,
-          type: item.value,
-          page: 1,
-          sort: sortItem.value,
-        },
-      });
-    });
+    const { history } = this.props;
+    history.replace(`/audit_list_2?type=${item.value}`);
   }
 
   sortReasult = (item) => {
@@ -278,7 +357,7 @@ export default class AuditList extends React.Component {
       sortItem: item,
     }, () => {
       dispatch({
-        type: 'buckle/getAuditList',
+        type: 'buckle/getAuditList2',
         payload: {
           pagesize: 10,
           type: checkState.value,
@@ -301,16 +380,34 @@ export default class AuditList extends React.Component {
     history.push(`/event_preview/${item.id}`);
   }
 
+
+  handleVisible = (flag, model) => {
+    this.setState({ visible: !!flag, model });
+  }
+
+  renderExtraContent = (value) => {
+    const extra = (
+      <div className={style.aside}>
+        <img
+          src={shortcut}
+          alt="快捷操作"
+          onClick={() => { this.onShortcut(value); }}
+        />
+      </div>
+    );
+    return extra;
+  }
+
   renderLalbel = () => {
-    const { checkState } = this.state;
+    const { type } = this;
     let labelArr = [];
-    if (checkState.value === 'processing') {
+    if (type === 'processing') {
       const obj = {};
       obj.evt = value => auditState(value.status_id);
       obj.labelStyle = value => auditLabel(value.status_id);
       labelArr.push(obj);
     }
-    if (checkState.value === 'approved') {
+    if (type === 'approved') {
       const newObj = [
         {
           evt: value => auditFinishedResult(value.status_id),
@@ -325,32 +422,22 @@ export default class AuditList extends React.Component {
     }
     return labelArr;
   }
-  renderExtraContent = (value) => {
-    const extra = (
-      <div className={style.aside}>
-        <img
-          src={shortcut}
-          alt="快捷操作"
-          onClick={() => { this.onShortcut(value); }}
-        />
-      </div>
-    );
-    return extra;
-  }
 
   render() {
     const { auditList } = this.props;
-    const { checkState, filter, el, userInfo, shortModal } = this.state;
-    const isFilter = makerFilters(filter).filters;
+    const { el, userInfo, sorter, shortModal } = this.state;
+    const { type } = this;
+    const { filterColumns } = tabs[type];
+    // const isFilter = makerFilters(filter).filters;
     const linkBtn = [];
     if (Object.keys(el).length) {
       const detail = { ...el };
-      const type = detail.status_id.toString();
+      const statusId = detail.status_id.toString();
       const reject = (
         <div
           key="reject"
           className={[style.opt_item, style.reject].join(' ')}
-          onClick={() => this.doAudit(type, 'no')}
+          onClick={() => this.doAudit(statusId, 'no')}
         >
           驳回
         </div>
@@ -359,7 +446,7 @@ export default class AuditList extends React.Component {
         <div
           key="pass"
           className={[style.opt_item, style.agree].join(' ')}
-          onClick={() => this.doAudit(type, 'yes')}
+          onClick={() => this.doAudit(statusId, 'yes')}
         >
           通过
         </div>
@@ -375,7 +462,7 @@ export default class AuditList extends React.Component {
         linkBtn.push(pass);
       }
     }
-    const isApproved = checkState.value === 'approved';
+    const isApproved = this.type === 'approved';
     const extra = !isApproved ? this.renderExtraContent : null;
     return (
       <Flex direction="column">
@@ -384,7 +471,7 @@ export default class AuditList extends React.Component {
             <WhiteSpace size="md" />
             <WingBlank size="lg">
               <WingBlank size="lg">
-                <StateTabs option={auditStates} checkItem={checkState} justify="around" handleClick={this.tabChange} />
+                <StateTabs option={auditStates} checkItem={{ value: this.type }} justify="around" handleClick={this.tabChange} />
               </WingBlank>
             </WingBlank>
             <WhiteSpace size="md" />
@@ -397,41 +484,31 @@ export default class AuditList extends React.Component {
               <Flex.Item>
                 <div
                   className={[style.dosort].join(' ')}
-                  style={{
-                    backgroundImage: `url(${this.state.sortItem.icon})`,
-                    backgroundPosition: 'right center',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundSize: '0.4rem',
-                  }}
-                  onClick={() => this.selFilter('sortModal')}
+                  onClick={() => this.handleVisible(true, 'sort')}
                 >
-                  {this.state.sortItem.name}
+                  {sorter.name}
                 </div>
               </Flex.Item>
               <Flex.Item>
                 <div
-                  className={[style.filter, isFilter ? style.active : null].join(' ')}
-                  onClick={() => this.selFilter('filterModal')}
+                  className={[style.filter ? style.active : null].join(' ')}
+                  onClick={() => this.handleVisible(true, 'filter')}
                 >筛选
                 </div>
+
               </Flex.Item>
             </Flex>
-            <ListSort
-              maskColor="rgba(0, 0, 0, 0.1)"
-              visible={this.state.modal.sortModal}
-              onCancel={this.onCancel}
-              filterKey="sortModal"
-            >
-              {sortList.map(item => (
-                <div
-                  className={style.sort_item}
-                  key={item.name}
-                  style={{ backgroundImage: `url(${item.icon}) no-repeat right center` }}
-                  onClick={() => this.sortReasult(item)}
-                >{item.name}
-                </div>
-            ))}
-            </ListSort>
+            <ModalFilters
+              visible={this.state.visible}
+              model={this.state.model}
+              filters={this.filters}
+              sorter={sorter.value}
+              filterColumns={filterColumns}
+              sorterData={sortList}
+              // modalId="1"
+              fetchDataSource={this.fetchDataSource}
+              onCancel={this.handleVisible}
+            />
           </div>
         </Flex.Item>
         <Flex.Item className={style.content}>
@@ -439,64 +516,17 @@ export default class AuditList extends React.Component {
             <Buckle
               extra={extra}
               onRefresh={this.onRefresh}
-              dataSource={auditList[checkState.value] ? auditList[checkState.value].data : []}
+              dataSource={auditList[type] ? auditList[type].data : []}
               handleClick={this.toLookDetail}
               onPageChange={this.onPageChange}
               label={this.renderLalbel() || []}
-              page={auditList[checkState.value] ?
-                auditList[checkState.value].page : 1}
-              totalpage={auditList[checkState.value] ?
-                auditList[checkState.value].totalpage : 10}
+              page={auditList[type] ?
+                auditList[type].page : 1}
+              totalpage={auditList[type] ?
+                auditList[type].totalpage : 10}
             />
           </WingBlank>
         </Flex.Item>
-        <ListFilter
-          onOk={this.onFilterOk}
-          filterKey="filterModal"
-          onCancel={this.onCancel}
-          onResetForm={this.onResetForm}
-          iconStyle={{ width: '0.533rem', height: '0.533rem' }}
-          visible={this.state.modal.filterModal}
-          contentStyle={{
-            position: 'fixed',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 999,
-            textAlign: 'left',
-            backgroundColor: 'rgba(0,0,0,0.2)',
-            paddingLeft: '2rem',
-          }}
-        >
-          {checkState.value === 'processing' ? (
-            <div className={style.filter_item}>
-              <div className={style.title}>审核类型</div>
-              <CheckBoxs
-                option={procesingOption}
-                checkStatus={(i, v) => this.doMultiple(i, v, 'approveType')}
-                value={filter.approveType}
-              />
-            </div>
-          ) :
-            (
-              <div className={style.filter_item}>
-                <div className={style.title}>审核类型</div>
-                <CheckBoxs
-                  option={procesingOption}
-                  checkStatus={(i, v) => this.doMultiple(i, v, 'approveType')}
-                  value={filter.approveType}
-                />
-                <div className={style.title}>事件状态</div>
-                <CheckBoxs
-                  option={dealtOption}
-                  checkStatus={(i, v) => this.checkItem(i, v, 'eventState')}
-                  value={[filter.eventState]}
-                />
-              </div>
-            )
-          }
-        </ListFilter>
         <Modal
           popup
           visible={!isApproved && shortModal}

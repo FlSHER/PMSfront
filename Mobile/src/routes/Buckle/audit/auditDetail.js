@@ -133,8 +133,6 @@ export default class AuditDetail extends React.Component {
   render() {
     const { buckleDetail = {} } = this.props;
     const { eventId } = this.state;
-    console.log(buckleDetail);
-    
     const detail = buckleDetail[eventId] || {};
     const newDetail = { ...detail || {} };
     const participant = detail.participants;

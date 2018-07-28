@@ -13,7 +13,7 @@ export default class RecordOk extends Component {
     const { history } = this.props;
     const footerBtn = bottomOpt.map((item) => {
       return (
-        <React.Fragment>
+        <React.Fragment key={item.name}>
           <WhiteSpace size="sm" />
           <WingBlank>
             <Button

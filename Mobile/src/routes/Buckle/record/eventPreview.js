@@ -11,6 +11,21 @@ import { userStorage } from '../../../utils/util';
 import style from '../index.less';
 import styles from '../../common.less';
 
+const person = [
+  {
+    key: 'recorder_point',
+    id: 0,
+    value: 'recorder_name',
+    name: '记录人',
+  },
+  {
+    key: 'first_approver_point',
+    id: 1,
+    value: 'first_approver_name',
+    name: '初审人',
+  },
+];
+
 @connect(({ buckle, record }) => ({
   record,
   details: buckle.groupDetails,
@@ -140,7 +155,7 @@ export default class EventPreview extends React.Component {
     const { details } = this.props;
     const { userInfo, id } = this.state;
     const detail = details[id] || {};
-    const { addresseess } = detail;
+    const { addressees } = detail;
     const footerBtn = [];
     if (Object.keys(detail).length) {
       if (detail.recorder_sn === userInfo.staff_sn) {
@@ -223,7 +238,7 @@ export default class EventPreview extends React.Component {
                 <Flex.Item >基础信息</Flex.Item>
               </Flex>
               <div>
-                <div className={style.event_title}>{detail.titie}</div>
+                <div className={style.event_title}>{detail.title}</div>
                 <div className={style.event_remark}>{detail.created_at}</div>
                 <div className={style.event_remark}>{detail.remark}</div>
               </div>
@@ -302,7 +317,7 @@ export default class EventPreview extends React.Component {
                 className={style.person_list}
                 wrap="wrap"
               >
-                {(addresseess || []).map((item, i) => {
+                {(addressees || []).map((item, i) => {
                   const idx = i;
                   return (
                     <PersonIcon

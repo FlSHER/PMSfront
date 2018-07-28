@@ -10,6 +10,7 @@ import {
   auditFinishedState,
   buckleState,
   auditFinishedLabel,
+  auditFinishedResult,
 } from '../../../utils/convert.js';
 import { userStorage } from '../../../utils/util';
 
@@ -60,6 +61,7 @@ export default class BuckleList extends React.Component {
     sortItem: sortList[0],
     checkState: auditStates[0],
   }
+
   componentWillMount() {
     const { dispatch } = this.props;
     const { checkState, sortItem } = this.state;
@@ -78,6 +80,7 @@ export default class BuckleList extends React.Component {
       });
     });
   }
+
   onPageChange = () => {
     const { dispatch, logList } = this.props;
     const { checkState, sortItem } = this.state;
@@ -92,11 +95,13 @@ export default class BuckleList extends React.Component {
       },
     });
   }
+
   onClose = key => () => {
     this.setState({
       [key]: false,
     });
   }
+
   onRefresh = () => {
     const { dispatch } = this.props;
     const { checkState, sortItem } = this.state;
@@ -111,12 +116,14 @@ export default class BuckleList extends React.Component {
       },
     });
   }
+
   onCancel = (e, feild) => {
     const { modal } = this.state;
     const newModal = { ...modal };
     newModal[feild] = false;
     this.setNewState('modal', newModal);
   }
+
   onResetForm = () => {
     const { checkState, sortItem } = this.state;
     const { dispatch } = this.props;
@@ -136,6 +143,7 @@ export default class BuckleList extends React.Component {
         });
       });
   }
+
   onFilterOk = () => {
     const { checkState, sortItem } = this.state;
     const { dispatch } = this.props;
@@ -189,6 +197,7 @@ export default class BuckleList extends React.Component {
     }
     return search;
   }
+
   sortReasult = (item) => {
     const { dispatch } = this.props;
     const { modal, checkState } = this.state;
@@ -209,12 +218,14 @@ export default class BuckleList extends React.Component {
       });
     });
   }
+
   showModal = (e, key) => {
     e.preventDefault(); // 修复 Android 上点击穿透
     this.setState({
       [key]: true,
     });
   }
+
   selFilter = (feild) => { // 筛选
     const { modal } = this.state;
     const modalObj = {};
@@ -237,6 +248,7 @@ export default class BuckleList extends React.Component {
     newFilter[key] = temp;
     this.setNewState('filter', newFilter);
   }
+
   doMultiple = (i, v, key) => {
     const { filter } = this.state;
     const newFilter = { ...filter };
@@ -250,6 +262,7 @@ export default class BuckleList extends React.Component {
     newFilter[key] = [...temp];
     this.setNewState('filter', newFilter);
   }
+
   tabChange = (item) => {
     const { dispatch, logList } = this.props;
     this.setState({
@@ -290,6 +303,7 @@ export default class BuckleList extends React.Component {
       },
     });
   }
+
   yearChange = (v, key) => {
     const { filter } = this.state;
     const { time } = filter;
@@ -302,6 +316,7 @@ export default class BuckleList extends React.Component {
       },
     });
   }
+
   monthChange = (v, key) => {
     let newV = Number(v);
     const { filter } = this.state;
@@ -323,13 +338,14 @@ export default class BuckleList extends React.Component {
       },
     });
   }
+
   renderLalbel = () => {
     const { checkState } = this.state;
     let labelArr = [];
     if (checkState.value === 'approved') {
       const newObj = [
         {
-          evt: value => buckleState(value.status_id),
+          evt: value => auditFinishedResult(value.status_id),
           labelStyle: value => convertStyle(value.status_id),
         },
         {
@@ -346,6 +362,7 @@ export default class BuckleList extends React.Component {
     }
     return labelArr;
   }
+
   render() {
     const { logList } = this.props;
     const { checkState, filter } = this.state;

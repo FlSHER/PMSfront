@@ -9,6 +9,7 @@ import {
   getLogsList,
   getLogsGroupList,
   getLogGroupDetail,
+  getAuditList2,
 } from '../services/buckle';
 import defaultReducers from './reducers/default';
 import { makerFilters } from '../utils/util.js';
@@ -90,6 +91,20 @@ export default {
     *getAuditList({ payload }, { call, put }) {
       const newPayload = makerFilters(payload);
       const response = yield call(getLogsGroupList, newPayload);
+      if (response && !response.error) {
+        yield put({
+          type: 'saveList',
+          payload: {
+            key: 'auditList',
+            type: payload.type,
+            value: response,
+          },
+        });
+      }
+    },
+    *getAuditList2({ payload }, { call, put }) {
+      // const newPayload = makerFilters(payload);
+      const response = yield call(getAuditList2, payload.url);
       if (response && !response.error) {
         yield put({
           type: 'saveList',

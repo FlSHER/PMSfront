@@ -3,7 +3,7 @@ import './index.less';
 
 class Input extends React.Component {
   render() {
-    const { value, onChange, type, style, onBlur } = this.props;
+    const { value, onChange, type, style, floatNumber } = this.props;
     return (
       <input
         value={value}
@@ -14,7 +14,19 @@ class Input extends React.Component {
         onMouseUp={() => {
           if (this.ptr.focused) { this.ptr.focused = false; this.ptr.select(); return false; }
         }}
-        onBlur={() => onBlur(this.ptr.value)}
+        onBlur={() => {
+          if (floatNumber) {
+            const a = this.ptr.value;
+            const b = Number(a);
+            const c = b.toFixed(floatNumber);
+            let v = c;
+            if (Math.floor(c) === Number(v)) {
+              v = Number(v);
+            }
+            onChange(v);
+          }
+        }
+        }
         onChange={() => onChange(this.ptr.value)}
       />
     );
@@ -26,6 +38,7 @@ Input.defaultProps = {
   onBlur: () => {
 
   },
+  floatNumber: 0,
 };
 
 export default Input;

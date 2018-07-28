@@ -13,6 +13,7 @@ export default {
   reducers: {
     // ...defaultReducers,
     clearModal(state) {
+      console.log('clearmodal');
       return {
         ...state,
         eventIndex: -1,
@@ -198,24 +199,6 @@ export default {
       return {
         ...state,
         [action.payload.key]: newList,
-      };
-    },
-    clearModal(state) {
-      const newState = {
-        info: {
-          executedAt: new Date(),
-          description: '',
-          participants: [],
-        },
-        optAll: {
-          pointA: '',
-          pointB: '',
-          count: '',
-        },
-      };
-      return {
-        ...state,
-        ...newState,
       };
     },
   },

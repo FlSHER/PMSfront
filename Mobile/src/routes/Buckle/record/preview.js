@@ -16,6 +16,7 @@ import styles from '../../common.less';
 export default class Preview extends React.Component {
   componentWillMount() {
     const { location: { search }, dispatch, record: { records } } = this.props;
+    console.log('records', records);
     this.urlParams = getUrlParams(search);
     const { id } = this.urlParams;
     if (id !== undefined && !(records && records.length)) {
@@ -47,7 +48,6 @@ export default class Preview extends React.Component {
 
   getCount = () => {
     const { record: { participants } } = this.props;
-    console.log('participants', participants);
     let count = 0;
     Object.keys(participants || {}).forEach((key) => {
       count += participants[key].length;
@@ -99,10 +99,18 @@ export default class Preview extends React.Component {
   render() {
     const { record: { records } } = this.props;
     const count = this.getCount();
-    const extra = {
-      text: '删除',
-      style: { backgroundColor: 'rgb(218,81,85)', minWidth: '1.6rem', color: 'white', fontSize: '12px', borderTopRightRadius: '2px' },
-    };
+    const extra = [
+      {
+        text: '查看详情',
+        style: { backgroundColor: 'rgb(199,199,199)', minWidth: '2.133rem', color: 'white', fontSize: '12px' },
+        onPress: 'pointRedirect',
+      },
+      {
+        text: '删除',
+        style: { backgroundColor: 'rgb(218,81,85)', minWidth: '1.6rem', color: 'white', fontSize: '12px', borderTopRightRadius: '2px' },
+        onPress: 'deleteEventItem',
+      },
+    ];
     return (
       <div
         className={styles.con}
@@ -135,12 +143,16 @@ export default class Preview extends React.Component {
           <WingBlank>
             {records.map((item, i) => {
               const key = i;
-              const newExtra = { onPress: e => this.deleteEventItem(e, i) };
+              const newExtra = extra.map((_) => {
+                const obj = { ..._ };
+                obj.onPress = e => this[_.onPress](e, i);
+                return obj;
+              });
               return (
                 <React.Fragment key={key}>
                   <WhiteSpace />
                   <RecordPreview
-                    extra={{ ...extra, ...newExtra }}
+                    extra={newExtra}
                     handleClick={e => this.pointRedirect(e, i)}
                     value={item}
                   />
