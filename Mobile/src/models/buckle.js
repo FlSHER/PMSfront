@@ -12,7 +12,7 @@ import {
   getAuditList2,
 } from '../services/buckle';
 import defaultReducers from './reducers/default';
-import { makerFilters } from '../utils/util.js';
+import { makerFilters, pageChange } from '../utils/util.js';
 
 
 export default {
@@ -49,20 +49,30 @@ export default {
   },
   effects: {
 
-    *finalApprove({ payload }, { call }) {
+    *finalApprove({ payload }, { call, put }) {
       const response = yield call(finalApprove, payload.data);
       if (response && !response.error) {
         Toast.success(response.message);
         payload.cb();
+        yield put({
+          type: 'updateAuditList',
+          payload: response.data,
+        });
       }
     },
-    *firstApprove({ payload }, { call }) {
+
+    *firstApprove({ payload }, { call, put }) {
       const response = yield call(firstApprove, payload.data);
       if (response && !response.error) {
         Toast.success(response.message);
+        yield put({
+          type: 'updateAuditList',
+          payload: response.data,
+        });
         payload.cb();
       }
     },
+
     *withdrawBuckle({ payload }, { call }) {
       const response = yield call(withdrawBuckle, payload.id);
       if (response && !response.error) {
@@ -70,10 +80,15 @@ export default {
         payload.cb();
       }
     },
-    *buckleReject({ payload }, { call }) {
+
+    *buckleReject({ payload }, { call, put }) {
       const response = yield call(buckleReject, payload.data);
       if (response && !response.error) {
         Toast.success(response.message);
+        yield put({
+          type: 'updateAuditList',
+          payload: response.data,
+        });
         payload.cb();
       }
     },
@@ -102,6 +117,7 @@ export default {
         });
       }
     },
+
     *getAuditList2({ payload }, { call, put }) {
       // const newPayload = makerFilters(payload);
       const response = yield call(getAuditList2, payload.url);
@@ -116,6 +132,7 @@ export default {
         });
       }
     },
+
     *getLogsList({ payload }, { call, put }) {
       const newPayload = makerFilters(payload);
       const response = yield call(getLogsList, newPayload);
@@ -181,6 +198,29 @@ export default {
   },
   reducers: {
     ...defaultReducers,
+    updateAuditList(state, action) {
+      const current = action.payload;
+      const { processing, approved } = state.auditList;
+      let newApproved = {
+        ...approved
+        || { page: 1, pagesize: 10, total: 0, totalpage: 0, data: [] } };
+
+      const data = (processing ? processing.data : []).filter(item => item.id !== current.id);
+      let newProcessing = { ...processing, data };
+      const approveData = [...newApproved.data];
+      const newApprovedData = approveData.filter(item => item.id !== current);
+      newApprovedData.unshift(current);
+      newApproved.data = [...newApprovedData];
+      newApproved = { ...newApproved, ...pageChange(newApproved) };
+      newProcessing = { ...newProcessing, ...pageChange(newProcessing) };
+      return {
+        ...state,
+        auditList: {
+          processing: newProcessing,
+          approved: newApproved,
+        },
+      };
+    },
     saveData(state, action) {
       const newState = { ...state };
       newState[action.payload.key] = action.payload.value;

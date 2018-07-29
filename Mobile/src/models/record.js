@@ -13,7 +13,6 @@ export default {
   reducers: {
     // ...defaultReducers,
     clearModal(state) {
-      console.log('clearmodal');
       return {
         ...state,
         eventIndex: -1,

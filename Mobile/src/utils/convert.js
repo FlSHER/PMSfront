@@ -136,10 +136,10 @@ export const convertStyle = (status) => {
 };
 // 已审核的列表已操作的状态
 export const auditFinishedState = (item) => {
-  if (item.status_id === 1 || (item.first_approved_at && item.status_id === -1)) {
-    return '初审';
-  } else if (item.status_id === 2 || (item.status_id === -1 && !item.final_approved_at)) {
+  if (item.status_id === 2 || (item.status_id === -1 && !item.final_approved_at)) {
     return '终审';
+  } else if (item.status_id === 1 || (!item.first_approved_at && item.status_id === -1)) {
+    return '初审';
   }
 };
 
@@ -155,7 +155,7 @@ export const auditFinishedResult = (state) => {
 
 // 已审核的列表已操作的状态
 export const auditFinishedLabel = (item) => {
-  if (item.status_id === 1 || (item.first_approved_at && item.status_id === -1)) {
+  if (item.status_id === 1 || (!item.first_approved_at && item.status_id === -1)) {
     return 'label_state_first';
   } else if (item.status_id === 2 || (item.status_id === -1 && !item.final_approved_at)) {
     return 'label_state_final';

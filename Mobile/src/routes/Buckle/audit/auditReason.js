@@ -69,7 +69,7 @@ export default class BuckleRecord extends React.Component {
         type: 'buckle/buckleReject',
         payload: {
           data: {
-            param: { remark },
+            param: { reject_remark: remark },
             event_id: detail.id,
           },
           cb: () => {

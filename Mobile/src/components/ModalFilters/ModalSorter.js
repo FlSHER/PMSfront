@@ -18,7 +18,7 @@ class ModalSorter extends React.PureComponent {
   }
 
   render() {
-    const { onChange, data, visible, onCancel } = this.props;
+    const { onChange, data, visible, onCancel, filterKey } = this.props;
     return (
       <div className={style.filter_con} ref={(_) => { this.ptr = _; }}>
         <ListSort
@@ -32,7 +32,7 @@ class ModalSorter extends React.PureComponent {
               <div
                 className={style.sort_item}
                 key={idx}
-                onClick={() => { onChange(item.value); }}
+                onClick={(e) => { onCancel(e, filterKey); onChange(item.value); }}
               >{item.name}
               </div>
             );

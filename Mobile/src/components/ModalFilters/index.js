@@ -13,12 +13,24 @@ class ModalFilters extends React.Component {
     const { filters, sorter } = props;
     this.state = {
       filters: filters || {},
-      sorter: sorter || {},
+      sorter: sorter || '',
     };
   }
 
   componentWillMount() {
     // this.fetchFilters({});
+  }
+
+  componentWillReceiveProps(props) {
+    const { filters, sorter } = props;
+    if (JSON.stringify(filters) !== JSON.stringify(this.props.filters)
+    || sorter !== this.props.filters
+    ) {
+      this.setState({
+        filters: filters || {},
+        sorter: sorter || '',
+      });
+    }
   }
 
   fetchFilters = (params) => {
@@ -34,13 +46,13 @@ class ModalFilters extends React.Component {
         const strValue = filters[key];
         delete filters[key];
         if (speciColumn.notbelong) { // 不放在filters里
-          newParams[key] = strValue;
+          newParams[key] = strValue.in;
         } else {
           speciPams.push(strValue);
         }
       } else if (speciColumn && !speciColumn.notusename) { // 要使用key
         if (speciColumn.notbelong) { // 不放在filters里
-          newParams[key] = filters[key];
+          newParams[key] = filters[key].in;
           delete filters[key];
         }
       } else if (Array.isArray(filters[key])) {
@@ -67,6 +79,8 @@ class ModalFilters extends React.Component {
         ...filters,
         [key]: value,
       },
+    }, () => {
+      this.fetchFilters();
     });
   }
 
@@ -77,7 +91,6 @@ class ModalFilters extends React.Component {
       this.fetchFilters();
     });
   }
-
 
   makeRangeFilter = (props) => {
     const { name, min, max } = props;
@@ -96,12 +109,12 @@ class ModalFilters extends React.Component {
   makeCheckFilter = (props) => {
     const { name } = props;
     const keyValue = this.state.filters[name];
-    const checkValue = keyValue.in;
+    const checkValue = keyValue ? keyValue.in : '';
     return (
       <CheckBox
         {...props}
         value={checkValue || []}
-        onChange={value => this.handleFiltersOnChange(name, value)}
+        onChange={value => this.handleFiltersOnChange(name, { in: value })}
       />
     );
   }
@@ -160,10 +173,16 @@ class ModalFilters extends React.Component {
   }
 
   makeModalProps = () => {
-    const { onCancel, visible } = this.props;
+    const { onCancel, visible, onResetForm } = this.props;
     const resopnse = {
       onCancel: () => onCancel(false),
       visible,
+      onResetForm: () => {
+        this.setState(
+          { filters: {} },
+          () => this.fetchFilters());
+        onResetForm();
+      },
     };
     return resopnse;
   }

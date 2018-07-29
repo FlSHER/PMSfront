@@ -8,11 +8,11 @@ export function env() {
   if (host.indexOf(config.productitionDomain) >= 0) {
     return 'production';
   } else
-    if (host.indexOf(config.develepDomain) >= 0) {
-      return 'development';
-    } else if (host.indexOf(config.testingDomain) >= 0) {
-      return 'testing';
-    }
+  if (host.indexOf(config.develepDomain) >= 0) {
+    return 'development';
+  } else if (host.indexOf(config.testingDomain) >= 0) {
+    return 'testing';
+  }
   return 'production';
 }
 
@@ -305,15 +305,14 @@ export function isArray(o) {
 }
 
 export function parseParams(url) {
-  console.log(url)
   const keyValue = url.split('&');
   const obj = {};
   keyValue.forEach((item) => {
-    let arr = [];
+    const arr = [];
     const i = item.indexOf('=');
     if (i > -1 && i < item.length - 1) {
       arr[0] = item.slice(0, i);
-      arr[1] = item.slice(i + 1)
+      arr[1] = item.slice(i + 1);
     }
 
     if (arr && arr.length === 2) {
@@ -489,4 +488,20 @@ export function getUrlString(name, url) {
   const r = (url || window.location.search.substr(1)).match(reg);
   if (r != null) return unescape(r[2]);
   return null;
+}
+
+
+export function pageChange(obj, type = 'add') {
+  const { page, pagesize, total } = obj;
+  const newObj = { ...obj };
+  if (total / pagesize === pagesize) {
+    if (type === 'add') {
+      newObj.page = page + 1;
+      newObj.total = total + 1;
+    } else {
+      newObj.page = page === 1 ? 1 : page - 1;
+      newObj.total = total - 1;
+    }
+  }
+  return newObj;
 }

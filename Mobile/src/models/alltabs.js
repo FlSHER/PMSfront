@@ -8,7 +8,7 @@ export default {
   namespace: 'alltabs',
   state: {
     tabs: {
-      processing: 'sort=created_at-desc&type=processing&filters=status_id=1',
+      processing: 'sort=created_at-desc&type=processing',
       approved: 'sort=created_at-desc&type=approved',
     },
   },

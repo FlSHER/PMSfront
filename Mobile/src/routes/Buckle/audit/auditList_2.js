@@ -43,24 +43,24 @@ const tabs = {
   approved: {
     filterColumns: [
       {
-        name: 'state',
+        name: 'step',
         type: 'checkBox',
         title: '审核类型',
         multiple: false,
         notbelong: true,
         options: [
           {
-            label: '初审', value: 'first_approved_at',
+            label: '初审', value: 'first',
           },
           {
-            label: '终审', value: 'final_approved_at',
+            label: '终审', value: 'final',
           },
         ],
       },
       {
         name: 'cate',
         type: 'checkBox',
-        title: '审核类型',
+        title: '操作类型',
         multiple: false,
         notbelong: true,
         options: [
@@ -81,12 +81,8 @@ const sortList = [
   { name: '时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
 const auditStates = [
-  { name: '待审核', value: 'processing' },
-  { name: '已审核', value: 'approved' },
-];
-const procesingOption = [
-  { name: '初审', value: 'first_approver_sn' },
-  { name: '终审', value: 'final_approver_sn' },
+  { name: '待我审核的', value: 'processing' },
+  { name: '我已审核的', value: 'approved' },
 ];
 @connect(({ buckle, alltabs }) => ({
   auditList: buckle.auditList,
@@ -110,21 +106,11 @@ export default class AuditList extends React.Component {
     this.setState({
       userInfo: newInfo,
     });
-    if (auditList[type]) {
+    if (auditList[type] && auditList[type].page !== 1) {
       return;
     }
+    this.currentFilter();
     this.fetchDataSource({});
-    // const currentTab = allTabs[this.type];
-    // const currentParams = getUrlParams(currentTab);
-    // const newParams = { ...currentParams, ...params, page: 1, pagesize: 10 };
-    // const urlparams = parseParamsToUrl(newParams);
-    // dispatch({
-    //   type: 'buckle/getAuditList2',
-    //   payload: {
-    //     url: urlparams,
-    //     type: this.type,
-    //   },
-    // });
   }
 
   componentWillReceiveProps(props) {
@@ -132,8 +118,9 @@ export default class AuditList extends React.Component {
     this.urlParams = getUrlParams(search);
     const { type = 'processing' } = this.urlParams;
     this.type = type;
+    this.currentFilter();
     if (this.props.location.search !== search) {
-      if (auditList[type]) {
+      if (auditList[type] && auditList[type].page !== 1) {
         return;
       }
       this.fetchDataSource({});
@@ -141,79 +128,33 @@ export default class AuditList extends React.Component {
   }
 
   onPageChange = () => {
-    const { dispatch, auditList } = this.props;
-    const { checkState, sortItem } = this.state;
-    dispatch({
-      type: 'buckle/getAuditList2',
-      payload: {
-        pagesize: 10,
-        type: checkState.value,
-        sort: sortItem.value,
-        page: auditList[checkState.value].page + 1,
-        filter: this.dealFilter(),
-      },
-    });
-  }
-
-  onClose = (key) => {
-    this.setState({
-      [key]: false,
-    });
+    const { auditList } = this.props;
+    const currentData = auditList[this.type];
+    const params = {
+      page: currentData ? currentData.page + 1 : 1,
+    };
+    this.fetchDataSource(params);
   }
 
   onRefresh = () => {
-    const { dispatch } = this.props;
-    const { checkState, sortItem } = this.state;
-    dispatch({
-      type: 'buckle/getAuditList2',
-      payload: {
-        pagesize: 10,
-        page: 1,
-        type: checkState.value,
-        sort: sortItem.value,
-        filters: this.dealFilter(),
-      },
-    });
-  }
-
-  onCancel = (e, feild) => {
-    const { modal } = this.state;
-    const newModal = { ...modal };
-    newModal[feild] = false;
-    this.setNewState('modal', newModal);
+    const params = {
+      page: 1,
+    };
+    this.fetchDataSource(params);
   }
 
   onResetForm = () => {
-    const { checkState, sortItem } = this.state;
     const { dispatch } = this.props;
-    this.setState({ filter: {} }, () => {
-      dispatch({
-        type: 'buckle/getAuditList2',
-        payload: {
-          pagesize: 10,
-          type: checkState.value,
-          page: 1,
-          sort: sortItem.value,
-        },
-      });
+    dispatch({
+      type: 'alltabs/saveKey',
+      payload: {
+        type: this.type,
+        value: `sort=created_at-desc&type=${this.type}`,
+      },
     });
   }
 
-  onFilterOk = () => {
-    const { checkState, sortItem } = this.state;
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'buckle/getAuditList2',
-      payload: {
-        pagesize: 10,
-        type: checkState.value,
-        page: 1,
-        sort: sortItem.value,
-        filters: this.dealFilter(),
-      },
-    });
-    this.onCancel('', 'filterModal');
-  }
+
   onShortcut = (el) => {
     this.setState({
       el,
@@ -221,19 +162,35 @@ export default class AuditList extends React.Component {
     });
   }
 
-  setNewState = (key, newValue) => {
-    this.setState({
-      [key]: newValue,
+  findNotBelong = () => {
+    const { filterColumns } = tabs[this.type];
+    const notBelongs = filterColumns.filter(item => item.notbelong);
+    return notBelongs;
+  }
+
+  currentFilter = () => {
+    const { allTabs } = this.props;
+    const currentTab = allTabs[this.type];
+    let filterParams = getUrlString('filters', currentTab);
+    // this.sorter = getUrlString('sort', currentTab);
+    const notbelongs = this.findNotBelong();
+    const notbelongParams = [];
+    notbelongs.forEach((item) => {
+      const str = getUrlString(item.name, currentTab);
+      if (str) {
+        notbelongParams.push(`${item.name}=${str}`);
+      }
     });
+    filterParams = `${notbelongParams.join(';')};${filterParams}`;
+    this.filters = doConditionValue(filterParams);
   }
 
   fetchDataSource = (params) => {
     const { dispatch, allTabs } = this.props;
     const currentTab = allTabs[this.type];
-    const filterParams = getUrlString('filters', currentTab);
-    this.filters = doConditionValue(filterParams);
+    this.sorter = params ? params.sort : 'created_at-desc';
     const currentParams = parseParams(currentTab);
-    const newParams = { ...currentParams, ...params, page: 1, pagesize: 10 };
+    const newParams = { page: 1, pagesize: 10, ...currentParams, ...params, type: this.type };
     const urlparams = parseParamsToUrl(newParams);
     dispatch({
       type: 'alltabs/saveKey',
@@ -251,24 +208,6 @@ export default class AuditList extends React.Component {
     });
   }
 
-  dealFilter = () => {
-    const { filter } = this.state;
-    const { userInfo } = this.state;
-    const { approveType, eventState } = filter;
-    const search = {};
-    if (!(approveType.length === procesingOption.length) && approveType.length) { // 如果不是全选
-      const appType = approveType[0];
-      search[appType] = userInfo.staff_sn;
-      if (appType === 'first_approver_sn') {
-        search.status_id = eventState === 1 ? 1 : eventState;
-      }
-      if (appType === 'final_approver_sn') {
-        search.status_id = eventState === 1 ? 2 : eventState;
-      }
-    }
-    return search;
-  }
-
   doAudit = (type, state) => {
     const { el } = this.state;
     const { dispatch, history } = this.props;
@@ -282,98 +221,15 @@ export default class AuditList extends React.Component {
     history.push(`/audit_reason/${type}/${state}/-1`);
   }
 
-  sortReasult = (item) => {
-    const { modal } = this.state;
-    const newModal = { ...modal };
-    newModal.sortModal = false;
-    this.setState({
-      modal: { ...newModal },
-      sortItem: item,
-    });
-  }
-
-  showModal = (e, key) => {
-    e.preventDefault(); // 修复 Android 上点击穿透
-    this.setState({
-      [key]: true,
-    });
-  }
-
-  selFilter = (feild) => { // 筛选
-    const { modal } = this.state;
-    const modalObj = {};
-    Object.keys(modal).map((key) => {
-      const value = modal[key];
-      if (key !== feild) {
-        modalObj[key] = false;
-      } else {
-        modalObj[key] = !value;
-      }
-      return value;
-    });
-    this.setNewState('modal', modalObj);
-  }
-
-  checkItem = (i, v, key) => {
-    const { filter } = this.state;
-    const newFilter = { ...filter };
-    const temp = newFilter[key] === v ? '' : v;
-    newFilter[key] = temp;
-    this.setNewState('filter', newFilter);
-  }
-
-  doMultiple = (i, v, key) => {
-    const { filter } = this.state;
-    const newFilter = { ...filter };
-    let temp = [...(newFilter[key] || [])];
-    const isExist = temp.indexOf(v) !== -1;
-    if (isExist) {
-      temp = temp.filter(item => item !== v);
-    } else {
-      temp.push(v);
-    }
-    newFilter[key] = [...temp];
-    this.setNewState('filter', newFilter);
-  }
-
   tabChange = (item) => {
     const { history } = this.props;
     history.replace(`/audit_list_2?type=${item.value}`);
   }
 
-  sortReasult = (item) => {
-    const { dispatch } = this.props;
-    const { modal, checkState } = this.state;
-    const newModal = { ...modal };
-    newModal.sortModal = false;
-    this.setState({
-      modal: { ...newModal },
-      sortItem: item,
-    }, () => {
-      dispatch({
-        type: 'buckle/getAuditList2',
-        payload: {
-          pagesize: 10,
-          type: checkState.value,
-          page: 1,
-          sort: item.value,
-        },
-      });
-    });
-  }
-
   toLookDetail = (item) => {
-    const { dispatch, history } = this.props;
-    dispatch({
-      type: 'buckle/save',
-      payload: {
-        store: 'auditList',
-        data: {},
-      },
-    });
+    const { history } = this.props;
     history.push(`/event_preview/${item.id}`);
   }
-
 
   handleVisible = (flag, model) => {
     this.setState({ visible: !!flag, model });
@@ -422,7 +278,7 @@ export default class AuditList extends React.Component {
     const { el, userInfo, sorter, shortModal } = this.state;
     const { type } = this;
     const { filterColumns } = tabs[type];
-    // const isFilter = makerFilters(filter).filters;
+    const [sortItem] = sortList.filter(item => item.value === this.sorter);
     const linkBtn = [];
     if (Object.keys(el).length) {
       const detail = { ...el };
@@ -479,6 +335,12 @@ export default class AuditList extends React.Component {
                 <div
                   className={[style.dosort].join(' ')}
                   onClick={() => this.handleVisible(true, 'sort')}
+                  style={{
+                    backgroundImage: `url(${sortItem.icon})`,
+                    backgroundPosition: 'right center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '0.4rem',
+                  }}
                 >
                   {sorter.name}
                 </div>
@@ -496,7 +358,8 @@ export default class AuditList extends React.Component {
               visible={this.state.visible}
               model={this.state.model}
               filters={this.filters}
-              sorter={sorter.value}
+              sorter={this.sorter}
+              onResetForm={this.onResetForm}
               filterColumns={filterColumns}
               sorterData={sortList}
               // modalId="1"

@@ -40,7 +40,7 @@ class ListFilter extends Component {
       >
         <div
           style={conStyle}
-          onClick={e => onCancel(e, filterKey)}
+          onClick={(e) => { onCancel(e, filterKey); }}
         >
           <div className={style.filter_con}>
             <div className={style.header}>
@@ -58,16 +58,16 @@ class ListFilter extends Component {
             >
               <div className={style.footer_opt}>
                 <a
-                  onClick={onResetForm}
+                  onClick={(e) => { e.stopPropagation(); onResetForm(); return false; }}
                   style={{ color: 'rgb(24,116,208)' }}
                 >
                   重置
                 </a>
                 <a
                   style={{ color: '#fff' }}
-                  onClick={() =>
-                    onOk(filterKey)
-                  }
+                  // onClick={() =>
+                  //   onOk(filterKey)
+                  // }
                 >确定
                 </a>
               </div>
