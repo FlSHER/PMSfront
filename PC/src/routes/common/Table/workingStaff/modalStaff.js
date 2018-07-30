@@ -164,14 +164,19 @@ export default class ModalStaff extends React.PureComponent {
         dataIndex: 'staff_sn',
         sorter: true,
         searcher: true,
+        fixed: true,
+        width: 60,
       }, {
         title: '姓名',
         align: 'center',
         dataIndex: 'realname',
         searcher: true,
+        fixed: true,
+        width: 60,
       }, {
         title: '品牌',
         align: 'center',
+        width: 100,
         dataIndex: 'brand_id',
         filters: brandFilters,
         render: (val) => {
@@ -180,6 +185,7 @@ export default class ModalStaff extends React.PureComponent {
         },
       }, {
         title: '职位',
+        width: 100,
         dataIndex: 'position_id',
         filters: filterPosition,
         render: (val) => {

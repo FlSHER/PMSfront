@@ -9,6 +9,7 @@ export default class extends React.PureComponent {
   state = {
     visible: false,
     recorded: false,
+    addressee: false,
   }
 
   handleDrawerVisible = (flag) => {
@@ -23,16 +24,23 @@ export default class extends React.PureComponent {
     });
   };
 
+  handleAddresseeVisible = (flag) => {
+    this.setState({
+      addressee: !!flag,
+    });
+  };
+
   handleVisible = () => {
     this.setState({
       visible: false,
       recorded: false,
+      addressee: false,
     });
   }
 
 
   render() {
-    const { visible, recorded } = this.state;
+    const { visible, recorded, addressee } = this.state;
     return (
       <div className={styles.tabs}>
         <Tabs
@@ -48,6 +56,9 @@ export default class extends React.PureComponent {
           </TabPane>
           <TabPane tab="我记录的" key="2" forceRender>
             <Recorded onClose={this.handleRecordedVisible} visible={recorded} type="recorded" />
+          </TabPane>
+          <TabPane tab="抄送我的" key="3" forceRender>
+            <Recorded onClose={this.handleAddresseeVisible} visible={addressee} type="addressee" />
           </TabPane>
         </Tabs>
       </div>

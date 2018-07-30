@@ -21,9 +21,14 @@ const {
 export default class extends React.PureComponent {
   constructor(props) {
     super(props);
-    const { form, bindForm } = props;
+    const { form, bindForm, value } = props;
     bindForm(form);
     this.state = {
+      eventId: value.event_id || null,
+      pointRange: {
+        point_a: {},
+        point_b: {},
+      },
       defaultPoint: {
         point_b: 0,
         point_a: 0,
@@ -45,6 +50,17 @@ export default class extends React.PureComponent {
     const b = parseFloat(value.point_b_default);
     const pointB = Math.floor(value.point_b_default) === b;
     this.setState({
+      eventId: value.id,
+      pointRange: {
+        point_a: {
+          min: value.point_a_min,
+          max: value.point_a_max,
+        },
+        point_b: {
+          min: value.point_b_min,
+          max: value.point_b_max,
+        },
+      },
       defaultPoint: {
         point_a: pointA ? a : value.point_a_default,
         point_b: pointB ? b : value.point_b_default,
@@ -62,7 +78,7 @@ export default class extends React.PureComponent {
 
   render() {
     const { form: { getFieldDecorator }, value } = this.props;
-    const { defaultPoint } = this.state;
+    const { defaultPoint, eventId, pointRange } = this.state;
     const style = { width: 540 };
     const formItemLayout = {
       labelCol: { span: 3 },
@@ -76,6 +92,7 @@ export default class extends React.PureComponent {
           })(
             <EventSearch
               style={style}
+              eventId={value.event_id || null}
               onChange={this.handleChange}
             />
           )}
@@ -91,7 +108,11 @@ export default class extends React.PureComponent {
           {getFieldDecorator('participants', {
             initialValue: value.participants || [],
           })(
-            <WorkingStaff defaultPoint={defaultPoint} />
+            <WorkingStaff
+              eventId={eventId}
+              pointRange={pointRange}
+              defaultPoint={defaultPoint}
+            />
           )}
         </FormItem>
       </OAForm>

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Input } from 'antd';
+import { Input, Icon } from 'antd';
 import OAForm from '../../../../components/OAForm';
+import styles from './index.less';
 
 const FormItem = OAForm.Item;
 const {
@@ -21,7 +22,7 @@ export default class BatchForm extends React.PureComponent {
   }
 
   render() {
-    const { form, form: { getFieldDecorator } } = this.props;
+    const { form, form: { getFieldDecorator }, pointRange } = this.props;
     const style = { width: '90px' };
     return (
       <OAModal
@@ -42,11 +43,16 @@ export default class BatchForm extends React.PureComponent {
           )}
         </FormItem>
         <FormItem label="次数">
-          {getFieldDecorator('number', {
+          {getFieldDecorator('count', {
           })(
             <Input type="number" placeholder="请输入" style={style} />
           )}
         </FormItem>
+        <div className={styles.footers}>
+          <span><Icon type="exclamation-circle-o" /> 分值范围</span>
+          <span> A分：{pointRange.point_a} </span>
+          <span> B分：{pointRange.point_b} </span>
+        </div>
       </OAModal>
     );
   }

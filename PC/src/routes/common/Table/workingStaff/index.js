@@ -1,14 +1,14 @@
 import React from 'react';
-import { Button, Icon } from 'antd';
+import { Button, Icon, Modal } from 'antd';
 import OATable from '../../../../components/OATable';
 import ModalStaff from './modalStaff';
 import BatchForm from './batchForm';
+import styles from './index.less';
 
 const { EdiTableCell } = OATable;
-
+const { error } = Modal;
 const valueDefault = {
-  number: 1,
-  count: 0,
+  count: 1,
 };
 
 export default class WorkingStaff extends React.PureComponent {
@@ -27,6 +27,14 @@ export default class WorkingStaff extends React.PureComponent {
     const { user } = window;
     const deleteUserStatus = value.find(item => item.staff_sn === user.staff_sn);
     return deleteUserStatus;
+  }
+
+  showError = () => {
+    error({
+      title: '请选择事件标题！',
+      okText: '确定',
+      cancelText: '取消',
+    });
   }
 
   handleBatch = (staffSn) => {
@@ -53,6 +61,11 @@ export default class WorkingStaff extends React.PureComponent {
   }
 
   handleModalVisible = (visible, flag) => {
+    const { eventId } = this.props;
+    if (!eventId) {
+      this.showError();
+      return false;
+    }
     this.setState({ [visible]: !!flag });
   }
 
@@ -109,6 +122,11 @@ export default class WorkingStaff extends React.PureComponent {
   }
 
   addCurrentUser = () => {
+    const { eventId } = this.props;
+    if (!eventId) {
+      this.showError();
+      return false;
+    }
     const { value } = this.state;
     const { user } = window;
     const { defaultPoint } = this.props;
@@ -122,10 +140,16 @@ export default class WorkingStaff extends React.PureComponent {
   }
 
   ediTableCell = (dataIndex) => {
+    const { pointRange } = this.props;
     return (value, record) => {
+      let range = null;
+      if (dataIndex === 'point_a' || dataIndex === 'point_b') {
+        range = { range: pointRange[dataIndex] };
+      }
       return (
         <EdiTableCell
           type="number"
+          {...range}
           value={value ? value.toString() : '0'}
           onChange={this.handleTableOnChange(record.staff_sn, dataIndex)}
         />
@@ -154,13 +178,13 @@ export default class WorkingStaff extends React.PureComponent {
       },
       {
         title: '次数',
-        dataIndex: 'number',
+        dataIndex: 'count',
         width: 80,
-        render: this.ediTableCell('number'),
+        render: this.ediTableCell('count'),
       },
       {
         title: '总分',
-        dataIndex: 'count',
+        dataIndex: 'pointCount',
         render: (_, record) => {
           const number = parseInt(record.count, 10);
           const aPoint = parseInt(record.point_a, 10) * number;
@@ -234,12 +258,26 @@ export default class WorkingStaff extends React.PureComponent {
   }
 
   render() {
+    const { pointRange } = this.props;
     const { visible, batchVisible } = this.state;
+    const footer = {
+      point_a: ` ${pointRange.point_a.min} 至 ${pointRange.point_a.max} `,
+      point_b: ` ${pointRange.point_b.min} 至 ${pointRange.point_b.max} `,
+    };
     return (
       <div style={{ width: 540 }}>
         <OATable
           ref={(e) => { this.oatable = e; }}
           {...this.makeTableProps()}
+          footer={() => {
+            return (
+              <div className={styles.footers}>
+                <span><Icon type="exclamation-circle-o" /> 分值范围</span>
+                <span> A分：{footer.point_a} </span>
+                <span> B分：{footer.point_b} </span>
+              </div>
+            );
+          }}
         />
         <ModalStaff
           visible={visible}
@@ -250,6 +288,7 @@ export default class WorkingStaff extends React.PureComponent {
         <BatchForm
           visible={batchVisible}
           handleChange={this.handleBatchChange}
+          pointRange={footer}
           onCancel={() => this.handleModalVisible('batchVisible', false)}
         />
       </div>

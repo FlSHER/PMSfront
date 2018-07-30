@@ -20,6 +20,7 @@ export default {
     participantDetails: {},
     processing: {},
     approved: {},
+    addressee: {},
   },
   effects: {
     * fetch({ payload }, { call, put }) {

@@ -176,7 +176,7 @@ export default class extends React.PureComponent {
       },
     ];
     if (type === 'processing') return columns.concat(processing, columns2);
-    if (type === 'approved') return columns.concat(approver, columns2);
+    if (type === 'approved' || type === 'addressee') return columns.concat(approver, columns2);
     if (type === 'recorded') return columns.concat(processing, columns2);
   }
 

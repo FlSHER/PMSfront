@@ -5,7 +5,7 @@ const menuData = [
     path: 'reward',
     children: [
       {
-        name: '记录奖扣',
+        name: '批量奖扣',
         path: 'buckle',
         children: [
           {
@@ -33,10 +33,6 @@ const menuData = [
       {
         name: '奖扣审核',
         path: 'audit',
-      },
-      {
-        name: '抄送我的',
-        path: 'my-peruser',
       },
     ],
   },

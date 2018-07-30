@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import Drawer from '../../../components/OADrawer';
 import CheckInfo from './checkInfo';
 import CheckForm from './checkForm';
@@ -54,7 +55,7 @@ export default class extends React.Component {
   }
 
   renderRecordedFooter = () => {
-    const { fetchCancel, id, editInfo, onClose } = this.props;
+    const { fetchCancel, id, editInfo, onClose, dispatch } = this.props;
     const statusId = editInfo.status_id;
     return (
       <div className={styles.footer}>
@@ -68,7 +69,11 @@ export default class extends React.Component {
           </div>
         )}
         {[-1, -2].indexOf(statusId) !== -1 && (
-          <div>
+          <div
+            onClick={() => {
+              dispatch(routerRedux.push(`/reward/buckle/submission/${id}`));
+            }}
+          >
             <span>再次提交</span>
           </div>
         )}

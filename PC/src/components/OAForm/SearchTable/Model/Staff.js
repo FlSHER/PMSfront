@@ -138,15 +138,20 @@ export default class Staff extends PureComponent {
         title: '编号',
         dataIndex: 'staff_sn',
         sorter: true,
+        fixed: true,
+        width: 60,
         searcher: true,
       }, {
         title: '姓名',
         align: 'center',
         dataIndex: 'realname',
+        fixed: true,
+        width: 60,
         searcher: true,
       }, {
         title: '品牌',
         align: 'center',
+        width: 100,
         dataIndex: 'brand_id',
         filters: brandFilters,
         render: (val) => {
@@ -156,6 +161,7 @@ export default class Staff extends PureComponent {
       }, {
         title: '职位',
         dataIndex: 'position_id',
+        width: 100,
         filters: filterPosition,
         render: (val) => {
           const data = position.find(item => item.id === val);

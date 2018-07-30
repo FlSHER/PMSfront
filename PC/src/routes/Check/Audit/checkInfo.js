@@ -52,7 +52,7 @@ function Approver({ tip, data }) {
   );
   // const statusId = data.status_id;
   // const status = getBuckleStatus(statusId);
-
+  const statusTextClassName = !data.rejected ? styles.pass : styles.reject;
   return (
     <div className={styles.approver}>
       <DescriptionList size="large" col={1} layout="vertical">
@@ -62,7 +62,7 @@ function Approver({ tip, data }) {
             <UserCircle>
               {data.staff_name}
             </UserCircle>
-            {(data.time || data.rejected) && (
+            {(data.time || data.rejected || data.status_id === 0 || data.status_id === 1) && (
               <div className={styles.dec}>
                 <div
                   className={styles.describe}
@@ -70,8 +70,8 @@ function Approver({ tip, data }) {
                   <div className={styles.arrow}>
                     <span />
                   </div>
-                  <p className={(!data.rejected ? styles.pass : styles.reject)}>
-                    {data.rejected ? '驳回' : '通过'}
+                  <p className={statusTextClassName}>
+                    {data.statusText}
                   </p>
                   <p className={styles.description}>
                     {data.remark}
@@ -122,38 +122,38 @@ function StaffCustormer({ title, data }) {
 }
 
 function getApproverData(data) {
-  let firstRemark = null;
-  let firstRejected = false;
-  if (data.first_approved_at) {
-    firstRemark = data.first_approve_remark;
-  } else if (!data.first_approved_at && data.status_id === -1) {
-    firstRejected = true;
-    firstRemark = data.reject_remark;
-  }
-
-  let lastRemark = null;
-  let lastRejected = false;
-  if (data.final_approved_at) {
-    lastRemark = data.final_approve_remark;
-  } else if (!data.final_approved_at && data.status_id === -1) {
-    lastRejected = true;
-    lastRemark = data.reject_remark;
-  }
   const first = {
     staff_sn: data.first_approver_sn || null,
     staff_name: data.first_approver_name || null,
     status_id: data.status_id,
-    remark: firstRemark,
+    remark: null,
     time: data.first_approved_at || null,
-    rejected: firstRejected || null,
+    rejected: false,
+    statusText: '通过',
   };
+
+  if (status === 0 && !data.first_approved_at) {
+    first.statusText = '审核中...';
+  } else if (data.first_approved_at) {
+    first.remark = data.first_approve_remark;
+  } else if (
+    !data.first_approved_at &&
+    data.status_id === -1 &&
+    data.first_approver_sn === data.rejecter_sn
+  ) {
+    first.statusText = '驳回';
+    first.rejected = true;
+    first.remark = data.reject_remark;
+  }
+
   const last = {
     staff_sn: data.final_approver_sn || null,
     staff_name: data.final_approver_name || null,
-    remark: lastRemark,
+    remark: null,
     status_id: data.status_id,
     time: data.final_approved_at || null,
-    rejected: lastRejected,
+    rejected: false,
+    statusText: '通过',
     point: {
       recorder_name: data.recorder_name || null,
       recorder: data.recorder_point || null,
@@ -161,6 +161,21 @@ function getApproverData(data) {
       first_approver: data.first_approver_point || null,
     },
   };
+
+  if (status === 1 && !data.final_approved_at) {
+    last.statusText = '审核中...';
+  } else if (data.final_approved_at) {
+    last.remark = data.final_approve_remark;
+  } else if (
+    !data.final_approved_at &&
+    data.status_id === -1 &&
+    data.final_approver_sn === data.rejecter_sn
+  ) {
+    last.statusText = '驳回';
+    last.rejected = true;
+    last.remark = data.reject_remark;
+  }
+
   return {
     first,
     last,

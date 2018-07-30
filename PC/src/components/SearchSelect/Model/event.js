@@ -13,12 +13,19 @@ import styles from './ellipsis.less';
 }))
 
 export default class extends React.Component {
+  constructor(props) {
+    super(props);
+    this.fecthId = null;
+  }
+
   componentDidMount() {
-    const { value } = this.props;
-    if (value.event_id) {
-      this.fetchEvent({}, value.event_id);
+    const { eventId } = this.props;
+    if (eventId && !this.fecthId) {
+      this.fecthId = eventId;
+      this.fetchEvent({}, eventId);
     }
   }
+
 
   fetchEventType = () => {
     const { dispatch } = this.props;

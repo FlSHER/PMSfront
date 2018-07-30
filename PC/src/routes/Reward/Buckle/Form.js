@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Button } from 'antd';
+import { Input, Button, Spin } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
@@ -133,10 +133,9 @@ export default class extends React.PureComponent {
   }
 
   makeFormProps = () => {
-    const { form, loading } = this.props;
+    const { form } = this.props;
     const response = {
       form,
-      loading,
     };
     return response;
   }
@@ -174,11 +173,11 @@ export default class extends React.PureComponent {
 
 
   makeLastApproverProps = () => {
-    const { finalStaff, finalLoading, loadingInfo } = this.props;
+    const { finalStaff, finalLoading } = this.props;
     const tableProps = {
       index: 'staff_sn',
       data: finalStaff,
-      loading: finalLoading || loadingInfo,
+      loading: finalLoading,
       scroll: { x: 700 },
       fetchDataSource: this.fetchFianl,
     };
@@ -225,7 +224,7 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { form: { getFieldDecorator }, buckleInfo } = this.props;
+    const { form: { getFieldDecorator }, buckleInfo, loadingInfo, loading } = this.props;
     const { listFormValue, eventsError } = this.state;
     const userInfo = window.user || {};
     const formItemLayout = {
@@ -248,99 +247,101 @@ export default class extends React.PureComponent {
     }
     return (
       <div style={{ width, margin: '0 auto' }}>
-        <ListForm
-          errors={eventsError}
-          initialValue={id ? (formFieldsValue.logs || []) : listFormValue}
-          onChange={this.handleListFormChange}
-          style={{ width, marginTop: 10 }}
-          placeholder="添加事件"
-        />
-        <div id="ccc" style={{ fontSize: 12, color: '#969696', padding: '20px 0 20px 100px' }}>
-          <span style={{ marginRight: 30 }}>事件数量：{listFormValue.length}</span>
-          <span>总人次：{staffNumber}</span>
-        </div>
-        <OAForm {...this.makeFormProps()} style={{ padding: 10, width }}>
-          <FormItem label="主题" {...formItemLayout}>
-            {getFieldDecorator('title', {
-              initialValue: formFieldsValue.title || '',
-            })(
-              <Input placeholder="请输入" />
-            )}
-          </FormItem>
-          <FormItem label="事件时间" {...formItemLayout}>
-            {getFieldDecorator('executed_at', {
-              initialValue: formFieldsValue.executed_at || moment().format('L'),
-            })(
-              <DatePicker
-                disabledDate={(currentData) => {
-                  return currentData > moment();
-                }}
-                placeholder="请输入"
-                showToday={false}
-                style={{ width: '100%' }}
-              />
-            )}
-          </FormItem>
-          <FormItem label="初审人" {...formItemLayout} >
-            {getFieldDecorator('first', {
-              initialValue: {
-                first_approver_sn: formFieldsValue.first_approver_sn || userInfo.staff_sn || '',
-                first_approver_name: formFieldsValue.first_approver_name || userInfo.realname || '',
-              },
-            })(
-              <SearchTable.Staff
-                mode="user"
-                name={{
-                  first_approver_sn: 'staff_sn',
-                  first_approver_name: 'realname',
-                }}
-                showName="first_approver_name"
-              />
-            )}
-          </FormItem>
-          <FormItem label="终审人" {...formItemLayout} >
-            {getFieldDecorator('last', {
-              initialValue: {
-                final_approver_sn: formFieldsValue.final_approver_sn || userInfo.staff_sn || '',
-                final_approver_name: formFieldsValue.final_approver_name || userInfo.realname || '',
-              },
-            })(
-              <SearchTable
-                mode="user"
-                name={{
-                  final_approver_sn: 'staff_sn',
-                  final_approver_name: 'staff_name',
-                }}
-                showName="final_approver_name"
-                tableProps={{
-                  ...this.makeLastApproverProps(),
-                }}
-              />
-            )}
-          </FormItem>
-          <FormItem label="抄送人" {...formItemLayout} >
-            {getFieldDecorator('addressees', {
-              initialValue: formFieldsValue.addressees || [],
-            })(
-              <SearchTable.Staff
-                mode="user"
-                multiple
-                name={{ staff_sn: 'staff_sn', staff_name: 'realname' }}
-                showName="staff_name"
-              />
-            )}
-          </FormItem>
-          <FormItem label="备注" {...formItemLayout}>
-            {getFieldDecorator('remark', {
-              initialValue: formFieldsValue.remark || '',
-            })(
-              <Input.TextArea placeholder="请输入备注说明......" style={{ height: 90 }} />
-            )}
-          </FormItem>
-          <FormItem style={{ left: '50%', marginLeft: '-60px' }}>
-            <Button style={{ width: 120 }} type="primary" htmlType="submit" onClick={this.handleSubmit}>提交</Button>
-          </FormItem>
-        </OAForm>
+        <Spin spinning={loadingInfo || loading || false}>
+          <ListForm
+            errors={eventsError}
+            initialValue={id ? (formFieldsValue.logs || []) : listFormValue}
+            onChange={this.handleListFormChange}
+            style={{ width, marginTop: 10 }}
+            placeholder="添加事件"
+          />
+          <div id="ccc" style={{ fontSize: 12, color: '#969696', padding: '20px 0 20px 100px' }}>
+            <span style={{ marginRight: 30 }}>事件数量：{listFormValue.length}</span>
+            <span>总人次：{staffNumber}</span>
+          </div>
+          <OAForm {...this.makeFormProps()} style={{ padding: 10, width }}>
+            <FormItem label="主题" {...formItemLayout}>
+              {getFieldDecorator('title', {
+                initialValue: formFieldsValue.title || '',
+              })(
+                <Input placeholder="请输入" />
+              )}
+            </FormItem>
+            <FormItem label="事件时间" {...formItemLayout}>
+              {getFieldDecorator('executed_at', {
+                initialValue: formFieldsValue.executed_at || moment().format('L'),
+              })(
+                <DatePicker
+                  disabledDate={(currentData) => {
+                    return currentData > moment();
+                  }}
+                  placeholder="请输入"
+                  showToday={false}
+                  style={{ width: '100%' }}
+                />
+              )}
+            </FormItem>
+            <FormItem label="初审人" {...formItemLayout} >
+              {getFieldDecorator('first', {
+                initialValue: {
+                  first_approver_sn: formFieldsValue.first_approver_sn || userInfo.staff_sn || '',
+                  first_approver_name: formFieldsValue.first_approver_name || userInfo.realname || '',
+                },
+              })(
+                <SearchTable.Staff
+                  mode="user"
+                  name={{
+                    first_approver_sn: 'staff_sn',
+                    first_approver_name: 'realname',
+                  }}
+                  showName="first_approver_name"
+                />
+              )}
+            </FormItem>
+            <FormItem label="终审人" {...formItemLayout} >
+              {getFieldDecorator('last', {
+                initialValue: formFieldsValue.final_approver_sn ? {
+                  final_approver_sn: formFieldsValue.final_approver_sn,
+                  final_approver_name: formFieldsValue.final_approver_name,
+                } : {},
+              })(
+                <SearchTable
+                  mode="user"
+                  name={{
+                    final_approver_sn: 'staff_sn',
+                    final_approver_name: 'staff_name',
+                  }}
+                  showName="final_approver_name"
+                  tableProps={{
+                    ...this.makeLastApproverProps(),
+                  }}
+                />
+              )}
+            </FormItem>
+            <FormItem label="抄送人" {...formItemLayout} >
+              {getFieldDecorator('addressees', {
+                initialValue: formFieldsValue.addressees || [],
+              })(
+                <SearchTable.Staff
+                  mode="user"
+                  multiple
+                  name={{ staff_sn: 'staff_sn', staff_name: 'realname' }}
+                  showName="staff_name"
+                />
+              )}
+            </FormItem>
+            <FormItem label="备注" {...formItemLayout}>
+              {getFieldDecorator('remark', {
+                initialValue: formFieldsValue.remark || '',
+              })(
+                <Input.TextArea placeholder="请输入备注说明......" style={{ height: 90 }} />
+              )}
+            </FormItem>
+            <FormItem style={{ left: '50%', marginLeft: '-60px' }}>
+              <Button style={{ width: 120 }} type="primary" htmlType="submit" onClick={this.handleSubmit}>提交</Button>
+            </FormItem>
+          </OAForm>
+        </Spin>
       </div>
     );
   }

@@ -69,7 +69,7 @@
     }
   }
   .eventBgk {
-    width: 381px;
+    width: 380px;
     margin-left: -12px;
     background: #e5f5f3;
   }
@@ -127,14 +127,13 @@
       }
     }
     .dec {
-      width: 300px;
+      max-width: 300px;
       flex-grow: 1;
     }
     .describe {
       position: relative;
       border: 1px solid #c7c7c7;
-      border-radius: 4px;
-      height: 60px;
+      border-radius: 4px; // height: 60px;
       color: #969696;
       font-size: 12px;
       .arrow {
@@ -157,25 +156,27 @@
         transform: rotateZ(45deg); // border-right-color: #fff;
       }
     }
+    .default {
+      color: #666;
+      padding: 0 10px;
+    }
     .pass {
-      color: @primary-color;
-      position: absolute;
-      top: 10px;
-      left: 10px;
+      color: @primary-color; // position: absolute;
+      padding: 0 10px; // top: 10px;
+      // left: 10px;
     }
     .reject {
-      color: #cf4252;
-      position: absolute;
-      top: 10px;
-      left: 10px;
+      color: #cf4252; // position: absolute;
+      padding: 0 10px; // top: 10px;
+      // left: 10px;
     }
     .description {
-      position: absolute;
-      bottom: -5px;
-      left: 10px;
+      // position: absolute;
+      // bottom: -5px;
+      // left: 10px;
+      padding: 0 10px;
       overflow: hidden;
       text-overflow: ellipsis;
-      width: 270px;
     }
   }
   :global {

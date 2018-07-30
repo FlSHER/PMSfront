@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Icon,
   Button,
+  Modal,
 } from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import update from 'immutability-helper';
@@ -9,6 +10,8 @@ import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import CustomerCard from './Drag';
 import styles from './index.less';
+
+const { confirm } = Modal;
 
 export default (CustomerFrom) => {
   @DragDropContext(HTML5Backend)
@@ -43,6 +46,18 @@ export default (CustomerFrom) => {
       }
     }
 
+    showDeleteConfirm = (key) => {
+      confirm({
+        title: '确定要删除吗',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk: () => {
+          this.remove(key);
+        },
+      });
+    }
+
     remove = (key) => {
       const { dataSource } = this.state;
       const newDataSource = dataSource.filter(item => item.key !== key);
@@ -67,7 +82,7 @@ export default (CustomerFrom) => {
         <Icon
           className="dynamic-delete-button"
           type="close"
-          onClick={() => this.remove(k)}
+          onClick={() => this.showDeleteConfirm(k)}
         />
       );
     }
