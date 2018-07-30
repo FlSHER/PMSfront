@@ -13,6 +13,11 @@ const menuData = [
             path: 'success/:id',
             hiddenMenu: true,
           },
+          {
+            name: '再次提交',
+            path: 'submission/:id',
+            hiddenMenu: true,
+          },
         ],
       },
       {

@@ -18,9 +18,10 @@ const {
     props.setFiedError(name, null);
   },
 })
-@connect(({ event, loading }) => ({
-  listFormValue: event.listFormValue,
+@connect(({ event, buckle, loading }) => ({
   finalStaff: event.finalStaff,
+  buckleInfo: buckle.buckleGropusDetails,
+  loadingInfo: loading.effects['buckle/fetchBuckleGroupsInfo'],
   loading: loading.effects['buckle/addBuckle'],
   finalLoading: loading.effects['event/fetchFinalStaff'],
 }))
@@ -33,6 +34,22 @@ export default class extends React.PureComponent {
       listFormValue: [{}],
       eventsError: {},
     };
+  }
+
+  componentDidMount() {
+    const { params } = { ...(this.props.match || { params: {} }) };
+    const { id } = params;
+    if (id) {
+      this.fetchInfo(id);
+    }
+  }
+
+  fetchInfo = (id) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'buckle/fetchBuckleGroupsInfo',
+      payload: { id },
+    });
   }
 
   handleListFormChange = (params, index) => {
@@ -48,21 +65,6 @@ export default class extends React.PureComponent {
     }
     this.setState({ listFormValue: [...newListValue] });
   }
-
-  // listFormOnError = (field, index) => {
-  //   const newError = { ...eventsError[index] };
-  //   if (newError[field]) {
-  //     delete newError[field];
-  //     this.setState({
-  //       eventsError: {
-  //         ...eventsError,
-  //         [index]: {
-  //           ...newError,
-  //         },
-  //       },
-  //     });
-  //   }
-  // };
 
   extraError = (name, error) => {
     const { setFields } = this.props.form;
@@ -119,7 +121,6 @@ export default class extends React.PureComponent {
         onError: this.handleError,
         onSuccess: (result) => {
           dispatch(routerRedux.push(`/reward/buckle/success/${result.id}`));
-          // this.props.history.replace(`/reward/buckle/success/${result.id}`);
         },
       });
     });
@@ -173,11 +174,11 @@ export default class extends React.PureComponent {
 
 
   makeLastApproverProps = () => {
-    const { finalStaff, finalLoading } = this.props;
+    const { finalStaff, finalLoading, loadingInfo } = this.props;
     const tableProps = {
       index: 'staff_sn',
       data: finalStaff,
-      loading: finalLoading,
+      loading: finalLoading || loadingInfo,
       scroll: { x: 700 },
       fetchDataSource: this.fetchFianl,
     };
@@ -224,7 +225,7 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { form: { getFieldDecorator } } = this.props;
+    const { form: { getFieldDecorator }, buckleInfo } = this.props;
     const { listFormValue, eventsError } = this.state;
     const userInfo = window.user || {};
     const formItemLayout = {
@@ -238,12 +239,18 @@ export default class extends React.PureComponent {
         staffNumber += item.participants.length;
       }
     });
+
+    const { params } = { ...(this.props.match || { params: {} }) };
+    const { id } = params;
+    let formFieldsValue = {};
+    if (buckleInfo[id]) {
+      formFieldsValue = { ...buckleInfo[id] };
+    }
     return (
       <div style={{ width, margin: '0 auto' }}>
         <ListForm
           errors={eventsError}
-          // onError={this.listFormOnError}
-          initialValue={listFormValue}
+          initialValue={id ? (formFieldsValue.logs || []) : listFormValue}
           onChange={this.handleListFormChange}
           style={{ width, marginTop: 10 }}
           placeholder="添加事件"
@@ -255,14 +262,14 @@ export default class extends React.PureComponent {
         <OAForm {...this.makeFormProps()} style={{ padding: 10, width }}>
           <FormItem label="主题" {...formItemLayout}>
             {getFieldDecorator('title', {
-              initialValue: '',
+              initialValue: formFieldsValue.title || '',
             })(
               <Input placeholder="请输入" />
             )}
           </FormItem>
           <FormItem label="事件时间" {...formItemLayout}>
             {getFieldDecorator('executed_at', {
-              initialValue: moment().format('L'),
+              initialValue: formFieldsValue.executed_at || moment().format('L'),
             })(
               <DatePicker
                 disabledDate={(currentData) => {
@@ -277,8 +284,8 @@ export default class extends React.PureComponent {
           <FormItem label="初审人" {...formItemLayout} >
             {getFieldDecorator('first', {
               initialValue: {
-                first_approver_sn: userInfo.staff_sn || '',
-                first_approver_name: userInfo.realname || '',
+                first_approver_sn: formFieldsValue.first_approver_sn || userInfo.staff_sn || '',
+                first_approver_name: formFieldsValue.first_approver_name || userInfo.realname || '',
               },
             })(
               <SearchTable.Staff
@@ -293,7 +300,10 @@ export default class extends React.PureComponent {
           </FormItem>
           <FormItem label="终审人" {...formItemLayout} >
             {getFieldDecorator('last', {
-              initialValue: {},
+              initialValue: {
+                final_approver_sn: formFieldsValue.final_approver_sn || userInfo.staff_sn || '',
+                final_approver_name: formFieldsValue.final_approver_name || userInfo.realname || '',
+              },
             })(
               <SearchTable
                 mode="user"
@@ -310,7 +320,7 @@ export default class extends React.PureComponent {
           </FormItem>
           <FormItem label="抄送人" {...formItemLayout} >
             {getFieldDecorator('addressees', {
-              initialValue: [],
+              initialValue: formFieldsValue.addressees || [],
             })(
               <SearchTable.Staff
                 mode="user"
@@ -322,7 +332,7 @@ export default class extends React.PureComponent {
           </FormItem>
           <FormItem label="备注" {...formItemLayout}>
             {getFieldDecorator('remark', {
-              initialValue: '',
+              initialValue: formFieldsValue.remark || '',
             })(
               <Input.TextArea placeholder="请输入备注说明......" style={{ height: 90 }} />
             )}

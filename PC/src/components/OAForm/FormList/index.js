@@ -33,15 +33,13 @@ export default (CustomerFrom) => {
 
     componentWillReceiveProps(nextProps) {
       const { dataSource } = this.state;
-      if (nextProps.initialValue.length !== 0) {
-        if (
-          JSON.stringify(nextProps.initialValue)
-          !==
-          JSON.stringify(this.props.initialValue)
-          && (dataSource.length === 0)
-        ) {
-          this.setState({ dataSource: nextProps.initialValue });
-        }
+      if (
+        JSON.stringify(nextProps.initialValue)
+        !==
+        JSON.stringify(this.props.initialValue)
+        && (dataSource.length === 0)
+      ) {
+        this.setState({ dataSource: nextProps.initialValue });
       }
     }
 

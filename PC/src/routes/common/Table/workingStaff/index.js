@@ -137,6 +137,7 @@ export default class WorkingStaff extends React.PureComponent {
     const columns = [
       {
         title: '姓名',
+        width: 50,
         dataIndex: 'staff_name',
       },
       {
@@ -161,7 +162,7 @@ export default class WorkingStaff extends React.PureComponent {
         title: '总分',
         dataIndex: 'count',
         render: (_, record) => {
-          const number = parseInt(record.number, 10);
+          const number = parseInt(record.count, 10);
           const aPoint = parseInt(record.point_a, 10) * number;
           const bPoint = parseInt(record.point_b, 10) * number;
           return (
@@ -242,7 +243,6 @@ export default class WorkingStaff extends React.PureComponent {
         />
         <ModalStaff
           visible={visible}
-          // value={value}
           onChange={this.handleModalStaffOnChange}
           filters={{ content: 'status_id>=0;', status: [1, 2, 3] }}
           onCancel={() => this.handleModalVisible('visible', false)}

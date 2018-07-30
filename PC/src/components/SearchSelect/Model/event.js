@@ -13,6 +13,13 @@ import styles from './ellipsis.less';
 }))
 
 export default class extends React.Component {
+  componentDidMount() {
+    const { value } = this.props;
+    if (value.event_id) {
+      this.fetchEvent({}, value.event_id);
+    }
+  }
+
   fetchEventType = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -21,11 +28,13 @@ export default class extends React.Component {
     });
   }
 
-  fetchEvent = (params) => {
+  fetchEvent = (params, id) => {
     let newParams;
     const { dispatch } = this.props;
     this.fetchEventType();
-    if (params.length && !params.page) {
+    if (id) {
+      newParams = { filters: `id=${id}` };
+    } else if (params.length && !params.page) {
       newParams = makerFilters({
         filters: { name: { like: params } },
       });

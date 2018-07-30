@@ -1,6 +1,7 @@
 import React from 'react';
 import { Divider, Modal } from 'antd';
 import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import moment from 'moment';
 import OATable from '../../../components/OATable';
 import BuckleInfo from './info';
@@ -207,7 +208,7 @@ export default class extends React.PureComponent {
   }
 
   makeAction = (record) => {
-    const { type } = this.props;
+    const { type, dispatch } = this.props;
     const action = [(
       <a
         key="info"
@@ -236,7 +237,9 @@ export default class extends React.PureComponent {
           <a
             key="cancel"
             style={{ color: '#59c3c3' }}
-          // onClick={() => this.showCancelConfirm(record.id)}
+            onClick={() => {
+              dispatch(routerRedux.push(`/reward/buckle/submission/${record.id}`));
+            }}
           >
             再次提交
           </a>

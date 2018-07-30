@@ -27,6 +27,7 @@ export default class extends React.PureComponent {
       defaultPoint: {
         point_b: 0,
         point_a: 0,
+        count: 1,
       },
     };
   }
@@ -60,7 +61,7 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { form: { getFieldDecorator } } = this.props;
+    const { form: { getFieldDecorator }, value } = this.props;
     const { defaultPoint } = this.state;
     const style = { width: 540 };
     const formItemLayout = {
@@ -71,7 +72,7 @@ export default class extends React.PureComponent {
       <OAForm {...this.makeFormProps()} style={{ padding: 10, width: 670 }}>
         <FormItem label="事件标题" {...formItemLayout}>
           {getFieldDecorator('event_id', {
-            initialValue: {},
+            initialValue: value.event_id ? { id: value.event_id } : {},
           })(
             <EventSearch
               style={style}
@@ -81,14 +82,14 @@ export default class extends React.PureComponent {
         </FormItem>
         <FormItem label="事件描述" {...formItemLayout}>
           {getFieldDecorator('description', {
-            initialValue: '',
+            initialValue: value.description || '',
           })(
             <TextArea placeholder="请输入" style={style} />
           )}
         </FormItem>
         <FormItem label="事件配置" {...formItemLayout} >
           {getFieldDecorator('participants', {
-            initialValue: [],
+            initialValue: value.participants || [],
           })(
             <WorkingStaff defaultPoint={defaultPoint} />
           )}

@@ -85,6 +85,9 @@ export const getRouterData = (app) => {
     '/reward/buckle': {
       component: dynamicWrapper(app, [], () => import('../routes/Reward/Buckle')),
     },
+    '/reward/buckle/submission/:id': {
+      component: dynamicWrapper(app, [], () => import('../routes/Reward/Buckle/Form')),
+    },
     '/reward/buckle/success/:id': {
       component: dynamicWrapper(app, [], () => import('../routes/Reward/Success')),
     },
