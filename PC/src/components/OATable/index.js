@@ -32,6 +32,7 @@ const defaultProps = {
   filtered: 0,
   sync: true,
   tableVisible: true,
+  searchOnChange: () => { },
   fetchDataSource: () => {
     // message.error('请设置fetchDataSource');
   },
@@ -122,7 +123,7 @@ class OATable extends PureComponent {
   }
 
   fetchTableDataSource = (fetch) => {
-    const { fetchDataSource, columns, serverSide } = this.props;
+    const { fetchDataSource, columns, serverSide, searchOnChange } = this.props;
     const { filters, pagination, sorter } = this.state;
     let params = {};
     if (serverSide) {
@@ -157,6 +158,7 @@ class OATable extends PureComponent {
           params.sort = `${key}-${defaultSorter[key] === 'ascend' ? 'asc' : 'desc'}`;
         });
       }
+      searchOnChange(params);
       params = makerFilters(params);
     }
     if (!fetch) {

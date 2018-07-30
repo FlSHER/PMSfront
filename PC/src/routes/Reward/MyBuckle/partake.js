@@ -1,21 +1,23 @@
 import React from 'react';
 import { connect } from 'dva';
-import OATable from '../../../components/OATable';
+import moment from 'moment';
+import 'ant-design-pro/dist/ant-design-pro.css';
+import Ellipsis from 'ant-design-pro/lib/Ellipsis';
 
-const status = [
-  { value: 0, text: '待审核' },
-  { value: 1, text: '初审通过' },
-  { value: 2, text: '终审通过' },
-  { value: -1, text: '驳回' },
-  { value: -2, text: '撤回' },
-  { value: -3, text: '撤销' },
-];
+import OATable from '../../../components/OATable';
+import EventInfo from './info';
+import { statusData } from '../../../utils/utils';
+
 
 @connect(({ buckle, loading }) => ({
   buckle,
   loading: loading.effects['buckle/fetch'],
 }))
 export default class extends React.PureComponent {
+  state = {
+    editInfo: {},
+  }
+
   fetch = (params) => {
     const { dispatch, type } = this.props;
     dispatch({
@@ -30,8 +32,8 @@ export default class extends React.PureComponent {
   makeColums = () => {
     const columns = [
       {
-        title: '主题',
-        dataIndex: 'title',
+        title: '事件标题',
+        dataIndex: 'event_name',
         searcher: true,
       },
       {
@@ -40,17 +42,38 @@ export default class extends React.PureComponent {
         searcher: true,
       },
       {
-        title: '时间',
+        title: '事件时间',
         dataIndex: 'executed_at',
+        sorter: true,
+        sortOrder: 'descend',
         dateFilters: true,
+        render: (time) => {
+          return moment(time).format('YYYY-MM-DD');
+        },
       },
       {
         title: '事件状态',
         dataIndex: 'status_id',
-        filters: status,
+        width: 50,
+        filters: statusData,
         render: (statusId) => {
-          const statusText = status.find(item => item.value === statusId);
+          const statusText = statusData.find(item => item.value === statusId);
           return statusText.text || '';
+        },
+      },
+      {
+        title: '参与人',
+        dataIndex: 'participants.staff_name',
+        width: 200,
+        searcher: true,
+        render: (_, record) => {
+          const { participants } = record;
+          const staffName = participants.map(item => item.staff_name);
+          return (
+            <div style={{ width: 200 }}>
+              <Ellipsis tooltip lines={1}>{staffName.join('、')}</Ellipsis>
+            </div>
+          );
         },
       },
       {
@@ -70,26 +93,48 @@ export default class extends React.PureComponent {
       },
       {
         title: '操作',
-        render: () => {
-          return <a style={{ color: '#59c3c3' }}>查看</a>;
+        render: (record) => {
+          return (
+            <a
+              style={{ color: '#59c3c3' }}
+              onClick={() => {
+                this.setState({ editInfo: record }, () => {
+                  const { onClose } = this.props;
+                  onClose(true);
+                });
+              }}
+            >
+              查看
+            </a>
+          );
         },
       },
     ];
     return columns;
   }
 
+
   render() {
-    const { buckle, loading, type } = this.props;
+    const { buckle, loading, type, visible, onClose } = this.props;
+    const { editInfo } = this.state;
     const reuslt = buckle[type];
     return (
-      <OATable
-        serverSide
-        loading={loading}
-        columns={this.makeColums()}
-        data={reuslt && reuslt.data}
-        total={reuslt && reuslt.total}
-        fetchDataSource={this.fetch}
-      />
+      <React.Fragment>
+        <OATable
+          serverSide
+          loading={loading}
+          columns={this.makeColums()}
+          data={reuslt && reuslt.data}
+          total={reuslt && reuslt.total}
+          fetchDataSource={this.fetch}
+        />
+        <EventInfo
+          type={type}
+          id={editInfo.id || null}
+          visible={visible}
+          onClose={onClose}
+        />
+      </React.Fragment>
     );
   }
 }

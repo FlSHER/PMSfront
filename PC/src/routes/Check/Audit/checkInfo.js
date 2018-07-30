@@ -11,36 +11,35 @@ const { Description } = DescriptionList;
 function EventInfo({ data }) {
   const list = data.participants || [];
   return (
-    <div className={styles.eventInfo}>
-      <DescriptionList
-        size="large"
-        col={1}
-      >
-        <Description term="编号">
-          {data.event_id}
-        </Description>
-        <Description term="标题">
-          {data.event_name}
-        </Description>
-        <Description term="事件内容">
-          {data.description}
-        </Description>
-        <Description term="事件配置">
-          {list.map((item, index) => {
-            const key = index;
-            return (
-              <p key={key}>
-                <Ellipsis length={3} className={styles.userName}>
-                  {item.staff_name}
-                </Ellipsis>
-                <span className={styles.userPoint}>A：{`${item.point_a * item.count} (${item.point_a}x${item.count})`}</span>
-                <span className={styles.userPoint}>B：{`${item.point_b * item.count} (${item.point_b}x${item.count})`}</span>
-              </p>
-            );
-          })}
-        </Description>
-      </DescriptionList>
-    </div>
+
+    <DescriptionList
+      size="large"
+      col={1}
+    >
+      <Description term="编号">
+        {data.event_id}
+      </Description>
+      <Description term="标题">
+        {data.event_name}
+      </Description>
+      <Description term="事件内容">
+        {data.description}
+      </Description>
+      <Description term="事件配置">
+        {list.map((item, index) => {
+          const key = index;
+          return (
+            <p key={key}>
+              <Ellipsis length={3} className={styles.userName}>
+                {item.staff_name}
+              </Ellipsis>
+              <span className={styles.userPoint}>A：<i>{`${item.point_a * item.count} (${item.point_a}x${item.count})`}</i></span>
+              <span className={styles.userPoint}>B：<i>{`${item.point_b * item.count} (${item.point_b}x${item.count})`}</i></span>
+            </p>
+          );
+        })}
+      </Description>
+    </DescriptionList>
   );
 }
 
@@ -51,7 +50,7 @@ function Approver({ tip, data }) {
       <span className={styles.right}>{data.time}</span>
     </div>
   );
-  const statusId = data.status_id;
+  // const statusId = data.status_id;
   // const status = getBuckleStatus(statusId);
 
   return (
@@ -71,17 +70,12 @@ function Approver({ tip, data }) {
                   <div className={styles.arrow}>
                     <span />
                   </div>
-                  <p className={(statusId > 0 ? styles.pass : styles.reject)}>
-                    {data.time && '通过'}
-                    {data.rejected && '驳回'}
+                  <p className={(!data.rejected ? styles.pass : styles.reject)}>
+                    {data.rejected ? '驳回' : '通过'}
                   </p>
-                  {
-                    statusId > 0 && data.time && (
-                      <p className={styles.description}>
-                        {data.remark}
-                      </p>
-                    )
-                  }
+                  <p className={styles.description}>
+                    {data.remark}
+                  </p>
                 </div>
                 {
                   data.point && data.point.recorder_name && (
@@ -128,21 +122,38 @@ function StaffCustormer({ title, data }) {
 }
 
 function getApproverData(data) {
+  let firstRemark = null;
+  let firstRejected = false;
+  if (data.first_approved_at) {
+    firstRemark = data.first_approve_remark;
+  } else if (!data.first_approved_at && data.status_id === -1) {
+    firstRejected = true;
+    firstRemark = data.reject_remark;
+  }
+
+  let lastRemark = null;
+  let lastRejected = false;
+  if (data.final_approved_at) {
+    lastRemark = data.final_approve_remark;
+  } else if (!data.final_approved_at && data.status_id === -1) {
+    lastRejected = true;
+    lastRemark = data.reject_remark;
+  }
   const first = {
     staff_sn: data.first_approver_sn || null,
     staff_name: data.first_approver_name || null,
     status_id: data.status_id,
-    remark: data.first_approve_remark || null,
+    remark: firstRemark,
     time: data.first_approved_at || null,
-    rejected: data.rejected_at || null,
+    rejected: firstRejected || null,
   };
   const last = {
     staff_sn: data.final_approver_sn || null,
     staff_name: data.final_approver_name || null,
-    remark: data.final_approve_remark || null,
+    remark: lastRemark,
     status_id: data.status_id,
     time: data.final_approved_at || null,
-    rejected: data.rejected_at || null,
+    rejected: lastRejected,
     point: {
       recorder_name: data.recorder_name || null,
       recorder: data.recorder_point || null,
@@ -160,6 +171,7 @@ export {
   EventInfo,
   Approver,
   StaffCustormer,
+  getApproverData,
 };
 export default function CheckInfo({ data }) {
   const able = Object.keys(data).length;
@@ -198,7 +210,9 @@ export default function CheckInfo({ data }) {
         {logs.map((item, index) => {
           const key = index;
           return (
-            <EventInfo key={key} data={item} />
+            <div key={key} className={`${styles.eventInfo} ${styles.eventBgk}`}>
+              <EventInfo data={item} />
+            </div>
           );
         })}
 

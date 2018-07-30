@@ -10,7 +10,7 @@ const { Step } = Steps;
   buckleInfo: buckle.buckleGropusDetails,
 }))
 export default class BuckleSuccess extends React.PureComponent {
-  componentDidMount() {
+  componentWillMount() {
     this.fetch();
   }
 
@@ -19,7 +19,7 @@ export default class BuckleSuccess extends React.PureComponent {
     const { params } = this.props.match;
     const { id } = params;
     dispatch({
-      type: 'buckle/fetchBuckleGroups',
+      type: 'buckle/fetchBuckleGroupsInfo',
       payload: { id },
     });
   }
@@ -83,7 +83,12 @@ export default class BuckleSuccess extends React.PureComponent {
               }}
             >再记一单
             </Button>
-            <Button>查看奖扣</Button>
+            <Button
+              onClick={() => {
+                this.props.dispatch(routerRedux.replace('/reward/my'));
+              }}
+            >查看奖扣
+            </Button>
           </div>
         </div>
       </React.Fragment>

@@ -7,7 +7,7 @@ import styles from './index.less';
 
 
 @connect(({ buckle, loading }) => ({
-  buckle: buckle.buckleGropusDetails,
+  buckleInfo: buckle.buckleGropusDetails,
   loading: loading.effects['buckle/fetchBuckleGroupsInfo'],
 }))
 export default class extends React.Component {
@@ -53,12 +53,34 @@ export default class extends React.Component {
     );
   }
 
+  renderRecordedFooter = () => {
+    const { fetchCancel, id, editInfo, onClose } = this.props;
+    const statusId = editInfo.status_id;
+    return (
+      <div className={styles.footer}>
+        {[0, 1].indexOf(statusId) !== -1 && (
+          <div onClick={() => {
+            fetchCancel(id);
+            onClose(false);
+          }}
+          >
+            <span>撤回</span>
+          </div>
+        )}
+        {[-1, -2].indexOf(statusId) !== -1 && (
+          <div>
+            <span>再次提交</span>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   render() {
-    const { id, onClose, loading, buckle, visible, editInfo, type } = this.props;
+    const { id, onClose, loading, buckleInfo, visible, editInfo, type } = this.props;
     const checkFormVisible = this.state.visible;
     const { title } = this.state;
-    const data = buckle[id] || {};
+    const data = buckleInfo[id] || {};
     return (
       <React.Fragment>
         <Drawer
@@ -67,6 +89,7 @@ export default class extends React.Component {
           onClose={onClose}
           loading={loading}
           {...(type === 'processing' && { footer: this.renderFooter() })}
+          {...(type === 'recorded' && { footer: this.renderRecordedFooter() })}
         >
           <CheckInfo data={data} />
         </Drawer>

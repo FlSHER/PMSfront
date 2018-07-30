@@ -4,12 +4,17 @@
     box-shadow: @box-shadow-base;
     .ant-drawer-header {
       position: absolute;
+      padding: 0;
       top: 0;
-      padding: 14px 0;
-      left: 20px;
-      right: 20px;
-      border-bottom: 1px solid #c7c7c7;
+      left: 0px;
+      right: 0px;
       z-index: 1;
+      border: none;
+      .titleContent {
+        border-bottom: 1px solid #c7c7c7;
+        height: 50px;
+        margin: 0 20px;
+      }
     }
     .ant-drawer-body {
       padding: 69px 0 0 0;

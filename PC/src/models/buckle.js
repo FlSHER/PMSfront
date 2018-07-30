@@ -5,6 +5,7 @@ import {
   firstCheck,
   finalCheck,
   reject,
+  withdrawBuckle,
 } from '../services/buckle';
 import defaultReducers from './reducers';
 
@@ -14,7 +15,9 @@ export default {
     buckleGropus: {},
     buckleGropusDetails: {},
     recorded: {},
+    recordedDetails: {},
     participant: {},
+    participantDetails: {},
     processing: {},
     approved: {},
   },
@@ -24,6 +27,9 @@ export default {
         const params = { ...payload };
         const { id, type } = params;
         delete params.id;
+        if (id) {
+          delete params.type;
+        }
         const response = yield call(fetchBuckle, params, id || '');
         yield put({
           type: 'save',
@@ -130,6 +136,25 @@ export default {
         }
       } catch (err) { return err; }
     },
+    * withdrawBuckle({ payload, onSuccess, onError }, { call, put }) {
+      try {
+        const { id, type } = payload;
+        const response = yield call(withdrawBuckle, id);
+        if (response.errors && onError) {
+          onError(response.errors);
+        } else {
+          yield put({
+            type: 'withdraw',
+            payload: {
+              id,
+              store: type,
+              // data: response,
+            },
+          });
+          onSuccess(response);
+        }
+      } catch (err) { return err; }
+    },
   },
   reducers: {
     ...defaultReducers,
@@ -151,6 +176,26 @@ export default {
           total: proces.total - 1,
           data: processing,
         },
+      };
+    },
+    withdraw(state, action) {
+      const { id, store } = action.payload;
+      const dataSource = state[store];
+      const newData = [];
+      dataSource.data.forEach((item) => {
+        if (item.id === id) {
+          newData.push({
+            ...item,
+            status_id: -2,
+          });
+        } else {
+          newData.push(item);
+        }
+      });
+      dataSource.data = newData;
+      return {
+        ...state,
+        [store]: { ...dataSource },
       };
     },
   },

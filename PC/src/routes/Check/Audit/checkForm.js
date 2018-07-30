@@ -59,7 +59,7 @@ export default class extends React.PureComponent {
       this.fetch(newParams, 'buckle/approve');
     } else {
       delete newParams.remark;
-      newParams.rejecter_remark = params.remark;
+      newParams.remark = params.remark;
       this.fetch(newParams, 'buckle/reject');
     }
   }

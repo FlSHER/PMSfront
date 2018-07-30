@@ -154,9 +154,15 @@ export default !noProxy ? {
     // 'GET /api/oa/staff(.*)': 'http://192.168.20.238:8003/api/staff',
 
     // 张博涵
+    // 'GET /api/PMS/(.*)': 'http://192.168.20.238:8007/api/',
+    // 'POST /api/PMS/(.*)': 'http://192.168.20.238:8007/api/',
+    // 'PUT /api/PMS/(.*)': 'http://192.168.20.238:8007/api/',
+    // 'DELETE /api/PMS/(.*)': 'http://192.168.20.238:8007/api/',
+
     'POST /oauth/(.*)': 'http://localhost.oaupdate.org/oauth/',
     'POST /oauth/(.*)': 'http://192.168.20.238:8003/oauth/',
     'GET /api/(.*)': 'http://192.168.20.238:8003/api/',
+
     // 'GET /api/(.*)': 'http://192.168.20.238:8007/api/',
     // 'POST /api/(.*)': 'http://192.168.20.238:8007/api/',
     // 'PUT /api/(.*)': 'http://192.168.20.238:8007/api/',
