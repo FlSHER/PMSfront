@@ -142,14 +142,14 @@ export default class extends React.PureComponent {
         align: 'center',
         dataIndex: 'event_count',
         sorter: true,
-        searcher: true,
+        rangeFilters: true,
       },
       {
         title: '总人次',
         align: 'center',
         dataIndex: 'participant_count',
         sorter: true,
-        searcher: true,
+        rangeFilters: true,
       },
       {
         title: '记录人',

@@ -255,6 +255,7 @@ class OATable extends PureComponent {
       filterIcon: <Icon type="filter" style={{ color: filtered.indexOf(key) !== -1 ? '#108ee9' : '' }} />,
       filterDropdown: (
         <RangeFilter
+          width={260}
           onSearchRange={this.handleRangeFilter(key)}
         />
       ),

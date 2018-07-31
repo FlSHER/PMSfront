@@ -31,18 +31,15 @@ export default class SearchTable extends PureComponent {
   constructor(props) {
     super(props);
     const { value } = props;
-    // const newValue = this.makeInitialValue(value);
     this.state = {
       visible: false,
       value: value || [],
-      // modelStyle: props.modelStyle || defaultStyle,
     };
   }
 
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.value !== this.props.value) {
-      // const newValue = this.makeInitialValue(nextProps.value);
       this.setState({ value: nextProps.value });
     }
   }
@@ -77,7 +74,6 @@ export default class SearchTable extends PureComponent {
       result = this.pushValue;
       this.setState({ value: result });
     }
-    // const newValue = dontInitialValue(name, result, multiple);
     onChange(result);
   };
 
@@ -151,12 +147,12 @@ export default class SearchTable extends PureComponent {
   render() {
     const { mode, multiple, name, title, tableProps, onChange, width } = this.props;
     const { visible, value } = this.state;
-    let selectValue = [];
-    if (multiple) {
-      selectValue = [...value];
-    } else {
-      selectValue = [value[tableProps.index]] || [];
-    }
+    // let selectValue = [];
+    // if (multiple) {
+    //   selectValue = [...value];
+    // } else {
+    //   selectValue = [value[tableProps.index]] || [];
+    // }
     return (
       <div>
         {mode === 'default' && this.makeSearchView()}
@@ -173,7 +169,6 @@ export default class SearchTable extends PureComponent {
           value={value}
           {...tableProps}
           multiple={multiple}
-          selectValue={selectValue}
         />
       </div>
     );

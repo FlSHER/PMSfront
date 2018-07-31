@@ -22,6 +22,32 @@ export default class SiderMenu extends PureComponent {
   constructor(props) {
     super(props);
     this.menus = props.menuData;
+    this.state = {
+      openKeys: this.getDefaultCollapsedSubMenus(props),
+    };
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location.pathname !== this.props.location.pathname) {
+      this.setState({
+        openKeys: this.getDefaultCollapsedSubMenus(nextProps),
+      });
+    }
+  }
+  getDefaultCollapsedSubMenus(props) {
+    const { location: { pathname } } = props || this.props;
+    const snippets = pathname.split('/').slice(1, -1);
+    const currentPathSnippets = snippets.map((item, index) => {
+      const arr = snippets.filter((_, i) => i <= index);
+      return arr.join('/');
+    });
+    let currentMenuSelectedKeys = [];
+    currentPathSnippets.forEach((item) => {
+      currentMenuSelectedKeys = currentMenuSelectedKeys.concat(this.getSelectedMenuKeys(item));
+    });
+    if (currentMenuSelectedKeys.length === 0) {
+      return ['dashboard'];
+    }
+    return currentMenuSelectedKeys;
   }
   getFlatMenuKeys(menus) {
     let keys = [];
@@ -124,9 +150,20 @@ export default class SiderMenu extends PureComponent {
     return ItemDom;
   }
 
+  handleOpenChange = (openKeys) => {
+    const lastOpenKey = openKeys[openKeys.length - 1];
+    const isMainMenu = this.menus.some(
+      item => lastOpenKey && (item.key === lastOpenKey || item.path === lastOpenKey)
+    );
+    this.setState({
+      openKeys: isMainMenu ? [lastOpenKey] : [...openKeys],
+    });
+  }
+
   render() {
     const { location: { pathname } } = this.props;
-
+    const { openKeys } = this.state;
+    const menuProps = { openKeys };
     // if pathname can't match, use the nearest parent's key
     const parentUrl = `${pathname.split('/')[1]}`;
     // const path = `${parentUrl}/${pathname.split('/').slice(-1)[0]}`;
@@ -135,7 +172,7 @@ export default class SiderMenu extends PureComponent {
     });
     let selectedKeys = this.getSelectedMenuKeys(pathname);
     if (!selectedKeys.length) {
-      selectedKeys = menuData && menuData.children ? [menuData.children[0].path] : ['/'];
+      selectedKeys = [openKeys[openKeys.length - 1]];
     }
     return (
       <Sider>
@@ -143,7 +180,9 @@ export default class SiderMenu extends PureComponent {
           key="Menu"
           mode="inline"
           className="leftMenu"
+          {...menuProps}
           selectedKeys={selectedKeys}
+          onOpenChange={this.handleOpenChange}
         >
           {menuData && this.getNavMenuItems(menuData.children)}
         </Menu>

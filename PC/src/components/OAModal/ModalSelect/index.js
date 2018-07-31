@@ -52,6 +52,7 @@ export default class ModalStaff extends React.PureComponent {
     const response = {
       ...this.props,
       scroll: { x: 1000, y: scrollHegiht },
+      selectValue: this.state.value || [],
       setSelectedValue: this.setSelectedValue,
     };
 

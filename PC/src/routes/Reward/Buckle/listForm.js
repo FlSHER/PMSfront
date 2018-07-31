@@ -26,8 +26,14 @@ export default class extends React.PureComponent {
     this.state = {
       eventId: value.event_id || null,
       pointRange: {
-        point_a: {},
-        point_b: {},
+        point_a: {
+          min: 0,
+          max: 0,
+        },
+        point_b: {
+          min: 0,
+          max: 0,
+        },
       },
       defaultPoint: {
         point_b: 0,

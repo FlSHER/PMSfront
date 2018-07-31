@@ -28,11 +28,11 @@ export default class InputBetween extends PureComponent {
   }
 
   render() {
-    const { value: { min, max } } = this.state;
+    const { value: { min, max }, width } = this.state;
     const { addonAfter } = this.props;
     return (
       <React.Fragment>
-        <InputGroup compact style={{ display: 'flex' }}>
+        <InputGroup compact style={{ display: 'flex', ...(width ? { width } : {}) }}>
           <Input
             style={{ flexGrow: 1, textAlign: 'center' }}
             placeholder="最小值"
@@ -63,7 +63,7 @@ export default class InputBetween extends PureComponent {
           />
           {addonAfter}
         </InputGroup>
-      </React.Fragment>
+      </React.Fragment >
     );
   }
 }

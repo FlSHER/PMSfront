@@ -64,48 +64,12 @@ export default class SelectTable extends React.Component {
     const { setSelectedValue } = this.props;
     const value = [];
     selectedRows.forEach((item) => {
-      // const temp = this.makeValueKey(item);
       value.push(item);
     });
     this.setState({ value }, () => {
       setSelectedValue([...value]);
     });
   };
-
-  // makeValueKey = (item) => {
-  //   const temp = {};
-  //   const { name } = this.props;
-  //   Object.keys(name).forEach((key) => {
-  //     temp[name[key]] = item[name[key]];
-  //   });
-  //   return temp;
-  // };
-
-  // dotFieldsValue = (data, parentKey) => {
-  //   let response = {};
-  //   Object.keys(data || {}).forEach((key) => {
-  //     const value = data[key];
-  //     const newKey = parentKey === undefined ? key : `${parentKey}.${key}`;
-  //     if (Array.isArray(value)) {
-  //       if (typeof value[0] === 'object') {
-  //         response = {
-  //           ...response,
-  //           ...this.dotFieldsValue(value, newKey),
-  //         };
-  //       } else {
-  //         response[newKey] = value;
-  //       }
-  //     } else if (typeof value === 'object') {
-  //       response = {
-  //         ...response,
-  //         ...this.dotFieldsValue(value, newKey),
-  //       };
-  //     } else {
-  //       response[newKey] = value;
-  //     }
-  //   });
-  //   return response;
-  // }
 
   render() {
     const {

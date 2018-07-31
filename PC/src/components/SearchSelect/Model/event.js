@@ -19,10 +19,10 @@ export default class extends React.Component {
   }
 
   componentDidMount() {
-    const { eventId } = this.props;
+    const { eventId, onChange } = this.props;
     if (eventId && !this.fecthId) {
       this.fecthId = eventId;
-      this.fetchEvent({}, eventId);
+      this.fetchEvent({}, eventId, onChange);
     }
   }
 
@@ -35,7 +35,7 @@ export default class extends React.Component {
     });
   }
 
-  fetchEvent = (params, id) => {
+  fetchEvent = (params, id, callBack) => {
     let newParams;
     const { dispatch } = this.props;
     this.fetchEventType();
@@ -52,6 +52,7 @@ export default class extends React.Component {
       dispatch({
         type: 'event/fetchEvent',
         payload: newParams,
+        callBack,
       });
     }
   }

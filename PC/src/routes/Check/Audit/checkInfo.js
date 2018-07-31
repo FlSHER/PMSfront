@@ -52,7 +52,10 @@ function Approver({ tip, data }) {
   );
   // const statusId = data.status_id;
   // const status = getBuckleStatus(statusId);
-  const statusTextClassName = !data.rejected ? styles.pass : styles.reject;
+  let statusTextClassName = !data.rejected ? styles.pass : styles.reject;
+  if (data.status_id === 0 || data.status_id === 1) {
+    statusTextClassName = styles.default;
+  }
   return (
     <div className={styles.approver}>
       <DescriptionList size="large" col={1} layout="vertical">
@@ -132,7 +135,7 @@ function getApproverData(data) {
     statusText: '通过',
   };
 
-  if (status === 0 && !data.first_approved_at) {
+  if (data.status_id === 0 && !data.first_approved_at) {
     first.statusText = '审核中...';
   } else if (data.first_approved_at) {
     first.remark = data.first_approve_remark;
@@ -161,8 +164,7 @@ function getApproverData(data) {
       first_approver: data.first_approver_point || null,
     },
   };
-
-  if (status === 1 && !data.final_approved_at) {
+  if (data.status_id === 1 && !data.final_approved_at) {
     last.statusText = '审核中...';
   } else if (data.final_approved_at) {
     last.remark = data.final_approve_remark;

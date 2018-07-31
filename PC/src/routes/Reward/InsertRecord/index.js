@@ -200,25 +200,25 @@ export default class extends React.PureComponent {
         width: 100,
         title: 'A分加分上限',
         dataIndex: 'point_a_awarding_limit',
-        rangerFilter: true,
+        rangeFilters: true,
       },
       {
         width: 100,
         title: 'A分减分上限',
         dataIndex: 'point_a_deducting_limit',
-        rangerFilter: true,
+        rangeFilters: true,
       },
       {
         width: 100,
         title: 'B分加分上限',
         dataIndex: 'point_b_awarding_limit',
-        rangerFilter: true,
+        rangeFilters: true,
       },
       {
         width: 100,
         title: 'B分减分上限',
         dataIndex: 'point_b_deducting_limit',
-        rangerFilter: true,
+        rangeFilters: true,
       },
     ];
     return tableProps;

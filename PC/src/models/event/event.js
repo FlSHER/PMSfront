@@ -3,7 +3,7 @@ import { fetchEvent } from '../../services/event';
 const store = 'event';
 
 export default {
-  * fetchEvent({ payload }, { call, put }) {
+  * fetchEvent({ payload, callBack }, { call, put }) {
     try {
       const params = { ...payload };
       const response = yield call(fetchEvent, params);
@@ -14,6 +14,9 @@ export default {
           data: response,
         },
       });
+      if (callBack) {
+        callBack(response[0]);
+      }
     } catch (err) { return err; }
   },
 };
