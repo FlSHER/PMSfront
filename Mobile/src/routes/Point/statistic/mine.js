@@ -304,7 +304,7 @@ export default class Statistic extends React.Component {
 
   pointRedirect = () => {
     const { history } = this.props;
-    history.push('/point_list');
+    history.push('/point_list_2');
   }
 
   renderEsChart = (elementChart, key) => {

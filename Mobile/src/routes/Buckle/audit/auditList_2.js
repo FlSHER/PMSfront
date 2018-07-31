@@ -3,16 +3,17 @@ import {
   connect,
 } from 'dva';
 import { WingBlank, WhiteSpace, Flex, Modal } from 'antd-mobile';
-import { Buckle } from '../../../common/ListView/index';
+import { Buckle, Auditted } from '../../../common/ListView/index';
 import ModalFilters from '../../../components/ModalFilters';
 
 import {
   auditState,
   auditLabel,
-  convertStyle,
+  // convertStyle,
   auditFinishedState,
   auditFinishedLabel,
   auditFinishedResult,
+  auditFinishedResultLabel,
 } from '../../../utils/convert.js';
 import { userStorage, getUrlParams, getUrlString, parseParamsToUrl, doConditionValue, parseParams } from '../../../utils/util';
 
@@ -94,7 +95,8 @@ export default class AuditList extends React.Component {
     model: 'filters',
     el: {},
     shortModal: false,
-    sorter: { name: '时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
+    page: 1,
+    totalpage: 10,
   }
 
   componentWillMount() {
@@ -106,10 +108,13 @@ export default class AuditList extends React.Component {
     this.setState({
       userInfo: newInfo,
     });
-    if (auditList[type] && auditList[type].page !== 1) {
+    console.log('auditList', auditList);
+    if ((auditList[type] && auditList[type].page !== 1)) {
+      this.currentFilter();
       return;
     }
-    this.currentFilter();
+    console.log('auditList', '哈哈哈哈');
+
     this.fetchDataSource({});
   }
 
@@ -118,6 +123,15 @@ export default class AuditList extends React.Component {
     this.urlParams = getUrlParams(search);
     const { type = 'processing' } = this.urlParams;
     this.type = type;
+    if (JSON.stringify(this.props.auditList[type]) !== JSON.stringify(auditList[type])) {
+      const page = auditList[type] ? auditList[type].page : 1;
+      const totalpage = auditList[type] ? auditList[type].totalpage : 10;
+      this.setState({
+        totalpage,
+        page,
+      });
+    }
+
     this.currentFilter();
     if (this.props.location.search !== search) {
       if (auditList[type] && auditList[type].page !== 1) {
@@ -133,18 +147,29 @@ export default class AuditList extends React.Component {
     const params = {
       page: currentData ? currentData.page + 1 : 1,
     };
-    this.fetchDataSource(params);
+    this.setState({
+      page: params.page,
+    }, () => {
+      this.fetchDataSource(params);
+    });
   }
 
   onRefresh = () => {
     const params = {
       page: 1,
     };
-    this.fetchDataSource(params);
+    this.setState({
+      page: params.page,
+    }, () => {
+      this.fetchDataSource(params);
+    });
   }
 
   onResetForm = () => {
     const { dispatch } = this.props;
+    this.setState({
+      page: 1,
+    });
     dispatch({
       type: 'alltabs/saveKey',
       payload: {
@@ -161,6 +186,14 @@ export default class AuditList extends React.Component {
       shortModal: true,
     });
   }
+
+ fetchFiltersDataSource=(params) => {
+   this.setState({
+     page: 1,
+   }, () => {
+     this.fetchDataSource({ ...params, page: 1 });
+   });
+ }
 
   findNotBelong = () => {
     const { filterColumns } = tabs[this.type];
@@ -188,7 +221,7 @@ export default class AuditList extends React.Component {
   fetchDataSource = (params) => {
     const { dispatch, allTabs } = this.props;
     const currentTab = allTabs[this.type];
-    this.sorter = params ? params.sort : 'created_at-desc';
+    this.sorter = (params && params.sort) || 'created_at-desc';
     const currentParams = parseParams(currentTab);
     const newParams = { page: 1, pagesize: 10, ...currentParams, ...params, type: this.type };
     const urlparams = parseParamsToUrl(newParams);
@@ -260,8 +293,8 @@ export default class AuditList extends React.Component {
     if (type === 'approved') {
       const newObj = [
         {
-          evt: value => auditFinishedResult(value.status_id),
-          labelStyle: value => convertStyle(value.status_id),
+          evt: value => auditFinishedResult(value),
+          labelStyle: value => auditFinishedResultLabel(value),
         },
         {
           evt: value => auditFinishedState(value),
@@ -275,10 +308,14 @@ export default class AuditList extends React.Component {
 
   render() {
     const { auditList } = this.props;
-    const { el, userInfo, sorter, shortModal } = this.state;
+    const { el, userInfo, shortModal } = this.state;
     const { type } = this;
-    const { filterColumns } = tabs[type];
-    const [sortItem] = sortList.filter(item => item.value === this.sorter);
+    const { filterColumns = [] } = tabs[type];
+    // console.log('this.page', this.state.page);
+    let [sortItem] = sortList.filter(item => item.value === this.sorter);
+    if (!sortItem) {
+      [sortItem] = sortList;
+    }
     const linkBtn = [];
     if (Object.keys(el).length) {
       const detail = { ...el };
@@ -312,8 +349,10 @@ export default class AuditList extends React.Component {
         linkBtn.push(pass);
       }
     }
+    const activeStyle = Object.keys(this.filters || {}).length ? style.active : null;
+
     const isApproved = this.type === 'approved';
-    const extra = !isApproved ? this.renderExtraContent : null;
+    // const extra = !isApproved ? this.renderExtraContent : null;
     return (
       <Flex direction="column">
         <Flex.Item className={style.header}>
@@ -321,7 +360,12 @@ export default class AuditList extends React.Component {
             <WhiteSpace size="md" />
             <WingBlank size="lg">
               <WingBlank size="lg">
-                <StateTabs option={auditStates} checkItem={{ value: this.type }} justify="around" handleClick={this.tabChange} />
+                <StateTabs
+                  option={auditStates}
+                  checkItem={{ value: this.type }}
+                  justify="around"
+                  handleClick={this.tabChange}
+                />
               </WingBlank>
             </WingBlank>
             <WhiteSpace size="md" />
@@ -342,12 +386,12 @@ export default class AuditList extends React.Component {
                     backgroundSize: '0.4rem',
                   }}
                 >
-                  {sorter.name}
+                  {sortItem.name}
                 </div>
               </Flex.Item>
               <Flex.Item>
                 <div
-                  className={[style.filter ? style.active : null].join(' ')}
+                  className={[style.filter, activeStyle].join(' ')}
                   onClick={() => this.handleVisible(true, 'filter')}
                 >筛选
                 </div>
@@ -362,26 +406,37 @@ export default class AuditList extends React.Component {
               onResetForm={this.onResetForm}
               filterColumns={filterColumns}
               sorterData={sortList}
-              // modalId="1"
-              fetchDataSource={this.fetchDataSource}
+              fetchDataSource={this.fetchFiltersDataSource}
               onCancel={this.handleVisible}
             />
           </div>
         </Flex.Item>
         <Flex.Item className={style.content}>
           <WingBlank>
+            {type === 'processing' && (
             <Buckle
-              extra={extra}
+          // extra={extra}
               onRefresh={this.onRefresh}
               dataSource={auditList[type] ? auditList[type].data : []}
               handleClick={this.toLookDetail}
               onPageChange={this.onPageChange}
               label={this.renderLalbel() || []}
-              page={auditList[type] ?
-                auditList[type].page : 1}
-              totalpage={auditList[type] ?
-                auditList[type].totalpage : 10}
+              page={this.state.page}
+              totalpage={this.state.totalpage}
             />
+            )}
+            {type === 'approved' && (
+              <Auditted
+            // extra={extra}
+                onRefresh={this.onRefresh}
+                dataSource={auditList[type] ? auditList[type].data : []}
+                handleClick={this.toLookDetail}
+                onPageChange={this.onPageChange}
+                label={this.renderLalbel() || []}
+                page={this.state.page}
+                totalpage={this.state.totalpage}
+              />
+              )}
           </WingBlank>
         </Flex.Item>
         <Modal
@@ -409,7 +464,6 @@ export default class AuditList extends React.Component {
                 >取消
                 </Flex.Item>
               </Flex>
-
             </WingBlank>
           </div>
         </Modal>

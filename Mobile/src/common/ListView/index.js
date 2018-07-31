@@ -14,6 +14,7 @@ import FinalStaff from './FinalStaff';
 import RecordPreview from './RecordPreview';
 import RecordDetail from './RecordDetail';
 import PaticipantBuckle from './PaticipantBuckle';
+import Auditted from './Auditted';
 
 export {
   Department,
@@ -30,5 +31,6 @@ export {
   RecordPreview,
   RecordDetail,
   PaticipantBuckle,
+  Auditted,
   // EventList,
 };

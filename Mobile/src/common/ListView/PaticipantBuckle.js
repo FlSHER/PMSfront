@@ -40,10 +40,7 @@ export default class PaticipantBuckle extends Component {
           <div className={style.time}>
             {value.description}
           </div>
-          <div className={style.desc}>
-            记录人：{value.recorder_name}
-          </div>
-          <div className={style.desc}>{value.created_at}</div>
+          <div className={style.desc}>执行时间：{value.executed_at}</div>
         </div>
         {extra && extra(value)}
       </div>

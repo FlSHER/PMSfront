@@ -214,7 +214,7 @@ export function markTreeData(data, pid = null, { parentId, key }) {
 
 export function findTreeParent(data, id, key = 'id', pid = 'parent_id') {
   const result = [];
-  const [findData] = data.filter((item) => {
+  const [findData] = (data || []).filter((item) => {
     return item[key] === id;
   });
   if (!findData || !id) return result;
@@ -505,3 +505,4 @@ export function pageChange(obj, type = 'add') {
   }
   return newObj;
 }
+

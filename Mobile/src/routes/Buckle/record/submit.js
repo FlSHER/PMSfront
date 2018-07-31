@@ -29,6 +29,16 @@ export default class BuckleRecord extends React.Component {
     scrollToAnchor(link);
   }
 
+
+  getCount = () => {
+    const { record: { participants } } = this.props;
+    let count = 0;
+    Object.keys(participants || {}).forEach((key) => {
+      count += participants[key].length;
+    });
+    return count;
+  }
+
   initInfo = () => {
     const { submit: { info } } = this.props;
     this.setState({
@@ -100,12 +110,14 @@ export default class BuckleRecord extends React.Component {
     });
   }
 
+
   record = () => {
     const {
       record: { records },
       submit: { addressees, final, first },
       dispatch, history,
     } = this.props;
+    const count = this.getCount();
     const newAddressees = addressees.map((item) => {
       const obj = {
         staff_sn: item.staff_sn,
@@ -122,6 +134,8 @@ export default class BuckleRecord extends React.Component {
       final_approver_name: final.staff_name,
       ...submitInfo,
       addressees: newAddressees,
+      event_count: records.length,
+      participant_count: count,
     };
     dispatch({
       type: 'submit/recordBuckle',

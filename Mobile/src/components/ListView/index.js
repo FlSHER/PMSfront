@@ -1,12 +1,12 @@
 
 import React, { PureComponent } from 'react';
-import ReactDOM from 'react-dom';
 import { connect } from 'dva';
+import ReactDOM from 'react-dom';
 import { List, PullToRefresh } from 'antd-mobile';
 import QueueAnim from 'rc-queue-anim';
 import nothing from '../../assets/nothing.png';
 import SmallLoader from '../General/Loader/SmallLoader';
-import Loader from '../General/Loader/Loader';
+import spin from '../General/Loader';
 
 import { Nothing } from '../index';
 
@@ -30,13 +30,15 @@ export default function ListView(ListItem) {
     }
 
     componentDidMount() {
-      const htmlDom = ReactDOM.findDOMNode(this.ptr);
-      const offetTop = htmlDom.getBoundingClientRect().top;
-      console.log(offetTop);
-      const hei = this.state.height - offetTop;
-      setTimeout(() => this.setState({
-        height: hei,
-      }), 0);
+      if (this.ptr) {
+        const htmlDom = ReactDOM.findDOMNode(this.ptr);
+        const offetTop = htmlDom.getBoundingClientRect().top;
+        console.log(offetTop);
+        const hei = this.state.height - offetTop;
+        setTimeout(() => this.setState({
+          height: hei,
+        }), 0);
+      }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -170,6 +172,7 @@ export default function ListView(ListItem) {
       );
     }
 
+
     renderList = () => {
       const { dataSource, page, offsetBottom, heightNone,
         loading, totalpage, onRefresh } = this.props;
@@ -177,15 +180,17 @@ export default function ListView(ListItem) {
       const style = !heightNone ? { style: { minHeight: height } } : null;
       const nothingAble = !heightNone &&
         (!loading.global && ((dataSource && !dataSource.length) || !dataSource));
+      const loader = (((!dataSource) || (dataSource && !dataSource.length)
+       || (page === 1))
+       && loading.global);
+      // console.log('loader', nothingAble, loader, loading.global, page, page === 1);
+      spin(loader);
       return (
         <div
           {...(page && { onTouchStart: this.handleStart })}
           {...(page && { onTouchEnd: this.handleEnd })}
           ref={(el) => { this.ptr = el; }}
         >
-          {((!dataSource) || (dataSource && !dataSource.length)) &&
-            <Loader fullScreen spinning={loading.global} />
-          }
           {
             nothingAble ? (
               <div {...style}>
@@ -206,7 +211,7 @@ export default function ListView(ListItem) {
                     })}
                   </List>
                   {!loading.global && onRefresh && page < totalpage &&
-                  <div style={{ textAlign: 'center' }}>加载更多</div>
+                    <div style={{ textAlign: 'center' }}>加载更多</div>
                   }
                   {loading.global && onRefresh && <SmallLoader />}
                 </QueueAnim>
@@ -218,6 +223,7 @@ export default function ListView(ListItem) {
 
     render() {
       const { onRefresh } = this.props;
+      console.log();
       return (
         <React.Fragment>
           {onRefresh ? this.pullDownToRefresh() : this.renderList()}

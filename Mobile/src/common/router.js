@@ -96,6 +96,9 @@ export const getRouterData = (app) => {
     '/buckle_list': {
       component: dynamicWrapper(app, [], () => import('../routes/Buckle/mine/buckleList')),
     },
+    '/buckle_list_2': {
+      component: dynamicWrapper(app, [], () => import('../routes/Buckle/mine/buckleList_2')),
+    },
     '/audit_list': {
       component: dynamicWrapper(app, ['buckle', 'oauth'], () => import('../routes/Buckle/audit/auditList')),
     },
@@ -117,6 +120,9 @@ export const getRouterData = (app) => {
     },
     '/point_list': {
       component: dynamicWrapper(app, ['point'], () => import('../routes/Point/survey/pointList')),
+    },
+    '/point_list_2': {
+      component: dynamicWrapper(app, ['point'], () => import('../routes/Point/survey/pointList_2')),
     },
     '/ranking': {
       component: dynamicWrapper(app, ['ranking'], () => import('../routes/Point/ranking/rankingList')),

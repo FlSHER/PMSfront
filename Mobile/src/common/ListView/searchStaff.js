@@ -6,7 +6,10 @@ import style from './index.less';
 export default class searchStaff extends Component {
   render() {
     const { value, onClick, checked, multiple, renderName = 'realname', isFinal = false } = this.props;
-    const className = multiple ? { className: [style.item, checked ? style.checked : null].join(' ') } : null;
+    // const className = multiple ?
+    // { className: [style.item, checked ? style.checked : null].join(' ') } : null;
+    const className = multiple ? { className: [style.item, checked ? style.checked : null].join(' ') } : { className: style.single_item };
+
     return (
       <div
         className={style.action_item}
@@ -16,9 +19,7 @@ export default class searchStaff extends Component {
           {...className}
         >
           <span>{value[renderName]}</span>
-        </div>
-        <div className={style.department_title}>
-          {value && value.department ? value.department.full_name : ''}
+          <span style={{ color: 'rgb(74,74,74)' }}>{value && value.department ? `（${value.department.full_name}）` : ''}</span>
         </div>
         {isFinal ? (
           <React.Fragment>

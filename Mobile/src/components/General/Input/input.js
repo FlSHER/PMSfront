@@ -2,6 +2,24 @@ import React from 'react';
 import './index.less';
 
 class Input extends React.Component {
+  makeInputValue = (newValue) => {
+    let value = newValue;
+    const { range, onChange } = this.props;
+    if (range) {
+      if (parseFloat(value) < range.min) {
+        value = range.min;
+      }
+      if (parseFloat(value) > range.max) {
+        value = range.max;
+      }
+    }
+    // const numberValue = parseFloat(value);
+    // if (Math.floor(numberValue) === numberValue) {
+    //   value = Number(value);
+    // }
+    onChange(value);
+    // return value;
+  }
   render() {
     const { value, onChange, type, style, floatNumber } = this.props;
     return (
@@ -27,7 +45,7 @@ class Input extends React.Component {
           }
         }
         }
-        onChange={() => onChange(this.ptr.value)}
+        onChange={() => this.makeInputValue(this.ptr.value)}
       />
     );
   }

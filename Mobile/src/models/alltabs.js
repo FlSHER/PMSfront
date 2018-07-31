@@ -10,6 +10,10 @@ export default {
     tabs: {
       processing: 'sort=created_at-desc&type=processing',
       approved: 'sort=created_at-desc&type=approved',
+      participant: 'sort=created_at-desc&type=participant',
+      addressee: 'sort=created_at-desc&type=addressee',
+      recorded: 'sort=created_at-desc&type=recorded',
+      point: 'sort=created_at-desc',
     },
   },
   effects: {

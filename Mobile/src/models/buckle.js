@@ -133,6 +133,22 @@ export default {
       }
     },
 
+    *getBuckleList2({ payload }, { call, put }) {
+      // const newPayload = makerFilters(payload);
+      const response = yield call(getAuditList2, payload.url);
+      if (response && !response.error) {
+        yield put({
+          type: 'saveList',
+          payload: {
+            key: 'logList',
+            type: payload.type,
+            value: response,
+          },
+        });
+      }
+    },
+
+
     *getLogsList({ payload }, { call, put }) {
       const newPayload = makerFilters(payload);
       const response = yield call(getLogsList, newPayload);

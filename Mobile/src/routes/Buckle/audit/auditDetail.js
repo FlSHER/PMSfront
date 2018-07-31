@@ -74,9 +74,30 @@ export default class AuditDetail extends React.Component {
   }
 
   makeApprover = (approver) => {
-    const { buckleDetail = {} } = this.props;
-    const { eventId } = this.state;
-    const newDetail = { ...buckleDetail[eventId] || {} };
+    const { details } = this.props;
+    const { id } = this.state;
+    const detail = { ...details[id] || {} };
+    const approveInfo = {};
+    if ((detail.status_id === 1 || detail.status_id === 0) && !approver.time) {
+      approveInfo.statusText = '审核中...';
+    } else if (approver.time) {
+      approveInfo.statusText = '通过';
+      approveInfo.time = approver.time;
+      approveInfo.remark = approver.description || '无';
+    } else if (
+      !approver.time &&
+      detail.status_id === -1 &&
+      approver.sn === detail.rejecter_sn
+    ) {
+      approveInfo.statusText = '驳回';
+      approveInfo.time = detail.rejected_at;
+      approveInfo.remark = detail.reject_remark;
+      approveInfo.style = {
+        div: { background: 'rgba(207,1,26,0.1)' },
+        span: { borderRightColor: 'rgba(207,1,26,0.1)' },
+      };
+    }
+
     return (
       <div key={approver.key}>
         <WhiteSpace size="sm" />
@@ -90,39 +111,33 @@ export default class AuditDetail extends React.Component {
             >
               <div style={{ marginRight: '0.64rem' }}>
                 <PersonIcon
-                  value={newDetail}
+                  value={detail}
                   type="1"
                   nameKey={approver.key}
                   showNum={2}
                   itemStyle={{ marginBottom: 0 }}
                 />
               </div>
-              {approver.time ? (
-                <div className={style.dec}>
-                  <div
-                    className={style.describe}
-                  >
-                    <span />
-                    <p style={{ color: 'rgb(74,74,74)' }}>通过</p>
-                    <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{approver.description}</p>
-                  </div>
-                  <div className={style.approver_time}>{approver.time}</div>
-                </div>
-              ) : newDetail.rejected_at ?
-                  (
-                    <div className={style.dec}>
-                      <div
-                        className={style.describe}
-                        style={{ background: 'rgba(207,1,26,0.1)' }}
-
-                      >
-                        <span style={{ borderRightColor: 'rgba(207,1,26,0.1)' }} />
-                        <p style={{ color: 'rgb(74,74,74)' }}>驳回</p>
-                        <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{detail.reject_remark}</p>
-                      </div>
-                      <div className={style.approver_time}>{newDetail.rejected_at}</div>
+              {
+                (
+                  // detail.rejected_at
+                   approveInfo.time
+                  || (detail.status_id === approver.checkStatus)
+                ) && (
+                  <div className={style.dec}>
+                    <div
+                      className={style.describe}
+                      style={approveInfo.style ? approveInfo.style.div : null}
+                    >
+                      <span style={approveInfo.style ? approveInfo.style.span : null} />
+                      <p style={{ color: !(detail.status_id === 0 || detail.status_id === 1) ? 'rgb(74,74,74)' : '#666' }}>
+                        {approveInfo.statusText}
+                      </p>
+                      <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{approveInfo.remark}</p>
                     </div>
-                  ) : null}
+                    <div className={style.approver_time}>{approveInfo.time}</div>
+                  </div>
+                )}
             </Flex>
           </div>
         </WingBlank>
@@ -140,20 +155,22 @@ export default class AuditDetail extends React.Component {
     const { userInfo } = this.state;
     const approvers = [
       {
-        sn: newDetail.first_approver_sn,
+        sn: detail.first_approver_sn,
         title: '初审人',
-        name: newDetail.first_approver_name,
-        description: newDetail.first_approve_remark,
+        name: detail.first_approver_name,
+        description: detail.first_approve_remark,
         key: 'first_approver_name',
-        time: newDetail.first_approved_at,
+        time: detail.first_approved_at,
+        checkStatus: 0,
       },
       {
-        sn: newDetail.final_approver_sn,
+        sn: detail.final_approver_sn,
         title: '终审人',
-        name: newDetail.final_approver_name,
-        description: newDetail.final_approve_remark,
+        name: detail.final_approver_name,
+        description: detail.final_approve_remark,
         key: 'final_approver_name',
-        time: newDetail.final_approved_at,
+        time: detail.final_approved_at,
+        checkStatus: 1,
       },
     ];
     // if (detail.status_id === 1 || (detail.first_approved_at && detail.status_id === -2)) {
@@ -184,7 +201,7 @@ export default class AuditDetail extends React.Component {
               </Button>
             </Flex.Item>);
         }
-        if ([-1, -2].indexOf(newDetail.status_id) !== -1) {
+        if ([-1, -2, -3].indexOf(newDetail.status_id) !== -1) {
           // 再次提交
           footerBtn.push(
             <Flex.Item key="submit">
@@ -231,13 +248,13 @@ export default class AuditDetail extends React.Component {
           <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
             <List>
-              <div style={{ padding: '0.4rem 15px' }}>
+              <div style={{ padding: '0 15px' }}>
                 <div className={style.event_title}>
                   {newDetail.event_name}
                   <Label value={newDetail} content={buckleState(newDetail.status_id)} />
                 </div>
               </div>
-              <div style={{ padding: '0.4rem 15px' }}>
+              <div style={{ padding: '0 15px' }}>
                 {newDetail.description}
               </div>
             </List>
@@ -322,28 +339,32 @@ export default class AuditDetail extends React.Component {
               </div>
             </WingBlank>
           ) : null}
-          <WhiteSpace size="sm" />
-          <WingBlank className={style.parcel}>
-            <div className={style.players}>
-              <Flex className={style.title}> 抄送人</Flex>
-              <Flex
-                className={style.person_list}
-                wrap="wrap"
-              >
-                {(addresseess || []).map((item, i) => {
-                  const idx = i;
-                  return (
-                    <PersonIcon
-                      key={idx}
-                      value={item}
-                      type="1"
-                      nameKey="staff_name"
-                    />);
-                })
-                }
-              </Flex>
-            </div>
-          </WingBlank>
+          {addresseess && addresseess.length ? (
+            <React.Fragment>
+              <WhiteSpace size="sm" />
+              <WingBlank className={style.parcel}>
+                <div className={style.players}>
+                  <Flex className={style.title}> 抄送人</Flex>
+                  <Flex
+                    className={style.person_list}
+                    wrap="wrap"
+                  >
+                    {(addresseess || []).map((item, i) => {
+                    const idx = i;
+                    return (
+                      <PersonIcon
+                        key={idx}
+                        value={item}
+                        type="1"
+                        nameKey="staff_name"
+                      />);
+                  })
+                  }
+                  </Flex>
+                </div>
+              </WingBlank>
+            </React.Fragment>
+          ) : null}
           <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
             <div className={style.players}>

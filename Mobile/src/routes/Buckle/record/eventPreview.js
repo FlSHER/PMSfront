@@ -51,19 +51,6 @@ export default class EventPreview extends React.Component {
     });
   }
 
-  getCount = () => {
-    const { details } = this.props;
-    const { id } = this.state;
-    const detail = details[id] | {};
-    const { logs = [] } = detail;
-    let count = 0;
-    logs.forEach((item) => {
-      const { participants } = item;
-      count += participants.length;
-    });
-    return count;
-  }
-
   nextStep = () => {
     const { history } = this.props;
     history.push('/buckle_submit');
@@ -90,7 +77,17 @@ export default class EventPreview extends React.Component {
   }
 
   doAudit = (type, state) => {
-    const { history } = this.props;
+    const { history, dispatch } = this.props;
+    const { details } = this.props;
+    const { id } = this.state;
+    const detail = { ...details[id] || {} };
+    dispatch({
+      type: 'buckle/save',
+      payload: {
+        store: 'detail',
+        data: detail,
+      },
+    });
     history.push(`/audit_reason/${type}/${state}/-1`);
   }
 
@@ -98,6 +95,27 @@ export default class EventPreview extends React.Component {
     const { details } = this.props;
     const { id } = this.state;
     const detail = { ...details[id] || {} };
+    const approveInfo = {};
+    if ((detail.status_id === 1 || detail.status_id === 0) && !approver.time) {
+      approveInfo.statusText = '审核中...';
+    } else if (approver.time) {
+      approveInfo.statusText = '通过';
+      approveInfo.time = approver.time;
+      approveInfo.remark = approver.description || '无';
+    } else if (
+      !approver.time &&
+      detail.status_id === -1 &&
+      approver.sn === detail.rejecter_sn
+    ) {
+      approveInfo.statusText = '驳回';
+      approveInfo.time = detail.rejected_at;
+      approveInfo.remark = detail.reject_remark;
+      approveInfo.style = {
+        div: { background: 'rgba(207,1,26,0.1)' },
+        span: { borderRightColor: 'rgba(207,1,26,0.1)' },
+      };
+    }
+
     return (
       <div key={approver.key}>
         <WhiteSpace size="sm" />
@@ -118,32 +136,26 @@ export default class EventPreview extends React.Component {
                   itemStyle={{ marginBottom: 0 }}
                 />
               </div>
-              {approver.time ? (
-                <div className={style.dec}>
-                  <div
-                    className={style.describe}
-                  >
-                    <span />
-                    <p style={{ color: 'rgb(74,74,74)' }}>通过</p>
-                    <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{approver.description}</p>
-                  </div>
-                  <div className={style.approver_time}>{approver.time}</div>
-                </div>
-              ) : detail.rejected_at ?
-                  (
-                    <div className={style.dec}>
-                      <div
-                        className={style.describe}
-                        style={{ background: 'rgba(207,1,26,0.1)' }}
-
-                      >
-                        <span style={{ borderRightColor: 'rgba(207,1,26,0.1)' }} />
-                        <p style={{ color: 'rgb(74,74,74)' }}>驳回</p>
-                        <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{detail.reject_remark}</p>
-                      </div>
-                      <div className={style.approver_time}>{detail.rejected_at}</div>
+              {
+                (
+                  // detail.rejected_at
+                  approveInfo.time
+                  || (detail.status_id === approver.checkStatus)
+                ) && (
+                  <div className={style.dec}>
+                    <div
+                      className={style.describe}
+                      style={approveInfo.style ? approveInfo.style.div : null}
+                    >
+                      <span style={approveInfo.style ? approveInfo.style.span : null} />
+                      <p style={{ color: !(detail.status_id === 0 || detail.status_id === 1) ? 'rgb(74,74,74)' : '#666' }}>
+                        {approveInfo.statusText}
+                      </p>
+                      <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{approveInfo.remark}</p>
                     </div>
-                  ) : null}
+                    <div className={style.approver_time}>{approveInfo.time}</div>
+                  </div>
+                )}
             </Flex>
           </div>
         </WingBlank>
@@ -207,7 +219,6 @@ export default class EventPreview extends React.Component {
     }
     const footerAble = footerBtn.length > 0;
     const { logs = [] } = detail;
-    const count = this.getCount();
     const approvers = [
       {
         sn: detail.first_approver_sn,
@@ -216,6 +227,7 @@ export default class EventPreview extends React.Component {
         description: detail.first_approve_remark,
         key: 'first_approver_name',
         time: detail.first_approved_at,
+        checkStatus: 0,
       },
       {
         sn: detail.final_approver_sn,
@@ -224,6 +236,7 @@ export default class EventPreview extends React.Component {
         description: detail.final_approve_remark,
         key: 'final_approver_name',
         time: detail.final_approved_at,
+        checkStatus: 1,
       },
     ];
     return (
@@ -257,8 +270,8 @@ export default class EventPreview extends React.Component {
                   }}
                   onClick={this.addMySelf}
                 >
-                  <span style={{ marginRight: '0.8rem' }}>事件数量：{logs.length}</span>
-                  <span>总人次：{count}</span>
+                  <span style={{ marginRight: '0.8rem' }}>事件数量：{detail.event_count}</span>
+                  <span>总人次：{detail.participant_count}</span>
                 </div>
               </div>
               {logs.map((item, i) => {
@@ -309,28 +322,33 @@ export default class EventPreview extends React.Component {
               </div>
             </WingBlank>
           ) : null}
-          <WhiteSpace size="sm" />
-          <WingBlank className={style.parcel}>
-            <div className={style.players}>
-              <Flex className={style.title}> 抄送人</Flex>
-              <Flex
-                className={style.person_list}
-                wrap="wrap"
-              >
-                {(addressees || []).map((item, i) => {
-                  const idx = i;
-                  return (
-                    <PersonIcon
-                      key={idx}
-                      value={item}
-                      type="1"
-                      nameKey="staff_name"
-                    />);
-                })
-                }
-              </Flex>
-            </div>
-          </WingBlank>
+          {addressees && addressees.length ? (
+            <React.Fragment>
+              <WhiteSpace size="sm" />
+              <WingBlank className={style.parcel}>
+                <div className={style.players}>
+                  <Flex className={style.title}> 抄送人</Flex>
+                  <Flex
+                    className={style.person_list}
+                    wrap="wrap"
+                  >
+                    {(addressees || []).map((item, i) => {
+                    const idx = i;
+                    return (
+                      <PersonIcon
+                        key={idx}
+                        value={item}
+                        type="1"
+                        nameKey="staff_name"
+                      />);
+                  })
+                  }
+                  </Flex>
+                </div>
+              </WingBlank>
+            </React.Fragment>
+            ) : null
+          }
           <WhiteSpace size="sm" />
           <WingBlank className={style.parcel}>
             <div className={style.players}>

@@ -23,19 +23,31 @@ class ModalFilters extends React.Component {
 
   componentWillReceiveProps(props) {
     const { filters, sorter } = props;
-    if (JSON.stringify(filters) !== JSON.stringify(this.props.filters)
-    || sorter !== this.props.filters
-    ) {
+    if (JSON.stringify(filters) !== JSON.stringify(this.props.filters)) {
       this.setState({
         filters: filters || {},
+      });
+    }
+    if (JSON.stringify(sorter) !== JSON.stringify(this.props.sorter)) {
+      this.setState({
         sorter: sorter || '',
       });
     }
   }
 
+  componentWillUnmount() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+  }
+
   fetchFilters = (params) => {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
     const { sorter } = this.state;
     const filters = { ...this.state.filters };
+    console.log('filter', filters);
     const { fetchDataSource, filterColumns } = this.props;
     const speciPams = [];
     let url = '';
@@ -92,6 +104,23 @@ class ModalFilters extends React.Component {
     });
   }
 
+  handleInputOnChange = (key, value) => {
+    const { filters } = this.state;
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.setState({
+      filters: {
+        ...filters,
+        [key]: value,
+      },
+    }, () => {
+      this.timer = setInterval(() => {
+        this.fetchFilters();
+      }, 500);
+    });
+  }
+
   makeRangeFilter = (props) => {
     const { name, min, max } = props;
     const rangaValue = this.state.filters[name];
@@ -101,7 +130,8 @@ class ModalFilters extends React.Component {
         value={rangaValue}
         min={min}
         max={max}
-        onChange={value => this.handleFiltersOnChange(name, value)}
+        // onBlur={value => this.handleFiltersOnChange(name, value)}
+        onChange={value => this.handleInputOnChange(name, value)}
       />
     );
   }
@@ -173,15 +203,18 @@ class ModalFilters extends React.Component {
   }
 
   makeModalProps = () => {
-    const { onCancel, visible, onResetForm } = this.props;
+    const { onCancel, visible, onResetForm, top } = this.props;
     const resopnse = {
       onCancel: () => onCancel(false),
       visible,
+      top,
       onResetForm: () => {
-        this.setState(
-          { filters: {} },
-          () => this.fetchFilters());
-        onResetForm();
+        this.setState({ filters: {} },
+          () => {
+            console.log('22222222');
+            this.fetchFilters();
+            onResetForm();
+          });
       },
     };
     return resopnse;
@@ -199,7 +232,7 @@ class ModalFilters extends React.Component {
     return (
       <ListFilter
         {...this.makeModalProps()}
-        onOk={() => this.fetchFilters()}
+        onOk={() => { console.log('ok'); this.fetchFilters(); }}
         filterKey="filterModal"
         iconStyle={{ width: '0.533rem', height: '0.533rem' }}
         contentStyle={{
@@ -300,15 +333,7 @@ ModalFilters.defaultProps = {
     // },
   ],
   sorter: 'created_at-asc',
-  sorterData: [
-    { name: '默认排序', value: 'created_at-asc' },
-    { name: '时间升序', value: 'created_at-asc' },
-    { name: '时间降序', value: 'created_at-desc' },
-    { name: 'A分升序', value: 'point_a-asc' },
-    { name: 'A分降序', value: 'point_a_-desc' },
-    { name: 'B分升序', value: 'point_b_-asc' },
-    { name: 'B分降序', value: 'point_b_-desc' },
-  ],
+  sorterData: [],
   filters: {
     // point_a: { min: 1, max: 10 }, point_b: { min: 1, max: 10 }
   },

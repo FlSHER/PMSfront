@@ -22,7 +22,6 @@ class ListFilter extends Component {
   render() {
     const {
       children,
-      onOk,
       onCancel,
       onResetForm,
       visible,

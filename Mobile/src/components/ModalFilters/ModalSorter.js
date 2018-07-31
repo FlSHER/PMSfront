@@ -18,12 +18,13 @@ class ModalSorter extends React.PureComponent {
   }
 
   render() {
-    const { onChange, data, visible, onCancel, filterKey } = this.props;
+    const { onChange, data, visible, onCancel, filterKey, top } = this.props;
     return (
       <div className={style.filter_con} ref={(_) => { this.ptr = _; }}>
         <ListSort
           visible={visible}
           onCancel={onCancel}
+          top={top}
           filterKey="sortModal"
         >
           {data.map((item, i) => {

@@ -7,10 +7,11 @@ import { Buckle } from '../../../common/ListView/index';
 import {
   auditState,
   auditLabel,
-  convertStyle,
+  // convertStyle,
   auditFinishedState,
   auditFinishedLabel,
   auditFinishedResult,
+  auditFinishedResultLabel,
 } from '../../../utils/convert.js';
 import { userStorage, makerFilters } from '../../../utils/util';
 
@@ -312,8 +313,8 @@ export default class AuditList extends React.Component {
     if (checkState.value === 'approved') {
       const newObj = [
         {
-          evt: value => auditFinishedResult(value.status_id),
-          labelStyle: value => convertStyle(value.status_id),
+          evt: value => auditFinishedResult(value),
+          labelStyle: value => auditFinishedResultLabel(value.status_id),
         },
         {
           evt: value => auditFinishedState(value),

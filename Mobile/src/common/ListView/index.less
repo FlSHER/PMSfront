@@ -57,9 +57,9 @@
     padding-right: 60/75rem;
     .base(rgb(0, 0, 0), @detail-title-size);
   }
-  .event_pre_title{
+  .event_pre_title {
     line-height: 48/75rem;
-    margin-top:20/75rem;
+    margin-top: 20/75rem;
     .base(rgb(74, 74, 74), @detail-title-size);
   }
   .predec {
@@ -296,6 +296,7 @@
   .event_title {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     .base(@list-title-color,
     @list-title-size);
     .label_state_0 {
@@ -366,10 +367,40 @@
     }
   }
   .event_name {
+    width: 440/75rem;
+    flex-grow: 0;
+    flex-shrink: 0;
+    .textLineOverFlow();
+  }
+  .audit_event_name {
     width: 360/75rem;
     flex-grow: 0;
     flex-shrink: 0;
     .textLineOverFlow();
+  }
+  .event_num {
+    display: flex;
+    justify-content: flex-start;
+    .num {
+      border: 1px solid rgb(216, 216, 216);
+      margin-right: 20/75rem;
+      span{
+        display: inline-block;
+        text-align: center;
+        height: 36/75rem;
+        line-height: 36/75rem;
+      }
+      span:first-child {
+        min-width: 120/75rem;
+        background: rgb(216, 216, 216);
+        color: #fff;
+      }
+      span:last-child {
+        min-width: 36/75rem;
+        background: #fff;
+        color: rgb(216, 216, 216);
+      }
+    }
   }
   .time {
     margin: 20/75rem 0 10/75rem;

@@ -24,6 +24,7 @@ const sortList = [
   { name: '执行时间升序', value: 'executed_at-asc', icon: import('../../../assets/filter/asc.svg') },
   { name: '执行时间降序', value: 'executed_at-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
+
 const auditStates = [
   { name: '我参与的', value: 'participant' },
   { name: '我记录的', value: 'recorded' },
@@ -35,19 +36,23 @@ const dealtOption = [
   { name: '已通过', value: 1 },
   { name: '已驳回', value: -1 },
 ];
+
 const stateOption = [
   { name: '已通过', value: 2 },
   { name: '已驳回', value: -1 },
   { name: '审核中', value: 0 },
   { name: '已撤回', value: -2 },
 ];
+
 const procesingOption = [
   { name: '初审', value: 'first_approver_sn' },
   { name: '终审', value: 'final_approver_sn' },
 ];
+
 @connect(({ buckle }) => ({
   logList: buckle.logList,
 }))
+
 export default class BuckleList extends React.Component {
   state = {
     filter: {// 筛选结果
@@ -345,7 +350,7 @@ export default class BuckleList extends React.Component {
     if (checkState.value === 'approved') {
       const newObj = [
         {
-          evt: value => auditFinishedResult(value.status_id),
+          evt: value => auditFinishedResult(value),
           labelStyle: value => convertStyle(value.status_id),
         },
         {

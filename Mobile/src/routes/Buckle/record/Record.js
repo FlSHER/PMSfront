@@ -359,6 +359,8 @@ export default class BuckleRecord extends React.Component {
             title: event.name,
             events: [eventObj],
             addressees: newCopy,
+            event_count: 1,
+            participant_count: (newParticipant || []).length,
           },
           cb: () => {
             this.clearModal();

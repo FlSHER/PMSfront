@@ -47,9 +47,13 @@ class PickerRange extends React.Component {
     const { value: { min, max } } = this.state;
     const { addonBefore } = this.props;
     return (
-      <Flex>
+      <Flex
+        className={style.pickerange}
+      >
         {addonBefore}
-        <Flex.Item>
+        <Flex.Item
+          style={{ flex: '1 1' }}
+        >
           <DatePicker
             mode="date"
             format="YYYY-MM-DD"
@@ -58,7 +62,10 @@ class PickerRange extends React.Component {
             <div className={style.some_time}>{min}</div>
           </DatePicker>
         </Flex.Item>
-        <Flex.Item>
+        <Flex.Item
+          style={{ flex: '1 1' }}
+
+        >
           <DatePicker
             mode="date"
             format="YYYY-MM-DD"

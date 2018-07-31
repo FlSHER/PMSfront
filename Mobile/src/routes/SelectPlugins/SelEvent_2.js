@@ -79,7 +79,7 @@ export default class SelEvent extends Component {
       type: 'event/searchEventName',
       payload: {
         page: page + 1,
-        pagesize: 15,
+        pagesize: 20,
         filters: {
           name: {
             like: searchValue,
@@ -199,7 +199,7 @@ export default class SelEvent extends Component {
       type: 'event/searchEventName',
       payload: {
         page: 1,
-        pagesize: 15,
+        pagesize: 20,
         filters: {
           name: {
             like: v,
@@ -234,6 +234,7 @@ export default class SelEvent extends Component {
     } = this.props;
     const isLoading = loading || loadingName;
     const { page, totalpage, data = [] } = searchEvent;
+    console.log('evtAll', evtAll);
     return (
       <Flex direction="column">
         <Flex.Item className={style.header} >

@@ -6,7 +6,7 @@ import style from './index.less';
 
 
 @ListView
-export default class Buckle extends Component {
+export default class Auditted extends Component {
   render() {
     const {
       handleClick,
@@ -24,7 +24,7 @@ export default class Buckle extends Component {
           onClick={() => handleClick(value)}
         >
           <div className={style.event_title}>
-            <span className={style.event_name}>{value.title}</span>
+            <span className={style.audit_event_name}>{value.title}</span>
             {label.map((its, i) => {
               const idx = i;
               return (
