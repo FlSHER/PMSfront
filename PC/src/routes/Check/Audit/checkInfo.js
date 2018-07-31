@@ -23,7 +23,7 @@ function EventInfo({ data }) {
         {data.event_name}
       </Description>
       <Description term="事件内容">
-        {data.description}
+        {data.description || '无'}
       </Description>
       <Description term="事件配置">
         {list.map((item, index) => {
@@ -53,7 +53,7 @@ function Approver({ tip, data }) {
   // const statusId = data.status_id;
   // const status = getBuckleStatus(statusId);
   let statusTextClassName = !data.rejected ? styles.pass : styles.reject;
-  if (data.status_id === 0 || data.status_id === 1) {
+  if ((data.status_id === 0 || data.status_id === 1) && !data.time) {
     statusTextClassName = styles.default;
   }
   return (
@@ -138,7 +138,7 @@ function getApproverData(data) {
   if (data.status_id === 0 && !data.first_approved_at) {
     first.statusText = '审核中...';
   } else if (data.first_approved_at) {
-    first.remark = data.first_approve_remark;
+    first.remark = data.first_approve_remark || '无';
   } else if (
     !data.first_approved_at &&
     data.status_id === -1 &&
@@ -146,7 +146,8 @@ function getApproverData(data) {
   ) {
     first.statusText = '驳回';
     first.rejected = true;
-    first.remark = data.reject_remark;
+    first.time = data.rejected_at;
+    first.remark = data.reject_remark || '无';
   }
 
   const last = {
@@ -164,10 +165,11 @@ function getApproverData(data) {
       first_approver: data.first_approver_point || null,
     },
   };
+
   if (data.status_id === 1 && !data.final_approved_at) {
     last.statusText = '审核中...';
   } else if (data.final_approved_at) {
-    last.remark = data.final_approve_remark;
+    last.remark = data.final_approve_remark || '无';
   } else if (
     !data.final_approved_at &&
     data.status_id === -1 &&
@@ -175,7 +177,8 @@ function getApproverData(data) {
   ) {
     last.statusText = '驳回';
     last.rejected = true;
-    last.remark = data.reject_remark;
+    last.time = data.rejected_at;
+    last.remark = data.reject_remark || '无';
   }
 
   return {
@@ -212,7 +215,7 @@ export default function CheckInfo({ data }) {
             {data.executed_at}
           </Description>
           <Description term="备注">
-            {data.remark}
+            {data.remark || '无'}
           </Description>
         </DescriptionList>
       </div>
@@ -240,7 +243,7 @@ export default function CheckInfo({ data }) {
         </div>
         {able !== 0 && <Approver tip="初审人" data={first} />}
         {able !== 0 && <Approver tip="终审人" data={last} />}
-        <StaffCustormer title="抄送人" data={addressees} />
+        {addressees.length > 0 && <StaffCustormer title="抄送人" data={addressees} />}
         <StaffCustormer title="记录人" data={recorder} />
       </div>
     </React.Fragment>

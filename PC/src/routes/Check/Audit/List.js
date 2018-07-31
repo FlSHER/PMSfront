@@ -81,7 +81,8 @@ export default class extends React.PureComponent {
         },
       },
     ];
-
+    const userInfo = window.user || {};
+    const currentSn = userInfo.staff_sn || '';
     const approver = [
       {
         title: '审核类型',
@@ -92,12 +93,9 @@ export default class extends React.PureComponent {
           return true;
         },
         render: (_, record) => {
-          if (record.status_id === 2 || (record.status_id === -1 && record.first_approved_at)) {
+          if (currentSn === record.final_approver_sn) {
             return '终审';
-          } else if (
-            record.status_id === 1
-            || (!record.first_approved_at && record.status_id === -1)
-          ) {
+          } else if (currentSn === record.first_approver_sn) {
             return '初审';
           }
         },
@@ -111,11 +109,18 @@ export default class extends React.PureComponent {
           return true;
         },
         render: (_, record) => {
-          if (record.status_id === 2 || record.status_id === 1) {
-            return '已通过';
-          } else if (record.status_id === -1) {
+          if (
+            (currentSn === record.rejecter_sn) && (record.status_id === -1)
+          ) {
             return '已驳回';
           }
+
+          if (
+            (record.final_approved_at) || (record.first_approved_at)
+          ) {
+            return '已通过';
+          }
+          return '';
         },
       },
     ];
@@ -124,12 +129,12 @@ export default class extends React.PureComponent {
       {
         title: '审核类型',
         dataIndex: 'status_id',
-        filters: type === 'recorded' ? statusData : status,
+        filters: type !== 'approved' ? statusData : status,
         onFilter: () => {
           return true;
         },
         render: (statusId) => {
-          if (type === 'recorded') return getBuckleStatus(statusId);
+          if (type !== 'approved') return getBuckleStatus(statusId);
           const { text } = status.find(item => item.value === statusId) || { text: '' };
           return text;
         },
@@ -175,9 +180,8 @@ export default class extends React.PureComponent {
         },
       },
     ];
-    if (type === 'processing') return columns.concat(processing, columns2);
-    if (type === 'approved' || type === 'addressee') return columns.concat(approver, columns2);
-    if (type === 'recorded') return columns.concat(processing, columns2);
+    if (['processing', 'addressee', 'recorded'].indexOf(type) !== -1) return columns.concat(processing, columns2);
+    if (type === 'approved') return columns.concat(approver, columns2);
   }
 
   fetchCancel = (id) => {
