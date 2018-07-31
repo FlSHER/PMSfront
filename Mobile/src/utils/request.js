@@ -12,7 +12,6 @@ const fetch = (url, options) => {
     timeout: 20000,
     headers,
   });
-  // console.log('url', url);
   const newMethod = method.toLowerCase();
   switch (true) {
     case newMethod === 'get':

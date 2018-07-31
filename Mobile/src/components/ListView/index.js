@@ -223,7 +223,6 @@ export default function ListView(ListItem) {
 
     render() {
       const { onRefresh } = this.props;
-      console.log();
       return (
         <React.Fragment>
           {onRefresh ? this.pullDownToRefresh() : this.renderList()}

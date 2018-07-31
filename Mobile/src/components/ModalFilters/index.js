@@ -47,7 +47,6 @@ class ModalFilters extends React.Component {
     }
     const { sorter } = this.state;
     const filters = { ...this.state.filters };
-    console.log('filter', filters);
     const { fetchDataSource, filterColumns } = this.props;
     const speciPams = [];
     let url = '';
@@ -211,7 +210,6 @@ class ModalFilters extends React.Component {
       onResetForm: () => {
         this.setState({ filters: {} },
           () => {
-            console.log('22222222');
             this.fetchFilters();
             onResetForm();
           });
@@ -232,7 +230,7 @@ class ModalFilters extends React.Component {
     return (
       <ListFilter
         {...this.makeModalProps()}
-        onOk={() => { console.log('ok'); this.fetchFilters(); }}
+        onOk={() => { this.fetchFilters(); }}
         filterKey="filterModal"
         iconStyle={{ width: '0.533rem', height: '0.533rem' }}
         contentStyle={{

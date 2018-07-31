@@ -108,13 +108,10 @@ export default class AuditList extends React.Component {
     this.setState({
       userInfo: newInfo,
     });
-    console.log('auditList', auditList);
     if ((auditList[type] && auditList[type].page !== 1)) {
       this.currentFilter();
       return;
     }
-    console.log('auditList', '哈哈哈哈');
-
     this.fetchDataSource({});
   }
 
