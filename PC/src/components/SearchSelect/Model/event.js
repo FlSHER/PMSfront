@@ -64,20 +64,15 @@ export default class extends React.Component {
         title: '编号',
         searcher: true,
         sorter: true,
-        width: 100,
+        width: 70,
+        fixed: 'left',
       },
       {
         dataIndex: 'name',
         title: '名称',
         searcher: true,
         width: 230,
-        render: (name) => {
-          return (
-            <Tooltip title={name}>
-              <div className="ellipsis" style={{ width: 230 }}>{name}</div>
-            </Tooltip>
-          );
-        },
+        fixed: 'left',
       },
       {
         dataIndex: 'type_id',

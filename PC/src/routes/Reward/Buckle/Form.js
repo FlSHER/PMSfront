@@ -127,9 +127,9 @@ export default class extends React.PureComponent {
   }
 
 
-  fetchFianl = () => {
+  fetchFianl = (params) => {
     const { dispatch } = this.props;
-    dispatch({ type: 'event/fetchFinalStaff' });
+    dispatch({ type: 'event/fetchFinalStaff', payload: params });
   }
 
   makeFormProps = () => {

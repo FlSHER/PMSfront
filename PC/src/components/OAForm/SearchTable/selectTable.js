@@ -117,6 +117,7 @@ export default class SelectTable extends React.Component {
       total,
       index,
       scroll,
+      serverSide,
     } = this.props;
 
     const { value } = this.state;
@@ -127,13 +128,11 @@ export default class SelectTable extends React.Component {
         selectedRowKeys: value.map(item => item[index]),
       },
     } : {};
-    // const dataSource = data && data.map((item) => {
-    //   return this.dotFieldsValue(item);
-    // });
+
     return (
       <div style={{ cursor: this.state.cursor }}>
         <OATable
-          serverSide
+          {...(serverSide !== undefined ? { serverSide } : { serverSide: true })}
           {...{ scroll: scroll || { x: 760 } }}
           {...selection}
           columns={columns}

@@ -126,15 +126,16 @@ export default class extends React.PureComponent {
   }
 
 
-  fetchFianl = () => {
+  fetchFianl = (params) => {
     const { dispatch } = this.props;
-    dispatch({ type: 'event/fetchFinalStaff' });
+    dispatch({ type: 'event/fetchFinalStaff', payload: params });
   }
 
   makeFormProps = () => {
-    const { form } = this.props;
+    const { form, loading } = this.props;
     const response = {
       form,
+      loading,
     };
     return response;
   }
@@ -178,6 +179,7 @@ export default class extends React.PureComponent {
       data: finalStaff,
       loading: finalLoading,
       scroll: { x: 700 },
+      serverSide: false,
       fetchDataSource: this.fetchFianl,
     };
     tableProps.columns = [

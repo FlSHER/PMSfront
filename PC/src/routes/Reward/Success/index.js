@@ -79,7 +79,7 @@ export default class BuckleSuccess extends React.PureComponent {
             <Button
               type="primary"
               onClick={() => {
-                this.props.dispatch(routerRedux.replace('/reward/buckle'));
+                this.props.history.goBack(-1);
               }}
             >再记一单
             </Button>

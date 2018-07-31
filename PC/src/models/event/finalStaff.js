@@ -3,9 +3,13 @@ import { fetchFinalStaff } from '../../services/event';
 const store = 'finalStaff';
 
 export default {
-  * fetchFinalStaff(_, { call, put }) {
+  * fetchFinalStaff({ payload: { update } }, { call, put, select }) {
     try {
-      const response = yield call(fetchFinalStaff);
+      let response;
+      response = yield select(model => model.event[store]);
+      if (!response.length || update) {
+        response = yield call(fetchFinalStaff);
+      }
       yield put({
         type: 'save',
         payload: {

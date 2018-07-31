@@ -76,7 +76,7 @@ class OATable extends PureComponent {
     return <div style={{ color: '#969696' }}>{`显示 ${range[0]} - ${range[1]} 项 , 共 ${total} 项`}</div>;
   }
 
-  fetchTableDataSource = (fetch) => {
+  fetchTableDataSource = (fetch, update = false) => {
     const { fetchDataSource, columns, serverSide, searchOnChange } = this.props;
     const { filters, pagination, sorter } = this.state;
     let params = {};
@@ -116,6 +116,9 @@ class OATable extends PureComponent {
       params = makerFilters(params);
     }
     if (!fetch) {
+      if (!serverSide && update) {
+        params.update = update;
+      }
       fetchDataSource(params);
     } else {
       return params;
@@ -607,7 +610,7 @@ class OATable extends PureComponent {
               multiOperator={multiOperator}
               extraOperator={this.makeExtraOperator()}
               extraOperatorRight={extraOperatorRight}
-              fetchTableDataSource={this.fetchTableDataSource}
+              fetchTableDataSource={() => { this.fetchTableDataSource(null, true); }}
               resetFilter={this.resetFilter}
               clearSelectedRows={this.clearSelectedRows}
             />
