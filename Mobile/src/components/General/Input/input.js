@@ -1,13 +1,27 @@
 import React from 'react';
-
-import {
-  connect,
-} from 'dva';
 import './index.less';
 
 class Input extends React.Component {
+  makeInputValue = (newValue) => {
+    let value = newValue;
+    const { range, onChange } = this.props;
+    if (range) {
+      if (parseFloat(value) < range.min) {
+        value = range.min;
+      }
+      if (parseFloat(value) > range.max) {
+        value = range.max;
+      }
+    }
+    // const numberValue = parseFloat(value);
+    // if (Math.floor(numberValue) === numberValue) {
+    //   value = Number(value);
+    // }
+    onChange(value);
+    // return value;
+  }
   render() {
-    const { value, onChange, type, style } = this.props;
+    const { value, onChange, type, style, floatNumber } = this.props;
     return (
       <input
         value={value}
@@ -18,7 +32,20 @@ class Input extends React.Component {
         onMouseUp={() => {
           if (this.ptr.focused) { this.ptr.focused = false; this.ptr.select(); return false; }
         }}
-        onChange={() => onChange(this.ptr.value)}
+        onBlur={() => {
+          if (floatNumber) {
+            const a = this.ptr.value;
+            const b = Number(a);
+            const c = b.toFixed(floatNumber);
+            let v = c;
+            if (Math.floor(c) === Number(v)) {
+              v = Number(v);
+            }
+            onChange(v);
+          }
+        }
+        }
+        onChange={() => this.makeInputValue(this.ptr.value)}
       />
     );
   }
@@ -26,6 +53,10 @@ class Input extends React.Component {
 
 Input.defaultProps = {
   type: 'number',
+  onBlur: () => {
+
+  },
+  floatNumber: 0,
 };
 
-export default connect()(Input);
+export default Input;

@@ -4,12 +4,13 @@ import {
 } from 'dva';
 import { WingBlank, WhiteSpace, Flex } from 'antd-mobile';
 import nothing from '../../../assets/nothing.png';
-import { Buckle } from '../../../common/ListView/index';
+import { Buckle, PaticipantBuckle } from '../../../common/ListView/index';
 import {
   convertStyle,
   auditFinishedState,
   buckleState,
   auditFinishedLabel,
+  auditFinishedResult,
 } from '../../../utils/convert.js';
 import { userStorage } from '../../../utils/util';
 
@@ -23,6 +24,7 @@ const sortList = [
   { name: '执行时间升序', value: 'executed_at-asc', icon: import('../../../assets/filter/asc.svg') },
   { name: '执行时间降序', value: 'executed_at-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
+
 const auditStates = [
   { name: '我参与的', value: 'participant' },
   { name: '我记录的', value: 'recorded' },
@@ -34,19 +36,23 @@ const dealtOption = [
   { name: '已通过', value: 1 },
   { name: '已驳回', value: -1 },
 ];
+
 const stateOption = [
   { name: '已通过', value: 2 },
   { name: '已驳回', value: -1 },
   { name: '审核中', value: 0 },
   { name: '已撤回', value: -2 },
 ];
+
 const procesingOption = [
   { name: '初审', value: 'first_approver_sn' },
   { name: '终审', value: 'final_approver_sn' },
 ];
+
 @connect(({ buckle }) => ({
   logList: buckle.logList,
 }))
+
 export default class BuckleList extends React.Component {
   state = {
     filter: {// 筛选结果
@@ -60,6 +66,7 @@ export default class BuckleList extends React.Component {
     sortItem: sortList[0],
     checkState: auditStates[0],
   }
+
   componentWillMount() {
     const { dispatch } = this.props;
     const { checkState, sortItem } = this.state;
@@ -68,7 +75,7 @@ export default class BuckleList extends React.Component {
       userInfo: newInfo,
     }, () => {
       dispatch({
-        type: 'buckle/getLogsList',
+        type: 'buckle/getLogsGroupList',
         payload: {
           pagesize: 10,
           sort: sortItem.value,
@@ -78,11 +85,12 @@ export default class BuckleList extends React.Component {
       });
     });
   }
+
   onPageChange = () => {
     const { dispatch, logList } = this.props;
     const { checkState, sortItem } = this.state;
     dispatch({
-      type: 'buckle/getLogsList',
+      type: 'buckle/getLogsGroupList',
       payload: {
         pagesize: 10,
         type: checkState.value,
@@ -92,16 +100,18 @@ export default class BuckleList extends React.Component {
       },
     });
   }
+
   onClose = key => () => {
     this.setState({
       [key]: false,
     });
   }
+
   onRefresh = () => {
     const { dispatch } = this.props;
     const { checkState, sortItem } = this.state;
     dispatch({
-      type: 'buckle/getLogsList',
+      type: 'buckle/getLogsGroupList',
       payload: {
         pagesize: 10,
         page: 1,
@@ -111,12 +121,14 @@ export default class BuckleList extends React.Component {
       },
     });
   }
+
   onCancel = (e, feild) => {
     const { modal } = this.state;
     const newModal = { ...modal };
     newModal[feild] = false;
     this.setNewState('modal', newModal);
   }
+
   onResetForm = () => {
     const { checkState, sortItem } = this.state;
     const { dispatch } = this.props;
@@ -126,7 +138,7 @@ export default class BuckleList extends React.Component {
         eventState: '',
       } }, () => {
         dispatch({
-          type: 'buckle/getLogsList',
+          type: 'buckle/getLogsGroupList',
           payload: {
             pagesize: 10,
             type: checkState.value,
@@ -136,6 +148,7 @@ export default class BuckleList extends React.Component {
         });
       });
   }
+
   onFilterOk = () => {
     const { checkState, sortItem } = this.state;
     const { dispatch } = this.props;
@@ -150,7 +163,7 @@ export default class BuckleList extends React.Component {
     //   max: filter.range.max,
     // };
     dispatch({
-      type: 'buckle/getLogsList',
+      type: 'buckle/getLogsGroupList',
       payload: {
         pagesize: 10,
         type: checkState.value,
@@ -189,6 +202,7 @@ export default class BuckleList extends React.Component {
     }
     return search;
   }
+
   sortReasult = (item) => {
     const { dispatch } = this.props;
     const { modal, checkState } = this.state;
@@ -199,7 +213,7 @@ export default class BuckleList extends React.Component {
       sortItem: item,
     }, () => {
       dispatch({
-        type: 'buckle/getLogsList',
+        type: 'buckle/getLogsGroupList',
         payload: {
           pagesize: 10,
           type: checkState.value,
@@ -209,12 +223,14 @@ export default class BuckleList extends React.Component {
       });
     });
   }
+
   showModal = (e, key) => {
     e.preventDefault(); // 修复 Android 上点击穿透
     this.setState({
       [key]: true,
     });
   }
+
   selFilter = (feild) => { // 筛选
     const { modal } = this.state;
     const modalObj = {};
@@ -237,6 +253,7 @@ export default class BuckleList extends React.Component {
     newFilter[key] = temp;
     this.setNewState('filter', newFilter);
   }
+
   doMultiple = (i, v, key) => {
     const { filter } = this.state;
     const newFilter = { ...filter };
@@ -250,6 +267,7 @@ export default class BuckleList extends React.Component {
     newFilter[key] = [...temp];
     this.setNewState('filter', newFilter);
   }
+
   tabChange = (item) => {
     const { dispatch, logList } = this.props;
     this.setState({
@@ -259,7 +277,7 @@ export default class BuckleList extends React.Component {
         return;
       }
       dispatch({
-        type: 'buckle/getLogsList',
+        type: 'buckle/getLogsGroupList',
         payload: {
           pagesize: 10,
           type: item.value,
@@ -268,9 +286,16 @@ export default class BuckleList extends React.Component {
       });
     });
   }
+
   toLookDetail = (item) => {
-    this.props.history.push(`/audit_detail/${item.id}`);
+    const { checkState } = this.state;
+    if (checkState.value === 'participant') {
+      this.props.history.push(`/audit_detail/${item.id}`);
+    } else {
+      this.props.history.push(`/event_preview/${item.id}`);
+    }
   }
+
   rangeChange = (v, key) => {
     const { filter } = this.state;
     const { range } = filter;
@@ -283,6 +308,7 @@ export default class BuckleList extends React.Component {
       },
     });
   }
+
   yearChange = (v, key) => {
     const { filter } = this.state;
     const { time } = filter;
@@ -295,6 +321,7 @@ export default class BuckleList extends React.Component {
       },
     });
   }
+
   monthChange = (v, key) => {
     let newV = Number(v);
     const { filter } = this.state;
@@ -316,13 +343,14 @@ export default class BuckleList extends React.Component {
       },
     });
   }
+
   renderLalbel = () => {
     const { checkState } = this.state;
     let labelArr = [];
     if (checkState.value === 'approved') {
       const newObj = [
         {
-          evt: value => buckleState(value.status_id),
+          evt: value => auditFinishedResult(value),
           labelStyle: value => convertStyle(value.status_id),
         },
         {
@@ -339,6 +367,7 @@ export default class BuckleList extends React.Component {
     }
     return labelArr;
   }
+
   render() {
     const { logList } = this.props;
     const { checkState, filter } = this.state;
@@ -419,17 +448,33 @@ export default class BuckleList extends React.Component {
               </div>
             ) : (
               <WingBlank>
-                <Buckle
+                {checkState.value === 'participant' && (
+                <PaticipantBuckle
                   dataSource={logList[checkState.value] ? logList[checkState.value].data : []}
                   handleClick={this.toLookDetail}
                   onRefresh={this.onRefresh}
                   onPageChange={this.onPageChange}
                   label={this.renderLalbel()}
                   page={logList[checkState.value] ?
-                    logList[checkState.value].page : 1}
+                logList[checkState.value].page : 1}
                   totalpage={logList[checkState.value] ?
-                    logList[checkState.value].totalpage : 10}
+                logList[checkState.value].totalpage : 10}
                 />
+                ) }
+                {checkState.value !== 'participant' && (
+                  <Buckle
+                    dataSource={logList[checkState.value] ? logList[checkState.value].data : []}
+                    handleClick={this.toLookDetail}
+                    onRefresh={this.onRefresh}
+                    onPageChange={this.onPageChange}
+                    label={this.renderLalbel()}
+                    page={logList[checkState.value] ?
+                    logList[checkState.value].page : 1}
+                    totalpage={logList[checkState.value] ?
+                    logList[checkState.value].totalpage : 10}
+                  />
+                )}
+
               </WingBlank>
             )}
 

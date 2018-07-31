@@ -96,7 +96,7 @@ export default class BuckleRecord extends React.Component {
         payload: {
           data: {
             param: {
-              remark,
+              final_approve_remark: remark,
               first_approver_point: point.first_approver_point,
               recorder_point: point.recorder_point,
             },

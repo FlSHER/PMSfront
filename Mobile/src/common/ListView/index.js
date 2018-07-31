@@ -11,6 +11,10 @@ import Group from './Group';
 import SeStaff from './searchStaff';
 import SearchEvent from './SearchEvent';
 import FinalStaff from './FinalStaff';
+import RecordPreview from './RecordPreview';
+import RecordDetail from './RecordDetail';
+import PaticipantBuckle from './PaticipantBuckle';
+import Auditted from './Auditted';
 
 export {
   Department,
@@ -24,5 +28,9 @@ export {
   SeStaff,
   SearchEvent,
   FinalStaff,
+  RecordPreview,
+  RecordDetail,
+  PaticipantBuckle,
+  Auditted,
   // EventList,
 };

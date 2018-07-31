@@ -100,7 +100,7 @@ export function dealErrorData(data, code) {
   } else if (code === 401 || code === 400 || code === 403) {
     msg = data.message;
   } else {
-    msg = codeMessage[code];
+    msg = codeMessage[code] || '网络异常';
   }
   Toast.fail(msg);
   return msg;
@@ -212,13 +212,25 @@ export function markTreeData(data, pid = null, { parentId, key }) {
   return tree;
 }
 
+export function findTreeParent(data, id, key = 'id', pid = 'parent_id') {
+  const result = [];
+  const [findData] = (data || []).filter((item) => {
+    return item[key] === id;
+  });
+  if (!findData || !id) return result;
+  result.push(findData);
+  let perantItem = [];
+  perantItem = findTreeParent(data, findData[pid], key, pid);
+  return result.concat(perantItem);
+}
+
 const whereConfig = {
-  in: '=',
   like: '~',
   min: '>=',
   max: '<=',
   lt: '<',
   gt: '>',
+  in: '=',
 };
 
 export function dotWheresValue(fields) {
@@ -239,8 +251,37 @@ export function dotWheresValue(fields) {
       fieldsWhere += `${name}=${fields[key]};`;
     }
   });
-
   return fieldsWhere;
+}
+
+export function doConditionValue(str = '') {
+  // const str = 'point_a>=1;point_a<=10;point_b>=1;
+  // point_b<=10;changed_at>=2018-07-25;changed_at<=2018-07;';
+  let arr = (str || '').split(';');
+  const obj = {};
+
+  for (let i = 0; i < arr.length; i += 1) {
+    const item = arr[i];
+    const keys = Object.keys(whereConfig);
+    for (let j = 0; j < keys.length; j += 1) {
+      const key = keys[j];
+      const name = whereConfig[key];
+      if (item.indexOf(name) > -1) {
+        const itemArr = item.split(name);
+        if (itemArr.length === 2) {
+          const objValue = {};
+          const [a, b] = itemArr;
+          objValue[key] = b;
+          obj[a] = { ...obj[a] || {}, ...objValue };
+          if (i === arr.length) {
+            arr = [...arr.slice(1)];
+          }
+          break;
+        }
+      }
+    }
+  }
+  return obj;
 }
 
 export function makerFilters(params) {
@@ -258,9 +299,30 @@ export function userStorage(key) {
   const newInfo = JSON.parse(info === undefined ? '{}' : info);
   return newInfo;
 }
+
 export function isArray(o) {
   return Object.prototype.toString.call(o) === '[object Array]';
 }
+
+export function parseParams(url) {
+  const keyValue = url.split('&');
+  const obj = {};
+  keyValue.forEach((item) => {
+    const arr = [];
+    const i = item.indexOf('=');
+    if (i > -1 && i < item.length - 1) {
+      arr[0] = item.slice(0, i);
+      arr[1] = item.slice(i + 1);
+    }
+
+    if (arr && arr.length === 2) {
+      const [key, value] = arr;
+      obj[key] = value;
+    }
+  });
+  return obj;
+}
+
 
 export function getUrlParams(url) {
   const d = decodeURIComponent;
@@ -292,6 +354,17 @@ export function getUrlParams(url) {
     }
   }
   return obj;
+}
+
+export function parseParamsToUrl(params) {
+  let url = '';
+  const strArr = [];
+  Object.keys(params).forEach((key) => {
+    const str = `${key}=${params[key]}`;
+    strArr.push(str);
+  });
+  url = strArr.join('&');
+  return url;
 }
 
 export function scrollToAnchor(anchorName) {
@@ -349,5 +422,87 @@ export function makeMonthData(arr) {
     return obj;
   });
   return dateData;
+}
+
+export function urlParamsUnicode(params) {
+  const url = [];
+  Object.keys(params).forEach((item) => {
+    if (params[item]) {
+      url.push(`${item}=${params[item]}`);
+    }
+  });
+  return url.join('&');
+}
+
+
+export function sum(arr) {
+  return arr.reduce((prev, curr) => {
+    return Number(prev) + Number(curr);
+  });
+}
+
+
+/**
+* str 截取字符串
+* width 容器宽度
+* fontSize 字数
+*/
+export function getLetfEllipsis(str, width, fontSize) {
+  const numberStr = Math.floor(width / fontSize);
+  if (str.length < numberStr) return str;
+  return `...${str.substr(-numberStr + 3)}`;
+}
+
+
+/**
+* arr 原数组
+* sort 排序降序或升序
+*/
+export function sortArr(arr, sort = 'desc') {
+  return arr.sort((a, b) => {
+    return sort === 'desc' ? b - a : a - b;
+  });
+}
+
+export const monthMessage = {
+  1: '一月',
+  2: '二月',
+  3: '三月',
+  4: '四月',
+  5: '五月',
+  6: '六月',
+  7: '七月',
+  8: '八月',
+  9: '九月',
+  10: '十月',
+  11: '十一月',
+  12: '十二月',
+};
+
+/**
+* 获取url参数对象
+* @param {参数名称} name
+*/
+export function getUrlString(name, url) {
+  const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
+  const r = (url || window.location.search.substr(1)).match(reg);
+  if (r != null) return unescape(r[2]);
+  return null;
+}
+
+
+export function pageChange(obj, type = 'add') {
+  const { page, pagesize, total } = obj;
+  const newObj = { ...obj };
+  if (total / pagesize === pagesize) {
+    if (type === 'add') {
+      newObj.page = page + 1;
+      newObj.total = total + 1;
+    } else {
+      newObj.page = page === 1 ? 1 : page - 1;
+      newObj.total = total - 1;
+    }
+  }
+  return newObj;
 }
 

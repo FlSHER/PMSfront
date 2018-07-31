@@ -77,7 +77,7 @@ export default class SelEvent extends Component {
       type: 'event/searchEventName',
       payload: {
         page: page + 1,
-        pagesize: 15,
+        pagesize: 20,
         filters: {
           name: {
             like: searchValue,
@@ -254,7 +254,7 @@ export default class SelEvent extends Component {
       type: 'event/searchEventName',
       payload: {
         page: 1,
-        pagesize: 15,
+        pagesize: 20,
         filters: {
           name: {
             like: v,
@@ -284,7 +284,8 @@ export default class SelEvent extends Component {
 
   render() {
     const { eventList, selected, searchValue } = this.state;
-    const { breadCrumb, evtName, loading, loadingName, searchEvent, loadingSearch } = this.props;
+    const { breadCrumb, evtName, loading, loadingName,
+      searchEvent, loadingSearch, evtAll } = this.props;
     const isLoading = loading || loadingName;
     const { page, totalpage, data = [] } = searchEvent;
     return (
@@ -341,6 +342,7 @@ export default class SelEvent extends Component {
             <SearchEvent
               name="name"
               heightNone
+              breadData={evtAll}
               selected={selected.data}
               dataSource={data || []}
               onChange={this.getSelectResult}

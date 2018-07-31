@@ -13,17 +13,8 @@ import home_ from '../assets/home_.svg';
 
 import appro from '../assets/appro.svg';
 import appro_ from '../assets/appro_.svg';
+import { userStorage } from './util';
 
-export const bankType = [
-  { value: '1', label: '中国工商银行' },
-  { value: '2', label: '中国农业银行' },
-  { value: '3', label: '中国建设银行' },
-  { value: '4', label: '中国银行' },
-  { value: '5', label: '交通银行' },
-  { value: '6', label: '招商银行' },
-  { value: '7', label: '中国邮政储蓄银行' },
-  { value: '8', label: '农村商业银行' },
-];
 // 底部菜单
 export const tabbar = [{
   title: '申请',
@@ -75,20 +66,22 @@ export const indexMenu = [
     key: '2',
     children: [
       { text: '记录奖扣', to: '/buckle_record', icon: import('../assets/jobstation/积分制-icon-记录奖扣.png') },
-      { text: '奖扣审核', to: '/audit_list', icon: import('../assets/jobstation/积分制-icon-奖扣审核.png') },
-      { text: '我的奖扣', to: '/buckle_list', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
-      // { text: '奖扣指标', to: '', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
+      { text: '批量记录', to: '/buckle_preview', icon: import('../assets/jobstation/积分制-icon-记录奖扣.png') },
+      { text: '奖扣审核', to: '/audit_list_2', icon: import('../assets/jobstation/积分制-icon-奖扣审核.png') },
+      { text: '我的奖扣', to: '/buckle_list_2', icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
     ],
   },
   {
     name: '积分',
     key: '3',
     children: [
-      // { text: '我的积分', to: '/point_statistic',
-      // icon: import('../assets/jobstation/积分制-icon-我的积分.png') },
-      { text: '积分明细', to: '/point_list', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },
+      { text: '我的积分', to: '/point_statistic', icon: import('../assets/jobstation/积分制-icon-我的积分.png') },
+      { text: '积分明细', to: '/point_list_2', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },
       // { text: '全员统计', to: '', icon: import('../assets/jobstation/积分制-icon-全员统计.png') },
       { text: '积分排名', to: '/ranking_group', icon: import('../assets/jobstation/积分制-icon-积分排名.png') },
+      // { text: '奖扣指标', to: '/buckle_target',
+      // icon: import('../assets/jobstation/积分制-icon-我的奖扣.png') },
+
       // { text: '投诉受理', to: '', icon: import('../assets/jobstation/积分制-icon-投诉受理.png') },
     ],
   },
@@ -106,6 +99,8 @@ export const buckleState = (state) => {
       return '已驳回';
     case -2:
       return '已撤回';
+    case -3:
+      return '已撤销';
     default:
   }
 };
@@ -132,31 +127,43 @@ export const auditLabel = (state) => {
 // 状态标签颜色
 export const convertStyle = (status) => {
   switch (status) {
+    case -3: return 'label_state_0';
     case -2: return 'label_state_0';
     case -1: return 'label_state_1';
     case 0: return 'label_state_3';
-    case 1:
+    case 1: return 'label_state_3';
     case 2: return 'label_state_2';
     default: return 'label_state_default';
   }
 };
 // 已审核的列表已操作的状态
 export const auditFinishedState = (item) => {
-  if (item.status_id === 1 || (item.first_approved_at && item.status_id === -1)) {
-    return '初审';
-  } else if (item.status_id === 2 || (item.status_id === -1 && !item.final_approved_at)) {
+  if (item.final_approver_sn === userStorage('userInfo').staff_sn) {
     return '终审';
+  } else if (item.first_approver_sn === userStorage('userInfo').staff_sn) {
+    return '初审';
   }
+};
+
+// 已审核的列表已操作的结果
+export const auditFinishedResult = (item) => {
+  return item.rejecter_sn === userStorage('userInfo').staff_sn ? '驳回' : '通过';
 };
 
 // 已审核的列表已操作的状态
 export const auditFinishedLabel = (item) => {
-  if (item.status_id === 1 || (item.first_approved_at && item.status_id === -1)) {
+  if (item.status_id === 1 || (!item.first_approved_at && item.status_id === -1)) {
     return 'label_state_first';
   } else if (item.status_id === 2 || (item.status_id === -1 && !item.final_approved_at)) {
     return 'label_state_final';
   }
 };
+
+// 已审核的列表已操作的结果
+export const auditFinishedResultLabel = (item) => {
+  return item.rejecter_sn === userStorage('userInfo').staff_sn ? 'label_state_1' : 'label_state_2';
+};
+
 
 export function clearString(s) {
   const pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）&;|{}【】‘；：”“'。，、？]");
@@ -178,36 +185,31 @@ export function reAgainImg(url, str) {
   return newImg;
 }
 
-
 export const pointSource = [
   {
-    name: '系统分', value: 0,
+    name: '基础', value: '0', label: '基础',
   },
   {
-    name: '固定分', value: 1,
+    name: '工作', value: '1', label: '工作',
   },
   {
-    name: '奖扣分', value: 2,
+    name: '行政', value: '2', label: '行政',
   },
   {
-    name: '任务分', value: 3,
+    name: '创新', value: '3', label: '创新',
   },
   {
-    name: '考勤分', value: 4,
-  },
-  {
-    name: '日志分', value: 5,
+    name: '其他', value: '4', label: '其他',
   },
 ];
 
 export const convertPointSource = (id) => {
   switch (id) {
-    case 0: return '系统分';
-    case 1: return '固定分';
-    case 2: return '奖扣分';
-    case 3: return '任务分';
-    case 4: return '考勤分';
-    case 5: return '日志分';
+    case 0: return '基础';
+    case 1: return '工作';
+    case 2: return '行政';
+    case 3: return '创新';
+    case 4: return '其他';
     default:
   }
 };

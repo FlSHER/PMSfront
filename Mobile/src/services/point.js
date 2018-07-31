@@ -11,3 +11,8 @@ export async function getPointLog(params) {
     json: true,
   }, false);
 }
+
+export async function getPointLog2(params) {
+  const url = params ? `?${params}` : '';
+  return request(`/api/points/statistic/log${url}`, null, false);
+}

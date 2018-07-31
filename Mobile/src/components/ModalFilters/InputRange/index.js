@@ -17,7 +17,7 @@ class InputRange extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { value } = nextProps;
+    const { value = { min: '', max: '' } } = nextProps;
     if (JSON.stringify(value) !== JSON.stringify(this.props.value)) {
       this.setState({
         value: {
@@ -26,6 +26,24 @@ class InputRange extends React.Component {
         },
       });
     }
+  }
+
+  makeInputValue = (newValue) => {
+    let value = newValue;
+    const { range, type } = this.props;
+    if (type === 'number' && range) {
+      if (parseFloat(value) < range.min) {
+        value = range.min;
+      }
+      if (parseFloat(value) > range.max) {
+        value = range.max;
+      }
+    }
+    const numberValue = parseFloat(value);
+    if (Math.floor(numberValue) === numberValue) {
+      value = Number(value);
+    }
+    return value;
   }
 
   handleOnChange = (key, newValue) => {
@@ -41,6 +59,23 @@ class InputRange extends React.Component {
     });
   }
 
+  handleOnBlur = (key, newValue) => {
+    const { value } = this.state;
+    const { onBlur } = this.props;
+    let nowValue = newValue;
+    if (!/^(-?\d+)(\.\d+)?$/.test(newValue)) {
+      nowValue = Number(newValue);
+    }
+    this.setState({
+      value: {
+        ...value,
+        [key]: nowValue,
+      },
+    }, () => {
+      onBlur(this.state.value);
+    });
+  }
+
   render() {
     const { value: { min, max } } = this.state;
     const { addonBefore } = this.props;
@@ -49,12 +84,14 @@ class InputRange extends React.Component {
         {addonBefore}
         <InputItem
           value={min}
-          onChange={value => this.handleOnChange('min', value)}
+          onChange={v => this.handleOnChange('min', v)}
+          // onBlur={(v) => { this.handleOnBlur('min', v); }}
         />
         <span className={style.rg}>—</span>
         <InputItem
           value={max}
-          onChange={value => this.handleOnChange('max', value)}
+          // onBlur={v => this.handleOnBlur('min', v)}
+          onChange={v => this.handleOnChange('max', v)}
         />
       </Flex>
     );

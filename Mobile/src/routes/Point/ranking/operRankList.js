@@ -136,7 +136,6 @@ export default class PointRanking extends React.Component {
     const { history } = this.props;
     const stage = item.value;
     const params = this[stage];
-    console.log('params', item, params);
     const url = `/ranking${params}`;
     history.replace(url);
   }
@@ -148,18 +147,6 @@ export default class PointRanking extends React.Component {
       payload: params,
     });
   }
-
-  // timeChange = (v, key) => {
-
-  //   // const { params } = this.state;
-  //   // const newParams = { ...params };
-  //   // newParams[key] = moment(v).format('YYYY-MM-DD');
-  //   // this.setState({
-  //   //   params: newParams,
-  //   // }, () => {
-  //   //   this.dealFilter();
-  //   // });
-  // }
 
   urlParamsUnicode = (params) => {
     const url = [];
@@ -180,90 +167,13 @@ export default class PointRanking extends React.Component {
     const params = this.urlParamsUnicode(this.urlParams);
     url += params ? `?${params}` : '';
     this.props.history.push(url);
-
-    // const { modal, params } = this.state;
-    // const newModal = { ...modal };
-    // const newParams = { ...params };
-    // newModal.sortModal = false;
-    // newParams.group_id = item.id;
-    // this.setState({
-    //   modal: { ...newModal },
-    //   params: newParams,
-    // }, () => {
-    //   this.dealFilter();
-    // });
   }
+
   toPointList = (item) => {
-    const { history, ranking } = this.props;
-    const groupId = ranking.group_id;
-    history.push(`/point_list?staff_sn=${item.staff_sn}&group_id=${groupId}`);
+    const { history } = this.props;
+    history.push(`/point_statistic?staff_sn=${item.staff_sn}`);
   }
-  renderRankingItem = (item) => {
-    const { userInfo } = this;
-    if (item.staff_sn === userInfo.staff_sn) {
-      return (
-        <Flex
-          justify="between"
-          key={item.staff_sn}
-          style={{
-            borderBottom: '1px solid rgb(250,250,250)',
-            position: 'relative',
-            height: '50px',
-            padding: '0 0.48rem',
-          }}
-        >
-          <Flex.Item
-            style={{ fontSize: '16px', color: 'rgb(24,116,208)' }}
-          >
-            <span>{item.rank}&nbsp;&nbsp;{item.staff_name}</span>
-            <span
-              id="my"
-              style={{ position: 'absolute', top: '-40px' }}
-            >看不见我
-            </span>
-          </Flex.Item>
-          <Flex.Item
-            style={{
-              color: 'rgb(24,116,208)',
-              fontSize: '16px',
-              textAlign: 'right',
-            }}
-          >
-            {item.total}
-          </Flex.Item>
-        </Flex>
-      );
-    }
-    return (
-      <Flex
-        key={item.staff_sn}
 
-        justify="between"
-        style={{
-          height: '50px',
-          padding: '0 0.48rem',
-          borderBottom: '1px solid rgb(250,250,250)',
-        }}
-      >
-        <Flex.Item
-          style={{
-            fontSize: '16px',
-          }}
-        >
-          {item.rank}&nbsp;&nbsp;{item.staff_name}
-        </Flex.Item>
-        <Flex.Item
-          style={{
-            color: 'rgb(155,155,155)',
-            fontSize: '16px',
-            textAlign: 'right',
-          }}
-        >
-          {item.total}
-        </Flex.Item>
-      </Flex>
-    );
-  }
   render() {
     const { ranking, loading, group } = this.props;
     const statisGroup = group.statis_group || [];

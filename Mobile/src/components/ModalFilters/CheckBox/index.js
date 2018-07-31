@@ -5,7 +5,7 @@ class CheckBox extends React.PureComponent {
   constructor(props) {
     super(props);
     const { value, multiple } = props;
-    const newValue = value || (multiple ? [] : null);
+    const newValue = value || (multiple ? [] : []);
     this.state = {
       value: newValue,
     };

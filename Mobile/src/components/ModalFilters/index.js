@@ -1,5 +1,4 @@
 import React from 'react';
-import { CheckBoxs } from '../../components/index';
 import ListFilter from '../Filter/ListFilter';
 import { makerFilters } from '../../utils/util';
 import InputRange from './InputRange';
@@ -14,28 +13,73 @@ class ModalFilters extends React.Component {
     const { filters, sorter } = props;
     this.state = {
       filters: filters || {},
-      sorter: sorter || {},
+      sorter: sorter || '',
     };
   }
 
   componentWillMount() {
-    this.fetchFilters({});
+    // this.fetchFilters({});
+  }
+
+  componentWillReceiveProps(props) {
+    const { filters, sorter } = props;
+    if (JSON.stringify(filters) !== JSON.stringify(this.props.filters)) {
+      this.setState({
+        filters: filters || {},
+      });
+    }
+    if (JSON.stringify(sorter) !== JSON.stringify(this.props.sorter)) {
+      this.setState({
+        sorter: sorter || '',
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
   }
 
   fetchFilters = (params) => {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
     const { sorter } = this.state;
     const filters = { ...this.state.filters };
-    const { fetchDataSource } = this.props;
+    const { fetchDataSource, filterColumns } = this.props;
+    const speciPams = [];
+    let url = '';
+    let newParams = {};
     Object.keys(filters).forEach((key) => {
-      if (Array.isArray(filters[key])) {
+      const [speciColumn] = filterColumns.filter(item => item.name === key);
+      if (speciColumn && speciColumn.notusename) { // 不使用key
+        const strValue = filters[key];
+        delete filters[key];
+        if (speciColumn.notbelong) { // 不放在filters里
+          newParams[key] = strValue.in;
+        } else {
+          speciPams.push(strValue);
+        }
+      } else if (speciColumn && !speciColumn.notusename) { // 要使用key
+        if (speciColumn.notbelong) { // 不放在filters里
+          newParams[key] = filters[key].in;
+          delete filters[key];
+        }
+      } else if (Array.isArray(filters[key])) {
         filters[key] = { in: filters[key] };
       }
     });
-    let newParams = {
+    newParams = {
+      ...newParams,
       sort: sorter,
       filters,
     };
+    url = speciPams.join(';');
     newParams = makerFilters(params || newParams);
+    newParams.filters += url ? `;${url}` : '';
+    // newParams.other;
+    console.log('newParams', newParams);
     fetchDataSource(newParams);
   }
 
@@ -46,6 +90,8 @@ class ModalFilters extends React.Component {
         ...filters,
         [key]: value,
       },
+    }, () => {
+      this.fetchFilters();
     });
   }
 
@@ -57,6 +103,22 @@ class ModalFilters extends React.Component {
     });
   }
 
+  handleInputOnChange = (key, value) => {
+    const { filters } = this.state;
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.setState({
+      filters: {
+        ...filters,
+        [key]: value,
+      },
+    }, () => {
+      this.timer = setInterval(() => {
+        this.fetchFilters();
+      }, 500);
+    });
+  }
 
   makeRangeFilter = (props) => {
     const { name, min, max } = props;
@@ -67,31 +129,32 @@ class ModalFilters extends React.Component {
         value={rangaValue}
         min={min}
         max={max}
-        onChange={value => this.handleFiltersOnChange(name, value)}
+        // onBlur={value => this.handleFiltersOnChange(name, value)}
+        onChange={value => this.handleInputOnChange(name, value)}
       />
     );
   }
 
   makeCheckFilter = (props) => {
     const { name } = props;
-    const rangaValue = this.state.filters[name];
+    const keyValue = this.state.filters[name];
+    const checkValue = keyValue ? keyValue.in : '';
     return (
       <CheckBox
         {...props}
-        value={rangaValue}
-        onChange={value => this.handleFiltersOnChange(name, value)}
+        value={checkValue || []}
+        onChange={value => this.handleFiltersOnChange(name, { in: value })}
       />
     );
   }
 
   makeTimeRangeFilter = (props) => {
-    const { name, min, max } = props;
+    const { name, max } = props;
     const rangaValue = this.state.filters[name];
     return (
       <PickerRange
         {...props}
         value={rangaValue}
-        min={min}
         max={max}
         onChange={value => this.handleFiltersOnChange(name, value)}
       />
@@ -139,10 +202,18 @@ class ModalFilters extends React.Component {
   }
 
   makeModalProps = () => {
-    const { onCancel, visible } = this.props;
+    const { onCancel, visible, onResetForm, top } = this.props;
     const resopnse = {
       onCancel: () => onCancel(false),
       visible,
+      top,
+      onResetForm: () => {
+        this.setState({ filters: {} },
+          () => {
+            this.fetchFilters();
+            onResetForm();
+          });
+      },
     };
     return resopnse;
   }
@@ -159,7 +230,7 @@ class ModalFilters extends React.Component {
     return (
       <ListFilter
         {...this.makeModalProps()}
-        onOk={() => this.fetchFilters()}
+        onOk={() => { this.fetchFilters(); }}
         filterKey="filterModal"
         iconStyle={{ width: '0.533rem', height: '0.533rem' }}
         contentStyle={{
@@ -200,82 +271,70 @@ class ModalFilters extends React.Component {
 ModalFilters.defaultProps = {
   model: 'filter',
   filterColumns: [
-    {
-      title: '记录时间',
-      name: 'changed_at',
-      type: 'timerange',
-      addonBefore: (
-        <CheckBoxs
-          itemStyle={{ marginBottom: 0, marginRight: '0.1333rem' }}
-          option={[{ name: 'A分', value: 'point_a' }]}
-        />
-      ),
-      min: null,
-      max: new Date(),
-    },
-    {
-      title: '分值类型',
-      name: 'point_a',
-      type: 'range',
-      addonBefore: (
-        <CheckBoxs
-          itemStyle={{ marginBottom: 0, marginRight: '0.1333rem' }}
-          option={[{ name: 'A分', value: 'point_a' }]}
-        />
-      ),
-      min: 1,
-      max: 10,
-    },
-    {
-      name: 'point_b',
-      type: 'range',
-      addonBefore: (
-        <CheckBoxs
-          itemStyle={{ marginBottom: 0, marginRight: '0.1333rem' }}
-          option={[{ name: 'B分', value: 'point_b' }]}
-        />
-      ),
-      min: 1,
-      max: 10,
-    },
-    {
-      name: 'source_id',
-      type: 'checkBox',
-      title: '分值来源',
-      multiple: true,
-      options: [
-        {
-          label: '系统分', value: 0,
-        },
-        {
-          label: '固定分', value: 1,
-        },
-        {
-          label: '奖扣分', value: 2,
-        },
-        {
-          label: '任务分', value: 3,
-        },
-        {
-          label: '考勤分', value: 4,
-        },
-        {
-          label: '日志分', value: 5,
-        },
-      ],
-    },
+    // {
+    //   title: '记录时间',
+    //   name: 'changed_at',
+    //   type: 'timerange',
+    //   min: null,
+    //   max: moment(new Date()).format('YYYY-MM-DD'),
+    // },
+    // {
+    //   title: '分值类型',
+    //   name: 'point_a',
+    //   type: 'range',
+    //   addonBefore: (
+    //     <CheckBoxs
+    //       itemStyle={{ marginBottom: 0, marginRight: '0.1333rem' }}
+    //       option={[{ name: 'A分', value: 'point_a' }]}
+    //     />
+    //   ),
+    //   min: 1,
+    //   max: 10,
+    // },
+    // {
+    //   name: 'point_b',
+    //   type: 'range',
+    //   addonBefore: (
+    //     <CheckBoxs
+    //       itemStyle={{ marginBottom: 0, marginRight: '0.1333rem' }}
+    //       option={[{ name: 'B分', value: 'point_b' }]}
+    //     />
+    //   ),
+    //   min: 1,
+    //   max: 10,
+    // },
+    // {
+    //   name: 'source_id',
+    //   type: 'checkBox',
+    //   title: '分值来源',
+    //   multiple: true,
+    //   options: [
+    //     {
+    //       label: '系统分', value: 0,
+    //     },
+    //     {
+    //       label: '固定分', value: 1,
+    //     },
+    //     {
+    //       label: '奖扣分', value: 2,
+    //     },
+    //     {
+    //       label: '任务分', value: 3,
+    //     },
+    //     {
+    //       label: '考勤分', value: 4,
+    //     },
+    //     {
+    //       label: '日志分', value: 5,
+    //     },
+    //   ],
+    // },
   ],
-  sorter: {},
-  sorterData: [
-    { name: '默认排序', value: 'created_at-asc' },
-    { name: '时间升序', value: 'created_at-asc' },
-    { name: '时间降序', value: 'created_at-desc' },
-    { name: 'A分升序', value: 'point_a-asc' },
-    { name: 'A分降序', value: 'point_a_-desc' },
-    { name: 'B分升序', value: 'point_b_-asc' },
-    { name: 'B分降序', value: 'point_b_-desc' },
-  ],
-  filters: { point_a: { min: 1, max: 10 }, point_b: { min: 1, max: 10 } },
+  sorter: 'created_at-asc',
+  sorterData: [],
+  filters: {
+    // point_a: { min: 1, max: 10 }, point_b: { min: 1, max: 10 }
+  },
   onCancel: () => { },
   fetchDataSource: () => { },
 };

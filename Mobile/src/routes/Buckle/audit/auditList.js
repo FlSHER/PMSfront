@@ -7,10 +7,11 @@ import { Buckle } from '../../../common/ListView/index';
 import {
   auditState,
   auditLabel,
-  convertStyle,
+  // convertStyle,
   auditFinishedState,
-  buckleState,
   auditFinishedLabel,
+  auditFinishedResult,
+  auditFinishedResultLabel,
 } from '../../../utils/convert.js';
 import { userStorage, makerFilters } from '../../../utils/util';
 
@@ -19,7 +20,8 @@ import style from '../index.less';
 import shortcut from '../../../assets/shortcuts.png';
 
 const sortList = [
-  { name: '默认排序', value: 'created_at-asc', icon: import('../../../assets/filter/default_sort.svg') },
+  // { name: '默认排序', value: 'created_at-asc',
+  // icon: import('../../../assets/filter/default_sort.svg') },
   { name: '时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
   { name: '时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
@@ -48,7 +50,7 @@ export default class AuditList extends React.Component {
       filterModal: false,
       sortModal: false,
     },
-    sortItem: { name: '默认排序', value: 'created_at-desc' },
+    sortItem: { name: '时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
     checkState: { name: '待审核', value: 'processing' },
     el: {},
     shortModal: false,
@@ -159,6 +161,7 @@ export default class AuditList extends React.Component {
       [key]: newValue,
     });
   }
+
   dealFilter = () => {
     const { filter } = this.state;
     const { userInfo } = this.state;
@@ -176,6 +179,7 @@ export default class AuditList extends React.Component {
     }
     return search;
   }
+
   doAudit = (type, state) => {
     const { el } = this.state;
     const { dispatch, history } = this.props;
@@ -188,6 +192,7 @@ export default class AuditList extends React.Component {
     });
     history.push(`/audit_reason/${type}/${state}/-1`);
   }
+
   sortReasult = (item) => {
     const { modal } = this.state;
     const newModal = { ...modal };
@@ -197,12 +202,14 @@ export default class AuditList extends React.Component {
       sortItem: item,
     });
   }
+
   showModal = (e, key) => {
     e.preventDefault(); // 修复 Android 上点击穿透
     this.setState({
       [key]: true,
     });
   }
+
   selFilter = (feild) => { // 筛选
     const { modal } = this.state;
     const modalObj = {};
@@ -217,6 +224,7 @@ export default class AuditList extends React.Component {
     });
     this.setNewState('modal', modalObj);
   }
+
   checkItem = (i, v, key) => {
     const { filter } = this.state;
     const newFilter = { ...filter };
@@ -224,6 +232,7 @@ export default class AuditList extends React.Component {
     newFilter[key] = temp;
     this.setNewState('filter', newFilter);
   }
+
   doMultiple = (i, v, key) => {
     const { filter } = this.state;
     const newFilter = { ...filter };
@@ -237,6 +246,7 @@ export default class AuditList extends React.Component {
     newFilter[key] = [...temp];
     this.setNewState('filter', newFilter);
   }
+
   tabChange = (item) => {
     const { dispatch, auditList } = this.props;
     const { sortItem } = this.state;
@@ -257,6 +267,7 @@ export default class AuditList extends React.Component {
       });
     });
   }
+
   sortReasult = (item) => {
     const { dispatch } = this.props;
     const { modal, checkState } = this.state;
@@ -277,10 +288,18 @@ export default class AuditList extends React.Component {
       });
     });
   }
-  toLookDetail = (item) => {
-    this.props.history.push(`/audit_detail/${item.id}`);
-  }
 
+  toLookDetail = (item) => {
+    const { dispatch, history } = this.props;
+    dispatch({
+      type: 'buckle/save',
+      payload: {
+        store: 'auditList',
+        data: {},
+      },
+    });
+    history.push(`/event_preview/${item.id}`);
+  }
 
   renderLalbel = () => {
     const { checkState } = this.state;
@@ -294,8 +313,8 @@ export default class AuditList extends React.Component {
     if (checkState.value === 'approved') {
       const newObj = [
         {
-          evt: value => buckleState(value.status_id),
-          labelStyle: value => convertStyle(value.status_id),
+          evt: value => auditFinishedResult(value),
+          labelStyle: value => auditFinishedResultLabel(value.status_id),
         },
         {
           evt: value => auditFinishedState(value),
@@ -318,6 +337,7 @@ export default class AuditList extends React.Component {
     );
     return extra;
   }
+
   render() {
     const { auditList } = this.props;
     const { checkState, filter, el, userInfo, shortModal } = this.state;

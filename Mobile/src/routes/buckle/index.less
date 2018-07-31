@@ -11,7 +11,7 @@
       font-size: 16px;
     }
     @media (-webkit-min-device-pixel-ratio: 2),
-      (min-resolution: 2dppx) {
+    (min-resolution: 2dppx) {
       .am-list-body::before {
         background-color: #fff !important;
       }
@@ -26,14 +26,17 @@
       border-top: none;
       border-bottom: none;
     }
-    .am-list .am-list-item.am-textarea-item {
-      border-bottom: none;
-    }
     .am-list-body div:not(:last-child) .am-list-line {
       border-bottom: none;
     }
     .am-list-item {
       border-bottom: 1px solid rgb(240, 240, 240);
+    }
+    .am-list-item.am-textarea-item {
+      border-bottom: none;
+    }
+    .am-list-item .am-textarea-item {
+      border-bottom: none;
     }
     .am-list-item.am-textarea-item::after {
       background-color: #fff !important;
@@ -57,6 +60,7 @@
       height: 70/75rem;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       border-bottom: 2px solid rgb(245, 245, 245);
     }
     .person_list {
@@ -335,4 +339,76 @@
 
 .opt_all {
   background: #badcff;
+}
+
+.all_info {
+  display: flex;
+  height: 140/75rem;
+  align-items: center;
+  padding-left: 36/75rem;
+  .left {
+    flex-grow: 1;
+    .base(@base-text-color,
+    @detail-describe-size);
+    span+span {
+      margin-left: 60/75rem;
+    }
+  }
+  :global {
+    .am-button-ghost::before {
+      border: none !important;
+    }
+  }
+}
+
+.nobottom {
+  border-bottom: none;
+  :global {
+    .am-list-item {
+      border-bottom: none;
+    }
+  }
+}
+
+.bottom {
+  border-bottom: 1px solid rgb(240, 240, 240);
+}
+
+.nopaddingl {
+  padding-left: none;
+  :global {
+    .am-list-item {
+      border-left: none;
+    }
+  }
+}
+
+.event_title {
+  .base(rgb(74,
+  74,
+  74),
+  16px);
+  // line-height: 48/75rem;
+  margin-bottom: 20/75rem;
+  padding-top: 20/75rem;
+}
+
+.event_remark {
+  line-height: 44/75rem;
+  .base(rgb(150,
+  150,
+  150),
+  12px);
+  margin-bottom: 10/75rem;
+  &:last-child{
+    margin-bottom: none;
+  }
+}
+
+.submit_ok{
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

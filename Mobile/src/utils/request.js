@@ -12,7 +12,6 @@ const fetch = (url, options) => {
     timeout: 20000,
     headers,
   });
-  // console.log('url', url);
   const newMethod = method.toLowerCase();
   switch (true) {
     case newMethod === 'get':
@@ -104,16 +103,16 @@ export default function request(uri, params, loading = true) {
   return fetch(urlParam, newOptions)
     .then(checkStatus)
     .then((response) => {
+      const { data } = response;
       Toast.hide();
       if (newOptions.method === 'DELETE' && response.status === 204) {
         const obj = { status: '204', message: '删除成功' };
-        return { ...obj };
+        return { ...obj, data };
       }
       if (newOptions.method === 'PUT' && response.status === 201) {
-        const obj = { status: '201', message: '操作成功' };
+        const obj = { status: '201', message: '操作成功', data };
         return { ...obj };
       }
-      const { data } = response;
       return data;
     }).catch((error) => {
       Toast.hide();
@@ -138,7 +137,6 @@ export default function request(uri, params, loading = true) {
     })
     .catch((error) => { // 加上catch
       Toast.hide();
-      console.log('hide', Toast);
       return error;
     });
 }

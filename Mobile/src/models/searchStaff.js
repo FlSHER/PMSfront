@@ -28,6 +28,9 @@ export default {
       final: [],
       participants: [],
       copy: [],
+      workingStaff: {
+        0: [],
+      },
     },
   },
   effects: {

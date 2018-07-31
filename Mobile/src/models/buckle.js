@@ -1,26 +1,37 @@
 import { Toast } from 'antd-mobile';
 import {
   recordBuckle,
-  getAuditList,
   buckleReject,
   getBuckleDetail,
   withdrawBuckle,
   firstApprove,
   finalApprove,
   getLogsList,
+  getLogsGroupList,
+  getLogGroupDetail,
+  getAuditList2,
 } from '../services/buckle';
 import defaultReducers from './reducers/default';
-import { makerFilters } from '../utils/util.js';
+import { makerFilters, pageChange } from '../utils/util.js';
 
 
 export default {
   namespace: 'buckle',
   state: {
-    selectStaff: [],
+    // selectStaff: [],
     info: {
       executedAt: new Date(),
       description: '',
       participants: [],
+    },
+    infos: {
+
+    },
+    selectStaff: {
+      first: [],
+      final: [],
+      participants: [],
+      copy: [],
     },
     optAll: {
       pointA: '',
@@ -32,24 +43,36 @@ export default {
     },
     auditList: {},
     detail: {},
+    buckleDetails: {},
+    groupDetails: {},
     used: false,
   },
   effects: {
 
-    *finalApprove({ payload }, { call }) {
+    *finalApprove({ payload }, { call, put }) {
       const response = yield call(finalApprove, payload.data);
       if (response && !response.error) {
         Toast.success(response.message);
         payload.cb();
+        yield put({
+          type: 'updateAuditList',
+          payload: response.data,
+        });
       }
     },
-    *firstApprove({ payload }, { call }) {
+
+    *firstApprove({ payload }, { call, put }) {
       const response = yield call(firstApprove, payload.data);
       if (response && !response.error) {
         Toast.success(response.message);
+        yield put({
+          type: 'updateAuditList',
+          payload: response.data,
+        });
         payload.cb();
       }
     },
+
     *withdrawBuckle({ payload }, { call }) {
       const response = yield call(withdrawBuckle, payload.id);
       if (response && !response.error) {
@@ -57,10 +80,15 @@ export default {
         payload.cb();
       }
     },
-    *buckleReject({ payload }, { call }) {
+
+    *buckleReject({ payload }, { call, put }) {
       const response = yield call(buckleReject, payload.data);
       if (response && !response.error) {
         Toast.success(response.message);
+        yield put({
+          type: 'updateAuditList',
+          payload: response.data,
+        });
         payload.cb();
       }
     },
@@ -77,7 +105,7 @@ export default {
     },
     *getAuditList({ payload }, { call, put }) {
       const newPayload = makerFilters(payload);
-      const response = yield call(getAuditList, newPayload);
+      const response = yield call(getLogsGroupList, newPayload);
       if (response && !response.error) {
         yield put({
           type: 'saveList',
@@ -89,6 +117,38 @@ export default {
         });
       }
     },
+
+    *getAuditList2({ payload }, { call, put }) {
+      // const newPayload = makerFilters(payload);
+      const response = yield call(getAuditList2, payload.url);
+      if (response && !response.error) {
+        yield put({
+          type: 'saveList',
+          payload: {
+            key: 'auditList',
+            type: payload.type,
+            value: response,
+          },
+        });
+      }
+    },
+
+    *getBuckleList2({ payload }, { call, put }) {
+      // const newPayload = makerFilters(payload);
+      const response = yield call(getAuditList2, payload.url);
+      if (response && !response.error) {
+        yield put({
+          type: 'saveList',
+          payload: {
+            key: 'logList',
+            type: payload.type,
+            value: response,
+          },
+        });
+      }
+    },
+
+
     *getLogsList({ payload }, { call, put }) {
       const newPayload = makerFilters(payload);
       const response = yield call(getLogsList, newPayload);
@@ -103,14 +163,47 @@ export default {
         });
       }
     },
+
+    *getLogsGroupList({ payload }, { call, put }) {
+      const newPayload = makerFilters(payload);
+      const response = yield call(getLogsGroupList, newPayload);
+      if (response && !response.error) {
+        yield put({
+          type: 'saveList',
+          payload: {
+            key: 'logList',
+            type: payload.type,
+            value: response,
+          },
+        });
+      }
+    },
+
+    *getLogGroupDetail({ payload }, { call, put }) {
+      const response = yield call(getLogGroupDetail, payload.eventId);
+      if (response && !response.error) {
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'group',
+            id: response.id,
+            data: response,
+          },
+        });
+        if (payload.cb) {
+          payload.cb(response);
+        }
+      }
+    },
     *getBuckleDetail({ payload }, { call, put }) {
       const response = yield call(getBuckleDetail, payload.eventId);
       if (response && !response.error) {
         yield put({
-          type: 'saveData',
+          type: 'save',
           payload: {
-            key: 'detail',
-            value: response,
+            store: 'buckle',
+            id: response.id,
+            data: response,
           },
         });
         if (payload.cb) {
@@ -121,6 +214,29 @@ export default {
   },
   reducers: {
     ...defaultReducers,
+    updateAuditList(state, action) {
+      const current = action.payload;
+      const { processing, approved } = state.auditList;
+      let newApproved = {
+        ...approved
+        || { page: 1, pagesize: 10, total: 0, totalpage: 0, data: [] } };
+
+      const data = (processing ? processing.data : []).filter(item => item.id !== current.id);
+      let newProcessing = { ...processing, data };
+      const approveData = [...newApproved.data];
+      const newApprovedData = approveData.filter(item => item.id !== current);
+      newApprovedData.unshift(current);
+      newApproved.data = [...newApprovedData];
+      newApproved = { ...newApproved, ...pageChange(newApproved) };
+      newProcessing = { ...newProcessing, ...pageChange(newProcessing) };
+      return {
+        ...state,
+        auditList: {
+          processing: newProcessing,
+          approved: newApproved,
+        },
+      };
+    },
     saveData(state, action) {
       const newState = { ...state };
       newState[action.payload.key] = action.payload.value;
@@ -144,16 +260,17 @@ export default {
       };
     },
     clearModal(state) {
-      const newState = { info: {
-        executedAt: new Date(),
-        description: '',
-        participants: [],
-      },
-      optAll: {
-        pointA: '',
-        pointB: '',
-        count: '',
-      },
+      const newState = {
+        info: {
+          executedAt: new Date(),
+          description: '',
+          participants: [],
+        },
+        optAll: {
+          pointA: '',
+          pointB: '',
+          count: '',
+        },
       };
       return {
         ...state,

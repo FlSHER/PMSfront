@@ -22,7 +22,7 @@ export default !noProxy ? {
     // 张博涵
     'POST /oauth/(.*)': 'http://localhost.oaupdate.org/oauth/',
     'POST /oauth/(.*)': 'http://192.168.20.238:8003/oauth/',
-    'GET /api/oa/(.*)': 'http://192.168.20.238:8007/api/',
+    'GET /api/oa/(.*)': 'http://192.168.20.238:8003/api/',
     // 'GET /api/(.*)': 'http://192.168.20.238:8007/api/',
     // 'POST /api/(.*)': 'http://192.168.20.238:8007/api/',
     // 'PUT /api/(.*)': 'http://192.168.20.238:8007/api/',

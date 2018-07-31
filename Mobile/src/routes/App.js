@@ -6,7 +6,7 @@ import {
   withRouter,
 } from 'dva/router';
 import { FooterBar } from '../components/Footer';
-// import Loader from '../components/General/Loader/Loader';
+import { Loader } from '../components/General/Loader';
 import { openPages } from '../configs/config';
 import './app.less';
 
@@ -46,6 +46,8 @@ export default class App extends React.Component {
 
     return (
       <React.Fragment>
+        <Loader />
+
         <div key={pathname}>
           <QueueAnim>
             <div

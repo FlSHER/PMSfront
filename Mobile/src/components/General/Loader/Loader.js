@@ -1,20 +1,19 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import styles from './Loader.less';
+// import classNames from 'classnames';
+import './Loader.less';
 
 export default class Loader extends React.PureComponent {
   render() {
-    const { spinning, fullScreen } = this.props;
+    // const { spinning, fullScreen } = this.props;
     return (
-      <div className={classNames(styles.loader, {
-        [styles.hidden]: !spinning,
-        [styles.fullScreen]: fullScreen,
-      })}
+      <div
+        id="global_loading"
+        className="loader fullScreen hidden"
       >
-        <div className={styles.warpper}>
-          <div className={styles.inner} />
-          <div className={styles.text} >加载中</div>
+        <div className="warpper">
+          <div className="inner" />
+          <div className="text" >加载中</div>
         </div>
       </div>
     );

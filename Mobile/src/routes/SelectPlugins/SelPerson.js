@@ -15,11 +15,27 @@ import style from './index.less';
   searStaff: searchStaff.searStaff,
   breadCrumb: searchStaff.breadCrumb,
   selectStaff: searchStaff.selectStaff,
+  loading,
   loading1: loading.effects['searchStaff/fetchSearchStaff'],
   loading2: loading.effects['searchStaff/fetchSelfDepStaff'],
   loading3: loading.effects['searchStaff/fetchFirstDepartment'],
   searchLoding: loading.effects['searchStaff/serachStaff'],
 }))
+
+// @connect(props => ({
+//   department: props.searchStaff.department,
+//   staff: props.searchStaff.staff,
+//   finalStaff: props.searchStaff.finalStaff,
+//   searStaff: props.searchStaff.searStaff,
+//   breadCrumb: props.searchStaff.breadCrumb,
+//   // selectStaff: props.searchStaff.selectStaff,
+//   selectStaff: props[type].selectStaff,
+
+//   loading1: props.loading.effects['searchStaff/fetchSearchStaff'],
+//   loading2: props.loading.effects['searchStaff/fetchSelfDepStaff'],
+//   loading3: props.loading.effects['searchStaff/fetchFirstDepartment'],
+//   searchLoding: props.loading.effects['searchStaff/serachStaff'],
+// }))
 export default class SelPerson extends Component {
   state = {
     selected: {
@@ -91,7 +107,7 @@ export default class SelPerson extends Component {
     }, () => {
       dispatch({
         type: 'searchStaff/serachStaff',
-        payload: `page=1&pagesize=15&filters=realname~${search};status_id>=0`,
+        payload: `page=1&pagesize=20&filters=realname~${search};status_id>=0`,
       });
     });
   }
@@ -102,7 +118,7 @@ export default class SelPerson extends Component {
     const { search } = this.state;
     dispatch({
       type: 'searchStaff/serachStaff',
-      payload: `page=${page + 1}&pagesize=15&status_id>=0&filters=realname~${search};status_id>=0`,
+      payload: `page=${page + 1}&pagesize=20&status_id>=0&filters=realname~${search};status_id>=0`,
     });
   }
 
@@ -213,6 +229,7 @@ export default class SelPerson extends Component {
       selectAll: !selectAll,
     });
   }
+
   firstDepartment = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -256,6 +273,7 @@ export default class SelPerson extends Component {
       staff, searStaff,
       breadCrumb, loading1,
       loading2, loading3,
+      loading,
     } = this.props;
     const { selected, type, search, key } = this.state;
     const isFinal = key === 'final';
@@ -289,7 +307,9 @@ export default class SelPerson extends Component {
                 name="id"
               />
             ) : null}
-            {search && data && !data.length && !tempFinal.length ? <Nothing /> : null}
+
+            {search && data && !data.length && !tempFinal.length && !loading.global ?
+              <Nothing /> : null}
             {!search && staff.length && !isFinal ? (
               <Staff
                 link=""

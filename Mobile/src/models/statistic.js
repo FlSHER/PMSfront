@@ -9,7 +9,9 @@ export default {
   state: {
     data: {
       monthly: {},
-      trend: [],
+      trend: [
+        { month: new Date().getMonth() + 1, point_a: 0, point_b: 0 },
+      ],
     },
   },
   effects: {

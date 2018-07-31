@@ -8,6 +8,7 @@ import nothing from '../../../assets/nothing.png';
 import { Point } from '../../../common/ListView/index';
 import { ListFilter, CheckBoxs, ListSort } from '../../../components/index';
 import Nothing from '../../../components/Nothing/Nothing.js';
+import { pointSource } from '../../../utils/convert';
 import { makerFilters, getUrlParams } from '../../../utils/util';
 import style from '../index.less';
 
@@ -23,26 +24,6 @@ const sortList = [
   { name: 'B分降序', value: 'point_b_-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
 
-const pointSource = [
-  {
-    name: '系统分', value: 0,
-  },
-  {
-    name: '固定分', value: 1,
-  },
-  {
-    name: '奖扣分', value: 2,
-  },
-  {
-    name: '任务分', value: 3,
-  },
-  {
-    name: '考勤分', value: 4,
-  },
-  {
-    name: '日志分', value: 5,
-  },
-];
 
 @connect(({ point }) => ({
   pointList: point.pointList,
@@ -418,7 +399,7 @@ export default class PointList extends React.Component {
 
           </div>
           <div className={[style.filter_item].join(' ')} >
-            <div className={style.title}>分值来源</div>
+            <div className={style.title}>类别</div>
             <CheckBoxs
               option={pointSource}
               checkStatus={(i, v) => this.doMultiple(i, v, 'source_id')}

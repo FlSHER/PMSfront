@@ -34,11 +34,15 @@
       margin-bottom: 0;
     }
   }
+  .aside_title {
+    color: #000;
+    font-size: 12px;
+  }
 }
 
 .point_type {
   margin-right: 76/75rem;
-  div + div {
+  div+div {
     margin-top: 20/75rem;
   }
 }
@@ -199,7 +203,7 @@
       font-size: 16px;
     }
     @media (-webkit-min-device-pixel-ratio: 2),
-      (min-resolution: 2dppx) {
+    (min-resolution: 2dppx) {
       .am-list-body::before {
         background-color: #fff !important;
       }
@@ -380,7 +384,7 @@
     background-color: transparent;
   }
   @media (-webkit-min-device-pixel-ratio: 2),
-    (min-resolution: 2dppx) {
+  (min-resolution: 2dppx) {
     html:not([data-scale]) .am-list-item:not(:last-child) .am-list-line::after {
       background-color: transparent;
     }
@@ -423,6 +427,29 @@
     .am-list-body {
       border-bottom: none;
       border-top: none;
+    }
+  }
+}
+
+.target {
+  display: flex;
+  padding: 20/75rem;
+  flex-wrap: wrap;
+  font-size: 14px;
+  .item {
+    width: 50%;
+    height: 200/75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-bottom: 2px solid rgb(245, 245, 245);
+    &:nth-child(2n+1) {
+      border-right: 2px solid rgb(245, 245, 245);
+    }
+    &:nth-last-child(2),&:nth-last-child(1) {
+      border-bottom: none;
     }
   }
 }

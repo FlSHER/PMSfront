@@ -105,14 +105,13 @@ export default class BuckleRecord extends React.Component {
       });
     } else {
       const { participants } = selectStaff;
-
       let newParticipant = participants.map((item) => {
         const obj = { ...item };
         obj.realname = item.staff_name || item.realname;
         obj.point_a = (item.point_a === '' || item.point_a === undefined) ?
-          (optAll.pointA ? optAll.pointA : event.point_a_default) : item.point_a;
+          (optAll.pointA ? Number(optAll.pointA) : Number(event.point_a_default)) : item.point_a;
         obj.point_b = (item.point_b === '' || item.point_b === undefined) ?
-          (optAll.pointB ? optAll.pointB : event.point_b_default) : item.point_b;
+          (optAll.pointB ? Number(optAll.pointB) : Number(event.point_b_default)) : item.point_b;
         obj.count = item.count === undefined ? optAll.count : item.count;
         return obj;
       });
@@ -187,6 +186,7 @@ export default class BuckleRecord extends React.Component {
     this.saveAllData();
     history.push(`/sel_person/${name}/${type}`);
   }
+
   addMore = (name, type) => {
     const { event } = this.props;
     if (name === 'final') {
@@ -204,9 +204,10 @@ export default class BuckleRecord extends React.Component {
   savePointData = (newPoint, kind, el) => {
     const { event } = this.props;
     let error = false;
-    if ((Number(newPoint) > Number(event[`${kind}_max`])) || (Number(newPoint) < Number(event[`${kind}_min`]))) {
+    if (kind !== 'count' && ((Number(newPoint) > Number(event[`${kind}_max`])) || (Number(newPoint) < Number(event[`${kind}_min`])))) {
       error = true;
     }
+
     const { optAll, info } = this.state;
     const newOpt = { ...optAll };
     const tempKey = kind === 'point_a' ?
@@ -299,64 +300,75 @@ export default class BuckleRecord extends React.Component {
     });
   }
   record = () => {
-    this.saveAllData();
-    const { info } = this.state;
-    const { searchStaff: { selectStaff }, event, dispatch, history } = this.props;
-    const { first, final, copy } = selectStaff;
-    const newCopy = copy.map((item) => {
-      const obj = {};
-      obj.staff_sn = item.staff_sn;
-      obj.staff_name = item.realname;
-      return obj;
-    });
-    const newParticipant = info.participants.map((item) => {
-      const obj = {};
-      obj.staff_sn = item.staff_sn;
-      obj.staff_name = item.realname;
-      obj.point_a = item.point_a;
-      obj.point_b = item.point_b;
-      obj.count = item.count;
-      return obj;
-    });
-    let msg = '';
-    msg = event.id === undefined ?
-      '请选择事件' : !info.participants.length ?
-        '请选择参与人' : !first.length ?
-          '请选择初审人' : !final.length ?
-            '请选择终审人' : '';
-    if (msg) {
-      Toast.fail(msg);
-      return;
-    }
+    setTimeout(() => {
+      this.saveAllData();
+      const { info } = this.state;
+      const { searchStaff: { selectStaff }, event, dispatch, history } = this.props;
+      const { first, final, copy } = selectStaff;
+      const newCopy = copy.map((item) => {
+        const obj = {};
+        obj.staff_sn = item.staff_sn;
+        obj.staff_name = item.realname;
+        return obj;
+      });
+      const newParticipant = info.participants.map((item) => {
+        const obj = {};
+        obj.staff_sn = item.staff_sn;
+        obj.staff_name = item.realname;
+        obj.point_a = item.point_a;
+        obj.point_b = item.point_b;
+        obj.count = item.count;
+        return obj;
+      });
+      let msg = '';
+      msg = event.id === undefined ?
+        '请选择事件' : !info.participants.length ?
+          '请选择参与人' : !first.length ?
+            '请选择初审人' : !final.length ?
+              '请选择终审人' : '';
+      if (msg) {
+        Toast.fail(msg);
+        return;
+      }
 
-    const pointError = newParticipant.filter(item =>
-      isNaN(item.point_a) || isNaN(item.point_b)
-    );
+      const pointError = newParticipant.filter(item =>
+        isNaN(item.point_a) || isNaN(item.point_b)
+      );
 
-    if (pointError.length) {
-      Toast.fail('请输入正确格式的数字');
-      return;
-    }
-    dispatch({
-      type: 'buckle/recordBuckle',
-      payload: {
-        data: {
-          event_id: event.id,
-          participants: newParticipant,
-          description: info.description,
-          first_approver_sn: first[0].staff_sn,
-          first_approver_name: first[0].realname,
-          final_approver_sn: final[0].staff_sn,
-          final_approver_name: final[0].staff_name,
-          executed_at: moment(info.executedAt).format('YYYY-MM-DD'),
-          addressees: newCopy,
+      if (pointError.length) {
+        Toast.fail('请输入正确格式的数字');
+        return;
+      }
+      const eventObj = {
+        description: info.description,
+        event_id: event.id,
+        name: event.name,
+        participants: newParticipant,
+
+      };
+      dispatch({
+        type: 'buckle/recordBuckle',
+        payload: {
+          data: {
+            first_approver_sn: first[0].staff_sn,
+            first_approver_name: first[0].realname,
+            final_approver_sn: final[0].staff_sn,
+            final_approver_name: final[0].staff_name,
+            executed_at: moment(info.executedAt).format('YYYY-MM-DD'),
+            remark: info.description,
+            title: event.name,
+            events: [eventObj],
+            addressees: newCopy,
+            event_count: 1,
+            participant_count: (newParticipant || []).length,
+          },
+          cb: () => {
+            this.clearModal();
+            history.push('/submitok');
+          },
         },
-        cb: () => {
-          this.clearModal();
-          history.replace('/home');
-        },
-      },
-    });
+      });
+    }, 10);
   }
 
   clearModal = () => {
@@ -394,6 +406,7 @@ export default class BuckleRecord extends React.Component {
     history.replace('/buckle_record#event');
     history.push('/sel_event');
   }
+
   addMySelf = () => {
     const { event } = this.props;
     const { info, optAll } = this.state;
@@ -406,8 +419,8 @@ export default class BuckleRecord extends React.Component {
     const myself = {
       staff_sn: userInfo.staff_sn,
       realname: userInfo.realname,
-      point_a: optAll.pointA ? optAll.pointA : event.point_a_default,
-      point_b: optAll.pointB ? optAll.pointB : event.point_b_default,
+      point_a: optAll.pointA ? Number(optAll.pointA) : Number(event.point_a_default),
+      point_b: optAll.pointB ? Number(optAll.pointB) : Number(event.point_b_default),
       count: optAll.count ? optAll.count : 1,
     };
     newParticipants.push(myself);
@@ -418,6 +431,7 @@ export default class BuckleRecord extends React.Component {
       },
     });
   }
+
   infoToast = () => {
     const { event } = this.props;
     if (event.id) {
@@ -434,6 +448,7 @@ export default class BuckleRecord extends React.Component {
       Toast.info('请先选择事件');
     }
   }
+
   render() {
     const { searchStaff: { selectStaff }, event } = this.props;
     const { first, final, copy } = selectStaff;
@@ -567,6 +582,7 @@ export default class BuckleRecord extends React.Component {
                         value={tmpPointA}
                         style={{ background: '#badcff', ...(optAll.point_a_error ? { color: 'red' } : null) }}
                         onChange={v => this.pointChange(v, 'point_a')}
+                        floatNumber={2}
                       />
                     </Flex.Item>
                     <Flex.Item className={[style.table_item, style.opt_all].join(' ')} >
@@ -574,6 +590,7 @@ export default class BuckleRecord extends React.Component {
                         value={tmpPointB}
                         style={{ background: '#badcff', ...(optAll.point_b_error ? { color: 'red' } : null) }}
                         onChange={v => this.pointChange(v, 'point_b')}
+                        floatNumber={2}
                       />
                     </Flex.Item>
                     <Flex.Item className={[style.table_item, style.opt_all].join(' ')}>
@@ -594,6 +611,7 @@ export default class BuckleRecord extends React.Component {
                             value={`${item.point_a}`}
                             style={{ ...(item.point_a_error ? { color: 'red' } : null) }}
                             onChange={v => this.pointChange(v, 'point_a', item)}
+                            floatNumber={2}
                           />
                         </Flex.Item>
                         <Flex.Item className={style.table_item}>
@@ -601,6 +619,7 @@ export default class BuckleRecord extends React.Component {
                             value={`${item.point_b}`}
                             style={{ ...(item.point_b_error ? { color: 'red' } : null) }}
                             onChange={v => this.pointChange(v, 'point_b', item)}
+                            floatNumber={2}
                           />
                         </Flex.Item>
                         <Flex.Item className={style.table_item}>
@@ -608,6 +627,7 @@ export default class BuckleRecord extends React.Component {
                             value={item.count}
                             style={{ ...(item.count_error ? { color: 'red' } : null) }}
                             onChange={v => this.pointChange(v, 'count', item)}
+                            floatNumber={2}
                           />
                         </Flex.Item>
                       </Flex>);

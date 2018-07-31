@@ -68,14 +68,42 @@ export const getRouterData = (app) => {
     '/buckle_record': {
       component: dynamicWrapper(app, ['buckle'], () => import('../routes/Buckle/record/record')),
     },
+
+    '/buckle_preview': {
+      component: dynamicWrapper(app, ['buckle', 'record'], () => import('../routes/Buckle/record/preview')),
+    },
+    '/buckle_preview/:id': {
+      component: dynamicWrapper(app, ['buckle', 'record'], () => import('../routes/Buckle/record/preview')),
+    },
+    '/event_preview/:id': {
+      component: dynamicWrapper(app, ['buckle', 'record'], () => import('../routes/Buckle/record/eventPreview')),
+    },
+
+    '/buckle_submit': {
+      component: dynamicWrapper(app, ['buckle', 'record', 'submit'], () => import('../routes/Buckle/record/submit')),
+    },
+    '/submitok': {
+      component: dynamicWrapper(app, ['buckle', 'record', 'submit'], () => import('../routes/Buckle/record/recordOk')),
+    },
+
+    '/record_point': {
+      component: dynamicWrapper(app, ['buckle', 'record'], () => import('../routes/Buckle/record/recordPoint')),
+    },
+
     '/buckle_record/:id': {
       component: dynamicWrapper(app, ['buckle'], () => import('../routes/Buckle/record/record')),
     },
     '/buckle_list': {
       component: dynamicWrapper(app, [], () => import('../routes/Buckle/mine/buckleList')),
     },
+    '/buckle_list_2': {
+      component: dynamicWrapper(app, [], () => import('../routes/Buckle/mine/buckleList_2')),
+    },
     '/audit_list': {
       component: dynamicWrapper(app, ['buckle', 'oauth'], () => import('../routes/Buckle/audit/auditList')),
+    },
+    '/audit_list_2': {
+      component: dynamicWrapper(app, ['buckle', 'oauth'], () => import('../routes/Buckle/audit/auditList_2')),
     },
     '/audit_reason/:type/:state/:level': {
       component: dynamicWrapper(app, [], () => import('../routes/Buckle/audit/auditReason')),
@@ -83,6 +111,7 @@ export const getRouterData = (app) => {
     '/audit_detail/:id': {
       component: dynamicWrapper(app, ['buckle', 'oauth'], () => import('../routes/Buckle/audit/auditDetail')),
     },
+
     '/point_detail/:id': {
       component: dynamicWrapper(app, ['point'], () => import('../routes/Point/survey/pointDetail')),
     },
@@ -91,6 +120,9 @@ export const getRouterData = (app) => {
     },
     '/point_list': {
       component: dynamicWrapper(app, ['point'], () => import('../routes/Point/survey/pointList')),
+    },
+    '/point_list_2': {
+      component: dynamicWrapper(app, ['point'], () => import('../routes/Point/survey/pointList_2')),
     },
     '/ranking': {
       component: dynamicWrapper(app, ['ranking'], () => import('../routes/Point/ranking/rankingList')),
@@ -104,6 +136,9 @@ export const getRouterData = (app) => {
     '/point_statistic': {
       component: dynamicWrapper(app, ['statistic'], () => import('../routes/Point/statistic/mine')),
     },
+    '/buckle_target': {
+      component: dynamicWrapper(app, ['target'], () => import('../routes/Point/target/target')),
+    },
     '/month_picker': {
       component: dynamicWrapper(app, [], () => import('../components/General/MonthPicker')),
     },
@@ -113,11 +148,17 @@ export const getRouterData = (app) => {
     '/sel_person/:key/:type': {
       component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/SelectPlugins/SelPerson')),
     },
+    '/sel_person2/:key/:type/:modal': {
+      component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/SelectPlugins/SelPerson_2')),
+    },
     '/sel_event': {
       component: dynamicWrapper(app, ['event', 'searchStaff', 'buckle'], () => import('../routes/SelectPlugins/SelEvent')),
     },
+    '/sel_event2/:modal': {
+      component: dynamicWrapper(app, ['event', 'searchStaff', 'buckle', 'record'], () => import('../routes/SelectPlugins/SelEvent_2')),
+    },
     '/test': {
-      component: dynamicWrapper(app, ['searchStaff'], () => import('../routes/test')),
+      component: dynamicWrapper(app, ['alltabs'], () => import('../routes/test')),
     },
     '/get_access_token': {
       component: dynamicWrapper(app, ['oauth'], () => import('../routes/Oauth/GetAccessToken')),
