@@ -258,14 +258,14 @@ export default class WorkingStaff extends React.PureComponent {
   }
 
   render() {
-    const { pointRange } = this.props;
+    const { pointRange, width } = this.props;
     const { visible, batchVisible } = this.state;
     const footer = {
       point_a: ` ${pointRange.point_a.min} 至 ${pointRange.point_a.max} `,
       point_b: ` ${pointRange.point_b.min} 至 ${pointRange.point_b.max} `,
     };
     return (
-      <div style={{ width: 540 }}>
+      <div style={{ width: width || 540 }}>
         <OATable
           ref={(e) => { this.oatable = e; }}
           {...this.makeTableProps()}

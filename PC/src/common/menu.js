@@ -5,6 +5,10 @@ const menuData = [
     path: 'reward',
     children: [
       {
+        name: '记录奖扣',
+        path: 'insert-record',
+      },
+      {
         name: '批量奖扣',
         path: 'buckle',
         children: [
