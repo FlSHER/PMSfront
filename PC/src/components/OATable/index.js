@@ -57,28 +57,6 @@ class OATable extends PureComponent {
       sorter: {},
       loading: false,
     };
-    // this.enterAnim = [
-    //   {
-    //     opacity: 0, x: 30, backgroundColor: '#fffeee', duration: 0,
-    //   },
-    //   {
-    //     height: 0,
-    //     duration: 200,
-    //     type: 'from',
-    //     delay: 250,
-    //     ease: 'easeOutQuad',
-    //     onComplete: this.onEnd,
-    //   },
-    //   {
-    //     opacity: 1, x: 0, duration: 250, ease: 'easeOutQuad',
-    //   },
-    //   { delay: 1000, backgroundColor: '#fff' },
-    // ];
-    // this.leaveAnim = [
-    //   { duration: 250, opacity: 0 },
-    //   { height: 0, duration: 200, ease: 'easeOutQuad' },
-    // ];
-    // this.currentPage = 1;
     this.sortOrder = {};
   }
 
@@ -94,31 +72,7 @@ class OATable extends PureComponent {
     dom.style.height = 'auto';
   }
 
-  // getBodyWrapper = (body) => {
-  //   // const { pagination } = this.state;
-  //   // // 切换分页去除动画;
-  //   // if (this.currentPage !== pagination.current) {
-  //   //   this.currentPage = pagination.current;
-  //   //   return body;
-  //   // }
-  //   return (
-  //     <QueueAnim
-  //       component="tbody"
-  //       // type={['right', 'left']}
-  //       // leaveReverse
-  //       className={body.className}
-  //     // enter={this.enterAnim}
-  //     // leave={this.leaveAnim}
-  //     // appear={false}
-  //     >
-  //       {body.children}
-  //     </QueueAnim>
-  //   );
-  // }
-
-
   showTotal = (total, range) => {
-    // const { filtered } = this.props;
     return <div style={{ color: '#969696' }}>{`显示 ${range[0]} - ${range[1]} 项 , 共 ${total} 项`}</div>;
   }
 
@@ -516,7 +470,6 @@ class OATable extends PureComponent {
     Object.keys(defaultProps).forEach((key) => {
       delete response[key];
     });
-    // console.log(response);
     return response;
   }
 
@@ -602,72 +555,9 @@ class OATable extends PureComponent {
 
   handleExcelTemplate = () => {
     const { excelTemplate } = this.props;
-    // this.excelLoading('下载中...');
-    // const a = document.createElement('a');
     location.href = excelTemplate;
-    // a.target = '_blank';
-    // a.click();
-    // request(`${excelTemplate}`, {
-    //   method: 'GET',
-    // }).then((res) => {
-    //   res.blob().then((blob) => {
-    //     this.excelLoading(false);
-    //     const url = window.URL.createObjectURL(blob);
-    //     let filename = res.headers.get('Content-Disposition');
-    //     filename = decodeURI(filename);
-    //     filename = filename.match(/filename="(.+)"/);
-    //     [, filename] = filename;
-    //     const a = document.createElement('a');
-    //     a.href = url;
-    //     a.download = filename;
-    //     a.click();
-    //   });
-    // });
   }
 
-  // handleUploadOnchange = (e) => {
-  //   const { files } = e.target;
-  //   if (!this.handleBeforeUpload(files[0])) return;
-  //   const fileReader = new FileReader();
-  //   fileReader.onload = (ev) => {
-  //     const data = ev.target.result;
-  //     let persons = [];
-  //     const workbook = XLSX.read(data, {
-  //       type: 'binary',
-  //     });
-  //     Object.keys(workbook.Sheets).forEach((sheet) => {
-  //       const fromTo = workbook.Sheets[sheet]['!ref'];
-  //       if (fromTo) {
-  //         persons = persons.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]));
-  //       }
-  //     });
-  //     if (!persons.length) {
-  //       message.error('不能上传空的excel文件!');
-  //     } else {
-  //       // const header = Object.values(persons[0]);
-  //       // persons = persons.filter((item, index) => index !== 0);
-  //       // persons = persons.map((item) => {
-  //       //   const temp = {};
-  //       //   const value = Object.values(item);
-  //       //   header.forEach((key, index) => {
-  //       //     if (value[index]) {
-  //       //       temp[key] = value[index];
-  //       //     }
-  //       //   });
-  //       //   return temp;
-  //       // });
-  //       const { excelInto } = this.props;
-  //       this.excelLoading('导入中...');
-  //       request(`${excelInto}`, {
-  //         method: 'POST',
-  //         body: persons,
-  //       }).then((response) => {
-  //         this.excelLoading(false);
-  //       });
-  //     }
-  //   };
-  //   fileReader.readAsBinaryString(files[0]);
-  // }
 
   makeExtraOperator = () => {
     const { extraOperator, excelInto, excelExport, excelTemplate } = this.props;
@@ -725,11 +615,6 @@ class OATable extends PureComponent {
               <Table
                 {...this.makeTableProps()}
                 key="table"
-              // components={{
-              //   body: {
-              //     wrapper: this.getBodyWrapper,
-              //   },
-              // }}
               />
             )}
           </QueueAnim>
