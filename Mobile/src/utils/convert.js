@@ -152,10 +152,10 @@ export const auditFinishedResult = (item) => {
 
 // 已审核的列表已操作的状态
 export const auditFinishedLabel = (item) => {
-  if (item.status_id === 1 || (!item.first_approved_at && item.status_id === -1)) {
-    return 'label_state_first';
-  } else if (item.status_id === 2 || (item.status_id === -1 && !item.final_approved_at)) {
+  if (item.final_approver_sn === userStorage('userInfo').staff_sn) {
     return 'label_state_final';
+  } else if (item.first_approver_sn === userStorage('userInfo').staff_sn) {
+    return 'label_state_first';
   }
 };
 
