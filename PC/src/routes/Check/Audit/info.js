@@ -57,7 +57,7 @@ export default class extends React.Component {
   renderRecordedFooter = () => {
     const { fetchCancel, id, editInfo, onClose, dispatch } = this.props;
     const statusId = editInfo.status_id;
-    return (
+    return ([0, 1, -1, -2].indexOf(statusId) !== -1) ? (
       <div className={styles.footer}>
         {[0, 1].indexOf(statusId) !== -1 && (
           <div onClick={() => {
@@ -78,7 +78,7 @@ export default class extends React.Component {
           </div>
         )}
       </div>
-    );
+    ) : null;
   }
 
   render() {

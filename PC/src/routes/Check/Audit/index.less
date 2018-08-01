@@ -43,12 +43,22 @@
   }
 }
 
+.defaultAlink,
+.defaultAlink:hover {
+  color: @primary-color;
+}
+
+.noAllowed,
+.noAllowed:hover {
+  color: #c8c8c8;
+  cursor: not-allowed;
+}
+
 .contentInfo {
   font-size: 12px !important;
   margin-bottom: 38px;
   .eventTitle {
     display: flex;
-    margin-bottom: 10px;
     div {
       flex-grow: 1;
     }
@@ -77,16 +87,19 @@
     border-radius: 4px;
     margin-bottom: 10px;
     padding: 10px 10px 0;
-    p {
-      color: #646464;
-      span {
-        display: inline-block;
-      }
+    color: #646464;
+    .user {
+      margin-bottom: 10px;
+    }
+    span {
+      vertical-align: middle;
+      display: inline-block;
     }
     .userName {
       width: 36px;
-      margin-right: 10px;
-      overflow: inherit;
+      margin-right: 10px; // overflow: inherit;
+      vertical-align: middle;
+      display: -webkit-inline-box;
     }
     .userPoint {
       width: 110px;
@@ -156,7 +169,6 @@
         transform: rotateZ(45deg); // border-right-color: #fff;
       }
     }
-
     .default {
       color: #666;
       padding: 0 10px;

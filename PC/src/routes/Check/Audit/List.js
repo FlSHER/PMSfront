@@ -6,6 +6,7 @@ import moment from 'moment';
 import OATable from '../../../components/OATable';
 import BuckleInfo from './info';
 import { makerFilters, getBuckleStatus, statusData } from '../../../utils/utils';
+import styles from './index.less';
 
 const status = [
   { value: 0, text: '待初审' },
@@ -144,7 +145,7 @@ export default class extends React.PureComponent {
 
     const columns2 = [
       {
-        title: '数量',
+        title: '事件数量',
         align: 'center',
         dataIndex: 'event_count',
         sorter: true,
@@ -217,20 +218,19 @@ export default class extends React.PureComponent {
     const action = [(
       <a
         key="info"
-        style={{ color: '#59c3c3' }}
+        className={styles.defaultAlink}
         onClick={() => this.showInfo(record)}
       >
         查看
       </a>
     )];
     if (type === 'recorded') {
-      const color = '#c8c8c8';
       const linkCancelProps = {
-        style: { color: '#59c3c3' },
+        className: styles.defaultAlink,
         onClick: () => this.showCancelConfirm(record.id),
       };
       if ([0, 1].indexOf(record.status_id) === -1) {
-        linkCancelProps.style.color = color;
+        linkCancelProps.className = styles.noAllowed;
         linkCancelProps.onClick = () => { };
       }
       action.push(<Divider key="v1" type="vertical" />);
@@ -243,13 +243,13 @@ export default class extends React.PureComponent {
         </a>
       ));
       const linkResubmitProps = {
-        style: { color: '#59c3c3' },
+        className: styles.defaultAlink,
         onClick: () => {
           dispatch(routerRedux.push(`/reward/buckle/submission/${record.id}`));
         },
       };
       if ([-1, -2].indexOf(record.status_id) === -1) {
-        linkResubmitProps.style.color = color;
+        linkResubmitProps.className = styles.noAllowed;
         linkResubmitProps.onClick = () => { };
       }
       action.push(<Divider key="v2" type="vertical" />);

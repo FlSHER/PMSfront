@@ -29,13 +29,13 @@ function EventInfo({ data }) {
         {list.map((item, index) => {
           const key = index;
           return (
-            <p key={key}>
-              <Ellipsis length={3} className={styles.userName}>
+            <div key={key} className={styles.user}>
+              <Ellipsis lines={1} className={styles.userName}>
                 {item.staff_name}
               </Ellipsis>
               <span className={styles.userPoint}>A：<i>{`${item.point_a * item.count} (${item.point_a}x${item.count})`}</i></span>
               <span className={styles.userPoint}>B：<i>{`${item.point_b * item.count} (${item.point_b}x${item.count})`}</i></span>
-            </p>
+            </div>
           );
         })}
       </Description>
@@ -220,7 +220,7 @@ export default function CheckInfo({ data }) {
         </DescriptionList>
       </div>
       <div className={styles.contentInfo}>
-        <div className={styles.eventTitle}>
+        <div className={styles.eventTitle} style={{ marginBottom: 10 }}>
           <div>事件详情</div>
           <div className={styles.eventCount}>
             <span>事件数量：{logs.length}</span>
