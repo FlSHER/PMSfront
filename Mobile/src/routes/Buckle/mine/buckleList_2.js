@@ -222,9 +222,9 @@ export default class AuditList extends React.Component {
     history.replace(`/buckle_list_2?type=${item.value}`);
   }
 
-  toLookDetail = (item) => {
+  toLookDetail = (url) => {
     const { history } = this.props;
-    history.push(`/event_preview/${item.id}`);
+    history.push(url);
   }
 
   handleVisible = (flag, model) => {
@@ -325,7 +325,7 @@ export default class AuditList extends React.Component {
           {type === 'participant' && (
             <PaticipantBuckle
               dataSource={logList[type] ? logList[type].data : []}
-              handleClick={this.toLookDetail}
+              handleClick={item => this.toLookDetail(`/audit_detail/${item.id}`)}
               onRefresh={this.onRefresh}
               onPageChange={this.onPageChange}
               label={this.renderLalbel()}
@@ -336,7 +336,7 @@ export default class AuditList extends React.Component {
           {type !== 'participant' && (
             <Buckle
               dataSource={logList[type] ? logList[type].data : []}
-              handleClick={this.toLookDetail}
+              handleClick={item => this.toLookDetail(`/event_preview/${item.id}`)}
               onRefresh={this.onRefresh}
               onPageChange={this.onPageChange}
               label={this.renderLalbel()}

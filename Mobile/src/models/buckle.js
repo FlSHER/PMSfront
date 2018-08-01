@@ -198,6 +198,7 @@ export default {
     *getBuckleDetail({ payload }, { call, put }) {
       const response = yield call(getBuckleDetail, payload.eventId);
       if (response && !response.error) {
+        console.log('response', response);
         yield put({
           type: 'save',
           payload: {
