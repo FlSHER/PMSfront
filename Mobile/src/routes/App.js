@@ -6,7 +6,9 @@ import {
   withRouter,
 } from 'dva/router';
 import { FooterBar } from '../components/Footer';
-import { Loader } from '../components/General/Loader';
+import spin, { Loader } from '../components/General/Loader';
+// import spin from '../General/Loader';
+
 import { openPages } from '../configs/config';
 import './app.less';
 
@@ -30,7 +32,11 @@ export default class App extends React.Component {
       });
     }
   }
-
+  componentWillReceiveProps(props) {
+    if (this.props.location !== props.location) {
+      spin(false);
+    }
+  }
   render() {
     const {
       // loading,
@@ -43,11 +49,9 @@ export default class App extends React.Component {
 
     pathname = pathname.indexOf('/') === 0 ? pathname : `/ ${pathname} `;
     // <Loader fullScreen spinning={loading.global} />
-
     return (
       <React.Fragment>
         <Loader />
-
         <div key={pathname}>
           <QueueAnim>
             <div

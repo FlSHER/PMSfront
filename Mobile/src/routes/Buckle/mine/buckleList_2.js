@@ -23,10 +23,19 @@ const options = [
     label: '已驳回', value: '-1',
   },
   {
-    label: '审核中', value: '0',
+    label: '审核中', value: '[0,1]',
   },
   {
     label: '已撤回', value: '-2',
+  },
+];
+
+const addrOption = [
+  {
+    label: '已通过', value: '2',
+  },
+  {
+    label: '已驳回', value: '-1',
   },
 ];
 const tabs = {
@@ -59,7 +68,7 @@ const tabs = {
         type: 'checkBox',
         title: '审核类型',
         multiple: false,
-        options,
+        options: addrOption,
       },
     ],
   },

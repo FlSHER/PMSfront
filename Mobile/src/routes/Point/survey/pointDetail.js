@@ -34,7 +34,7 @@ export default class PointDetail extends React.Component {
     const sourceId = detail.source_id;
     if (sourceId === 2) {
       const sourceForeignKey = detail.source_foreign_key;
-      history.replace(`/audit_detail/${sourceForeignKey}`);
+      history.push(`/audit_detail/${sourceForeignKey}`);
     }
   }
   render() {

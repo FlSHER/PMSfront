@@ -169,7 +169,7 @@ export default class Statistic extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      checked: 1,
+      checked: 2,
     };
   }
 

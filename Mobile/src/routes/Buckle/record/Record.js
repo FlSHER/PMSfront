@@ -511,7 +511,7 @@ export default class BuckleRecord extends React.Component {
             </DatePicker>
 
           </WingBlank>
-          <div style={{ ...((event && !Object.keys(event).length) || !event ? { display: 'none' } : null) }}>
+          <div style={{ ...((event && !Object.keys(event).length) || !event ? null : null) }}>
             <WhiteSpace size="sm" />
             <WingBlank className={style.parcel}>
               <div className={style.players}>
@@ -558,14 +558,19 @@ export default class BuckleRecord extends React.Component {
                       textAlign: 'right',
                       fontSize: '12px',
                       color: '#9b9b9b',
-                      paddingRight: '0.48rem',
-                      backgroundImage: `url(${prompt})`,
-                      backgroundPosition: 'right center',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundSize: '0.32rem',
                     }}
-                    onClick={this.infoToast}
-                  >分值范围
+                  >
+                    <span
+                      onClick={this.infoToast}
+                      style={{
+                      paddingRight: '0.48rem',
+                         backgroundImage: `url(${prompt})`,
+                    backgroundPosition: 'right center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '0.32rem' }}
+                    >
+                  分值范围
+                    </span>
                   </Flex.Item>
                 </Flex>
                 <Flex className={style.table_head}>
