@@ -1,7 +1,7 @@
 import React from 'react';
 import { InputNumber, Input } from 'antd';
 import { connect } from 'dva';
-import Ellipsis from '../../../components/Ellipsis';
+import Ellipsis from 'ant-design-pro/lib/Ellipsis';
 import OAForm from '../../../components/OAForm';
 import styles from './index.less';
 import { getBuckleTitle } from '../../../utils/utils';
@@ -96,7 +96,7 @@ export default class extends React.PureComponent {
           <FormItem label="配置分值" {...formItemLayout}>
             <FormItem style={{ width: 210, float: 'left' }}>
               <span className={styles.customerPoint}>
-                <span><Ellipsis lines={1}>{editInfo.recorder_name}</Ellipsis>（记录人）</span>
+                <span><Ellipsis length={5}>{editInfo.recorder_name}</Ellipsis>（记录人）</span>
                 {getFieldDecorator('recorder_point', {
                   initialValue: '',
                 })(
@@ -106,7 +106,7 @@ export default class extends React.PureComponent {
             </FormItem>
             <FormItem style={{ width: 210, float: 'left' }}>
               <span className={styles.customerPoint}>
-                <span><Ellipsis lines={1}>{editInfo.first_approver_name}</Ellipsis>（初审人）</span>
+                <span><Ellipsis length={5}>{editInfo.first_approver_name}</Ellipsis>（初审人）</span>
                 {getFieldDecorator('first_approver_point', {
                   initialValue: '',
                 })(
