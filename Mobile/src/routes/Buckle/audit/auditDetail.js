@@ -149,7 +149,6 @@ export default class AuditDetail extends React.Component {
   render() {
     const { buckleDetail = {} } = this.props;
     const { eventId } = this.state;
-    console.log('buckleDetail', buckleDetail);
     const detail = buckleDetail ? buckleDetail[eventId] : {};
     const newDetail = { ...detail || {} };
     const participant = newDetail.participants;
@@ -175,22 +174,6 @@ export default class AuditDetail extends React.Component {
         checkStatus: 1,
       },
     ];
-    // if (detail.status_id === 1 || (detail.first_approved_at && detail.status_id === -2)) {
-    //   approvers = approvers.filter(item => item.sn === detail.first_approver_sn);
-    // } else if (detail.status_id === 0
-    // || (detail.status_id === -2 && !detail.first_approved_at)) {
-    //   approvers = [];
-    // } else if (detail.status_id === -1) {
-    //   const temp = [];
-    //   approvers.find((item) => {
-    //     temp.push(item);
-    //     if (item.sn === detail.rejecter_sn) {
-    //       return true;
-    //     }
-    //     return false;
-    //   });
-    //   approvers = [...temp];
-    // }
     const footerBtn = [];
     if (Object.keys(newDetail).length) {
       if (newDetail.recorder_sn === userInfo.staff_sn) {
@@ -257,7 +240,7 @@ export default class AuditDetail extends React.Component {
                 </div>
               </div>
               <div style={{ padding: '0 15px' }}>
-                {newDetail.description}
+                {newDetail.description}1
               </div>
             </List>
           </WingBlank>
