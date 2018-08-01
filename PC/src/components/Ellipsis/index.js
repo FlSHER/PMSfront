@@ -24,7 +24,7 @@ const EllipsisText = ({ text, length, tooltip, ...other }) => {
   }
 
   if (tooltip) {
-    return <Tooltip title={text}><span>{displayText}{tail}</span></Tooltip>;
+    return <Tooltip arrowPointAtCenter placement="topLeft" title={text}><span>{displayText}{tail}</span></Tooltip>;
   }
 
   return (
@@ -166,14 +166,15 @@ export default class Ellipsis extends Component {
 
     // support document.body.style.webkitLineClamp
     if (isSupportLineClamp) {
-      const style = `#${id}{-webkit-line-clamp:${lines};}`;
-      return (
+      const style = `#${id}{-webkit-line-clamp:${lines};-webkit-box-orient: vertical;}`;
+      const lineClampBox = (
         <div id={id} className={cls} {...restProps}>
           <style>{style}</style>
-          {
-            tooltip ? (<Tooltip title={children}>{children}</Tooltip>) : children
-          }
+          {children}
         </div>);
+      return tooltip ? (
+        <Tooltip placement="topLeft" arrowPointAtCenter title={children}>{lineClampBox}</Tooltip>
+      ) : lineClampBox;
     }
 
     const childNode = (
@@ -198,7 +199,7 @@ export default class Ellipsis extends Component {
         >
           {
             tooltip ? (
-              <Tooltip title={text}>{childNode}</Tooltip>
+              <Tooltip arrowPointAtCenter placement="topLeft" title={text}>{childNode}</Tooltip>
             ) : childNode
           }
           <div className={styles.shadow} ref={this.handleShadowChildren}>{children}</div>

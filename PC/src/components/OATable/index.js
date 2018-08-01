@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Table, Input, Icon, message, Button, Tooltip, Spin } from 'antd';
 import QueueAnim from 'rc-queue-anim';
-import 'ant-design-pro/dist/ant-design-pro.css';
-import Ellipsis from 'ant-design-pro/lib/Ellipsis';
+import Ellipsis from '../Ellipsis';
 
 import { makerFilters } from '../../utils/utils';
 
@@ -14,7 +13,7 @@ import Operator from './operator';
 import TableUpload from './upload';
 
 import EdiTableCell from './editTableCell';
-import EditableCell from './editableRow';
+
 
 import styles from './index.less';
 import request from '../../utils/request';
@@ -154,11 +153,9 @@ class OATable extends PureComponent {
       if (column.width !== undefined && column.dataIndex !== undefined && !column.render) {
         response.render = (text) => {
           return (
-            <div style={{ width: column.width }}>
-              <Ellipsis tooltip title={text} lines={1}>
-                {text}
-              </Ellipsis>
-            </div>
+            <Ellipsis tooltip title={text} lines={1} style={{ width: column.width }}>
+              {text}
+            </Ellipsis>
           );
         };
       }
@@ -628,7 +625,6 @@ class OATable extends PureComponent {
 }
 
 OATable.EdiTableCell = EdiTableCell;
-OATable.EditableCell = EditableCell;
 OATable.defaultProps = defaultProps;
 
 export default OATable;
