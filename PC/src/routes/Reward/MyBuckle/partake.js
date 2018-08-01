@@ -1,8 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import 'ant-design-pro/dist/ant-design-pro.css';
-import Ellipsis from 'ant-design-pro/lib/Ellipsis';
+import Ellipsis from '../../../components/Ellipsis';
 
 import OATable from '../../../components/OATable';
 import EventInfo from './info';
@@ -72,9 +71,7 @@ export default class extends React.PureComponent {
           const { participants } = record;
           const staffName = participants.map(item => item.staff_name);
           return (
-            <div style={{ width: 200 }}>
-              <Ellipsis tooltip lines={1}>{staffName.join('、')}</Ellipsis>
-            </div>
+            <Ellipsis style={{ width: 200 }} tooltip lines={1}>{staffName.join('、')}</Ellipsis>
           );
         },
       },
