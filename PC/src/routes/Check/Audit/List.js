@@ -274,7 +274,7 @@ export default class extends React.PureComponent {
         <OATable
           serverSide
           loading={loading || cancelLoading}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 1400 }}
           columns={this.makeColums()}
           data={reuslt.data || []}
           total={reuslt.total || 0}
