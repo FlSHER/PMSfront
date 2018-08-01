@@ -15,12 +15,7 @@ const {
   approveLoading: loading.effects['buckle/approve'],
   rejectLoading: loading.effects['buckle/reject'],
 }))
-@OAForm.create({
-  onValuesChange(props, fieldValue) {
-    const [name] = Object.keys(fieldValue);
-    props.setFiedError(name, null);
-  },
-})
+@OAForm.create()
 export default class extends React.PureComponent {
   componentWillMount() {
     const { bindForm, form } = this.props;

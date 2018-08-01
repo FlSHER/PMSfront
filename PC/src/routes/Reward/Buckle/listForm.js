@@ -15,7 +15,7 @@ const {
   onValuesChange(props, fieldValue, allValues) {
     props.onChange(allValues, props.index);
     const [name] = Object.keys(fieldValue);
-    props.setFiedError(name, null);
+    props.setFiedError(name);
   },
 })
 export default class extends React.PureComponent {
