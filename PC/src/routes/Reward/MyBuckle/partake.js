@@ -92,6 +92,7 @@ export default class extends React.PureComponent {
       },
       {
         title: '操作',
+        fixed: 'right',
         render: (record) => {
           return (
             <a
@@ -122,6 +123,7 @@ export default class extends React.PureComponent {
         <OATable
           serverSide
           loading={loading}
+          scroll={{ x: 1000 }}
           columns={this.makeColums()}
           data={reuslt && reuslt.data}
           total={reuslt && reuslt.total}

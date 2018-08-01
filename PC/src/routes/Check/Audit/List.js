@@ -175,7 +175,7 @@ export default class extends React.PureComponent {
       },
       {
         title: '操作',
-        width: 180,
+        ...(type !== 'addressee' ? { width: 180 } : { width: 60 }),
         fixed: 'right',
         render: (_, record) => {
           return this.makeAction(record);
