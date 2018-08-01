@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-import { Tooltip } from 'antd';
 import { connect } from 'dva';
+import Ellipsis from '../../../Ellipsis';
 import { getBrandAuthority, getDepartmentAuthority } from '../../../../utils/utils';
 import SearchTable from '../index';
 
@@ -139,15 +139,16 @@ export default class Staff extends PureComponent {
         dataIndex: 'staff_sn',
         sorter: true,
         fixed: true,
-        width: 60,
+        width: 110,
+        tooltip: true,
         searcher: true,
       }, {
         title: '姓名',
-        align: 'center',
         dataIndex: 'realname',
         fixed: true,
-        width: 60,
+        tooltip: true,
         searcher: true,
+        width: 110,
       }, {
         title: '品牌',
         align: 'center',
@@ -170,7 +171,6 @@ export default class Staff extends PureComponent {
       }, {
         title: '部门',
         dataIndex: 'department_id',
-        width: 200,
         treeFilters: {
           title: 'full_name',
           value: 'id',
@@ -181,9 +181,9 @@ export default class Staff extends PureComponent {
           const data = department.find(item => item.id === val);
           const fullName = data ? data.full_name : '';
           const content = (
-            <Tooltip title={fullName} placement="right">
+            <Ellipsis tooltip lines={1}>
               {fullName}
-            </Tooltip>
+            </Ellipsis>
           );
           return content;
         },
@@ -192,6 +192,7 @@ export default class Staff extends PureComponent {
         title: '状态',
         dataIndex: 'status_id',
         align: 'center',
+        width: 110,
         filters: newStatus,
         render: (val) => {
           const data = status.find(item => item.value === val);

@@ -64,18 +64,20 @@ export default class extends React.PureComponent {
       {
         title: '主题',
         dataIndex: 'title',
-        width: 300,
+        tooltip: true,
         searcher: true,
       },
       {
         title: '备注',
         width: 150,
         dataIndex: 'remark',
+        tooltip: true,
         searcher: true,
       },
       {
         title: '事件时间',
         dataIndex: 'executed_at',
+        width: 135,
         sorter: true,
         dateFilters: true,
         render: (time) => {
@@ -90,6 +92,7 @@ export default class extends React.PureComponent {
         title: '审核类型',
         dataIndex: 'step',
         filters: step,
+        width: 100,
         filterMultiple: false,
         onFilter: () => {
           return true;
@@ -106,6 +109,7 @@ export default class extends React.PureComponent {
         title: '操作类型',
         dataIndex: 'cate',
         filters: cate,
+        width: 100,
         filterMultiple: false,
         onFilter: () => {
           return true;
@@ -131,6 +135,7 @@ export default class extends React.PureComponent {
       {
         title: '审核类型',
         dataIndex: 'status_id',
+        width: 110,
         filters: type !== 'approved' ? statusData : status,
         onFilter: () => {
           return true;
@@ -149,11 +154,13 @@ export default class extends React.PureComponent {
         align: 'center',
         dataIndex: 'event_count',
         sorter: true,
+        width: 130,
         rangeFilters: true,
       },
       {
         title: '总人次',
         align: 'center',
+        width: 130,
         dataIndex: 'participant_count',
         sorter: true,
         rangeFilters: true,
@@ -161,6 +168,7 @@ export default class extends React.PureComponent {
       {
         title: '记录人',
         dataIndex: 'recorder_name',
+        width: 110,
         searcher: true,
       },
       {
@@ -169,6 +177,7 @@ export default class extends React.PureComponent {
         dateFilters: true,
         sorter: true,
         sortOrder: 'descend',
+        width: 150,
         render: (time) => {
           return moment(time).format('YYYY-MM-DD HH:mm');
         },
@@ -274,7 +283,7 @@ export default class extends React.PureComponent {
         <OATable
           serverSide
           loading={loading || cancelLoading}
-          scroll={{ x: 1400 }}
+          scroll={{ x: 1400, y: 180 }}
           columns={this.makeColums()}
           data={reuslt.data || []}
           total={reuslt.total || 0}

@@ -149,11 +149,11 @@ class OATable extends PureComponent {
       } else if (column.rangeFilters) {
         Object.assign(response, this.makeRangeFilterOption(key, column));
       }
-      if (column.width !== undefined && column.dataIndex !== undefined && !column.render) {
+      if (column.dataIndex !== undefined && !column.render) {
         const { tooltip } = column;
         response.render = (text) => {
           return (
-            <Ellipsis tooltip={tooltip || true} title={text} lines={1} >
+            <Ellipsis tooltip={tooltip || false} lines={1}>
               {text}
             </Ellipsis>
           );
@@ -452,11 +452,12 @@ class OATable extends PureComponent {
       selectedRowKeys,
       onChange: this.handleRowSelectChange,
     } : rowSelection;
+    const bodyHeight = document.body.clientHeight;
     const response = {
       rowKey: (record, index) => record.id || record.staff_sn || record.shop_sn || index,
       dataSource: data,
       onChange: this.handleTableChange,
-      size: 'middle',
+      size: bodyHeight > 660 ? 'default' : 'small',
       bordered: false,
       // scroll: { x: true },
       pagination: {
