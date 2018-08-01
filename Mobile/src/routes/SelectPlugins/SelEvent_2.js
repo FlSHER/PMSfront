@@ -17,9 +17,10 @@ import style from './index.less';
   evtName: event.evtName,
   searchEvent: event.searchEvent,
   breadCrumb: event.breadCrumb,
+  loadings: loading,
   loading: loading.effects['event/getEvent'],
   loadingName: loading.effects['event/getEventName'],
-  loadingSearch: loading.effects['event/searchEventName'],
+  // loadingSearch: loading.effects['event/searchEventName'],
   selectStaff: searchStaff.selectStaff,
   info: buckle.info,
   optAll: buckle.optAll,
@@ -229,8 +230,8 @@ export default class SelEvent extends Component {
 
   render() {
     const { eventList, selected, searchValue } = this.state;
-    const { breadCrumb, evtName, loading,
-      loadingName, searchEvent, loadingSearch, evtAll,
+    const { breadCrumb, evtName, loading, loadings,
+      loadingName, searchEvent, evtAll,
     } = this.props;
     const isLoading = loading || loadingName;
     const { page, totalpage, data = [] } = searchEvent;
@@ -257,9 +258,10 @@ export default class SelEvent extends Component {
           ref={(e) => { this.ptr = e; }}
           style={{ ...(isLoading && { display: 'none' }), overflow: 'auto', height: this.state.height }}
         >
-          {((searchValue && !data.length) || (!evtName.length && !eventList.length)) &&
+          {((searchValue && !data.length) ||
+             (!evtName.length && !searchValue && !eventList.length)) &&
             (
-              <div style={{ display: isLoading || loadingSearch ? 'none' : 'flex', flexDirection: 'column' }}>
+              <div style={{ display: loadings.global ? 'none' : 'flex', flexDirection: 'column' }}>
                 <Nothing src={nothing} />
               </div>
             )
