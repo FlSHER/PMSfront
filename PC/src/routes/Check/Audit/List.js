@@ -32,7 +32,7 @@ const { confirm } = Modal;
 export default class extends React.PureComponent {
   state = { editInfo: {} };
 
-  fetch = (params) => {
+  fetch = (_, params) => {
     const { dispatch, type } = this.props;
     let newParams = { ...params };
     const extarParams = {};
@@ -266,7 +266,7 @@ export default class extends React.PureComponent {
           columns={this.makeColums()}
           data={reuslt.data || []}
           total={reuslt.total || 0}
-          searchOnChange={this.fetch}
+          fetchDataSource={this.fetch}
         />
         <BuckleInfo
           type={type}

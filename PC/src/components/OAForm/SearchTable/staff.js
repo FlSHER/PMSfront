@@ -42,7 +42,7 @@ export default class extends React.PureComponent {
         <UserCircle
           key={key}
           style={{ cursor: mouseStyle, background: color }}
-          closable={!this.props.disabled || !item.disabled}
+          closable={this.props.disabled || !item.disabled}
           afterClose={() => this.handleTagRemove(item.key)}
         >
           {isLongTag ? `${tag.slice(0, 20)}...` : tag}

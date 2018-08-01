@@ -54,10 +54,11 @@ export default (FormComponet) => {
       localStorage.removeItem(localSavingKey);
     }
 
-
-    handleFieldsError = (name, error) => {
-      const { setFields } = this.form;
-      setFields({ [name]: error });
+    handleFieldsError = (name) => {
+      const { setFields, getFieldError } = this.form;
+      if (getFieldError(name)) {
+        setFields({ [name]: {} });
+      }
     }
 
     handleOnChange = (changedFields, index) => {

@@ -14,12 +14,7 @@ const {
   DatePicker,
   SearchTable,
 } = OAForm;
-@OAForm.create({
-  onValuesChange(props, fieldValue) {
-    const [name] = Object.keys(fieldValue);
-    props.setFiedError(name, null);
-  },
-})
+@OAForm.create()
 @connect(({ event, loading }) => ({
   finalStaff: event.finalStaff,
   loading: loading.effects['buckle/addBuckle'],
@@ -50,6 +45,9 @@ export default class extends React.PureComponent {
     const pointA = Math.floor(value.point_a_default) === a;
     const b = parseFloat(value.point_b_default);
     const pointB = Math.floor(value.point_b_default) === b;
+    const addressees = value.default_cc_addressees || [{ staff_sn: '100010', staff_name: '张博涵', disabled: true }];
+    const { form: { setFieldsValue } } = this.props;
+    setFieldsValue({ addressees: [...addressees] });
     this.setState({
       eventId: value.id,
       pointRange: {
@@ -108,6 +106,14 @@ export default class extends React.PureComponent {
       params.final_approver_name = params.last.final_approver_name || '';
       params.event_count = 1;
       params.participant_count = values.participants.length;
+
+      params.addressees = values.addressees.map((item) => {
+        const temp = { ...item };
+        delete temp.disabled;
+        return temp;
+      });
+
+
       delete params.first;
       delete params.last;
       delete params.event_id;
@@ -320,7 +326,7 @@ export default class extends React.PureComponent {
               <SearchTable.Staff
                 mode="user"
                 multiple
-                name={{ staff_sn: 'staff_sn', staff_name: 'realname' }}
+                name={{ staff_sn: 'staff_sn', staff_name: 'realname', disabled: 'disabled' }}
                 showName="staff_name"
               />
             )}
