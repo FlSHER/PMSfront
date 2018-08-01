@@ -25,7 +25,7 @@ export const tabbar = [{
 }, {
   title: '审批',
   key: 'approval',
-  to: '/audit_list',
+  to: '/audit_list_2',
   icon: appro_,
   selIcon: appro,
 },

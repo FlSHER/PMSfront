@@ -18,9 +18,11 @@ export default class searchStaff extends Component {
         <div
           {...className}
         >
-          <div>
+          <div className={style.baseinfo}>
             <span>{value[renderName]}</span>
-            <span style={{ color: 'rgb(74,74,74)' }}>{value && value.department ? `（${value.department.full_name}）` : ''}</span>
+            <span style={{ color: '#969696' }}>
+              {value && value.department ? `（${value.department.full_name}）` : ''}
+            </span>
           </div>
         </div>
         {isFinal ? (

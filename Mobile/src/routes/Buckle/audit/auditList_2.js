@@ -28,7 +28,7 @@ const tabs = {
       {
         name: 'status_id',
         type: 'checkBox',
-        title: '审核类型',
+        title: '审核环节',
         multiple: false,
         options: [
           {
@@ -46,7 +46,7 @@ const tabs = {
       {
         name: 'step',
         type: 'checkBox',
-        title: '审核类型',
+        title: '审核环节',
         multiple: false,
         notbelong: true,
         options: [
@@ -61,15 +61,15 @@ const tabs = {
       {
         name: 'cate',
         type: 'checkBox',
-        title: '操作类型',
+        title: '操作',
         multiple: false,
         notbelong: true,
         options: [
           {
-            label: '已通过', value: 'audit',
+            label: '通过', value: 'audit',
           },
           {
-            label: '已驳回', value: 'reject',
+            label: '驳回', value: 'reject',
           },
         ],
       },

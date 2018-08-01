@@ -28,9 +28,14 @@ class Input extends React.Component {
         style={style}
         type={type}
         ref={(e) => { this.ptr = e; }}
-        onFocus={() => { this.ptr.focused = true; this.ptr.select(); }}
-        onMouseUp={() => {
-          if (this.ptr.focused) { this.ptr.focused = false; this.ptr.select(); return false; }
+        onFocus={(e) => {
+          e.target.focused = true;
+          e.target.select();
+         }}
+        onTouchEnd={(e) => {
+          // e.preventDefault();
+          // e.target.select();
+          if (e.target.focused) { e.target.focused = false; return false; }
         }}
         onBlur={() => {
           if (floatNumber) {

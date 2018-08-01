@@ -101,7 +101,7 @@ export default class AuditDetail extends React.Component {
 
     return (
       <div key={approver.key}>
-        <WhiteSpace size="sm" />
+        <WhiteSpace size="lg" />
         <WingBlank className={style.parcel} >
           <div className={style.players}>
             <Flex className={style.title}>{approver.title} </Flex>
@@ -230,7 +230,7 @@ export default class AuditDetail extends React.Component {
         direction="column"
       >
         <div className={styles.con_content}>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="lg" />
           <WingBlank className={style.parcel}>
             <List>
               <div style={{ padding: '0 15px' }}>
@@ -239,21 +239,23 @@ export default class AuditDetail extends React.Component {
                   <Label value={newDetail} content={buckleState(newDetail.status_id)} />
                 </div>
               </div>
-              <div style={{ padding: '0 15px' }}>
-                {newDetail.description}1
+              {newDetail.description && (
+              <div style={{ padding: '0 15px 10px 15px' }}>
+                {newDetail.description}
               </div>
+              )}
             </List>
           </WingBlank>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="lg" />
 
-          <WingBlank className={style.parcel}>
+          <WingBlank className={[style.parcel, style.nobottom].join(' ')}>
             <List>
               <List.Item extra={newDetail.executed_at}>
                 事件时间
               </List.Item>
             </List>
           </WingBlank>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="lg" />
           <WingBlank className={style.parcel}>
             <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
               <Flex className={style.title}> 参与人列表</Flex>
@@ -262,10 +264,10 @@ export default class AuditDetail extends React.Component {
                 align="center"
                 justify="center"
               >
-                <Flex.Item className={style.table_item}>姓名</Flex.Item>
+                <Flex.Item className={style.table_item} style={{ borderLeft: 'none' }}>姓名</Flex.Item>
                 <Flex.Item className={style.table_item}>单次A分</Flex.Item>
                 <Flex.Item className={style.table_item}>单次B分</Flex.Item>
-                <Flex.Item className={style.table_item}>次数</Flex.Item>
+                <Flex.Item className={style.table_item} style={{ borderRight: 'none' }}>次数</Flex.Item>
               </Flex>
               <div className={style.table_body}>
                 {(participant || []).map((item, i) => {
@@ -291,10 +293,9 @@ export default class AuditDetail extends React.Component {
               </div>
             </div>
           </WingBlank>
-          <WhiteSpace size="sm" />
           {approvers.map(item => this.makeApprover(item))}
           {newDetail.status_id === 2 ?
-            <WhiteSpace size="sm" /> : null}
+            <WhiteSpace size="lg" /> : null}
           {(newDetail.status_id === 2 || newDetail.status_id === -3) ? (
             <WingBlank className={style.parcel}>
               <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
@@ -326,7 +327,7 @@ export default class AuditDetail extends React.Component {
           ) : null}
           {addresseess && addresseess.length ? (
             <React.Fragment>
-              <WhiteSpace size="sm" />
+              <WhiteSpace size="lg" />
               <WingBlank className={style.parcel}>
                 <div className={style.players}>
                   <Flex className={style.title}> 抄送人</Flex>
@@ -350,7 +351,7 @@ export default class AuditDetail extends React.Component {
               </WingBlank>
             </React.Fragment>
           ) : null}
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="lg" />
           <WingBlank className={style.parcel}>
             <div className={style.players}>
               <Flex className={style.title}> 记录人</Flex>
