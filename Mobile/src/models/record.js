@@ -12,6 +12,26 @@ export default {
   },
   reducers: {
     // ...defaultReducers,
+    filterEvent(state) {
+      const { events, participants, eventAll, optAll } = state;
+      const newParticipants = { ...participants };
+      const newOptAll = [...optAll];
+      const newEvents = events.filter(item => item.event_id !== undefined);
+      const newEventAll = eventAll.filter(item => item.id !== undefined);
+      events.forEach((item, i) => {
+        if (item.event_id === undefined) {
+          delete newParticipants[i];
+          newOptAll.splice(i, 1);
+        }
+      });
+      return {
+        ...state,
+        events: newEvents,
+        eventAll: newEventAll,
+        optAll: newOptAll,
+        participants: newParticipants,
+      };
+    },
     clearModal(state) {
       return {
         ...state,
@@ -109,6 +129,18 @@ export default {
       return {
         ...state,
         events: newEvents,
+        participants,
+      };
+    },
+
+    deleteRecords(state, action) {
+      const { index } = action.payload;
+      const { records, participants } = state;
+      const newRecords = records.filter((item, i) => i !== index);
+      delete participants[index];
+      return {
+        ...state,
+        records: newRecords,
         participants,
       };
     },

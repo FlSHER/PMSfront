@@ -36,6 +36,9 @@ export default class Preview extends React.Component {
         },
       });
     }
+    dispatch({
+      type: 'record/filterEvent',
+    });
   }
 
   componentDidMount() {
@@ -69,7 +72,7 @@ export default class Preview extends React.Component {
     e.stopPropagation();
     const { dispatch } = this.props;
     dispatch({
-      type: 'record/deleteEvents',
+      type: 'record/deleteRecords',
       payload: {
         index: i,
       },
@@ -152,7 +155,7 @@ export default class Preview extends React.Component {
                   <WhiteSpace />
                   <RecordPreview
                     extra={newExtra}
-                    handleClick={e => this.pointRedirect(e, i)}
+                    // handleClick={e => this.pointRedirect(e, i)}
                     value={item}
                   />
                 </React.Fragment>
