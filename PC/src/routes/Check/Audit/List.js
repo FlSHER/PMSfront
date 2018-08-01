@@ -136,7 +136,7 @@ export default class extends React.PureComponent {
           return true;
         },
         render: (statusId) => {
-          if (type !== 'approved') return getBuckleStatus(statusId);
+          if (type !== 'approved') return getBuckleStatus(statusId) || '审核中';
           const { text } = status.find(item => item.value === statusId) || { text: '' };
           return text;
         },

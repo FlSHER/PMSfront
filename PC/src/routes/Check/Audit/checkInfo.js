@@ -81,7 +81,7 @@ function Approver({ tip, data }) {
                   </p>
                 </div>
                 {
-                  data.point && data.point.recorder_name && (
+                  data.point && data.point.recorder_name && data.point.recorder !== 0 && (
                     <p style={{ color: '#969696', marginTop: 10 }}>
                       记录人：{data.point.recorder_name} {data.point.recorder > 0 ? `+${data.point.recorder}` : data.point.recorder}
                     </p>
@@ -160,7 +160,7 @@ function getApproverData(data) {
     statusText: '通过',
     point: {
       recorder_name: data.recorder_name || null,
-      recorder: data.recorder_point || null,
+      recorder: data.recorder_point || 0,
       first_approver_name: data.first_approver || null,
       first_approver: data.first_approver_point || null,
     },

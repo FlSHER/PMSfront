@@ -58,7 +58,7 @@ export default class extends React.PureComponent {
         width: 50,
         filters: statusData,
         render: (statusId) => {
-          const statusText = statusData.find(item => item.value === statusId);
+          const statusText = statusData.find(item => item.value === statusId) || { text: '审核中' };
           return statusText.text || '';
         },
       },

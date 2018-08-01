@@ -45,8 +45,30 @@ export default class extends React.PureComponent {
     const pointA = Math.floor(value.point_a_default) === a;
     const b = parseFloat(value.point_b_default);
     const pointB = Math.floor(value.point_b_default) === b;
-    const addressees = value.default_cc_addressees.map(item => ({ ...item, disabled: true })) || [];
+    let addressees = value.default_cc_addressees || [];
+    addressees = addressees.map(item => ({ ...item, disabled: true })) || [];
     const { form: { setFieldsValue } } = this.props;
+    setFieldsValue({ addressees: [...addressees] });
+    if (value.first_approver_sn) {
+      setFieldsValue({
+        first: {
+          first_approver_sn: value.first_approver_sn || '',
+          first_approver_name: value.first_approver_name || '',
+          disabled: value.first_approver_locked === 1,
+        },
+      });
+    }
+
+    if (value.final_approver_sn) {
+      setFieldsValue({
+        last: {
+          final_approver_sn: value.final_approver_sn || '',
+          final_approver_name: value.final_approver_name || '',
+          disabled: value.final_approver_locked === 1,
+        },
+      });
+    }
+
     setFieldsValue({ addressees: [...addressees] });
     this.setState({
       eventId: value.id,

@@ -65,7 +65,7 @@ export default class extends React.Component {
         title: '编号',
         searcher: true,
         sorter: true,
-        width: 70,
+        width: 100,
         fixed: 'left',
       },
       {
