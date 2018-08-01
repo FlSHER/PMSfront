@@ -45,7 +45,7 @@ export default class extends React.PureComponent {
     const pointA = Math.floor(value.point_a_default) === a;
     const b = parseFloat(value.point_b_default);
     const pointB = Math.floor(value.point_b_default) === b;
-    const addressees = value.default_cc_addressees || [{ staff_sn: '100010', staff_name: '张博涵', disabled: true }];
+    const addressees = value.default_cc_addressees.map(item => ({ ...item, disabled: true })) || [];
     const { form: { setFieldsValue } } = this.props;
     setFieldsValue({ addressees: [...addressees] });
     this.setState({
