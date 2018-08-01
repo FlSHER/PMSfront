@@ -173,7 +173,7 @@ export default class extends React.PureComponent {
       },
       {
         title: '操作',
-        width: 150,
+        width: 180,
         fixed: 'right',
         render: (_, record) => {
           return this.makeAction(record);
@@ -223,32 +223,43 @@ export default class extends React.PureComponent {
       </a>
     )];
     if (type === 'recorded') {
-      if ([0, 1].indexOf(record.status_id) !== -1) {
-        action.push(<Divider key="v1" type="vertical" />);
-        action.push((
-          <a
-            key="cancel"
-            style={{ color: '#59c3c3' }}
-            onClick={() => this.showCancelConfirm(record.id)}
-          >
-            撤回
-          </a>
-        ));
+      const color = '#c8c8c8';
+      const linkCancelProps = {
+        style: { color: '#59c3c3' },
+        onClick: () => this.showCancelConfirm(record.id),
+      };
+      if ([0, 1].indexOf(record.status_id) === -1) {
+        linkCancelProps.style.color = color;
+        linkCancelProps.onClick = () => { };
       }
-      if ([-1, -2].indexOf(record.status_id) !== -1) {
-        action.push(<Divider key="v1" type="vertical" />);
-        action.push((
-          <a
-            key="cancel"
-            style={{ color: '#59c3c3' }}
-            onClick={() => {
-              dispatch(routerRedux.push(`/reward/buckle/submission/${record.id}`));
-            }}
-          >
-            再次提交
-          </a>
-        ));
+      action.push(<Divider key="v1" type="vertical" />);
+      action.push((
+        <a
+          key="cancel"
+          {...linkCancelProps}
+        >
+          撤回
+        </a>
+      ));
+      const linkResubmitProps = {
+        style: { color: '#59c3c3' },
+        onClick: () => {
+          dispatch(routerRedux.push(`/reward/buckle/submission/${record.id}`));
+        },
+      };
+      if ([-1, -2].indexOf(record.status_id) === -1) {
+        linkResubmitProps.style.color = color;
+        linkResubmitProps.onClick = () => { };
       }
+      action.push(<Divider key="v2" type="vertical" />);
+      action.push((
+        <a
+          key="resubmit"
+          {...linkResubmitProps}
+        >
+          再次提交
+        </a>
+      ));
     }
     return action;
   }
