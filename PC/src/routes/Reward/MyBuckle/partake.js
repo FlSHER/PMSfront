@@ -34,11 +34,13 @@ export default class extends React.PureComponent {
       {
         title: '事件标题',
         dataIndex: 'event_name',
+        width: 250,
         searcher: true,
       },
       {
         title: '备注',
         dataIndex: 'remark',
+        width: 200,
         searcher: true,
       },
       {

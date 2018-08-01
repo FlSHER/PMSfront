@@ -63,6 +63,7 @@ export default class extends React.PureComponent {
       {
         title: '主题',
         dataIndex: 'title',
+        width: 300,
         searcher: true,
       },
       {
