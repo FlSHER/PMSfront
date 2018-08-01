@@ -22,7 +22,7 @@ export default class extends React.Component {
     const { eventId, onChange } = this.props;
     if (eventId && !this.fecthId) {
       this.fecthId = eventId;
-      this.fetchEvent({}, eventId, onChange);
+      this.fetchEvent({}, {}, eventId, onChange);
     }
   }
 
@@ -35,7 +35,7 @@ export default class extends React.Component {
     });
   }
 
-  fetchEvent = (params, id, callBack) => {
+  fetchEvent = (params, _, id, callBack) => {
     let newParams;
     const { dispatch } = this.props;
     this.fetchEventType();

@@ -12,12 +12,7 @@ const {
   DatePicker,
   SearchTable,
 } = OAForm;
-@OAForm.create({
-  onValuesChange(props, fieldValue) {
-    const [name] = Object.keys(fieldValue);
-    props.setFiedError(name, null);
-  },
-})
+@OAForm.create()
 @connect(({ event, buckle, loading }) => ({
   finalStaff: event.finalStaff,
   buckleInfo: buckle.buckleGropusDetails,

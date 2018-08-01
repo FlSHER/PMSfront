@@ -37,6 +37,7 @@ export default class AuditDetail extends React.Component {
   componentWillMount() {
     const { dispatch, match: { params } } = this.props;
     const { id } = params;
+    console.log('id', id);
     const newInfo = userStorage('userInfo');
     this.setState({
       eventId: id,
@@ -74,9 +75,9 @@ export default class AuditDetail extends React.Component {
   }
 
   makeApprover = (approver) => {
-    const { details } = this.props;
-    const { id } = this.state;
-    const detail = { ...details[id] || {} };
+    const { buckleDetail } = this.props;
+    const { eventId } = this.state;
+    const detail = { ...buckleDetail[eventId] || {} };
     const approveInfo = {};
     if ((detail.status_id === 1 || detail.status_id === 0) && !approver.time) {
       approveInfo.statusText = '审核中...';
@@ -148,47 +149,31 @@ export default class AuditDetail extends React.Component {
   render() {
     const { buckleDetail = {} } = this.props;
     const { eventId } = this.state;
-    const detail = buckleDetail[eventId] || {};
+    const detail = buckleDetail ? buckleDetail[eventId] : {};
     const newDetail = { ...detail || {} };
-    const participant = detail.participants;
-    const addresseess = [...((detail.group && detail.group.addressees) || [])];
+    const participant = newDetail.participants;
+    const addresseess = [...((newDetail.group && newDetail.group.addressees) || [])];
     const { userInfo } = this.state;
     const approvers = [
       {
-        sn: detail.first_approver_sn,
+        sn: newDetail.first_approver_sn,
         title: '初审人',
-        name: detail.first_approver_name,
-        description: detail.first_approve_remark,
+        name: newDetail.first_approver_name,
+        description: newDetail.first_approve_remark,
         key: 'first_approver_name',
-        time: detail.first_approved_at,
+        time: newDetail.first_approved_at,
         checkStatus: 0,
       },
       {
-        sn: detail.final_approver_sn,
+        sn: newDetail.final_approver_sn,
         title: '终审人',
-        name: detail.final_approver_name,
-        description: detail.final_approve_remark,
+        name: newDetail.final_approver_name,
+        description: newDetail.final_approve_remark,
         key: 'final_approver_name',
-        time: detail.final_approved_at,
+        time: newDetail.final_approved_at,
         checkStatus: 1,
       },
     ];
-    // if (detail.status_id === 1 || (detail.first_approved_at && detail.status_id === -2)) {
-    //   approvers = approvers.filter(item => item.sn === detail.first_approver_sn);
-    // } else if (detail.status_id === 0
-    // || (detail.status_id === -2 && !detail.first_approved_at)) {
-    //   approvers = [];
-    // } else if (detail.status_id === -1) {
-    //   const temp = [];
-    //   approvers.find((item) => {
-    //     temp.push(item);
-    //     if (item.sn === detail.rejecter_sn) {
-    //       return true;
-    //     }
-    //     return false;
-    //   });
-    //   approvers = [...temp];
-    // }
     const footerBtn = [];
     if (Object.keys(newDetail).length) {
       if (newDetail.recorder_sn === userInfo.staff_sn) {
@@ -255,7 +240,7 @@ export default class AuditDetail extends React.Component {
                 </div>
               </div>
               <div style={{ padding: '0 15px' }}>
-                {newDetail.description}
+                {newDetail.description}1
               </div>
             </List>
           </WingBlank>

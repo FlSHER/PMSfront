@@ -38,10 +38,10 @@ export default class Staff extends PureComponent {
     };
   }
 
-  fetchStaff = (params) => {
+  fetchStaff = (urlPath, params) => {
     const { dispatch, position } = this.props;
     let { filterPosition } = this.state;
-    const newParams = { ...params };
+    const newParams = { ...urlPath };
     if (this.props.filters.content) {
       newParams.filters += this.props.filters.content;
     }
@@ -249,6 +249,6 @@ Staff.defaultProps = {
   showName: '',
   title: '',
   placeholder: '请选择员工',
-  filters: {},
+  filters: { content: 'status_id>=0;', status: [1, 2, 3] },
   onChange: () => { },
 };

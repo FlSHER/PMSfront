@@ -19,8 +19,8 @@
     "production":{
       "define": {
         "OA_PATH": "http://of.xigemall.com/",
-        "OA_CLIENT_ID": "8",
-        "OA_CLIENT_SECRET": "lmL6z770WU4MkCMKYGPpSh37XcJ1Q83zcsBeQMxr",
+        "OA_CLIENT_ID": "10",
+        "OA_CLIENT_SECRET": "prPH0XyteLHLOUVCzZzJeGnMYTvfj8cJ4JqovQrr",
         "AUTH_NAME":"pc",
         "TOKEN_PREFIX":"PMS_"
       }

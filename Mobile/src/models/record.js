@@ -125,7 +125,6 @@ export default {
       const { index } = action.payload;
       const { events, participants } = state;
       const newEvents = events.filter((item, i) => i !== index);
-      console.log('newEvents', newEvents);
       delete participants[index];
       return {
         ...state,
@@ -138,7 +137,6 @@ export default {
       const { index } = action.payload;
       const { records, participants } = state;
       const newRecords = records.filter((item, i) => i !== index);
-      console.log('newRecords', newRecords);
       delete participants[index];
       return {
         ...state,
