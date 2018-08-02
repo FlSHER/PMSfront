@@ -65,7 +65,6 @@ export default class RankingGroup extends React.Component {
               </div>
             </div>
           </WingBlank>
-          <WhiteSpace size="md" />
         </Flex.Item>
         <Flex.Item
           className={style.content}

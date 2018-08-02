@@ -2,7 +2,7 @@ import React from 'react';
 import {
   connect,
 } from 'dva';
-import { WingBlank, WhiteSpace, Flex } from 'antd-mobile';
+import { Tabs, Flex } from 'antd-mobile';
 import { Buckle, PaticipantBuckle } from '../../../common/ListView/index';
 import ModalFilters from '../../../components/ModalFilters';
 import {
@@ -10,8 +10,6 @@ import {
   convertStyle,
 } from '../../../utils/convert.js';
 import { getUrlParams, getUrlString, parseParamsToUrl, doConditionValue, parseParams } from '../../../utils/util';
-
-import { StateTabs } from '../../../components/index';
 import style from '../index.less';
 import shortcut from '../../../assets/shortcuts.png';
 
@@ -82,9 +80,9 @@ const sortList = [
 ];
 
 const auditStates = [
-  { name: '我参与的', value: 'participant' },
-  { name: '我记录的', value: 'recorded' },
-  { name: '抄送我的', value: 'addressee' },
+  { name: '我参与的', value: 'participant', title: '我参与的' },
+  { name: '我记录的', value: 'recorded', title: '我记录的' },
+  { name: '抄送我的', value: 'addressee', title: '抄送我的' },
 ];
 
 @connect(({ buckle, alltabs }) => ({
@@ -253,6 +251,17 @@ export default class AuditList extends React.Component {
     return extra;
   }
 
+  renderInitialPage = () => {
+    let initialPage = 0;
+    const { type } = this;
+    auditStates.forEach((item, i) => {
+      if (item.value === type) {
+        initialPage = i;
+      }
+    });
+    return initialPage;
+  }
+
   renderLalbel = () => {
     const labelArr = [];
     const obj = {};
@@ -276,16 +285,11 @@ export default class AuditList extends React.Component {
       <Flex direction="column">
         <Flex.Item className={style.header}>
           <div className={style.state_tab}>
-            <WhiteSpace size="md" />
-            <WingBlank size="lg">
-              <StateTabs
-                option={auditStates}
-                checkItem={{ value: this.type }}
-                justify="around"
-                handleClick={this.tabChange}
-              />
-            </WingBlank>
-            <WhiteSpace size="md" />
+            <Tabs
+              tabs={auditStates}
+              initialPage={this.renderInitialPage()}
+              onTabClick={this.tabChange}
+            />
           </div>
           <div className={style.filter_con}>
             <Flex

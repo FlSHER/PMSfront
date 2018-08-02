@@ -2,7 +2,7 @@ import React from 'react';
 import {
   connect,
 } from 'dva';
-import { WingBlank, WhiteSpace, Flex, Modal } from 'antd-mobile';
+import { WingBlank, Flex, Modal, Tabs } from 'antd-mobile';
 import { Buckle, Auditted } from '../../../common/ListView/index';
 import ModalFilters from '../../../components/ModalFilters';
 
@@ -16,8 +16,6 @@ import {
   auditFinishedResultLabel,
 } from '../../../utils/convert.js';
 import { userStorage, getUrlParams, getUrlString, parseParamsToUrl, doConditionValue, parseParams } from '../../../utils/util';
-
-import { StateTabs } from '../../../components/index';
 import style from '../index.less';
 import shortcut from '../../../assets/shortcuts.png';
 
@@ -81,9 +79,9 @@ const sortList = [
   { name: '时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
   { name: '时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
-const auditStates = [
-  { name: '待我审核的', value: 'processing' },
-  { name: '我已审核的', value: 'approved' },
+const auditTabs = [
+  { name: '待我审核的', value: 'processing', title: '待我审核的' },
+  { name: '我已审核的', value: 'approved', title: '我已审核的' },
 ];
 @connect(({ buckle, alltabs }) => ({
   auditList: buckle.auditList,
@@ -184,13 +182,13 @@ export default class AuditList extends React.Component {
     });
   }
 
- fetchFiltersDataSource=(params) => {
-   this.setState({
-     page: 1,
-   }, () => {
-     this.fetchDataSource({ ...params, page: 1 });
-   });
- }
+  fetchFiltersDataSource = (params) => {
+    this.setState({
+      page: 1,
+    }, () => {
+      this.fetchDataSource({ ...params, page: 1 });
+    });
+  }
 
   findNotBelong = () => {
     const { filterColumns } = tabs[this.type];
@@ -278,6 +276,17 @@ export default class AuditList extends React.Component {
     return extra;
   }
 
+  renderInitialPage = () => {
+    let initialPage = 0;
+    const { type } = this;
+    auditTabs.forEach((item, i) => {
+      if (item.value === type) {
+        initialPage = i;
+      }
+    });
+    return initialPage;
+  }
+
   renderLalbel = () => {
     const { type } = this;
     let labelArr = [];
@@ -307,6 +316,7 @@ export default class AuditList extends React.Component {
     const { auditList } = this.props;
     const { el, userInfo, shortModal } = this.state;
     const { type } = this;
+
     const { filterColumns = [] } = tabs[type];
     // console.log('this.page', this.state.page);
     let [sortItem] = sortList.filter(item => item.value === this.sorter);
@@ -354,18 +364,13 @@ export default class AuditList extends React.Component {
       <Flex direction="column">
         <Flex.Item className={style.header}>
           <div className={style.state_tab}>
-            <WhiteSpace size="md" />
-            <WingBlank size="lg">
-              <WingBlank size="lg">
-                <StateTabs
-                  option={auditStates}
-                  checkItem={{ value: this.type }}
-                  justify="around"
-                  handleClick={this.tabChange}
-                />
-              </WingBlank>
-            </WingBlank>
-            <WhiteSpace size="md" />
+            <Tabs
+              tabs={auditTabs}
+              // checkItem={{ value: this.type }}
+              initialPage={this.renderInitialPage()}
+              justify="around"
+              onTabClick={this.tabChange}
+            />
           </div>
           <div className={style.filter_con}>
             <Flex
@@ -409,10 +414,9 @@ export default class AuditList extends React.Component {
           </div>
         </Flex.Item>
         <Flex.Item className={style.content}>
-          <WingBlank>
-            {type === 'processing' && (
+          {type === 'processing' && (
             <Buckle
-          // extra={extra}
+              // extra={extra}
               onRefresh={this.onRefresh}
               dataSource={auditList[type] ? auditList[type].data : []}
               handleClick={this.toLookDetail}
@@ -421,20 +425,19 @@ export default class AuditList extends React.Component {
               page={this.state.page}
               totalpage={this.state.totalpage}
             />
-            )}
-            {type === 'approved' && (
-              <Auditted
-            // extra={extra}
-                onRefresh={this.onRefresh}
-                dataSource={auditList[type] ? auditList[type].data : []}
-                handleClick={this.toLookDetail}
-                onPageChange={this.onPageChange}
-                label={this.renderLalbel() || []}
-                page={this.state.page}
-                totalpage={this.state.totalpage}
-              />
-              )}
-          </WingBlank>
+          )}
+          {type === 'approved' && (
+            <Auditted
+              // extra={extra}
+              onRefresh={this.onRefresh}
+              dataSource={auditList[type] ? auditList[type].data : []}
+              handleClick={this.toLookDetail}
+              onPageChange={this.onPageChange}
+              label={this.renderLalbel() || []}
+              page={this.state.page}
+              totalpage={this.state.totalpage}
+            />
+          )}
         </Flex.Item>
         <Modal
           popup

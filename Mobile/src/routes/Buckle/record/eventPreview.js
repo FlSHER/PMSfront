@@ -118,7 +118,7 @@ export default class EventPreview extends React.Component {
 
     return (
       <div key={approver.key}>
-        <WhiteSpace size="sm" />
+        <WhiteSpace size="md" />
         <WingBlank className={style.parcel} >
           <div className={style.players}>
             <Flex className={style.title}>{approver.title} </Flex>
@@ -168,6 +168,7 @@ export default class EventPreview extends React.Component {
     const { userInfo, id } = this.state;
     const detail = details[id] || {};
     const { addressees } = detail;
+    const paddingStyle = { padding: '0 0.1877rem' };
     const footerBtn = [];
     if (Object.keys(detail).length) {
       if (detail.recorder_sn === userInfo.staff_sn) {
@@ -244,7 +245,7 @@ export default class EventPreview extends React.Component {
         className={styles.con}
       >
         <div className={styles.con_content}>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
           <WingBlank className={style.parcel}>
             <div className={style.players} style={{ paddingBottom: '0.4rem' }}>
               <Flex className={style.title} >
@@ -257,16 +258,16 @@ export default class EventPreview extends React.Component {
               </div>
             </div>
           </WingBlank>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
           <WingBlank className={style.parcel}>
-            <div className={style.players} style={{ paddingBottom: '0.4rem' }}>
-              <div className={style.title}>
+            <div className={[style.players, style.participant_item].join(' ')} >
+              <div className={style.title} style={paddingStyle}>
                 <div >事件详情</div>
                 <div
                   style={{
                     textAlign: 'right',
                     fontSize: '12px',
-                    color: 'rgb(200, 200, 200)',
+                    color: 'rgb(150,150,150)',
                   }}
                   onClick={this.addMySelf}
                 >
@@ -279,7 +280,8 @@ export default class EventPreview extends React.Component {
                 return (
                   <React.Fragment key={key}>
                     <RecordDetail
-                      conStyle={{ paddingLeft: 0, borderBottom: '2px dotted rgb(239,239,239)' }}
+                      conStyle={{ paddingLeft: 0 }}
+                      paddingStyle={paddingStyle}
                       // handleClick={e => this.pointRedirect(e, i)}
                       value={item}
                     />
@@ -289,10 +291,9 @@ export default class EventPreview extends React.Component {
               )}
             </div>
           </WingBlank>
-          <WhiteSpace size="sm" />
           {approvers.map(item => this.makeApprover(item))}
           {detail.status_id === 2 ?
-            <WhiteSpace size="sm" /> : null}
+            <WhiteSpace size="md" /> : null}
           {(detail.status_id === 2 || detail.status_id === -3) ? (
             <WingBlank className={style.parcel}>
               <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
@@ -324,7 +325,7 @@ export default class EventPreview extends React.Component {
           ) : null}
           {addressees && addressees.length ? (
             <React.Fragment>
-              <WhiteSpace size="sm" />
+              <WhiteSpace size="md" />
               <WingBlank className={style.parcel}>
                 <div className={style.players}>
                   <Flex className={style.title}> 抄送人</Flex>
@@ -349,7 +350,7 @@ export default class EventPreview extends React.Component {
             </React.Fragment>
             ) : null
           }
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
           <WingBlank className={style.parcel}>
             <div className={style.players}>
               <Flex className={style.title}> 记录人</Flex>
@@ -365,15 +366,13 @@ export default class EventPreview extends React.Component {
               </Flex>
             </div>
           </WingBlank>
-          <WhiteSpace size="lg" />
+          <WhiteSpace size="md" />
         </div>
         {footerAble && (
           <div className={styles.footer}>
-            <WingBlank>
-              <Flex className={style.opt}>
-                {footerBtn}
-              </Flex>
-            </WingBlank>
+            <Flex className={style.opt}>
+              {footerBtn}
+            </Flex>
           </div>
         )}
       </div>

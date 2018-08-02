@@ -233,12 +233,11 @@ export default class PointRanking extends React.Component {
               })}
             </ListSort>
           </div>
-          <WhiteSpace size="md" />
           <WingBlank size="lg">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p style={{ padding: '0.26667rem 0.48rem', fontSize: '14px' }}>我的排名</p>
               <span
-                style={{ fontSize: '12px', color: 'rgb(24, 116, 208)' }}
+                style={{ fontSize: '12px', color: 'rgb(24, 116, 208)', marginRight: '0.48rem' }}
                 onClick={() => scrollToAnchor('my')}
               >在列表中查看
               </span>

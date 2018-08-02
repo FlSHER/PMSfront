@@ -48,7 +48,11 @@
 
 .preview {
   background: #fff;
-  padding-left: 36/75rem;
+  padding: 0.4rem 0;
+  border-bottom: 2px dotted rgb(239, 239, 239);
+  &:last-child {
+    border-bottom: 0;
+  }
   .pre_title {
     .text-overflow();
     line-height: 44/75rem;
@@ -78,7 +82,9 @@
 }
 
 .person_point {
-  padding: 20/75rem 0;
+  padding: 20/75rem 14/75rem;
+  background: rgb(232, 241, 250);
+  margin-top: 20/75rem;
   .item {
     .base(@base-text-color, @list-text-size);
     margin-bottom: 20/75rem;
@@ -266,7 +272,9 @@
 .event_bread {
   line-height: 34/75rem;
   height: 34/75rem;
-  width: 440/75rem;
+  width: 400/75rem;
+  flex-grow: 1;
+  flex-shrink: 0;
   .textLineOverFlow();
 }
 
@@ -274,9 +282,11 @@
   span {
     display: inline-block;
     padding-left: 36/75rem;
+    width: 84/75rem;
+    .textLineOverFlow();
   }
   span + span {
-    margin-left: 20/75rem;
+    margin-left: 5/75rem;
   }
   span:first-child {
     background: url('../../assets/icon-初@2x.png') no-repeat left center;
@@ -293,6 +303,7 @@
   padding: 30/75rem 36/75rem;
   display: flex;
   justify-content: space-between;
+  background: #fff;
   border-bottom: 1px solid rgb(240, 240, 240);
   .main_info {
     flex-grow: 1;

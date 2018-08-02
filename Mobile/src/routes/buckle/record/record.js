@@ -479,7 +479,7 @@ export default class BuckleRecord extends React.Component {
         direction="column"
       >
         <div className={styles.con_content}>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
 
           <WingBlank className={style.parcel}>
             <List>
@@ -498,7 +498,7 @@ export default class BuckleRecord extends React.Component {
               </div>
             </List>
           </WingBlank>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
 
           <WingBlank className={style.parcel}>
             <DatePicker
@@ -511,8 +511,8 @@ export default class BuckleRecord extends React.Component {
             </DatePicker>
 
           </WingBlank>
-          <div style={{ ...((event && !Object.keys(event).length) || !event ? null : null) }}>
-            <WhiteSpace size="sm" />
+          <div style={{ ...((event && !Object.keys(event).length) || !event ? { display: 'none' } : null) }}>
+            <WhiteSpace size="md" />
             <WingBlank className={style.parcel}>
               <div className={style.players}>
                 <Flex className={style.title} id="participants">
@@ -548,7 +548,7 @@ export default class BuckleRecord extends React.Component {
                 </Flex>
               </div>
             </WingBlank>
-            <WhiteSpace size="sm" />
+            <WhiteSpace size="md" />
             <WingBlank className={style.parcel}>
               <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
                 <Flex className={style.title}>
@@ -574,14 +574,14 @@ export default class BuckleRecord extends React.Component {
                   </Flex.Item>
                 </Flex>
                 <Flex className={style.table_head}>
-                  <Flex.Item className={style.table_item}>姓名</Flex.Item>
+                  <Flex.Item className={style.table_item} style={{ borderLeft: 'none' }}>姓名</Flex.Item>
                   <Flex.Item className={style.table_item}>单次A分</Flex.Item>
                   <Flex.Item className={style.table_item}>单次B分</Flex.Item>
-                  <Flex.Item className={style.table_item}>次数</Flex.Item>
+                  <Flex.Item className={style.table_item} style={{ borderRight: 'none' }}>次数</Flex.Item>
                 </Flex>
                 <div className={style.table_body}>
                   <Flex>
-                    <Flex.Item className={[style.table_item, style.opt_all].join(' ')} >全部操作</Flex.Item>
+                    <Flex.Item className={[style.table_item, style.opt_all].join(' ')} style={{ borderLeft: 'none' }}>全部操作</Flex.Item>
                     <Flex.Item className={[style.table_item, style.opt_all].join(' ')} >
                       <Input
                         value={tmpPointA}
@@ -598,7 +598,7 @@ export default class BuckleRecord extends React.Component {
                         floatNumber={2}
                       />
                     </Flex.Item>
-                    <Flex.Item className={[style.table_item, style.opt_all].join(' ')}>
+                    <Flex.Item className={[style.table_item, style.opt_all].join(' ')} style={{ borderRight: 'none' }}>
                       <Input
                         value={tmpCount}
                         style={{ background: '#badcff', ...(optAll.count_error ? { color: 'red' } : null) }}
@@ -610,7 +610,7 @@ export default class BuckleRecord extends React.Component {
                     const idx = i;
                     return (
                       <Flex key={idx}>
-                        <Flex.Item className={style.table_item}>{item.realname}</Flex.Item>
+                        <Flex.Item className={style.table_item} >{item.realname}</Flex.Item>
                         <Flex.Item className={style.table_item}>
                           <Input
                             value={`${item.point_a}`}
@@ -627,7 +627,7 @@ export default class BuckleRecord extends React.Component {
                             floatNumber={2}
                           />
                         </Flex.Item>
-                        <Flex.Item className={style.table_item}>
+                        <Flex.Item className={style.table_item} >
                           <Input
                             value={item.count}
                             style={{ ...(item.count_error ? { color: 'red' } : null) }}
@@ -641,7 +641,7 @@ export default class BuckleRecord extends React.Component {
                 </div>
               </div>
             </WingBlank>
-            <WhiteSpace size="sm" />
+            <WhiteSpace size="md" />
             <WingBlank className={style.parcel}>
               <div className={style.players} id="first">
                 <Flex className={style.title} > 初审人</Flex>
@@ -666,7 +666,7 @@ export default class BuckleRecord extends React.Component {
                 </Flex>
               </div>
             </WingBlank>
-            <WhiteSpace size="sm" />
+            <WhiteSpace size="md" />
             <WingBlank className={style.parcel}>
               <div className={style.players} id="final">
                 <Flex className={style.title} > 终审人</Flex>
@@ -691,7 +691,7 @@ export default class BuckleRecord extends React.Component {
                 </Flex>
               </div>
             </WingBlank>
-            <WhiteSpace size="sm" />
+            <WhiteSpace size="md" />
             <WingBlank className={style.parcel}>
               <div className={style.players} id="copy">
                 <Flex className={style.title} > 抄送人</Flex>
@@ -720,15 +720,13 @@ export default class BuckleRecord extends React.Component {
           </div>
         </div>
         <div className={styles.footer}>
-          <WingBlank>
-            <div className={style.opt}>
-              <Button
-                type="primary"
-                onClick={this.record}
-              >提交
-              </Button>
-            </div>
-          </WingBlank>
+          <div className={style.opt}>
+            <Button
+              type="primary"
+              onClick={this.record}
+            >提交
+            </Button>
+          </div>
         </div>
       </div>
     );

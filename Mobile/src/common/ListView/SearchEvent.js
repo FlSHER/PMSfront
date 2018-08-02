@@ -32,10 +32,9 @@ export default class SearchEvent extends Component {
           </div>
           <div className={style.department_title}>
             {value.first_approver_name && <span>{value.first_approver_name}</span> }
-            {value.final_approver_name && <span style={{ marginLeft: '10px' }}>{value.final_approver_name}</span>}
+            {value.final_approver_name && <span style={{ marginLeft: '5px' }}>{value.final_approver_name}</span>}
           </div>
         </div>
-
       </div>
     );
   }
