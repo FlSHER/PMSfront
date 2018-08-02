@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {
   connect,
 } from 'dva';
-import { Flex, SearchBar } from 'antd-mobile';
+import { Flex, SearchBar, WingBlank } from 'antd-mobile';
 import { EventType, EventName, SearchEvent } from '../../common/ListView/index.js';
 import { Bread } from '../../components/General/index';
 import { Nothing } from '../../components/index';
@@ -266,7 +266,7 @@ export default class SelEvent extends Component {
     });
   }
   searchCancel = () => {
-    const { breadCrumb, dispatch } = this.props;
+    const { breadCrumb, dispatch, loadings } = this.props;
     this.setState({
       searchValue: '',
     }, () => {
@@ -313,7 +313,8 @@ export default class SelEvent extends Component {
           ref={(e) => { this.ptr = e; }}
           style={{ ...(isLoading && { display: 'none' }), overflow: 'auto', height: this.state.height }}
         >
-          {((searchValue && !data.length)
+          <WingBlank size="lg">
+            {((searchValue && !data.length)
             || (!evtName.length && !searchValue && !eventList.length)) &&
             (
               <div style={{ display: loadings.global ? 'none' : 'flex', flexDirection: 'column' }}>
@@ -321,7 +322,7 @@ export default class SelEvent extends Component {
               </div>
             )
           }
-          {
+            {
             !searchValue && (
               <EventType
                 name="name"
@@ -331,29 +332,30 @@ export default class SelEvent extends Component {
               />
             )
           }
-          {eventList.length && evtName.length ?
-            <p style={{ padding: '0.5rem 0 0.2rem 0.4rem', fontSize: '16px', color: 'rgb(100,100,100)' }}>事件列表</p> : null}
-          {!searchValue ? (
-            <EventName
-              name="name"
-              heightNone
-              selected={selected.data}
-              dataSource={evtName || []}
-              onChange={this.getSelectResult}
-            />) : null}
-          {searchValue ? (
-            <SearchEvent
-              name="name"
-              heightNone
-              breadData={evtAll}
-              selected={selected.data}
-              dataSource={data || []}
-              onChange={this.getSelectResult}
-              page={page}
-              totalpage={totalpage}
-              onPageChange={this.onPageChange}
-            />
+            {eventList.length && evtName.length ?
+              <p style={{ padding: '0.5rem 0 0.2rem 0.4rem', fontSize: '16px', color: 'rgb(100,100,100)' }}>事件列表</p> : null}
+            {!searchValue ? (
+              <EventName
+                name="name"
+                heightNone
+                selected={selected.data}
+                dataSource={evtName || []}
+                onChange={this.getSelectResult}
+              />) : null}
+            {searchValue ? (
+              <SearchEvent
+                name="name"
+                heightNone
+                breadData={evtAll}
+                selected={selected.data}
+                dataSource={data || []}
+                onChange={this.getSelectResult}
+                page={page}
+                totalpage={totalpage}
+                onPageChange={this.onPageChange}
+              />
           ) : null}
+          </WingBlank>
         </Flex.Item>
       </Flex>
     );
