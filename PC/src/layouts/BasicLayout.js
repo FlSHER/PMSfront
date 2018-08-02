@@ -138,6 +138,12 @@ class BasicLayout extends React.PureComponent {
       <Layout style={{ height: '100%' }}>
         <GlobalHeader
           logo={logo}
+          onMenuClick={({ key }) => {
+            if (key === 'logout') {
+              localStorage.clear();
+              window.location.href = 'http://192.168.20.238:8003/logout';
+            }
+          }}
           currentUser={currentUser}
           location={location}
           menuData={getMenuData()}
