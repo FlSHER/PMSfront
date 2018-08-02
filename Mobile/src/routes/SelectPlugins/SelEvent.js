@@ -287,7 +287,7 @@ export default class SelEvent extends Component {
   render() {
     const { eventList, selected, searchValue } = this.state;
     const { breadCrumb, evtName, loading, loadingName, loadings,
-      searchEvent, loadingSearch, evtAll } = this.props;
+      searchEvent, evtAll } = this.props;
     const isLoading = loading || loadingName;
     const { page, totalpage, data = [] } = searchEvent;
     return (
