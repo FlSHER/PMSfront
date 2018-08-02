@@ -181,6 +181,7 @@ class BasicLayout extends React.PureComponent {
                       <Redirect key={item.from} exact from={item.from} to={item.to} />
                     )
                   }
+                  <Redirect exact from="/" to="/reward/insert-record" />
                   <Route render={NotFound} />
                 </Switch>
                 <div className={styles.selectDom} id="selectDom" />

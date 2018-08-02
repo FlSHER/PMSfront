@@ -49,6 +49,9 @@ export default class ModalStaff extends React.PureComponent {
     if (JSON.stringify(nextProps.value) !== JSON.stringify(this.props.value)) {
       this.setState({ value: [...nextProps.value] });
     }
+    if (JSON.stringify(nextProps.position) !== JSON.stringify(this.props.position)) {
+      this.setState({ filterPosition: nextProps.position });
+    }
   }
 
   setSelectedValue = (rowDatas) => {

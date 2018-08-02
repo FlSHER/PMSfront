@@ -266,7 +266,7 @@ export default class SelEvent extends Component {
     });
   }
   searchCancel = () => {
-    const { breadCrumb, dispatch, loadings } = this.props;
+    const { breadCrumb, dispatch } = this.props;
     this.setState({
       searchValue: '',
     }, () => {
@@ -315,23 +315,23 @@ export default class SelEvent extends Component {
         >
           <WingBlank size="lg">
             {((searchValue && !data.length)
-            || (!evtName.length && !searchValue && !eventList.length)) &&
-            (
-              <div style={{ display: loadings.global ? 'none' : 'flex', flexDirection: 'column' }}>
-                <Nothing src={nothing} />
-              </div>
-            )
-          }
+              || (!evtName.length && !searchValue && !eventList.length)) &&
+              (
+                <div style={{ display: loadings.global ? 'none' : 'flex', flexDirection: 'column' }}>
+                  <Nothing src={nothing} />
+                </div>
+              )
+            }
             {
-            !searchValue && (
-              <EventType
-                name="name"
-                heightNone
-                dataSource={eventList || []}
-                fetchDataSource={this.selEvent}
-              />
-            )
-          }
+              !searchValue && (
+                <EventType
+                  name="name"
+                  heightNone
+                  dataSource={eventList || []}
+                  fetchDataSource={this.selEvent}
+                />
+              )
+            }
             {eventList.length && evtName.length ?
               <p style={{ padding: '0.5rem 0 0.2rem 0.4rem', fontSize: '16px', color: 'rgb(100,100,100)' }}>事件列表</p> : null}
             {!searchValue ? (
@@ -354,7 +354,7 @@ export default class SelEvent extends Component {
                 totalpage={totalpage}
                 onPageChange={this.onPageChange}
               />
-          ) : null}
+            ) : null}
           </WingBlank>
         </Flex.Item>
       </Flex>

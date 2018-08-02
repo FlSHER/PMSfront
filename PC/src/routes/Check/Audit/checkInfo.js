@@ -4,7 +4,7 @@ import 'ant-design-pro/dist/ant-design-pro.css';
 import Ellipsis from 'ant-design-pro/lib/Ellipsis';
 import styles from './index.less';
 import UserCircle from '../../../components/OAForm/SearchTable/UserCircle';
-// import { getBuckleStatus } from '../../../utils/utils';
+import { getStatusImg } from '../../../utils/utils';
 
 const { Description } = DescriptionList;
 
@@ -204,9 +204,10 @@ export default function CheckInfo({ data }) {
   logs.forEach((item) => {
     participantCount += item.participants.length;
   });
+  const statusImg = getStatusImg(data.status_id);
   return (
     <React.Fragment>
-      <div className={styles.contentInfo}>
+      <div className={styles.contentInfo} style={{ position: 'relative' }}>
         <DescriptionList size="large" title="基础信息" col={1} >
           <Description term="主题">
             {data.title}
@@ -218,6 +219,7 @@ export default function CheckInfo({ data }) {
             {data.remark || '无'}
           </Description>
         </DescriptionList>
+        <img src={statusImg} alt="" style={{ position: 'absolute', top: 10, right: 10 }} />
       </div>
       <div className={styles.contentInfo}>
         <div className={styles.eventTitle} style={{ marginBottom: 10 }}>
@@ -244,7 +246,7 @@ export default function CheckInfo({ data }) {
         {able !== 0 && <Approver tip="初审人" data={first} />}
         {able !== 0 && <Approver tip="终审人" data={last} />}
         {addressees.length > 0 && <StaffCustormer title="抄送人" data={addressees} />}
-        <StaffCustormer title="记录人" data={recorder} />
+        {recorder.length > 0 && <StaffCustormer title="记录人" data={recorder} />}
       </div>
     </React.Fragment>
   );
