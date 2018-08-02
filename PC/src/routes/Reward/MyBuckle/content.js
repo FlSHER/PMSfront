@@ -3,7 +3,7 @@ import DescriptionList from 'ant-design-pro/lib/DescriptionList';
 import Ellipsis from 'ant-design-pro/lib/Ellipsis';
 import styles from '../../Check/Audit/index.less';
 import { Approver, StaffCustormer, getApproverData } from '../../Check/Audit/checkInfo';
-// import { getBuckleStatus } from '../../../utils/utils';
+import { getStatusImg } from '../../../utils/utils';
 
 const { Description } = DescriptionList;
 
@@ -15,9 +15,10 @@ export default function CheckInfo({ data }) {
   const addressees = addrStaff.map(item => item.staff_name);
   const recorder = data.recorder_name ? [data.recorder_name] : [];
   const participants = data.participants || [];
+  const statusImg = getStatusImg(data.status_id);
   return (
     <React.Fragment>
-      <div className={styles.contentInfo}>
+      <div className={styles.contentInfo} style={{ position: 'relative' }}>
         <DescriptionList size="large" title="基础信息" col={1} >
           <Description term="事件标题">
             {data.event_name}
@@ -29,6 +30,7 @@ export default function CheckInfo({ data }) {
             {data.description}
           </Description>
         </DescriptionList>
+        <img src={statusImg} alt="" style={{ position: 'absolute', top: 10, right: 10 }} />
       </div>
       <div className={styles.contentInfo}>
         <div className={styles.eventTitle}>

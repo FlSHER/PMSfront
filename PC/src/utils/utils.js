@@ -532,3 +532,34 @@ export function getBuckleTitle(status) {
   }
 }
 
+/**
+ *  审核状态图片
+ */
+
+export function getStatusImg(status) {
+  switch (status) {
+    case 0:
+      return '/public/checkin.png';
+    case 1:
+      return '/public/checkin.png';
+    case 2:
+      return '/public/pass.png';
+    case -1:
+      return '/public/reject.png';
+    case -2:
+      return '/public/rollback.png';
+    case -3:
+      return '/public/cancel.png';
+    default:
+  }
+}
+
+// export const statusImg = [
+//   { value: 2, uri: '/public/pass.png' },
+//   { value: -1, uri: '/public/reject.png' },
+//   { value: -2, uri: '/public/rollback.png' },
+//   { value: -3, uri: '/public/cancel.png' },
+//   { value: 0, uri: '/public/checkin.png' },
+//   { value: 1, uri: '/public/checkin.png' },
+// ];
+

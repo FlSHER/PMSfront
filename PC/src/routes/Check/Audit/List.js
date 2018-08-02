@@ -9,8 +9,8 @@ import { makerFilters, getBuckleStatus, statusData } from '../../../utils/utils'
 import styles from './index.less';
 
 const status = [
-  { value: 0, text: '待初审' },
-  { value: 1, text: '待终审' },
+  { value: 2, text: '已通过' },
+  { value: -1, text: '已驳回' },
 ];
 
 const step = [
@@ -87,9 +87,36 @@ export default class extends React.PureComponent {
     ];
     const userInfo = window.user || {};
     const currentSn = userInfo.staff_sn || '';
-    const approver = [
+    const cateColumn = [
       {
-        title: '审核类型',
+        title: '操作类型',
+        dataIndex: 'cate',
+        filters: cate,
+        width: 100,
+        filterMultiple: false,
+        onFilter: () => {
+          return true;
+        },
+        render: (_, record) => {
+          if (
+            (currentSn === record.rejecter_sn) && (record.status_id === -1)
+          ) {
+            return '驳回';
+          }
+
+          if (
+            (record.final_approved_at) || (record.first_approved_at)
+          ) {
+            return '通过';
+          }
+          return '';
+        },
+      },
+    ];
+
+    const stepColumn = [
+      {
+        title: '环节',
         dataIndex: 'step',
         filters: step,
         width: 100,
@@ -105,38 +132,14 @@ export default class extends React.PureComponent {
           }
         },
       },
-      {
-        title: '操作类型',
-        dataIndex: 'cate',
-        filters: cate,
-        width: 100,
-        filterMultiple: false,
-        onFilter: () => {
-          return true;
-        },
-        render: (_, record) => {
-          if (
-            (currentSn === record.rejecter_sn) && (record.status_id === -1)
-          ) {
-            return '已驳回';
-          }
-
-          if (
-            (record.final_approved_at) || (record.first_approved_at)
-          ) {
-            return '已通过';
-          }
-          return '';
-        },
-      },
     ];
 
-    const processing = [
+    const statusColumn = [
       {
-        title: '审核类型',
+        title: '事件状态',
         dataIndex: 'status_id',
         width: 110,
-        filters: type !== 'approved' ? statusData : status,
+        filters: statusData,
         onFilter: () => {
           return true;
         },
@@ -165,12 +168,33 @@ export default class extends React.PureComponent {
         sorter: true,
         rangeFilters: true,
       },
+    ];
+
+    const firstFinal = [
+      {
+        title: '初审人',
+        dataIndex: 'first_approver_name',
+        width: 110,
+        searcher: true,
+      },
+      {
+        title: '终审人',
+        dataIndex: 'final_approver_name',
+        width: 110,
+        searcher: true,
+      },
+    ];
+
+    const recorderColumn = [
       {
         title: '记录人',
         dataIndex: 'recorder_name',
         width: 110,
         searcher: true,
       },
+    ];
+
+    const commonColum = [
       {
         title: '记录时间',
         dataIndex: 'created_at',
@@ -191,8 +215,19 @@ export default class extends React.PureComponent {
         },
       },
     ];
-    if (['processing', 'addressee', 'recorded'].indexOf(type) !== -1) return columns.concat(processing, columns2);
-    if (type === 'approved') return columns.concat(approver, columns2);
+
+    if (['addressee'].indexOf(type) !== -1) {
+      return columns.concat(columns2, firstFinal, recorderColumn, commonColum);
+    }
+    if (['recorded'].indexOf(type) !== -1) {
+      return columns.concat(statusColumn, columns2, commonColum);
+    }
+    if (['approved'].indexOf(type) !== -1) {
+      return columns.concat(stepColumn, cateColumn, columns2, recorderColumn, commonColum);
+    }
+    if (['processing'].indexOf(type) !== -1) {
+      return columns.concat(stepColumn, columns2, recorderColumn, commonColum);
+    }
   }
 
   fetchCancel = (id) => {

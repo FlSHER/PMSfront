@@ -6,12 +6,15 @@ import dva from 'dva';
 // user BrowserHistory
 import createHistory from 'history/createBrowserHistory';
 import createLoading from 'dva-loading';
+import moment from 'moment';
 import 'moment/locale/zh-cn';
 // import FastClick from 'fastclick';
 import './rollbar';
 // import onError from './error';
 
 import './index.less';
+
+moment.locale('zh-cn');
 // 1. Initialize
 const app = dva({
   history: createHistory(),

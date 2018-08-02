@@ -38,6 +38,12 @@ export default class Staff extends PureComponent {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (JSON.stringify(nextProps.position) !== JSON.stringify(this.props.position)) {
+      this.setState({ filterPosition: nextProps.position });
+    }
+  }
+
   fetchStaff = (urlPath, params) => {
     const { dispatch, position } = this.props;
     let { filterPosition } = this.state;

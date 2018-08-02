@@ -315,13 +315,13 @@ export default class SelEvent extends Component {
         >
           <WingBlank size="lg">
             {((searchValue && !data.length)
-            || (!evtName.length && !searchValue && !eventList.length)) &&
-            (
-              <div style={{ display: loadings.global ? 'none' : 'flex', flexDirection: 'column' }}>
-                <Nothing src={nothing} />
-              </div>
-            )
-          }
+              || (!evtName.length && !searchValue && !eventList.length)) &&
+              (
+                <div style={{ display: loadings.global ? 'none' : 'flex', flexDirection: 'column' }}>
+                  <Nothing src={nothing} />
+                </div>
+              )
+            }
             {
             !searchValue && (
               <React.Fragment>
@@ -359,7 +359,7 @@ export default class SelEvent extends Component {
                 totalpage={totalpage}
                 onPageChange={this.onPageChange}
               />
-          ) : null}
+            ) : null}
           </WingBlank>
         </Flex.Item>
       </Flex>

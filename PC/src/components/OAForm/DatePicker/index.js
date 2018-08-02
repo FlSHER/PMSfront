@@ -9,7 +9,7 @@ import moment from 'moment';
 export default class Picker extends PureComponent {
   makeProps = () => {
     const { value, format } = this.props;
-    const momentValue = value && value.length ? { value: moment(value, format || 'YYYY-MM-DD') } : { value: null };
+    const momentValue = value && value.length ? { value: moment(value, format || 'YYYY-MM-DD') } : null;
     const temp = { ...this.props };
     delete temp.value;
     const response = {
