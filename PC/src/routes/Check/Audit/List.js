@@ -282,6 +282,7 @@ export default class extends React.PureComponent {
       <React.Fragment>
         <OATable
           serverSide
+          autoScroll
           loading={loading || cancelLoading}
           scroll={{ x: 1400, y: 180 }}
           columns={this.makeColums()}

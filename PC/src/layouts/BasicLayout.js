@@ -154,7 +154,7 @@ class BasicLayout extends React.PureComponent {
               )
             }
             <Content className={styles.contentView}>
-              <div className={styles.viewer}>
+              <div className={styles.viewer} id="rightContent">
                 <Switch>
                   {
                     getRoutes(match.path, routerData).map((item) => {
