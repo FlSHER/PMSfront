@@ -1,3 +1,4 @@
+@import  '../utils/var.less';
 :global {
   .container {
     position: absolute;
@@ -8,6 +9,11 @@
   .am-wingblank.am-wingblank-lg {
     margin-left: 24/75rem !important;
     margin-right: 24/75rem !important;
+    border-radius: @radius;
+    background: #fff;
+  }
+  .am-list-body{
+    background-color: transparent !important;
   }
   .am-list-item .am-list-line .am-list-content {
     font-size: 16px !important;

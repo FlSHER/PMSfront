@@ -204,7 +204,7 @@ export default class AuditList extends React.Component {
   }
 
   fetchDataSource = (params) => {
-    const { dispatch, allTabs } = this.props;
+    const { dispatch, allTabs, logList } = this.props;
     const currentTab = allTabs[this.type];
     this.sorter = (params && params.sort) || 'created_at-desc';
     const currentParams = parseParams(currentTab);
