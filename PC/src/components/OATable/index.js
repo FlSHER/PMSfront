@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import { Table, Input, Icon, message, Button, Tooltip, Spin } from 'antd';
-import QueueAnim from 'rc-queue-anim';
 import Ellipsis from '../Ellipsis';
 
 import { makerFilters } from '../../utils/utils';
@@ -150,10 +149,11 @@ class OATable extends PureComponent {
       } else if (column.rangeFilters) {
         Object.assign(response, this.makeRangeFilterOption(key, column));
       }
-      if (column.width !== undefined && column.dataIndex !== undefined && !column.render) {
+      if (column.dataIndex !== undefined && !column.render) {
+        const { tooltip } = column;
         response.render = (text) => {
           return (
-            <Ellipsis tooltip title={text} lines={1} style={{ width: column.width }}>
+            <Ellipsis tooltip={tooltip || false} lines={1}>
               {text}
             </Ellipsis>
           );
@@ -452,11 +452,12 @@ class OATable extends PureComponent {
       selectedRowKeys,
       onChange: this.handleRowSelectChange,
     } : rowSelection;
+    const bodyHeight = document.body.clientHeight;
     const response = {
       rowKey: (record, index) => record.id || record.staff_sn || record.shop_sn || index,
       dataSource: data,
       onChange: this.handleTableChange,
-      size: 'middle',
+      size: bodyHeight > 660 ? 'default' : 'small',
       bordered: false,
       // scroll: { x: true },
       pagination: {
@@ -599,25 +600,23 @@ class OATable extends PureComponent {
     return (
       <Spin spinning={loading !== false} tip={`${loading}`}>
         <div className={styles.filterTable}>
-          <QueueAnim type={['right', 'left']} >
-            <Operator
-              {...this.state}
-              sync={sync}
-              key="Operator"
-              multiOperator={multiOperator}
-              extraOperator={this.makeExtraOperator()}
-              extraOperatorRight={extraOperatorRight}
-              fetchTableDataSource={() => { this.fetchTableDataSource(null, true); }}
-              resetFilter={this.resetFilter}
-              clearSelectedRows={this.clearSelectedRows}
+          <Operator
+            {...this.state}
+            sync={sync}
+            key="Operator"
+            multiOperator={multiOperator}
+            extraOperator={this.makeExtraOperator()}
+            extraOperatorRight={extraOperatorRight}
+            fetchTableDataSource={() => { this.fetchTableDataSource(null, true); }}
+            resetFilter={this.resetFilter}
+            clearSelectedRows={this.clearSelectedRows}
+          />
+          {(tableVisible === true) && (
+            <Table
+              {...this.makeTableProps()}
+              key="table"
             />
-            {(tableVisible === true) && (
-              <Table
-                {...this.makeTableProps()}
-                key="table"
-              />
-            )}
-          </QueueAnim>
+          )}
         </div>
       </Spin>
     );

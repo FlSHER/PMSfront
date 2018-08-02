@@ -65,20 +65,21 @@ export default class extends React.Component {
         title: '编号',
         searcher: true,
         sorter: true,
-        width: 70,
+        width: 110,
         fixed: 'left',
       },
       {
         dataIndex: 'name',
         title: '名称',
         searcher: true,
-        width: 230,
+        tooltip: true,
         fixed: 'left',
+        width: 300,
       },
       {
         dataIndex: 'type_id',
         title: '事件类型',
-        width: 230,
+        width: 300,
         treeFilters: {
           title: 'name',
           value: 'id',
@@ -92,7 +93,7 @@ export default class extends React.Component {
           const name = listName.join(' > ');
           return (
             <Tooltip title={name}>
-              <div style={{ width: 230 }}>{getLetfEllipsis(name, 230, 14)}</div>
+              {getLetfEllipsis(name, 230, 14)}
             </Tooltip>
           );
         },
@@ -152,7 +153,7 @@ export default class extends React.Component {
       index: 'id',
       data: [],
       columns: this.makeColumns(),
-      scroll: { x: 1000 },
+      scroll: { x: 1200 },
       modalProps: {
         title: '选择事件',
       },

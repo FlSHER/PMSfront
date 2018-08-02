@@ -33,13 +33,14 @@ export default class extends React.PureComponent {
       {
         title: '事件标题',
         dataIndex: 'event_name',
-        width: 250,
+        tooltip: true,
         searcher: true,
       },
       {
         title: '备注',
         dataIndex: 'remark',
         width: 200,
+        tooltip: true,
         searcher: true,
       },
       {
@@ -48,6 +49,7 @@ export default class extends React.PureComponent {
         sorter: true,
         sortOrder: 'descend',
         dateFilters: true,
+        width: 132,
         render: (time) => {
           return moment(time).format('YYYY-MM-DD');
         },
@@ -55,10 +57,10 @@ export default class extends React.PureComponent {
       {
         title: '事件状态',
         dataIndex: 'status_id',
-        width: 50,
+        width: 120,
         filters: statusData,
         render: (statusId) => {
-          const statusText = statusData.find(item => item.value === statusId);
+          const statusText = statusData.find(item => item.value === statusId) || { text: '审核中' };
           return statusText.text || '';
         },
       },
@@ -66,33 +68,38 @@ export default class extends React.PureComponent {
         title: '参与人',
         dataIndex: 'participants.staff_name',
         width: 200,
+        tooltip: true,
         searcher: true,
         render: (_, record) => {
           const { participants } = record;
           const staffName = participants.map(item => item.staff_name);
           return (
-            <Ellipsis style={{ width: 200 }} tooltip lines={1}>{staffName.join('、')}</Ellipsis>
+            <Ellipsis tooltip lines={1}>{staffName.join('、')}</Ellipsis>
           );
         },
       },
       {
         title: '初审人',
         dataIndex: 'first_approver_name',
+        width: 110,
         searcher: true,
       },
       {
         title: '终审人',
         dataIndex: 'final_approver_name',
+        width: 110,
         searcher: true,
       },
       {
         title: '记录人',
         dataIndex: 'recorder_name',
+        width: 110,
         searcher: true,
       },
       {
         title: '操作',
         fixed: 'right',
+        width: 100,
         render: (record) => {
           return (
             <a
@@ -123,7 +130,7 @@ export default class extends React.PureComponent {
         <OATable
           serverSide
           loading={loading}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 1000, y: 180 }}
           columns={this.makeColums()}
           data={reuslt && reuslt.data}
           total={reuslt && reuslt.total}
