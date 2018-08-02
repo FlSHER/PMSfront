@@ -158,7 +158,7 @@ export default class AuditList extends React.Component {
   }
 
   onResetForm = () => {
-    const { dispatch } = this.props;
+    const { dispatch, logList } = this.props;
     this.setState({
       page: 1,
     });
