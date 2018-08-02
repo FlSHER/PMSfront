@@ -2,7 +2,7 @@ import React from 'react';
 import {
   connect,
 } from 'dva';
-import { WingBlank, Button, WhiteSpace } from 'antd-mobile';
+import { WingBlank, Button } from 'antd-mobile';
 import { RecordPreview } from '../../../common/ListView';
 import { scrollToAnchor, getUrlParams } from '../../../utils/util';
 
@@ -101,6 +101,7 @@ export default class Preview extends React.Component {
   render() {
     const { record: { records } } = this.props;
     const count = this.getCount();
+    const paddingStyle = { padding: '0 0.1877rem' };
     const extra = [
       {
         text: '查看详情',
@@ -142,8 +143,9 @@ export default class Preview extends React.Component {
           </WingBlank>
         </div>
         <div className={styles.con_content}>
-          <WingBlank>
-            {records.map((item, i) => {
+          <WingBlank className={style.parcel}>
+            <div className={[style.players, style.participant_item].join(' ')} >
+              {records.map((item, i) => {
               const key = i;
               const newExtra = extra.map((_) => {
                 const obj = { ..._ };
@@ -152,9 +154,10 @@ export default class Preview extends React.Component {
               });
               return (
                 <React.Fragment key={key}>
-                  <WhiteSpace />
                   <RecordPreview
                     extra={newExtra}
+                    conStyle={{ paddingLeft: 0 }}
+                    paddingStyle={paddingStyle}
                     // handleClick={e => this.pointRedirect(e, i)}
                     value={item}
                   />
@@ -162,18 +165,17 @@ export default class Preview extends React.Component {
               );
             }
             )}
+            </div>
           </WingBlank>
         </div>
         <div className={styles.footer}>
-          <WingBlank>
-            <div className={style.opt}>
-              <Button
-                type="primary"
-                onClick={this.nextStep}
-              >下一步
-              </Button>
-            </div>
-          </WingBlank>
+          <div className={style.opt}>
+            <Button
+              type="primary"
+              onClick={this.nextStep}
+            >下一步
+            </Button>
+          </div>
         </div>
       </div>
     );

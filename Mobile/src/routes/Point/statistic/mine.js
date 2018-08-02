@@ -441,6 +441,7 @@ export default class Statistic extends React.Component {
               />
             </div>
           </WingBlank>
+          <WhiteSpace size="md" />
         </Flex.Item>
       </Flex>
     );

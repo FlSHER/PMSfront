@@ -37,7 +37,6 @@ export default class AuditDetail extends React.Component {
   componentWillMount() {
     const { dispatch, match: { params } } = this.props;
     const { id } = params;
-    console.log('id', id);
     const newInfo = userStorage('userInfo');
     this.setState({
       eventId: id,
@@ -101,7 +100,7 @@ export default class AuditDetail extends React.Component {
 
     return (
       <div key={approver.key}>
-        <WhiteSpace size="lg" />
+        <WhiteSpace size="md" />
         <WingBlank className={style.parcel} >
           <div className={style.players}>
             <Flex className={style.title}>{approver.title} </Flex>
@@ -230,7 +229,7 @@ export default class AuditDetail extends React.Component {
         direction="column"
       >
         <div className={styles.con_content}>
-          <WhiteSpace size="lg" />
+          <WhiteSpace size="md" />
           <WingBlank className={style.parcel}>
             <List>
               <div style={{ padding: '0 15px' }}>
@@ -246,7 +245,7 @@ export default class AuditDetail extends React.Component {
               )}
             </List>
           </WingBlank>
-          <WhiteSpace size="lg" />
+          <WhiteSpace size="md" />
 
           <WingBlank className={[style.parcel, style.nobottom].join(' ')}>
             <List>
@@ -255,7 +254,7 @@ export default class AuditDetail extends React.Component {
               </List.Item>
             </List>
           </WingBlank>
-          <WhiteSpace size="lg" />
+          <WhiteSpace size="md" />
           <WingBlank className={style.parcel}>
             <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
               <Flex className={style.title}> 参与人列表</Flex>
@@ -295,7 +294,7 @@ export default class AuditDetail extends React.Component {
           </WingBlank>
           {approvers.map(item => this.makeApprover(item))}
           {newDetail.status_id === 2 ?
-            <WhiteSpace size="lg" /> : null}
+            <WhiteSpace size="md" /> : null}
           {(newDetail.status_id === 2 || newDetail.status_id === -3) ? (
             <WingBlank className={style.parcel}>
               <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
@@ -327,7 +326,7 @@ export default class AuditDetail extends React.Component {
           ) : null}
           {addresseess && addresseess.length ? (
             <React.Fragment>
-              <WhiteSpace size="lg" />
+              <WhiteSpace size="md" />
               <WingBlank className={style.parcel}>
                 <div className={style.players}>
                   <Flex className={style.title}> 抄送人</Flex>
@@ -351,7 +350,7 @@ export default class AuditDetail extends React.Component {
               </WingBlank>
             </React.Fragment>
           ) : null}
-          <WhiteSpace size="lg" />
+          <WhiteSpace size="md" />
           <WingBlank className={style.parcel}>
             <div className={style.players}>
               <Flex className={style.title}> 记录人</Flex>
@@ -367,16 +366,14 @@ export default class AuditDetail extends React.Component {
               </Flex>
             </div>
           </WingBlank>
-          <WhiteSpace size="lg" />
+          <WhiteSpace size="md" />
         </div>
 
         {false && footerAble && (
           <div className={styles.footer}>
-            <WingBlank>
-              <Flex className={style.opt}>
-                {footerBtn}
-              </Flex>
-            </WingBlank>
+            <Flex className={style.opt}>
+              {footerBtn}
+            </Flex>
           </div>
         )}
       </div>

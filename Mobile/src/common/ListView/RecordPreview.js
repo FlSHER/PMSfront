@@ -22,6 +22,7 @@ export default class RecordPreview extends Component {
     const {
       value,
       handleClick,
+      paddingStyle,
       extra,
       conStyle,
     } = this.props;
@@ -40,10 +41,10 @@ export default class RecordPreview extends Component {
         <SwipeAction
           {...prop}
         >
-          <div className={style.pre_title}>
+          <div className={style.pre_title} style={paddingStyle}>
             {value.name || value.event_name}
           </div>
-          <div className={style.predec}>
+          <div className={style.predec} style={paddingStyle}>
             {value.description}
           </div>
         </SwipeAction>

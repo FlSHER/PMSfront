@@ -15,7 +15,7 @@ function IndexPage({ history }) {
       const idx = i;
       return (
         <div key={idx}>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
           <WingBlank>
             <div className={style.entrance}>
               <div className={style.title}> {item.name}</div>

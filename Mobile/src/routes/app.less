@@ -1,4 +1,4 @@
-@import  '../utils/var.less';
+@import '../utils/var.less';
 :global {
   .container {
     position: absolute;
@@ -6,17 +6,36 @@
     bottom: 0;
     width: 100%;
   }
+  .am-whitespace.am-whitespace-md {
+    height: 20/75rem !important;
+  }
   .am-wingblank.am-wingblank-lg {
     margin-left: 24/75rem !important;
     margin-right: 24/75rem !important;
     border-radius: @radius;
     background: #fff;
   }
+  .am-search-input {
+    height: 64/75rem !important;
+    line-height: 64/75rem !important;
+  }
+  .am-search-input .am-search-synthetic-ph {
+    height: 64/75rem !important;
+    line-height: 64/75rem !important;
+  }
+  .am-search-input input[type="search"] {
+    height: 64/75rem !important;
+  }
+  .am-search {
+    background-color: @base-bg-color  !important;
+    height: 110/75rem !important;
+    padding: 0 24/75rem !important;
+  }
+  .am-tabs-default-bar-tab-active {
+    color: #1874d0;
+  }
   .am-list-body {
     background-color: transparent !important;
-  }
-  .am-list-item {
-    // background-color: transparent !important;
   }
   .am-flexbox .am-flexbox-item {
     margin-left: none !important;

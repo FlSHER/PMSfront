@@ -21,6 +21,7 @@ export default class RecordDetail extends Component {
     const {
       value,
       conStyle,
+      paddingStyle,
     } = this.props;
 
     return (
@@ -28,17 +29,17 @@ export default class RecordDetail extends Component {
         className={style.preview}
         style={conStyle}
       >
-        <div className={style.event_pre_title}>
+        <div className={style.event_pre_title} style={paddingStyle}>
           {value.name || value.event_name}
         </div>
-        <div className={style.predecription}>
+        <div className={style.predecription} style={paddingStyle}>
           {value.description}
         </div>
-        <div className={style.predecription}>
-          编号：{value.id}
-        </div>
-        <div className={style.person_point}>
+        <div className={style.person_point} >
           {this.renderPoint()}
+        </div>
+        <div className={style.predecription} style={{ ...(paddingStyle), color: 'rgb(220,220,220)' }}>
+        编号：{value.id}
         </div>
       </div>
     );
