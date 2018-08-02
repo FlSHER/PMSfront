@@ -53,7 +53,7 @@ export default class extends PureComponent {
         <RangePicker
           locale={locale}
           open={dateFilterVisible}
-          value={date}
+          defaultValue={date}
           renderExtraFooter={this.makeExtraFooter}
           getCalendarContainer={(trigger) => {
             return trigger;
