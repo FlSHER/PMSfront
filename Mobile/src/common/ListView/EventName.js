@@ -13,7 +13,7 @@ export default class EventName extends Component {
           {...className}
           onClick={() => onClick(value)}
         >
-          <span>{value[name]}</span>
+          <div style={{ height: '32px', lineHeight: '32px' }}>{value[name]}</div>
         </div>
       </div>
     );

@@ -337,8 +337,14 @@ export default class SelEvent extends Component {
             )
           }
 
-            {eventList.length && evtName.length ?
-              <p style={{ padding: '0.5rem 0 0.2rem 0.4rem', fontSize: '16px', color: 'rgb(100,100,100)' }}>事件列表</p> : null}
+            {eventList.length && evtName.length ? (
+              <p style={{ padding: '0.5rem 0 0.2rem 0',
+              background: 'rgb(245,245,245)',
+              fontSize: '16px',
+               color: 'rgb(100,100,100)' }}
+              >事件列表
+              </p>
+              ) : null}
             {!searchValue ? (
               <EventName
                 name="name"
