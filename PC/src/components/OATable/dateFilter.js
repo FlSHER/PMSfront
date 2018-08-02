@@ -1,7 +1,5 @@
 import React, { PureComponent } from 'react';
-
 import { DatePicker } from 'antd';
-import locale from 'antd/lib/date-picker/locale/zh_CN';
 
 const { RangePicker } = DatePicker;
 
@@ -48,10 +46,11 @@ export default class extends PureComponent {
   render() {
     const { dateFilterVisible } = this.props;
     const { date } = this.state;
+    const dateFormat = 'YYYY-MM-DD';
     return (
       <div className="ant-table-filter-dropdown">
         <RangePicker
-          locale={locale}
+          format={dateFormat}
           open={dateFilterVisible}
           defaultValue={date}
           renderExtraFooter={this.makeExtraFooter}
