@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import { Table, Input, Icon, message, Button, Tooltip, Spin } from 'antd';
 import Ellipsis from '../Ellipsis';
 
@@ -30,6 +31,7 @@ const defaultProps = {
   filtered: 0,
   sync: true,
   tableVisible: true,
+  autoScroll: false,
   fetchDataSource: () => {
     // message.error('请设置fetchDataSource');
   },
@@ -53,8 +55,10 @@ class OATable extends PureComponent {
       filters: {},
       sorter: {},
       loading: false,
+      scrollY: true,
     };
     this.sortOrder = {};
+    this.bodyHeight = document.body.clientHeight;
   }
 
   componentDidMount() {
@@ -62,11 +66,30 @@ class OATable extends PureComponent {
     if (!data || data.length === 0 || serverSide) {
       this.fetchTableDataSource();
     }
+    this.state.scrollY = this.setScrollHeight() || true;
   }
 
   onEnd = (e) => {
     const dom = e.target;
     dom.style.height = 'auto';
+  }
+
+  setScrollHeight = () => {
+    const { autoScroll } = this.props;
+    if (autoScroll && this.table) {
+      const rightContent = document.getElementById('rightContent');
+      const contentHeigth = rightContent.clientHeight;
+      const contentTop = rightContent.offsetTop;
+      const table = ReactDOM.findDOMNode(this.table).getBoundingClientRect();
+      const tableTo = table.top;
+      const tableToContetnTop = tableTo - contentTop;
+      const { pagination } = this.props;
+      let scrollY = contentHeigth - tableToContetnTop;
+      if (!pagination) {
+        scrollY -= this.bodyHeight > 660 ? 120 : 100;
+      }
+      return scrollY;
+    }
   }
 
   showTotal = (total, range) => {
@@ -442,8 +465,8 @@ class OATable extends PureComponent {
   }
 
   makeTableProps = () => {
-    const { pagination, selectedRowKeys } = this.state;
-    const { multiOperator, data, serverSide, total, rowSelection } = this.props;
+    const { pagination, selectedRowKeys, scrollY } = this.state;
+    const { multiOperator, data, serverSide, total, rowSelection, autoScroll } = this.props;
     if (serverSide) {
       pagination.total = total;
     }
@@ -452,14 +475,14 @@ class OATable extends PureComponent {
       selectedRowKeys,
       onChange: this.handleRowSelectChange,
     } : rowSelection;
-    const bodyHeight = document.body.clientHeight;
+
     const response = {
       rowKey: (record, index) => record.id || record.staff_sn || record.shop_sn || index,
       dataSource: data,
       onChange: this.handleTableChange,
-      size: bodyHeight > 660 ? 'default' : 'small',
+      size: this.bodyHeight > 660 ? 'default' : 'small',
       bordered: false,
-      // scroll: { x: true },
+      scroll: {},
       pagination: {
         ...pagination,
         ...this.props.pagination,
@@ -468,6 +491,9 @@ class OATable extends PureComponent {
       rowSelection: newRowSelection,
       columns: this.mapColumns(),
     };
+    if (autoScroll) {
+      response.scroll.y = scrollY;
+    }
     Object.keys(defaultProps).forEach((key) => {
       delete response[key];
     });
@@ -599,7 +625,9 @@ class OATable extends PureComponent {
     const { loading } = this.state;
     return (
       <Spin spinning={loading !== false} tip={`${loading}`}>
-        <div className={styles.filterTable}>
+        <div
+          className={styles.filterTable}
+        >
           <Operator
             {...this.state}
             sync={sync}
@@ -613,6 +641,9 @@ class OATable extends PureComponent {
           />
           {(tableVisible === true) && (
             <Table
+              ref={(e) => {
+                this.table = e;
+              }}
               {...this.makeTableProps()}
               key="table"
             />
