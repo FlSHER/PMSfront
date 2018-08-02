@@ -161,7 +161,7 @@ export default class WorkingStaff extends React.PureComponent {
     const columns = [
       {
         title: '姓名',
-        width: 50,
+        width: 80,
         dataIndex: 'staff_name',
       },
       {
@@ -199,6 +199,7 @@ export default class WorkingStaff extends React.PureComponent {
       },
       {
         dataIndex: 'staff_sn',
+        width: 20,
         render: (staffSn) => {
           return (
             <span

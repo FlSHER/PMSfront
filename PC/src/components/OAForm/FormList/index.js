@@ -42,7 +42,15 @@ export default (CustomerFrom) => {
         JSON.stringify(this.props.initialValue)
         && (dataSource.length === 0)
       ) {
-        this.setState({ dataSource: nextProps.initialValue });
+        this.uuid = 0;
+        const initValue = nextProps.initialValue.map((item, index) => {
+          return {
+            ...item,
+            key: index + 1,
+          };
+        });
+        this.uuid = initValue.length;
+        this.setState({ dataSource: initValue });
       }
     }
 
