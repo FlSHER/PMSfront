@@ -143,15 +143,15 @@ export default !noProxy ? {
   {
 
     // 张卫
-    'GET /api/PMS/(.*)': 'http://PMS.test/api/',
-    'POST /api/PMS/(.*)': 'http://PMS.test/api/',
-    'PUT /api/PMS/(.*)': 'http://PMS.test/api/',
-    'DELETE /api/PMS/(.*)': 'http://PMS.test/api/',
+    'GET /api/PMS/(.*)': 'http://112.74.177.132:8009/api/',
+    'POST /api/PMS/(.*)': 'http://112.74.177.132:8009/api/',
+    'PUT /api/PMS/(.*)': 'http://112.74.177.132:8009/api/',
+    'DELETE /api/PMS/(.*)': 'http://112.74.177.132:8009/api/',
 
     // 张博涵
-    // 'GET /api/oa/current-user(.*)': 'http://192.168.20.238:8003/api/current-user',
-    // 'GET /api/oa/departments(.*)': 'http://192.168.20.238:8003/api/departments',
-    // 'GET /api/oa/staff(.*)': 'http://192.168.20.238:8003/api/staff',
+    // 'GET /api/oa/current-user(.*)': 'http://112.74.177.132:8009/api/current-user',
+    // 'GET /api/oa/departments(.*)': 'http://112.74.177.132:8009/api/departments',
+    // 'GET /api/oa/staff(.*)': 'http://112.74.177.132:8009/api/staff',
 
     // 张博涵
     // 'GET /api/PMS/(.*)': 'http://192.168.20.238:8007/api/',
@@ -159,9 +159,8 @@ export default !noProxy ? {
     // 'PUT /api/PMS/(.*)': 'http://192.168.20.238:8007/api/',
     // 'DELETE /api/PMS/(.*)': 'http://192.168.20.238:8007/api/',
 
-    'POST /oauth/(.*)': 'http://localhost.oaupdate.org/oauth/',
-    'POST /oauth/(.*)': 'http://192.168.20.238:8003/oauth/',
-    'GET /api/(.*)': 'http://192.168.20.238:8003/api/',
+    'POST /oauth/(.*)': 'http://112.74.177.132:8002/oauth/',
+    'GET /api/(.*)': 'http://112.74.177.132:8002/api/',
 
     // 'GET /api/(.*)': 'http://192.168.20.238:8007/api/',
     // 'POST /api/(.*)': 'http://192.168.20.238:8007/api/',

@@ -194,7 +194,6 @@ export {
   getApproverData,
 };
 export default function CheckInfo({ data }) {
-  const able = Object.keys(data).length;
   const { first, last } = getApproverData(data);
   const addrStaff = data.addressees || [];
   const addressees = addrStaff.map(item => item.staff_name);
@@ -239,15 +238,17 @@ export default function CheckInfo({ data }) {
         })}
 
       </div>
-      <div className={styles.contentInfo}>
-        <div className={styles.eventTitle}>
-          <div>审核进度</div>
+      {(first.staff_sn || last.staff_sn || addressees.length > 0 || recorder.length > 0) && (
+        <div className={styles.contentInfo}>
+          <div className={styles.eventTitle}>
+            <div>审核进度</div>
+          </div>
+          {!!first.staff_sn && <Approver tip="初审人" data={first} />}
+          {!!last.staff_sn && <Approver tip="终审人" data={last} />}
+          {addressees.length > 0 && <StaffCustormer title="抄送人" data={addressees} />}
+          {recorder.length > 0 && <StaffCustormer title="记录人" data={recorder} />}
         </div>
-        {able !== 0 && <Approver tip="初审人" data={first} />}
-        {able !== 0 && <Approver tip="终审人" data={last} />}
-        {addressees.length > 0 && <StaffCustormer title="抄送人" data={addressees} />}
-        {recorder.length > 0 && <StaffCustormer title="记录人" data={recorder} />}
-      </div>
+      )}
     </React.Fragment>
   );
 }

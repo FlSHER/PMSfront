@@ -130,8 +130,9 @@ export default class extends React.PureComponent {
         <OATable
           serverSide
           autoScroll
+          id={type}
           loading={loading}
-          scroll={{ x: 1000, y: 180 }}
+          scroll={{ x: 1000 }}
           columns={this.makeColums()}
           data={reuslt && reuslt.data}
           total={reuslt && reuslt.total}

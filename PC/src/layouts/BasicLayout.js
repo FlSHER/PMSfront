@@ -95,6 +95,21 @@ class BasicLayout extends React.PureComponent {
     //     isMobile: mobile,
     //   });
     // });
+    this.setClientHeight();
+    window.onresize = () => {
+      this.setClientHeight();
+    };
+  }
+
+  setClientHeight = () => {
+    const rightContent = document.getElementById('rightContent');
+    this.props.dispatch({
+      type: 'table/save',
+      payload: {
+        bodyHeight: document.body.clientHeight,
+        contentHeigth: rightContent.clientHeight,
+      },
+    });
   }
 
   getPageTitle() {
@@ -141,7 +156,7 @@ class BasicLayout extends React.PureComponent {
           onMenuClick={({ key }) => {
             if (key === 'logout') {
               localStorage.clear();
-              // window.location.href = 'http://192.168.20.238:8003/logout';
+              window.location.href = 'http://112.74.177.132:8002/logout';
             }
           }}
           currentUser={currentUser}

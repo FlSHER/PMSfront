@@ -1,3 +1,4 @@
+import { notification } from 'antd';
 import { queryCurrent } from '../services/user';
 import { setAuthority } from '../utils/authority';
 
@@ -13,6 +14,13 @@ export default {
         const currentUser = yield select(state => state.currentUser.currentUser);
         if (!Object.keys(currentUser).length) {
           const response = yield call(queryCurrent);
+          if (response.error) {
+            notification.error({
+              message: '没有权限',
+              description: '获取当前用户失败，请重新登录。',
+            });
+            return;
+          }
           if (response) {
             yield put({
               type: 'save',
