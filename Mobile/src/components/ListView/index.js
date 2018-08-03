@@ -33,7 +33,6 @@ export default function ListView(ListItem) {
       if (this.ptr) {
         const htmlDom = ReactDOM.findDOMNode(this.ptr);
         const offetTop = htmlDom.getBoundingClientRect().top;
-        console.log(offetTop);
         const hei = this.state.height - offetTop;
         setTimeout(() => this.setState({
           height: hei,
