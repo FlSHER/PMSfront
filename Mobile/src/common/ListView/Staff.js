@@ -27,7 +27,7 @@ export default class Staff extends Component {
               <span>B分权限：{(value.point_b_deducting_limit ? `-${value.point_b_deducting_limit}` : '0')} 至 {value.point_b_awarding_limit}</span>
             </div>
           </React.Fragment>
-) : null}
+        ) : null}
 
       </div>
     );

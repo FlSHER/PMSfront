@@ -25,6 +25,8 @@ export default class Ranking extends Component {
             position: 'relative',
             height: '50px',
             padding: '0 0.48rem',
+            background: '#fff',
+
           }}
         >
           <Flex.Item
@@ -57,6 +59,7 @@ export default class Ranking extends Component {
           height: '50px',
           padding: '0 0.48rem',
           borderBottom: '1px solid rgb(250,250,250)',
+          background: '#fff',
         }}
         onClick={() => handleClick(value)}
       >
@@ -82,6 +85,6 @@ export default class Ranking extends Component {
 }
 
 Ranking.defaultProps = {
-  handleClick: () => {},
+  handleClick: () => { },
 };
 

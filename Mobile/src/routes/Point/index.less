@@ -138,6 +138,13 @@
   margin-left: 0 !important;
 }
 
+.removeBg {
+  :global {
+    .am-wingblank.am-wingblank-lg {
+      background: @base-bg-color;
+    }
+  }
+}
 .footer {
   // flex: 0 !important;
   width: 100%;
@@ -153,6 +160,7 @@
       display: inline-block;
       width: 100%;
       height: 40/75rem;
+      line-height: 40/75rem;
       text-align: center;
       border-right: 1px solid rgb(239, 239, 239);
     }

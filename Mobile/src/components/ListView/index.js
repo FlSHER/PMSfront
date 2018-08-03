@@ -33,7 +33,6 @@ export default function ListView(ListItem) {
       if (this.ptr) {
         const htmlDom = ReactDOM.findDOMNode(this.ptr);
         const offetTop = htmlDom.getBoundingClientRect().top;
-        console.log(offetTop);
         const hei = this.state.height - offetTop;
         setTimeout(() => this.setState({
           height: hei,
@@ -183,7 +182,6 @@ export default function ListView(ListItem) {
       const loader = (((!dataSource) || (dataSource && !dataSource.length)
        || (page === 1))
        && loading.global);
-      // console.log('loader', nothingAble, loader, loading.global, page, page === 1);
       spin(loader);
       return (
         <div

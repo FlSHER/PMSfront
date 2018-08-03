@@ -124,9 +124,9 @@ export default class BuckleRecord extends React.Component {
               <div className={style.players}>
                 <Flex className={style.title}> 配置分值</Flex>
                 <Flex className={style.table_head}>
-                  <Flex.Item className={style.table_item}>名称</Flex.Item>
+                  <Flex.Item className={style.table_item} style={{ borderLeft: 'none' }}>名称</Flex.Item>
                   <Flex.Item className={style.table_item}>姓名</Flex.Item>
-                  <Flex.Item className={style.table_item}>B分</Flex.Item>
+                  <Flex.Item className={style.table_item} style={{ borderRight: 'none' }}>B分</Flex.Item>
                 </Flex>
                 <div className={style.table_body}>
                   {person.map((item, i) => {
