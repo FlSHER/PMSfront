@@ -70,7 +70,9 @@ class OATable extends PureComponent {
     this.bodyHeiht = document.body.clientHeight;
     const rightContent = document.getElementById('rightContent');
     this.contentTop = rightContent.offsetTop;
-    this.tableElement = ReactDOM.findDOMNode(this.table).getBoundingClientRect();
+    if (this.table) {
+      this.tableElement = ReactDOM.findDOMNode(this.table).getBoundingClientRect();
+    }
   }
 
   onEnd = (e) => {

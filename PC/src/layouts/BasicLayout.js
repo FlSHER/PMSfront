@@ -97,11 +97,13 @@ class BasicLayout extends React.PureComponent {
     // });
     this.setClientHeight();
     window.onresize = () => {
-      this.setClientHeight();
+      if (this.resizeInterval) clearInterval(this.resizeInterval);
+      this.resizeInterval = setInterval(this.setClientHeight, 500);
     };
   }
 
   setClientHeight = () => {
+    clearInterval(this.resizeInterval);
     const rightContent = document.getElementById('rightContent');
     this.props.dispatch({
       type: 'table/save',
