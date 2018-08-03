@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
+import { connect } from 'dva';
 import { Table, Input, Icon, message, Button, Tooltip, Spin } from 'antd';
 import Ellipsis from '../Ellipsis';
 
@@ -36,7 +37,9 @@ const defaultProps = {
     // message.error('请设置fetchDataSource');
   },
 };
-
+@connect(({ table }) => ({
+  table,
+}))
 class OATable extends PureComponent {
   constructor(props) {
     super(props);
@@ -55,10 +58,8 @@ class OATable extends PureComponent {
       filters: {},
       sorter: {},
       loading: false,
-      scrollY: true,
     };
     this.sortOrder = {};
-    this.bodyHeight = document.body.clientHeight;
   }
 
   componentDidMount() {
@@ -66,7 +67,12 @@ class OATable extends PureComponent {
     if (!data || data.length === 0 || serverSide) {
       this.fetchTableDataSource();
     }
-    this.state.scrollY = this.setScrollHeight() || true;
+    this.bodyHeiht = document.body.clientHeight;
+    const rightContent = document.getElementById('rightContent');
+    this.contentTop = rightContent.offsetTop;
+    if (this.table) {
+      this.tableElement = ReactDOM.findDOMNode(this.table).getBoundingClientRect();
+    }
   }
 
   onEnd = (e) => {
@@ -76,17 +82,17 @@ class OATable extends PureComponent {
 
   setScrollHeight = () => {
     const { autoScroll } = this.props;
-    if (autoScroll && this.table) {
-      const rightContent = document.getElementById('rightContent');
-      const contentHeigth = rightContent.clientHeight;
-      const contentTop = rightContent.offsetTop;
-      const table = ReactDOM.findDOMNode(this.table).getBoundingClientRect();
+    let scrollY = true;
+    if (autoScroll && this.table && this.tableElement) {
+      const { contentTop } = this;
+      const { bodyHeight, contentHeigth } = this.props.table;
+      const table = this.tableElement;
       const tableTo = table.top;
       const tableToContetnTop = tableTo - contentTop;
       const { pagination } = this.props;
-      let scrollY = contentHeigth - tableToContetnTop;
+      scrollY = contentHeigth - tableToContetnTop;
       if (!pagination) {
-        scrollY -= this.bodyHeight > 660 ? 120 : 100;
+        scrollY -= (bodyHeight || this.bodyHeight) > 660 ? 120 : 100;
       }
       return scrollY;
     }
@@ -465,8 +471,9 @@ class OATable extends PureComponent {
   }
 
   makeTableProps = () => {
-    const { pagination, selectedRowKeys, scrollY } = this.state;
+    const { pagination, selectedRowKeys } = this.state;
     const { multiOperator, data, serverSide, total, rowSelection, autoScroll } = this.props;
+    const { bodyHeight } = this.props.table;
     if (serverSide) {
       pagination.total = total;
     }
@@ -475,12 +482,11 @@ class OATable extends PureComponent {
       selectedRowKeys,
       onChange: this.handleRowSelectChange,
     } : rowSelection;
-
     const response = {
       rowKey: (record, index) => record.id || record.staff_sn || record.shop_sn || index,
       dataSource: data,
       onChange: this.handleTableChange,
-      size: this.bodyHeight > 660 ? 'default' : 'small',
+      size: (bodyHeight || this.bodyHeight) > 660 ? 'default' : 'small',
       bordered: false,
       scroll: {},
       pagination: {
@@ -491,8 +497,8 @@ class OATable extends PureComponent {
       rowSelection: newRowSelection,
       columns: this.mapColumns(),
     };
-    if (autoScroll) {
-      response.scroll.y = scrollY;
+    if (autoScroll && this.table) {
+      response.scroll.y = this.setScrollHeight();
     }
     Object.keys(defaultProps).forEach((key) => {
       delete response[key];

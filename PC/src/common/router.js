@@ -75,12 +75,13 @@ const model = [
   'staffs',
   'event',
   'buckle',
+  'table',
 ];
 
 export const getRouterData = (app) => {
   const routerConfig = {
     '/': {
-      component: dynamicWrapper(app, [...model], () => import('../layouts/BasicLayout')),
+      component: dynamicWrapper(app, model, () => import('../layouts/BasicLayout')),
     },
     '/reward/buckle': {
       component: dynamicWrapper(app, [], () => import('../routes/Reward/Buckle')),

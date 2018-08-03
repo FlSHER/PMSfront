@@ -64,12 +64,19 @@ function checkStatus(response) {
 export default async function request(url, options) {
   let urlParam = url;
   const defaultOptions = {
+    headers: {
+      Accept: 'application/json',
+    },
     credentials: 'same-origin',
   };
 
   const newOptions = {
     ...defaultOptions,
     ...options,
+    headers: {
+      ...defaultOptions.headers,
+      ...(options && options.headers),
+    },
   };
 
   const accessToken = localStorage.getItem(`${TOKEN_PREFIX}access_token`);
@@ -88,7 +95,6 @@ export default async function request(url, options) {
 
   if (newOptions.method === 'POST' || newOptions.method === 'PUT' || newOptions.method === 'PATCH') {
     newOptions.headers = {
-      Accept: 'application/json',
       'Content-Type': 'application/json; charset=utf-8',
       ...newOptions.headers,
     };
@@ -109,7 +115,7 @@ export default async function request(url, options) {
     }
   }
 
-
+  // console.log(newOptions);
   const result = fetch(urlParam, newOptions)
     .then(checkStatus)
     .then((response) => {
