@@ -66,11 +66,17 @@ export default class GlobalHeader extends PureComponent {
       location,
       logo,
     } = this.props;
+    let dropData = [];
+    if (currentUser.realname) {
+      dropData = [
+        (<Menu.Item disabled key="user"><Icon type="user" />个人中心</Menu.Item>),
+        (<Menu.Item disabled key="setting"><Icon type="setting" />设置</Menu.Item>),
+        (<Menu.Divider key="Divider" />),
+      ];
+    }
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-        <Menu.Item disabled><Icon type="user" />个人中心</Menu.Item>
-        <Menu.Item disabled><Icon type="setting" />设置</Menu.Item>
-        <Menu.Divider />
+        {dropData}
         <Menu.Item key="logout">
           <Icon type="logout" />退出登录
         </Menu.Item>
@@ -108,7 +114,12 @@ export default class GlobalHeader extends PureComponent {
                 </Ellipsis>
               </span>
             </Dropdown>
-          ) : <Spin size="small" style={{ marginLeft: 8, width: 80, lineHeight: 'inherit' }} />}
+          ) :
+            (
+              <Dropdown overlay={menu}>
+                <Spin size="small" style={{ marginLeft: 8, width: 80, lineHeight: 'inherit' }} />
+              </Dropdown>
+            )}
         </div>
       </Header>
     );

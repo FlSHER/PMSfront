@@ -158,7 +158,7 @@ class BasicLayout extends React.PureComponent {
           onMenuClick={({ key }) => {
             if (key === 'logout') {
               localStorage.clear();
-              window.location.href = 'http://112.74.177.132:8002/logout';
+              window.location.href = `${OA_PATH}/logout?redirect_uri=${window.location.href}`;
             }
           }}
           currentUser={currentUser}
