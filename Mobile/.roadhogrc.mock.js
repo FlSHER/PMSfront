@@ -15,23 +15,23 @@ export default !noProxy ? {
   'DELETE /api/(.*)': 'http://120.79.121.158:8004/api/',
 } : {
     // 张博涵
-    'GET /api/oa/current-user(.*)': 'http://192.168.20.238:8003/api/current-user',
-    'GET /api/oa/departments(.*)': 'http://192.168.20.238:8003/api/departments',
-    'GET /api/oa/staff(.*)': 'http://192.168.20.238:8003/api/staff',
+    'GET /api/oa/current-user(.*)': 'http://112.74.177.132:8002/api/current-user',
+    'GET /api/oa/departments(.*)': 'http://112.74.177.132:8002/api/departments',
+    'GET /api/oa/staff(.*)': 'http://112.74.177.132:8002/api/staff',
 
     // 张博涵
-    'POST /oauth/(.*)': 'http://localhost.oaupdate.org/oauth/',
-    'POST /oauth/(.*)': 'http://192.168.20.238:8003/oauth/',
-    'GET /api/oa/(.*)': 'http://192.168.20.238:8003/api/',
-    // 'GET /api/(.*)': 'http://192.168.20.238:8007/api/',
-    // 'POST /api/(.*)': 'http://192.168.20.238:8007/api/',
-    // 'PUT /api/(.*)': 'http://192.168.20.238:8007/api/',
-    // 'DELETE /api/(.*)': 'http://192.168.20.238:8007/api/',
+    'POST /oauth/(.*)': 'http://112.74.177.132:8002/oauth/',
+    'POST /oauth/(.*)': 'http://112.74.177.132:8002/oauth/',
+    'GET /api/oa/(.*)': 'http://112.74.177.132:8002/api/',
+    'GET /api/(.*)': 'http://112.74.177.132:8009/api/',
+    'POST /api/(.*)': 'http://112.74.177.132:8009/api/',
+    'PUT /api/(.*)': 'http://1112.74.177.132:8009/api/',
+    'DELETE /api/(.*)': 'http://112.74.177.132:8009/api/',
 
     // 张卫
-    'GET /api/(.*)': 'http://PMS.test/api/',
-    'POST /api/(.*)': 'http://PMS.test/api/',
-    'PUT /api/(.*)': 'http://PMS.test/api/',
-    'DELETE /api/(.*)': 'http://PMS.test/api/',
+    // 'GET /api/(.*)': 'http://112.74.177.132:8009/api/',
+    // 'POST /api/(.*)': 'http://112.74.177.132:8009/api/',
+    // 'PUT /api/(.*)': 'http://112.74.177.132:8009/api/',
+    // 'DELETE /api/(.*)': 'http://112.74.177.132:8009/api/',
   };
 

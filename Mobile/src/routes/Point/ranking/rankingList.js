@@ -7,9 +7,8 @@ import { WingBlank, WhiteSpace, Flex, DatePicker } from 'antd-mobile';
 import moment from 'moment';
 import { TimeRange } from '../../../components/General';
 import { Ranking } from '../../../common/ListView';
-import nothing from '../../../assets/nothing.png';
 import { userStorage, getUrlParams, scrollToAnchor } from '../../../utils/util';
-import { ListSort, Nothing } from '../../../components/index';
+import { ListSort } from '../../../components/index';
 import style from '../index.less';
 
 const tabs = [
@@ -152,7 +151,7 @@ export default class PointRanking extends React.Component {
     const [sortItem] = authGroup.filter(item => item.id.toString() === this.urlParams.group_id);
     const endAt = new Date();
     const startAt = new Date('2018/7/1');
-    const iosTime = (params.datetime || '').replace(/-/g, '/');
+    const iosTime = (params.datetime ? `${params.datetime}/1` : '').replace(/-/g, '/');
     return (
       <Flex direction="column">
         <Flex.Item className={style.header}>
@@ -285,21 +284,16 @@ export default class PointRanking extends React.Component {
         </Flex.Item>
         <Flex.Item
           {...(loading.global && { style: { display: 'none' } })}
-          className={style.content}
+          className={[style.content, style.removeBg].join(' ')}
         >
-          {list && !list.length ? (
-            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
-              <Nothing src={nothing} />
-            </div>) : (
-              <WingBlank>
-                <Ranking
-                  dataSource={list || []}
-                  offsetBottom={offsetBottom}
-                  handleClick={this.toPointList}
-                  onRefresh={this.onRefresh}
-                />
-              </WingBlank>
-            )}
+          <WingBlank>
+            <Ranking
+              dataSource={list || []}
+              offsetBottom={offsetBottom}
+              handleClick={this.toPointList}
+              onRefresh={this.onRefresh}
+            />
+          </WingBlank>
         </Flex.Item>
         <Flex.Item
           className={style.footer}

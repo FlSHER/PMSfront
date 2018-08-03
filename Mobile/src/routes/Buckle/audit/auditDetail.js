@@ -292,24 +292,24 @@ export default class AuditDetail extends React.Component {
               </div>
             </div>
           </WingBlank>
-          {approvers.map(item => this.makeApprover(item))}
-          {newDetail.status_id === 2 ?
-            <WhiteSpace size="md" /> : null}
-          {(newDetail.status_id === 2 || newDetail.status_id === -3) ? (
-            <WingBlank className={style.parcel}>
-              <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
-                <Flex className={style.title}> 配置分值</Flex>
-                <Flex
-                  className={style.table_head}
-                  align="center"
-                  justify="center"
-                >
-                  <Flex.Item className={style.table_item}>名称</Flex.Item>
-                  <Flex.Item className={style.table_item}>姓名</Flex.Item>
-                  <Flex.Item className={style.table_item}>B分</Flex.Item>
-                </Flex>
-                <div className={style.table_body}>
-                  {person.map((item, i) => {
+          {approvers.filter(_ => _.name).map(item => this.makeApprover(item))}
+          {newDetail.status_id === 2 && (
+            <React.Fragment>
+              <WhiteSpace size="md" />
+              <WingBlank className={style.parcel}>
+                <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
+                  <Flex className={style.title}> 配置分值</Flex>
+                  <Flex
+                    className={style.table_head}
+                    align="center"
+                    justify="center"
+                  >
+                    <Flex.Item className={style.table_item}>名称</Flex.Item>
+                    <Flex.Item className={style.table_item}>姓名</Flex.Item>
+                    <Flex.Item className={style.table_item}>B分</Flex.Item>
+                  </Flex>
+                  <div className={style.table_body}>
+                    {person.map((item, i) => {
                     const idx = i;
                     return (
                       <Flex key={idx}>
@@ -320,10 +320,12 @@ export default class AuditDetail extends React.Component {
                       </Flex>);
                   })
                   }
+                  </div>
                 </div>
-              </div>
-            </WingBlank>
-          ) : null}
+              </WingBlank>
+            </React.Fragment>
+
+          ) }
           {addresseess && addresseess.length ? (
             <React.Fragment>
               <WhiteSpace size="md" />
@@ -350,22 +352,28 @@ export default class AuditDetail extends React.Component {
               </WingBlank>
             </React.Fragment>
           ) : null}
-          <WhiteSpace size="md" />
-          <WingBlank className={style.parcel}>
-            <div className={style.players}>
-              <Flex className={style.title}> 记录人</Flex>
-              <Flex
-                className={style.person_list}
-                wrap="wrap"
-              >
-                <PersonIcon
-                  value={newDetail}
-                  type="1"
-                  nameKey="recorder_name"
-                />
-              </Flex>
-            </div>
-          </WingBlank>
+          {newDetail.recorder_name && (
+          <React.Fragment>
+            <WhiteSpace size="md" />
+            <WingBlank className={style.parcel}>
+              <div className={style.players}>
+                <Flex className={style.title}> 记录人</Flex>
+                <Flex
+                  className={style.person_list}
+                  wrap="wrap"
+                >
+                  <PersonIcon
+                    value={newDetail}
+                    type="1"
+                    nameKey="recorder_name"
+                  />
+                </Flex>
+              </div>
+            </WingBlank>
+          </React.Fragment>
+          )
+         }
+
           <WhiteSpace size="md" />
         </div>
 

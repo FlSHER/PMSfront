@@ -78,8 +78,6 @@ class ModalFilters extends React.Component {
     url = speciPams.join(';');
     newParams = makerFilters(params || newParams);
     newParams.filters += url ? `;${url}` : '';
-    // newParams.other;
-    console.log('newParams', newParams);
     fetchDataSource(newParams);
   }
 

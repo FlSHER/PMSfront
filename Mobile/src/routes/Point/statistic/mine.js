@@ -14,12 +14,11 @@ import style from '../index.less';
 const pointCount = {
   value: 0,
   name: '0',
-  selected: true,
+  // selected: true,
   label: {
     show: true,
     position: 'center',
     fontSize: 24,
-    padding: [23, 0, 0, 0],
   },
 };
 const colorStyle = ['#000', '#66cbff', '#b4e682', '#fff04c', '#ffb266', '#ff7f94'];
@@ -45,23 +44,23 @@ const pieOption = {
       center: [72, '50%'],
       type: 'pie',
       radius: ['60%', '61px'],
+      hoverAnimation: false,
+      // legendHoverLink: false,
       label: {
         normal: {
           show: false,
         },
         emphasis: {
-          show: true,
+          show: false,
           color: '#000',
         },
       },
-      selectedMode: false,
-
       labelLine: {
         normal: {
           show: false,
         },
       },
-      data: [],
+      data: [pointCount],
     },
   ],
 };
@@ -223,18 +222,14 @@ export default class Statistic extends React.Component {
 
   makePieSeriesData = (data, key, total) => {
     const extra = { ...pointCount };
-    if (total === 0) {
-      extra.label.color = '#000';
-      extra.selected = false;
-    }
-
-    extra.name = total !== null && total !== undefined && total.toString();
-    let newData = (data || []).filter(item => item[key]).map((item) => {
+    extra.name = `${total || 0}`;
+    let newData = data.filter(item => item[key]).map((item) => {
       const obj = {};
       obj.value = item[key];
       obj.name = item.name;
       return obj;
     });
+    newData = newData.length > 0 ? newData : [{ value: 1, name: '' }];
     newData = [extra, ...newData];
     return newData;
   }
@@ -310,7 +305,7 @@ export default class Statistic extends React.Component {
   renderEsChart = (elementChart, key) => {
     const { data: { monthly } } = this.props;
     const sourceBMonthly = monthly.source_b_monthly || defaultMonthly;
-    const sourceAMonthly = monthly.source_a_monthly || defaultMonthly;
+    const sourceAMonthly = defaultMonthly;
     const { checked } = this.state;
     const renderMonthly = checked === 1 ? sourceAMonthly : sourceBMonthly;
     const countArr = renderMonthly.map(item => item[key]);
@@ -321,7 +316,7 @@ export default class Statistic extends React.Component {
       return this.makeLegendPercent(name, renderMonthly, key, count);
     };
     if (count === 0) {
-      newpieOption.color = '#f0f0f0';
+      newpieOption.color = '#636363';
     }
     newpieOption.series[0].data = this.makePieSeriesData(renderMonthly, key, count);
     elementChart.setOption(newpieOption);
