@@ -108,6 +108,7 @@ export default async function request(url, options) {
       }
       paramsArray.push(`${key}=${param}`);
     });
+    delete newOptions.body;
     if (url.search(/\?/) === -1 && paramsArray.length > 0) {
       urlParam += `?${paramsArray.join('&')}`;
     } else if (paramsArray.length > 0) {
