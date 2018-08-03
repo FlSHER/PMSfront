@@ -290,7 +290,6 @@ export default class SelEvent extends Component {
       searchEvent, evtAll } = this.props;
     const isLoading = loading || loadingName;
     const { page, totalpage, data = [] } = searchEvent;
-    console.log('eventList.length && evtName.length', eventList.length, evtName.length);
     return (
       <Flex direction="column">
         <Flex.Item className={style.header} >
