@@ -98,7 +98,7 @@ class BasicLayout extends React.PureComponent {
     this.setClientHeight();
     window.onresize = () => {
       if (this.resizeInterval) clearInterval(this.resizeInterval);
-      this.resizeInterval = setInterval(this.setClientHeight, 500);
+      this.resizeInterval = setInterval(this.setClientHeight, 50);
     };
   }
 
