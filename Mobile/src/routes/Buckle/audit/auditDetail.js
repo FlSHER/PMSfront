@@ -64,7 +64,10 @@ export default class AuditDetail extends React.Component {
   }
 
   submitAgain = (item) => {
-    const { history } = this.props;
+    const { dispatch, history } = this.props;
+    dispatch({
+      type: 'event/clearEvent',
+    });
     history.push(`/buckle_record/${item.id}`);
   }
 

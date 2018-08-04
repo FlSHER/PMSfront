@@ -107,6 +107,12 @@ export default {
 
       };
     },
+    clearEvent(state) {
+      return {
+        ...state,
+        event: {},
+      };
+    },
     clearModal(state) {
       return {
         ...state,
