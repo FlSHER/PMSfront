@@ -47,7 +47,7 @@ function IndexPage({ history }) {
             <Grid
               hasLine={false}
               data={[
-                { text: '退出登录', icon: import('../assets/jobstation/积分制-icon-我.png') },
+                { text: '退出登录', icon: import('../../assets/jobstation/积分制-icon-我.png') },
               ]}
               columnNum={4}
               square={false}
