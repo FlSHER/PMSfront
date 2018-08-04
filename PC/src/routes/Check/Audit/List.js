@@ -292,7 +292,7 @@ export default class extends React.PureComponent {
           dispatch(routerRedux.push(`/reward/buckle/submission/${record.id}`));
         },
       };
-      if ([-1, -2].indexOf(record.status_id) === -1) {
+      if ([-1, -2, -3].indexOf(record.status_id) === -1) {
         linkResubmitProps.className = styles.noAllowed;
         linkResubmitProps.onClick = () => { };
       }
