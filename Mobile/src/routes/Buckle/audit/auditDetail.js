@@ -66,6 +66,9 @@ export default class AuditDetail extends React.Component {
   submitAgain = (item) => {
     const { dispatch, history } = this.props;
     dispatch({
+      type: 'record/clearModal',
+    });
+    dispatch({
       type: 'event/clearModal',
     });
     history.push(`/buckle_record/${item.id}`);
@@ -104,7 +107,7 @@ export default class AuditDetail extends React.Component {
     return (
       <div key={approver.key}>
         <WhiteSpace size="md" />
-        <WingBlank className={style.parcel} >
+        <WingBlank className={style.parcel}>
           <div className={style.players}>
             <Flex className={style.title}>{approver.title} </Flex>
             <Flex
@@ -124,7 +127,7 @@ export default class AuditDetail extends React.Component {
               {
                 (
                   // detail.rejected_at
-                   approveInfo.time
+                  approveInfo.time
                   || (detail.status_id === approver.checkStatus)
                 ) && (
                   <div className={style.dec}>
@@ -133,7 +136,8 @@ export default class AuditDetail extends React.Component {
                       style={approveInfo.style ? approveInfo.style.div : null}
                     >
                       <span style={approveInfo.style ? approveInfo.style.span : null} />
-                      <p style={{ color: !(detail.status_id === 0 || detail.status_id === 1) ? 'rgb(74,74,74)' : '#666' }}>
+                      <p
+                        style={{ color: !(detail.status_id === 0 || detail.status_id === 1) ? 'rgb(74,74,74)' : '#666' }}>
                         {approveInfo.statusText}
                       </p>
                       <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{approveInfo.remark}</p>
@@ -242,9 +246,9 @@ export default class AuditDetail extends React.Component {
                 </div>
               </div>
               {newDetail.description && (
-              <div style={{ padding: '0 15px 10px 15px' }}>
-                {newDetail.description}
-              </div>
+                <div style={{ padding: '0 15px 10px 15px' }}>
+                  {newDetail.description}
+                </div>
               )}
             </List>
           </WingBlank>
@@ -313,22 +317,22 @@ export default class AuditDetail extends React.Component {
                   </Flex>
                   <div className={style.table_body}>
                     {person.map((item, i) => {
-                    const idx = i;
-                    return (
-                      <Flex key={idx}>
-                        <Flex.Item className={style.table_item}>{item.name}</Flex.Item>
-                        <Flex.Item className={style.table_item}>{newDetail[item.value]}</Flex.Item>
-                        <Flex.Item className={style.table_item}>{newDetail[item.key]}</Flex.Item>
+                      const idx = i;
+                      return (
+                        <Flex key={idx}>
+                          <Flex.Item className={style.table_item}>{item.name}</Flex.Item>
+                          <Flex.Item className={style.table_item}>{newDetail[item.value]}</Flex.Item>
+                          <Flex.Item className={style.table_item}>{newDetail[item.key]}</Flex.Item>
 
-                      </Flex>);
-                  })
-                  }
+                        </Flex>);
+                    })
+                    }
                   </div>
                 </div>
               </WingBlank>
             </React.Fragment>
 
-          ) }
+          )}
           {addresseess && addresseess.length ? (
             <React.Fragment>
               <WhiteSpace size="md" />
@@ -340,42 +344,42 @@ export default class AuditDetail extends React.Component {
                     wrap="wrap"
                   >
                     {(addresseess || []).map((item, i) => {
-                    const idx = i;
-                    return (
-                      <PersonIcon
-                        key={idx}
-                        value={item}
-                        type="1"
-                        nameKey="staff_name"
-                      />);
-                  })
-                  }
+                      const idx = i;
+                      return (
+                        <PersonIcon
+                          key={idx}
+                          value={item}
+                          type="1"
+                          nameKey="staff_name"
+                        />);
+                    })
+                    }
                   </Flex>
                 </div>
               </WingBlank>
             </React.Fragment>
           ) : null}
           {newDetail.recorder_name && (
-          <React.Fragment>
-            <WhiteSpace size="md" />
-            <WingBlank className={style.parcel}>
-              <div className={style.players}>
-                <Flex className={style.title}> 记录人</Flex>
-                <Flex
-                  className={style.person_list}
-                  wrap="wrap"
-                >
-                  <PersonIcon
-                    value={newDetail}
-                    type="1"
-                    nameKey="recorder_name"
-                  />
-                </Flex>
-              </div>
-            </WingBlank>
-          </React.Fragment>
+            <React.Fragment>
+              <WhiteSpace size="md" />
+              <WingBlank className={style.parcel}>
+                <div className={style.players}>
+                  <Flex className={style.title}> 记录人</Flex>
+                  <Flex
+                    className={style.person_list}
+                    wrap="wrap"
+                  >
+                    <PersonIcon
+                      value={newDetail}
+                      type="1"
+                      nameKey="recorder_name"
+                    />
+                  </Flex>
+                </div>
+              </WingBlank>
+            </React.Fragment>
           )
-         }
+          }
 
           <WhiteSpace size="md" />
         </div>
