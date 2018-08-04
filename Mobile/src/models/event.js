@@ -104,13 +104,6 @@ export default {
       return {
         ...state,
         ...newState,
-
-      };
-    },
-    clearEvent(state) {
-      return {
-        ...state,
-        event: {},
       };
     },
     clearModal(state) {
