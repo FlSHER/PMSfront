@@ -12,34 +12,61 @@ function IndexPage({ history }) {
     <div className={styles.con}>
       {
         indexMenu.map((item, i) => {
-      const idx = i;
-      return (
-        <div key={idx}>
-          <WhiteSpace size="md" />
-          <WingBlank>
-            <div className={style.entrance}>
-              <div className={style.title}> {item.name}</div>
-              <Grid
-                hasLine={false}
-                data={item.children}
-                columnNum={4}
-                square={false}
-                renderItem={dataItem => (
-                  <div>
-                    <img src={dataItem.icon} alt={dataItem.text} style={{ width: '40px' }} />
-                    <div style={{ color: 'rgb(10,10,10)', fontSize: '14px', marginTop: '4px' }}>
-                      <span>{dataItem.text}</span>
-                    </div>
-                  </div>
-                )}
-                onClick={el => history.push(el.to)}
-              />
+          const idx = i;
+          return (
+            <div key={idx}>
+              <WhiteSpace size="md" />
+              <WingBlank>
+                <div className={style.entrance}>
+                  <div className={style.title}> {item.name}</div>
+                  <Grid
+                    hasLine={false}
+                    data={item.children}
+                    columnNum={4}
+                    square={false}
+                    renderItem={dataItem => (
+                      <div>
+                        <img src={dataItem.icon} alt={dataItem.text} style={{ width: '40px' }} />
+                        <div style={{ color: 'rgb(10,10,10)', fontSize: '14px', marginTop: '4px' }}>
+                          <span>{dataItem.text}</span>
+                        </div>
+                      </div>
+                    )}
+                    onClick={el => history.push(el.to)}
+                  />
+                </div>
+              </WingBlank>
             </div>
-          </WingBlank>
-        </div>
-      );
-    })}
-
+          );
+        })}
+      <div key="system">
+        <WhiteSpace size="md" />
+        <WingBlank>
+          <div className={style.entrance}>
+            <div className={style.title}> 系统</div>
+            <Grid
+              hasLine={false}
+              data={[
+                { text: '退出登录', icon: import('../assets/jobstation/积分制-icon-我.png') },
+              ]}
+              columnNum={4}
+              square={false}
+              renderItem={dataItem => (
+                <div>
+                  <img src={dataItem.icon} alt={dataItem.text} style={{ width: '40px' }} />
+                  <div style={{ color: 'rgb(10,10,10)', fontSize: '14px', marginTop: '4px' }}>
+                    <span>{dataItem.text}</span>
+                  </div>
+                </div>
+              )}
+              onClick={() => {
+                localStorage.clear();
+                history.back();
+              }}
+            />
+          </div>
+        </WingBlank>
+      </div>
     </div>
   );
 }
