@@ -57,6 +57,12 @@ export default class EventPreview extends React.Component {
   }
 
   submitAgain = (item) => {
+    dispatch({
+      type: 'record/clearModal',
+    });
+    dispatch({
+      type: 'event/clearModal',
+    });
     const { history } = this.props;
     history.push(`/buckle_preview?id=${item.id}`);
   }

@@ -66,9 +66,6 @@ export default class AuditDetail extends React.Component {
   submitAgain = (item) => {
     const { dispatch, history } = this.props;
     dispatch({
-      type: 'buckle/clearModal',
-    });
-    dispatch({
       type: 'record/clearModal',
     });
     dispatch({
