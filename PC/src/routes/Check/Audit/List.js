@@ -37,15 +37,13 @@ export default class extends React.PureComponent {
     const { dispatch, type } = this.props;
     let newParams = { ...params };
     const extarParams = {};
-    if (type === 'approved') {
-      if (newParams.filters.step) {
-        extarParams.step = newParams.filters.step;
-        delete newParams.filters.step;
-      }
-      if (newParams.filters.cate) {
-        extarParams.cate = newParams.filters.cate;
-        delete newParams.filters.cate;
-      }
+    if (newParams.filters.step) {
+      extarParams.step = newParams.filters.step;
+      delete newParams.filters.step;
+    }
+    if (newParams.filters.cate) {
+      extarParams.cate = newParams.filters.cate;
+      delete newParams.filters.cate;
     }
     newParams = makerFilters(newParams);
     dispatch({
