@@ -5,7 +5,7 @@ import Ellipsis from '../../../components/Ellipsis';
 
 import OATable from '../../../components/OATable';
 import EventInfo from './info';
-import { statusData } from '../../../utils/utils';
+import { statusData, makerFilters } from '../../../utils/utils';
 
 
 @connect(({ buckle, loading }) => ({
@@ -17,7 +17,24 @@ export default class extends React.PureComponent {
     editInfo: {},
   }
 
-  fetch = (params) => {
+  fetch = (_, _params) => {
+    let params = { ..._params };
+    if (_params.filters.status_id) {
+      if (typeof _params.filters.status_id === 'string') {
+        const temp = _params.filters.status_id.split(',');
+        params.filters.status_id = {};
+        params.filters.status_id.in = temp;
+      } else {
+        const whereStatus = _params.filters.status_id.in;
+        let status = [];
+        whereStatus.forEach((item) => {
+          const temp = item.split(',');
+          status = [...status, ...temp];
+        });
+        params.filters.status_id.in = status;
+      }
+    }
+    params = makerFilters(params);
     const { dispatch, type } = this.props;
     dispatch({
       type: 'buckle/fetch',

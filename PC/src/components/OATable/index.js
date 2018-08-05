@@ -171,7 +171,7 @@ class OATable extends PureComponent {
         response.render = response.render || this.makeDefaultSearchRender(key);
       } else if (column.treeFilters) {
         Object.assign(response, this.makeTreeFilterOption(key, column));
-      } else if (column.filters) {
+      } else if (column.filters && !serverSide) {
         response.onFilter = column.onFilter || this.makeDefaultOnFilter(key);
       } else if (column.dateFilters) {
         Object.assign(response, this.makeDateFilterOption(key, column));

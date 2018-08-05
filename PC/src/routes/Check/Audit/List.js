@@ -45,6 +45,21 @@ export default class extends React.PureComponent {
       extarParams.cate = newParams.filters.cate;
       delete newParams.filters.cate;
     }
+    if (params.filters.status_id) {
+      if (typeof params.filters.status_id === 'string') {
+        const temp = params.filters.status_id.split(',');
+        newParams.filters.status_id = {};
+        newParams.filters.status_id.in = temp;
+      } else {
+        const whereStatus = params.filters.status_id.in;
+        let statusId = [];
+        whereStatus.forEach((item) => {
+          const temp = item.split(',');
+          statusId = [...statusId, ...temp];
+        });
+        newParams.filters.status_id.in = statusId;
+      }
+    }
     newParams = makerFilters(newParams);
     dispatch({
       type: 'buckle/fetchBuckleGroups',
