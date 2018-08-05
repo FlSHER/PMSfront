@@ -511,7 +511,7 @@ export const statusData = [
   { value: 2, text: '已通过' },
   { value: -1, text: '已驳回' },
   { value: -2, text: '已撤回' },
-  { value: -3, text: '已撤消' },
+  { value: -3, text: '已撤销' },
   // { value: 1, text: '审核中' },
 ];
 
