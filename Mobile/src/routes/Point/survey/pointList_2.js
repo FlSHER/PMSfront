@@ -184,7 +184,7 @@ export default class PointList2 extends React.Component {
     this.sorter = (params && params.sort) || 'created_at-desc';
     const currentParams = parseParams(currentTab);
     const newParams = { page: 1, pagesize: 10, ...currentParams, ...params };
-    const staffSn = getUrlParams(location.search)['staff_sn'];
+    const staffSn = getUrlParams(location.search).staff_sn;
     if (staffSn) newParams.staff_sn = staffSn;
     const urlparams = parseParamsToUrl(newParams);
     dispatch({
