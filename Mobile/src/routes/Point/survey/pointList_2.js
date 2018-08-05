@@ -8,7 +8,7 @@ import { Point } from '../../../common/ListView/index';
 import { CheckBoxs } from '../../../components/index';
 import ModalFilters from '../../../components/ModalFilters';
 import { pointSource } from '../../../utils/convert';
-import { getUrlString, parseParamsToUrl, doConditionValue, parseParams } from '../../../utils/util';
+import { getUrlParams, getUrlString, parseParamsToUrl, doConditionValue, parseParams } from '../../../utils/util';
 import style from '../index.less';
 
 const sortList = [
@@ -105,7 +105,6 @@ export default class PointList2 extends React.Component {
         page,
       });
     }
-
     if (this.props.location.search !== search) {
       if (pointList[type] && pointList[type].page !== 1) {
         return;
@@ -149,7 +148,7 @@ export default class PointList2 extends React.Component {
     });
   }
 
-  fetchFiltersDataSource=(params) => {
+  fetchFiltersDataSource = (params) => {
     this.setState({
       page: 1,
     }, () => {
@@ -180,11 +179,13 @@ export default class PointList2 extends React.Component {
   }
 
   fetchDataSource = (params) => {
-    const { dispatch, allTabs } = this.props;
+    const { dispatch, allTabs, location } = this.props;
     const currentTab = allTabs[type];
     this.sorter = (params && params.sort) || 'created_at-desc';
     const currentParams = parseParams(currentTab);
     const newParams = { page: 1, pagesize: 10, ...currentParams, ...params };
+    const staffSn = getUrlParams(location.search)['staff_sn'];
+    if (staffSn) newParams.staff_sn = staffSn;
     const urlparams = parseParamsToUrl(newParams);
     dispatch({
       type: 'alltabs/saveKey',
@@ -213,7 +214,9 @@ export default class PointList2 extends React.Component {
         <img
           src={shortcut}
           alt="快捷操作"
-          onClick={() => { this.onShortcut(value); }}
+          onClick={() => {
+            this.onShortcut(value);
+          }}
         />
       </div>
     );
@@ -242,11 +245,11 @@ export default class PointList2 extends React.Component {
                   className={[style.dosort].join(' ')}
                   onClick={() => this.handleVisible(true, 'sort')}
                   style={{
-                backgroundImage: `url(${sortItem.icon})`,
-                backgroundPosition: 'right center',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: '0.4rem',
-              }}
+                    backgroundImage: `url(${sortItem.icon})`,
+                    backgroundPosition: 'right center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '0.4rem',
+                  }}
                 >
                   {sortItem.name}
                 </div>
@@ -269,7 +272,7 @@ export default class PointList2 extends React.Component {
               onResetForm={this.onResetForm}
               filterColumns={filterColumns}
               sorterData={sortList}
-          // modalId="1"
+              // modalId="1"
               fetchDataSource={this.fetchFiltersDataSource}
               onCancel={this.handleVisible}
             />
