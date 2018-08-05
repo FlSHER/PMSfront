@@ -149,7 +149,7 @@ export default class extends React.PureComponent {
           autoScroll
           id={type}
           loading={loading}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 1200 }}
           columns={this.makeColums()}
           data={reuslt && reuslt.data}
           total={reuslt && reuslt.total}
