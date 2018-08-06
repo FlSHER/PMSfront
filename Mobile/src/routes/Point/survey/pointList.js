@@ -3,17 +3,15 @@ import {
   connect,
 } from 'dva';
 import moment from 'moment';
-import { WingBlank, Flex, InputItem, DatePicker } from 'antd-mobile';
-import nothing from '../../../assets/nothing.png';
+import { Flex } from 'antd-mobile';
 import { Point } from '../../../common/ListView/index';
-import { ListFilter, CheckBoxs, ListSort } from '../../../components/index';
-import Nothing from '../../../components/Nothing/Nothing.js';
+import { CheckBoxs } from '../../../components/index';
+import ModalFilters from '../../../components/ModalFilters';
 import { pointSource } from '../../../utils/convert';
-import { makerFilters, getUrlParams } from '../../../utils/util';
+import { getUrlParams, getUrlString, parseParamsToUrl, doConditionValue, parseParams } from '../../../utils/util';
 import style from '../index.less';
 
 const sortList = [
-  { name: '默认排序', value: 'changed_at-desc', icon: import('../../../assets/filter/default_sort.svg') },
   { name: '生效时间升序', value: 'changed_at-asc', icon: import('../../../assets/filter/asc.svg') },
   { name: '生效时间降序', value: 'changed_at-desc', icon: import('../../../assets/filter/desc.svg') },
   { name: '记录时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
@@ -24,240 +22,216 @@ const sortList = [
   { name: 'B分降序', value: 'point_b_-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
 
+const type = 'point';
 
-@connect(({ point }) => ({
+const filterColumns = [
+  {
+    title: '分值类型',
+    name: 'point_a',
+    type: 'range',
+    addonBefore: (
+      <CheckBoxs
+        itemStyle={{ marginBottom: 0, marginRight: '0.1333rem' }}
+        option={[{ name: 'A分', value: 'point_a' }]}
+      />
+    ),
+    min: 1,
+    max: 10,
+  },
+  {
+    name: 'point_b',
+    type: 'range',
+    addonBefore: (
+      <CheckBoxs
+        itemStyle={{ marginBottom: 0, marginRight: '0.1333rem' }}
+        option={[{ name: 'B分', value: 'point_a' }]}
+      />
+    ),
+    min: 1,
+    max: 10,
+  },
+  {
+    name: 'source_id',
+    type: 'checkBox',
+    title: '类别',
+    multiple: true,
+    options: pointSource,
+  },
+  {
+    title: '记录时间',
+    name: 'created_at',
+    type: 'timerange',
+    min: null,
+    max: moment(new Date()).format('YYYY-MM-DD'),
+  },
+  {
+    title: '生效时间',
+    name: 'changed_at',
+    type: 'timerange',
+    min: null,
+    max: moment(new Date()).format('YYYY-MM-DD'),
+  },
+];
+
+@connect(({ point, alltabs }) => ({
   pointList: point.pointList,
+  allTabs: alltabs.tabs,
 }))
-export default class PointList extends React.Component {
+export default class PointList2 extends React.Component {
   state = {
-    filters: {// 筛选结果
-      point_a: {
-        min: '',
-        max: '',
-      },
-      point_b: {
-        min: '',
-        max: '',
-      },
-      source_id: {
-        in: [],
-      },
-      changed_at: {
-        min: '',
-        max: '',
-      },
-      created_at: {
-        min: '',
-        max: '',
-      },
-    },
-    modal: {// 模态框
-      filterModal: false,
-      sortModal: false,
-    },
-    sortItem: { name: '默认排序', value: 'changed_at-desc', icon: import('../../../assets/filter/default_sort.svg') },
+    visible: false,
+    model: 'filters',
+    page: 1,
+    totalpage: 10,
   }
 
   componentWillMount() {
-    const { dispatch, location } = this.props;
-    const { sortItem } = this.state;
-    this.urlParams = getUrlParams(location.search);
-    dispatch({
-      type: 'point/getPointLog',
-      payload: {
-        pagesize: 10,
-        page: 1,
-        sort: sortItem.value,
-        ...this.urlParams,
-      },
+    const { pointList } = this.props;
+    if (pointList[type] && pointList[type].page !== 1) {
+      this.currentFilter();
+      return;
+    }
+    this.fetchDataSource({});
+  }
+
+  componentWillReceiveProps(props) {
+    const { location: { search }, pointList } = props;
+    this.currentFilter();
+    if (JSON.stringify(this.props.pointList[type]) !== JSON.stringify(pointList[type])) {
+      const page = pointList[type] ? pointList[type].page : 1;
+      const totalpage = pointList[type] ? pointList[type].totalpage : 10;
+      this.setState({
+        totalpage,
+        page,
+      });
+    }
+    if (this.props.location.search !== search) {
+      if (pointList[type] && pointList[type].page !== 1) {
+        return;
+      }
+      this.fetchDataSource({});
+    }
+  }
+
+  onPageChange = () => {
+    const { pointList } = this.props;
+    const currentData = pointList;
+    const params = {
+      page: currentData ? currentData.page + 1 : 1,
+    };
+    this.setState({
+      page: params.page,
+    }, () => {
+      this.fetchDataSource(params);
     });
   }
 
   onRefresh = () => {
-    const { dispatch } = this.props;
-    const { filters, sortItem } = this.state;
-    dispatch({
-      type: 'point/getPointLog',
-      payload: {
-        pagesize: 10,
-        page: 1,
-        sort: sortItem.value,
-        filters,
-        ...this.urlParams,
-      },
+    this.setState({
+      page: params.page,
+    }, () => {
+      this.fetchDataSource(params);
     });
-  }
-
-  onCancel = (e, feild) => {
-    const { modal } = this.state;
-    const newModal = { ...modal };
-    newModal[feild] = false;
-    this.setNewState('modal', newModal);
   }
 
   onResetForm = () => {
-    const { sortItem } = this.state;
     const { dispatch } = this.props;
-    this.setState(
-      { filters: {
-        point_a: {
-          min: '',
-          max: '',
-        },
-        point_b: {
-          min: '',
-          max: '',
-        },
-        source_id: [],
-        changed_at: {
-          min: '',
-          max: '',
-        },
-        created_at: {
-          min: '',
-          max: '',
-        },
-      } }, () => {
-        dispatch({
-          type: 'point/getPointLog',
-          payload: {
-            pagesize: 10,
-            page: 1,
-            ...this.urlParams,
-            sort: sortItem.value,
-          },
-        });
-      });
-  }
-
-  onFilterOk = () => {
-    const { sortItem, filters } = this.state;
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'point/getPointLog',
-      payload: {
-        pagesize: 10,
-        page: 1,
-        sort: sortItem.value,
-        ...this.urlParams,
-        filters,
-      },
+    this.setState({
+      page: 1,
     });
-    this.onCancel('', 'filterModal');
-  }
-
-  onPageChange = () => {
-    const { dispatch, pointList } = this.props;
-    const { sortItem, filters } = this.state;
     dispatch({
-      type: 'point/getPointLog',
+      type: 'alltabs/saveKey',
       payload: {
-        pagesize: 10,
-        sort: sortItem.value,
-        page: pointList.page + 1,
-        ...this.urlParams,
-        filters,
+        type,
+        value: 'sort=changed_at-desc',
       },
     });
   }
 
-  setNewState = (key, newValue) => {
+  fetchFiltersDataSource = (params) => {
     this.setState({
-      [key]: newValue,
-    });
-  }
-
-  sortReasult = (item) => {
-    const { dispatch } = this.props;
-    const { modal, filters } = this.state;
-    const newModal = { ...modal };
-    newModal.sortModal = false;
-    this.setState({
-      modal: { ...newModal },
-      sortItem: item,
+      page: 1,
     }, () => {
-      dispatch({
-        type: 'point/getPointLog',
-        payload: {
-          pagesize: 10,
-          page: 1,
-          sort: item.value,
-          ...this.urlParams,
-          filters,
-        },
-      });
+      this.fetchDataSource({ ...params, page: 1 });
     });
   }
 
-  selFilter = (feild) => { // 筛选
-    const { modal } = this.state;
-    const modalObj = {};
-    Object.keys(modal).map((key) => {
-      const value = modal[key];
-      if (key !== feild) {
-        modalObj[key] = false;
-      } else {
-        modalObj[key] = !value;
+  findNotBelong = () => {
+    const notBelongs = filterColumns.filter(item => item.notbelong);
+    return notBelongs;
+  }
+
+  currentFilter = () => {
+    const { allTabs } = this.props;
+    const currentTab = allTabs[this.type];
+    let filterParams = getUrlString('filters', currentTab);
+    // this.sorter = getUrlString('sort', currentTab);
+    const notbelongs = this.findNotBelong();
+    const notbelongParams = [];
+    notbelongs.forEach((item) => {
+      const str = getUrlString(item.name, currentTab);
+      if (str) {
+        notbelongParams.push(`${item.name}=${str}`);
       }
-      return value;
     });
-    this.setNewState('modal', modalObj);
+    filterParams = `${notbelongParams.join(';')};${filterParams}`;
+    this.filters = doConditionValue(filterParams);
   }
 
-  checkItem = (i, v, key) => {
-    const { filter } = this.state;
-    const newFilter = { ...filter };
-    const temp = newFilter[key].selectd === v ? '' : v;
-    newFilter[key].selectd = temp;
-    this.setNewState('filter', newFilter);
-  }
-
-  timeChange = (date, key, range) => {
-    const { filters } = this.state;
-    const newFilter = { ...filters };
-    newFilter[key][range] = moment(date).format('YYYY-MM-DD');
-    this.setNewState('filter', newFilter);
-  }
-
-  doMultiple = (i, v, key) => {
-    const { filters } = this.state;
-    const newFilter = { ...filters };
-    let temp = [...(newFilter[key].in || [])];
-    const isExist = temp.indexOf(v) !== -1;
-    if (isExist) {
-      temp = temp.filter(item => item !== v);
-    } else {
-      temp.push(v);
-    }
-    newFilter[key].in = [...temp];
-    this.setNewState('filter', newFilter);
-  }
-
-  tabChange = (item) => {
-    this.setNewState('checkState', item);
+  fetchDataSource = (params) => {
+    const { dispatch, allTabs, location } = this.props;
+    const currentTab = allTabs[type];
+    this.sorter = (params && params.sort) || 'created_at-desc';
+    const currentParams = parseParams(currentTab);
+    const newParams = { page: 1, pagesize: 10, ...currentParams, ...params };
+    const staffSn = getUrlParams(location.search).staff_sn;
+    if (staffSn) newParams.staff_sn = staffSn;
+    const urlparams = parseParamsToUrl(newParams);
+    dispatch({
+      type: 'alltabs/saveKey',
+      payload: {
+        type,
+        value: urlparams,
+      },
+    });
+    dispatch({
+      type: 'point/getPointLog2',
+      payload: urlparams,
+    });
   }
 
   toLookDetail = (item) => {
     this.props.history.push(`/point_detail/${item.id}`);
   }
 
-  rangeChange = (v, key, range) => {
-    if (v && v !== '-' && !/^-?\d+$/.test(v)) {
-      return;
-    }
-    const { filters } = this.state;
-    const newFilter = { ...filters };
-    newFilter[key][range] = v;
-    this.setNewState('filter', newFilter);
+  handleVisible = (flag, model) => {
+    this.setState({ visible: !!flag, model });
+  }
+
+  renderExtraContent = (value) => {
+    const extra = (
+      <div className={style.aside}>
+        <img
+          src={shortcut}
+          alt="快捷操作"
+          onClick={() => {
+            this.onShortcut(value);
+          }}
+        />
+      </div>
+    );
+    return extra;
   }
 
   render() {
     const { pointList } = this.props;
     const { data } = pointList;
-    const { page, totalpage } = pointList;
-    const { filters } = this.state;
-    const isFilter = makerFilters({ filters }).filters;
-
+    const { page, totalpage } = this.state;
+    let [sortItem] = sortList.filter(item => item.value === this.sorter);
+    if (!sortItem) {
+      [sortItem] = sortList;
+    }
+    const activeStyle = Object.keys(this.filters || {}).length ? style.active : null;
     return (
       <Flex direction="column">
         <Flex.Item className={style.header}>
@@ -269,196 +243,52 @@ export default class PointList extends React.Component {
               <Flex.Item>
                 <div
                   className={[style.dosort].join(' ')}
+                  onClick={() => this.handleVisible(true, 'sort')}
                   style={{
-                    backgroundImage: `url(${this.state.sortItem.icon})`,
+                    backgroundImage: `url(${sortItem.icon})`,
                     backgroundPosition: 'right center',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: '0.4rem',
                   }}
-                  onClick={() => this.selFilter('sortModal')}
                 >
-                  {this.state.sortItem.name}
+                  {sortItem.name}
                 </div>
               </Flex.Item>
               <Flex.Item>
                 <div
-                  className={[style.filter, isFilter ? style.active : null].join(' ')}
-                  onClick={() => this.selFilter('filterModal')}
+                  className={[style.filter, activeStyle].join(' ')}
+                  onClick={() => this.handleVisible(true, 'filter')}
                 >筛选
                 </div>
+
               </Flex.Item>
             </Flex>
-            <ListSort
-              contentStyle={{
-                position: 'fixed',
-                zIndex: 99,
-                left: 0,
-                top: '1.17333rem',
-                bottom: 0,
-                right: 0,
-                overflow: 'auto',
-                background: 'rgba(0, 0, 0, 0.1)',
-              }}
+            <ModalFilters
+              visible={this.state.visible}
+              model={this.state.model}
+              filters={this.filters}
+              sorter={this.sorter}
               top="1.17333rem"
-              visible={this.state.modal.sortModal}
-              onCancel={this.onCancel}
-              filterKey="sortModal"
-            >
-              {sortList.map((item, i) => {
-                const idx = i;
-                return (
-                  <div
-                    className={style.sort_item}
-                    key={idx}
-                    onClick={() => this.sortReasult(item)}
-                  >{item.name}
-                  </div>
-                );
-              })}
-            </ListSort>
+              onResetForm={this.onResetForm}
+              filterColumns={filterColumns}
+              sorterData={sortList}
+              // modalId="1"
+              fetchDataSource={this.fetchFiltersDataSource}
+              onCancel={this.handleVisible}
+            />
           </div>
         </Flex.Item>
         <Flex.Item className={style.content}>
-          {data && !data.length ? (
-            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
-              <Nothing src={nothing} />
-            </div>
-          ) : (
-            <WingBlank>
-              <Point
-                dataSource={data || []}
-                handleClick={this.toLookDetail}
-                onRefresh={this.onRefresh}
-                onPageChange={this.onPageChange}
-                page={page || 1}
-                totalpage={totalpage || 10}
-              />
-            </WingBlank>
-            )}
+          <Point
+            dataSource={data || []}
+            handleClick={this.toLookDetail}
+            onRefresh={this.onRefresh}
+            onPageChange={this.onPageChange}
+            page={page || 1}
+            totalpage={totalpage || 10}
+          />
         </Flex.Item>
-        <ListFilter
-          onOk={this.onFilterOk}
-          filterKey="filterModal"
-          onCancel={this.onCancel}
-          onResetForm={this.onResetForm}
-          iconStyle={{ width: '0.533rem', height: '0.533rem' }}
-          visible={this.state.modal.filterModal}
-          contentStyle={{
-            position: 'fixed',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 999,
-            textAlign: 'left',
-            backgroundColor: 'rgba(0,0,0,0.2)',
-            paddingLeft: '2rem',
-          }}
-        >
-          <div
-            className={[style.filter_item, style.range].join(' ')}
-            style={{ paddingBottom: '0.48rem' }}
-          >
-            <div className={style.title}>分值类型</div>
-            <Flex align="center">
-              <CheckBoxs
-                itemStyle={{ marginBottom: 0, marginRight: '0.1333rem' }}
-                option={[{ name: 'A分', value: 'point_a' }]}
-                // checkStatus={(i, v) => this.checkItem(i, v, 'point_a')}
-                // value={[filter.point_a.selectd]}
-              />
-              <InputItem
-                value={filters.point_a.min}
-                onChange={e => this.rangeChange(e, 'point_a', 'min')}
-              /><span className={style.rg}>—</span><InputItem
-                value={filters.point_a.max}
-                onChange={e => this.rangeChange(e, 'point_a', 'max')}
-              />
-            </Flex>
-          </div>
-          <div
-            className={[style.filter_item, style.range].join(' ')}
-            style={{ paddingBottom: '0.48rem' }}
-          >
-            <div className={style.title}>分值类型</div>
-            <Flex align="center">
-              <CheckBoxs
-                itemStyle={{ marginBottom: 0, marginRight: '0.1333rem' }}
-                option={[{ name: 'B分', value: 'point_b' }]}
-                // checkStatus={(i, v) => this.checkItem(i, v, 'point_b')}
-                // value={[filter.point_b.selectd]}
-              />
-              <InputItem
-                value={filters.point_b.min}
-                onChange={e => this.rangeChange(e, 'point_b', 'min')}
-              /><span className={style.rg}>—</span><InputItem
-                value={filters.point_b.max}
-                onChange={e => this.rangeChange(e, 'point_b', 'max')}
-              />
-            </Flex>
 
-          </div>
-          <div className={[style.filter_item].join(' ')} >
-            <div className={style.title}>类别</div>
-            <CheckBoxs
-              option={pointSource}
-              checkStatus={(i, v) => this.doMultiple(i, v, 'source_id')}
-              value={filters.source_id.in}
-            />
-          </div>
-          <div
-            className={[style.filter_item].join(' ')}
-            style={{ paddingBottom: '0.48rem' }}
-          >
-            <div className={style.title}>记录时间</div>
-            <Flex>
-              <Flex.Item>
-                <DatePicker
-                  mode="date"
-                  format="YYYY-MM-DD"
-                  onChange={date => this.timeChange(date, 'created_at', 'min')}
-                >
-                  <div className={style.some_time}>{filters.created_at.min}</div>
-                </DatePicker>
-              </Flex.Item>
-              <Flex.Item>
-                <DatePicker
-                  mode="date"
-                  format="YYYY-MM-DD"
-                  onChange={date => this.timeChange(date, 'created_at', 'max')}
-                >
-                  <div className={style.some_time}>{filters.created_at.max}</div>
-                </DatePicker>
-              </Flex.Item>
-            </Flex>
-          </div>
-          <div
-            className={[style.filter_item].join(' ')}
-            style={{ paddingBottom: '0.48rem' }}
-          >
-            <div className={style.title}>生效时间</div>
-            <Flex>
-              <Flex.Item>
-                <DatePicker
-                  mode="date"
-                  format="YYYY/MM/DD"
-                  onChange={date => this.timeChange(date, 'changed_at', 'min')}
-                >
-                  <div className={style.some_time}>{filters.changed_at.min}</div>
-                </DatePicker>
-              </Flex.Item>
-              <Flex.Item>
-                <DatePicker
-                  mode="date"
-                  format="YYYY-MM-DD"
-                  onChange={date => this.timeChange(date, 'changed_at', 'max')}
-                >
-                  <div className={style.some_time}>{filters.changed_at.max}</div>
-                </DatePicker>
-              </Flex.Item>
-            </Flex>
-          </div>
-        </ListFilter>
       </Flex>
     );
   }

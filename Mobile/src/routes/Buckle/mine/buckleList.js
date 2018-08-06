@@ -2,23 +2,77 @@ import React from 'react';
 import {
   connect,
 } from 'dva';
-import { WingBlank, WhiteSpace, Flex } from 'antd-mobile';
-import nothing from '../../../assets/nothing.png';
+import { Tabs, Flex } from 'antd-mobile';
 import { Buckle, PaticipantBuckle } from '../../../common/ListView/index';
+import ModalFilters from '../../../components/ModalFilters';
 import {
-  convertStyle,
-  auditFinishedState,
   buckleState,
-  auditFinishedLabel,
-  auditFinishedResult,
+  convertStyle,
 } from '../../../utils/convert.js';
-import { userStorage } from '../../../utils/util';
-
-import { ListFilter, CheckBoxs, ListSort, StateTabs, Nothing } from '../../../components/index';
+import { getUrlParams, getUrlString, parseParamsToUrl, doConditionValue, parseParams } from '../../../utils/util';
 import style from '../index.less';
+import shortcut from '../../../assets/shortcuts.png';
+
+const options = [
+  {
+    label: '已通过', value: '2',
+  },
+  {
+    label: '已驳回', value: '-1',
+  },
+  {
+    label: '审核中', value: '[0,1]',
+  },
+  {
+    label: '已撤回', value: '-2',
+  },
+];
+
+const addrOption = [
+  {
+    label: '已通过', value: '2',
+  },
+  {
+    label: '已驳回', value: '-1',
+  },
+];
+const tabs = {
+  participant: {
+    filterColumns: [
+      {
+        name: 'status_id',
+        type: 'checkBox',
+        title: '审核类型',
+        multiple: false,
+        options,
+      },
+    ],
+  },
+  recorded: {
+    filterColumns: [
+      {
+        name: 'status_id',
+        type: 'checkBox',
+        title: '审核类型',
+        multiple: false,
+        options,
+      },
+    ],
+  },
+  addressee: {
+    filterColumns: [
+      {
+        name: 'status_id',
+        type: 'checkBox',
+        title: '审核类型',
+        multiple: false,
+        options: addrOption,
+      },
+    ],
+  },
+};
 
 const sortList = [
-  { name: '默认排序', value: 'created_at-desc', icon: import('../../../assets/filter/default_sort.svg') },
   { name: '记录时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
   { name: '记录时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
   { name: '执行时间升序', value: 'executed_at-asc', icon: import('../../../assets/filter/asc.svg') },
@@ -26,366 +80,216 @@ const sortList = [
 ];
 
 const auditStates = [
-  { name: '我参与的', value: 'participant' },
-  { name: '我记录的', value: 'recorded' },
-  { name: '抄送我的', value: 'addressee' },
-  { name: '我审核的', value: 'approved' },
+  { name: '我参与的', value: 'participant', title: '我参与的' },
+  { name: '我记录的', value: 'recorded', title: '我记录的' },
+  { name: '抄送我的', value: 'addressee', title: '抄送我的' },
 ];
 
-const dealtOption = [
-  { name: '已通过', value: 1 },
-  { name: '已驳回', value: -1 },
-];
-
-const stateOption = [
-  { name: '已通过', value: 2 },
-  { name: '已驳回', value: -1 },
-  { name: '审核中', value: 0 },
-  { name: '已撤回', value: -2 },
-];
-
-const procesingOption = [
-  { name: '初审', value: 'first_approver_sn' },
-  { name: '终审', value: 'final_approver_sn' },
-];
-
-@connect(({ buckle }) => ({
+@connect(({ buckle, alltabs }) => ({
   logList: buckle.logList,
+  allTabs: alltabs.tabs,
 }))
-
-export default class BuckleList extends React.Component {
+export default class AuditList extends React.Component {
   state = {
-    filter: {// 筛选结果
-      approveType: [],
-      eventState: '',
-    },
-    modal: {// 模态框
-      filterModal: false,
-      sortModal: false,
-    },
-    sortItem: sortList[0],
-    checkState: auditStates[0],
+    visible: false,
+    model: 'filters',
+    page: 1,
+    totalpage: 10,
   }
 
   componentWillMount() {
-    const { dispatch } = this.props;
-    const { checkState, sortItem } = this.state;
-    const newInfo = userStorage('userInfo');
-    this.setState({
-      userInfo: newInfo,
-    }, () => {
-      dispatch({
-        type: 'buckle/getLogsGroupList',
-        payload: {
-          pagesize: 10,
-          sort: sortItem.value,
-          type: checkState.value,
-          page: 1,
-        },
+    const { logList } = this.props;
+    this.urlParams = getUrlParams();
+    const { type = 'participant' } = this.urlParams;
+    this.type = type;
+    if (logList[type] && logList[type].page !== 1) {
+      this.currentFilter();
+      return;
+    }
+    this.fetchDataSource({});
+  }
+
+  componentWillReceiveProps(props) {
+    const { location: { search }, logList } = props;
+    this.urlParams = getUrlParams(search);
+    const { type = 'participant' } = this.urlParams;
+    this.type = type;
+    if (JSON.stringify(this.props.logList[type]) !== JSON.stringify(logList[type])) {
+      const page = logList[type] ? logList[type].page : 1;
+      const totalpage = logList[type] ? logList[type].totalpage : 10;
+      this.setState({
+        totalpage,
+        page,
       });
-    });
+    }
+
+    this.currentFilter();
+    if (this.props.location.search !== search) {
+      if (logList[type] && logList[type].page !== 1) {
+        return;
+      }
+      this.fetchDataSource({});
+    }
   }
 
   onPageChange = () => {
-    const { dispatch, logList } = this.props;
-    const { checkState, sortItem } = this.state;
-    dispatch({
-      type: 'buckle/getLogsGroupList',
-      payload: {
-        pagesize: 10,
-        type: checkState.value,
-        sort: sortItem.value,
-        page: logList[checkState.value].page + 1,
-        filters: this.dealFilter(),
-      },
-    });
-  }
-
-  onClose = key => () => {
+    const { logList } = this.props;
+    const currentData = logList[this.type];
+    const params = {
+      page: currentData ? currentData.page + 1 : 1,
+    };
     this.setState({
-      [key]: false,
+      page: params.page,
     });
+    this.fetchDataSource(params);
   }
 
   onRefresh = () => {
-    const { dispatch } = this.props;
-    const { checkState, sortItem } = this.state;
-    dispatch({
-      type: 'buckle/getLogsGroupList',
-      payload: {
-        pagesize: 10,
-        page: 1,
-        sort: sortItem.value,
-        type: checkState.value,
-        filters: this.dealFilter(),
-      },
+    const params = {
+      page: 1,
+    };
+    this.setState({
+      page: params.page,
+    }, () => {
+      this.fetchDataSource(params);
     });
-  }
-
-  onCancel = (e, feild) => {
-    const { modal } = this.state;
-    const newModal = { ...modal };
-    newModal[feild] = false;
-    this.setNewState('modal', newModal);
   }
 
   onResetForm = () => {
-    const { checkState, sortItem } = this.state;
     const { dispatch } = this.props;
-    this.setState(
-      { filter: {// 筛选结果
-        approveType: [],
-        eventState: '',
-      } }, () => {
-        dispatch({
-          type: 'buckle/getLogsGroupList',
-          payload: {
-            pagesize: 10,
-            type: checkState.value,
-            page: 1,
-            sort: sortItem.value,
-          },
-        });
-      });
-  }
-
-  onFilterOk = () => {
-    const { checkState, sortItem } = this.state;
-    const { dispatch } = this.props;
-    // const search = {
-    //   created_at: {
-    //     min: `${filter.time.year}-${filter.time.month.min}-01`,
-    //     max: `${filter.time.year}-${filter.time.month.max}-01`,
-    //   },
-    // };
-    // search[filter.point] = {
-    //   min: filter.range.min,
-    //   max: filter.range.max,
-    // };
+    this.setState({
+      page: 1,
+    });
     dispatch({
-      type: 'buckle/getLogsGroupList',
+      type: 'alltabs/saveKey',
       payload: {
-        pagesize: 10,
-        type: checkState.value,
-        page: 1,
-        sort: sortItem.value,
-        filters: this.dealFilter(),
+        type: this.type,
+        value: `sort=created_at-desc&type=${this.type}`,
       },
     });
-    this.onCancel('', 'filterModal');
-  }
-  setNewState = (key, newValue) => {
-    this.setState({
-      [key]: newValue,
-    });
   }
 
-  dealFilter = () => {
-    const { filter, checkState, userInfo } = this.state;
-    const { approveType, eventState } = filter;
-    const search = {};
 
-    if (checkState.value === 'approved') { // 审核列表
-      if (!(approveType.length === procesingOption.length)
-      && approveType.length) { // 如果type为审核中不是全选
-        const appType = approveType[0];
-        search[appType] = userInfo.staff_sn;
-        if (appType === 'first_approver_sn') {
-          search.status_id = eventState === 1 ? 1 : eventState;
-        }
-        if (appType === 'final_approver_sn') {
-          search.status_id = eventState === 1 ? 2 : eventState;
-        }
+  findNotBelong = () => {
+    const { filterColumns = [] } = tabs[this.type] || {};
+    const notBelongs = filterColumns.filter(item => item.notbelong);
+    return notBelongs;
+  }
+
+  currentFilter = () => {
+    const { allTabs } = this.props;
+    const currentTab = allTabs[this.type];
+    let filterParams = getUrlString('filters', currentTab);
+    // this.sorter = getUrlString('sort', currentTab);
+    const notbelongs = this.findNotBelong();
+    const notbelongParams = [];
+    notbelongs.forEach((item) => {
+      const str = getUrlString(item.name, currentTab);
+      if (str) {
+        notbelongParams.push(`${item.name}=${str}`);
       }
-    } else {
-      search.status_id = eventState === 0 ? { in: [0, 1] } : eventState;
-    }
-    return search;
+    });
+    filterParams = `${notbelongParams.join(';')};${filterParams}`;
+    this.filters = doConditionValue(filterParams);
   }
 
-  sortReasult = (item) => {
-    const { dispatch } = this.props;
-    const { modal, checkState } = this.state;
-    const newModal = { ...modal };
-    newModal.sortModal = false;
+  fetchFiltersDataSource=(params) => {
     this.setState({
-      modal: { ...newModal },
-      sortItem: item,
+      page: 1,
     }, () => {
-      dispatch({
-        type: 'buckle/getLogsGroupList',
-        payload: {
-          pagesize: 10,
-          type: checkState.value,
-          page: 1,
-          sort: item.value,
-        },
-      });
+      this.fetchDataSource({ ...params, page: 1 });
     });
   }
 
-  showModal = (e, key) => {
-    e.preventDefault(); // 修复 Android 上点击穿透
-    this.setState({
-      [key]: true,
+  fetchDataSource = (params) => {
+    const { dispatch, allTabs } = this.props;
+    const currentTab = allTabs[this.type];
+    this.sorter = (params && params.sort) || 'created_at-desc';
+    const currentParams = parseParams(currentTab);
+    const newParams = { page: 1, pagesize: 10, ...currentParams, ...params, type: this.type };
+    const urlparams = parseParamsToUrl(newParams);
+    dispatch({
+      type: 'alltabs/saveKey',
+      payload: {
+        type: this.type,
+        value: urlparams,
+      },
     });
-  }
-
-  selFilter = (feild) => { // 筛选
-    const { modal } = this.state;
-    const modalObj = {};
-    Object.keys(modal).map((key) => {
-      const value = modal[key];
-      if (key !== feild) {
-        modalObj[key] = false;
-      } else {
-        modalObj[key] = !value;
-      }
-      return value;
+    dispatch({
+      type: 'buckle/getBuckleList2',
+      payload: {
+        url: urlparams,
+        type: this.type,
+      },
     });
-    this.setNewState('modal', modalObj);
-  }
-
-  checkItem = (i, v, key) => {
-    const { filter } = this.state;
-    const newFilter = { ...filter };
-    const temp = newFilter[key] === v ? '' : v;
-    newFilter[key] = temp;
-    this.setNewState('filter', newFilter);
-  }
-
-  doMultiple = (i, v, key) => {
-    const { filter } = this.state;
-    const newFilter = { ...filter };
-    let temp = [...(newFilter[key] || [])];
-    const isExist = temp.indexOf(v) !== -1;
-    if (isExist) {
-      temp = temp.filter(item => item !== v);
-    } else {
-      temp.push(v);
-    }
-    newFilter[key] = [...temp];
-    this.setNewState('filter', newFilter);
   }
 
   tabChange = (item) => {
-    const { dispatch, logList } = this.props;
-    this.setState({
-      checkState: item,
-    }, () => {
-      if (logList[item.value]) {
-        return;
+    const { history } = this.props;
+    history.replace(`/buckle_list?type=${item.value}`);
+  }
+
+  toLookDetail = (url) => {
+    const { history } = this.props;
+    history.push(url);
+  }
+
+  handleVisible = (flag, model) => {
+    this.setState({ visible: !!flag, model });
+  }
+
+  renderExtraContent = (value) => {
+    const extra = (
+      <div className={style.aside}>
+        <img
+          src={shortcut}
+          alt="快捷操作"
+          onClick={() => { this.onShortcut(value); }}
+        />
+      </div>
+    );
+    return extra;
+  }
+
+  renderInitialPage = () => {
+    let initialPage = 0;
+    const { type } = this;
+    auditStates.forEach((item, i) => {
+      if (item.value === type) {
+        initialPage = i;
       }
-      dispatch({
-        type: 'buckle/getLogsGroupList',
-        payload: {
-          pagesize: 10,
-          type: item.value,
-          page: 1,
-        },
-      });
     });
-  }
-
-  toLookDetail = (item) => {
-    const { checkState } = this.state;
-    if (checkState.value === 'participant') {
-      this.props.history.push(`/audit_detail/${item.id}`);
-    } else {
-      this.props.history.push(`/event_preview/${item.id}`);
-    }
-  }
-
-  rangeChange = (v, key) => {
-    const { filter } = this.state;
-    const { range } = filter;
-    const newRange = { ...range };
-    newRange[key] = v;
-    this.setState({
-      filter: {
-        ...filter,
-        range: newRange,
-      },
-    });
-  }
-
-  yearChange = (v, key) => {
-    const { filter } = this.state;
-    const { time } = filter;
-    const newTime = { ...time };
-    newTime[key] = v;
-    this.setState({
-      filter: {
-        ...filter,
-        time: newTime,
-      },
-    });
-  }
-
-  monthChange = (v, key) => {
-    let newV = Number(v);
-    const { filter } = this.state;
-    const { time } = filter;
-    const newRange = { ...time };
-    const { month } = time;
-    if (newV > 12) {
-      return;
-    }
-    if (newV === 0) {
-      newV = 1;
-    }
-    month[key] = newV;
-    newRange.month = { ...month };
-    this.setState({
-      filter: {
-        ...filter,
-        time: newRange,
-      },
-    });
+    return initialPage;
   }
 
   renderLalbel = () => {
-    const { checkState } = this.state;
-    let labelArr = [];
-    if (checkState.value === 'approved') {
-      const newObj = [
-        {
-          evt: value => auditFinishedResult(value),
-          labelStyle: value => convertStyle(value.status_id),
-        },
-        {
-          evt: value => auditFinishedState(value),
-          labelStyle: value => auditFinishedLabel(value),
-        },
-      ];
-      labelArr = [...newObj];
-    } else {
-      const obj = {};
-      obj.evt = value => buckleState(value.status_id);
-      obj.labelStyle = value => convertStyle(value.status_id);
-      labelArr.push(obj);
-    }
+    const labelArr = [];
+    const obj = {};
+    obj.evt = value => buckleState(value.status_id);
+    obj.labelStyle = value => convertStyle(value.status_id);
+    labelArr.push(obj);
+
     return labelArr;
   }
 
   render() {
     const { logList } = this.props;
-    const { checkState, filter } = this.state;
+    const { type } = this;
+    const { filterColumns = [] } = tabs[type] || {};
+    let [sortItem] = sortList.filter(item => item.value === this.sorter);
+    if (!sortItem) {
+      [sortItem] = sortList;
+    }
+    const activeStyle = Object.keys(this.filters || {}).length ? style.active : null;
     return (
       <Flex direction="column">
         <Flex.Item className={style.header}>
           <div className={style.state_tab}>
-            <WhiteSpace size="md" />
-            <WingBlank size="lg">
-              <WingBlank size="lg">
-                <StateTabs
-                  option={auditStates}
-                  checkItem={checkState}
-                  handleClick={this.tabChange}
-                />
-              </WingBlank>
-            </WingBlank>
-            <WhiteSpace size="md" />
+            <Tabs
+              tabs={auditStates}
+              initialPage={this.renderInitialPage()}
+              onTabClick={this.tabChange}
+            />
           </div>
           <div className={style.filter_con}>
             <Flex
@@ -395,135 +299,64 @@ export default class BuckleList extends React.Component {
               <Flex.Item>
                 <div
                   className={[style.dosort].join(' ')}
+                  onClick={() => this.handleVisible(true, 'sort')}
                   style={{
-                    backgroundImage: `url(${this.state.sortItem.icon})`,
+                    backgroundImage: `url(${sortItem.icon})`,
                     backgroundPosition: 'right center',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: '0.4rem',
                   }}
-                  onClick={() => this.selFilter('sortModal')}
                 >
-                  {this.state.sortItem.name}
+                  {sortItem.name}
                 </div>
               </Flex.Item>
               <Flex.Item>
                 <div
-                  className={[style.filter, Object.keys(this.dealFilter()).length ? style.active : null].join(' ')}
-                  onClick={() => this.selFilter('filterModal')}
+                  className={[style.filter, activeStyle].join(' ')}
+                  onClick={() => this.handleVisible(true, 'filter')}
                 >筛选
                 </div>
+
               </Flex.Item>
             </Flex>
-            <ListSort
-              contentStyle={{
-                position: 'fixed',
-                zIndex: 99,
-                left: 0,
-                top: '2.3733333rem',
-                bottom: 0,
-                right: 0,
-                overflow: 'auto',
-              }}
-              topStyle={{ height: '2.3466667rem' }}
-              visible={this.state.modal.sortModal}
-              onCancel={this.onCancel}
-              filterKey="sortModal"
-            >
-              {sortList.map(item => (
-                <div
-                  className={style.sort_item}
-                  key={item.name}
-                  onClick={() => this.sortReasult(item)}
-                >{item.name}
-                </div>
-              ))}
-            </ListSort>
+            <ModalFilters
+              visible={this.state.visible}
+              model={this.state.model}
+              filters={this.filters}
+              sorter={this.sorter}
+              onResetForm={this.onResetForm}
+              filterColumns={filterColumns}
+              sorterData={sortList}
+              // modalId="1"
+              fetchDataSource={this.fetchFiltersDataSource}
+              onCancel={this.handleVisible}
+            />
           </div>
         </Flex.Item>
         <Flex.Item className={style.content}>
-          {logList[checkState.value] && !logList[checkState.value].data.length ?
-            (
-              <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, height: '100%' }}>
-                <Nothing src={nothing} />
-              </div>
-            ) : (
-              <WingBlank>
-                {checkState.value === 'participant' && (
-                <PaticipantBuckle
-                  dataSource={logList[checkState.value] ? logList[checkState.value].data : []}
-                  handleClick={this.toLookDetail}
-                  onRefresh={this.onRefresh}
-                  onPageChange={this.onPageChange}
-                  label={this.renderLalbel()}
-                  page={logList[checkState.value] ?
-                logList[checkState.value].page : 1}
-                  totalpage={logList[checkState.value] ?
-                logList[checkState.value].totalpage : 10}
-                />
-                ) }
-                {checkState.value !== 'participant' && (
-                  <Buckle
-                    dataSource={logList[checkState.value] ? logList[checkState.value].data : []}
-                    handleClick={this.toLookDetail}
-                    onRefresh={this.onRefresh}
-                    onPageChange={this.onPageChange}
-                    label={this.renderLalbel()}
-                    page={logList[checkState.value] ?
-                    logList[checkState.value].page : 1}
-                    totalpage={logList[checkState.value] ?
-                    logList[checkState.value].totalpage : 10}
-                  />
-                )}
-
-              </WingBlank>
-            )}
-
+          {type === 'participant' && (
+            <PaticipantBuckle
+              dataSource={logList[type] ? logList[type].data : []}
+              handleClick={item => this.toLookDetail(`/audit_detail/${item.id}`)}
+              onRefresh={this.onRefresh}
+              onPageChange={this.onPageChange}
+              label={this.renderLalbel()}
+              page={this.state.page}
+              totalpage={this.state.totalpage}
+            />
+          )}
+          {type !== 'participant' && (
+            <Buckle
+              dataSource={logList[type] ? logList[type].data : []}
+              handleClick={item => this.toLookDetail(`/event_preview/${item.id}`)}
+              onRefresh={this.onRefresh}
+              onPageChange={this.onPageChange}
+              label={this.renderLalbel()}
+              page={this.state.page}
+              totalpage={this.state.totalpage}
+            />
+          )}
         </Flex.Item>
-        <ListFilter
-          onOk={this.onFilterOk}
-          filterKey="filterModal"
-          onCancel={this.onCancel}
-          onResetForm={this.onResetForm}
-          iconStyle={{ width: '0.533rem', height: '0.533rem' }}
-          visible={this.state.modal.filterModal}
-          contentStyle={{
-            position: 'fixed',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 999,
-            textAlign: 'left',
-            backgroundColor: 'rgba(0,0,0,0.2)',
-            paddingLeft: '2rem',
-          }}
-        >
-          {checkState.value !== 'approved' ? (
-            <div className={style.filter_item}>
-              <div className={style.title}>事件状态</div>
-              <CheckBoxs
-                option={stateOption}
-                checkStatus={(i, v) => this.checkItem(i, v, 'eventState')}
-                value={[filter.eventState]}
-              />
-            </div>
-          ) : (
-            <div className={style.filter_item}>
-              <div className={style.title}>审核类型</div>
-              <CheckBoxs
-                option={procesingOption}
-                checkStatus={(i, v) => this.doMultiple(i, v, 'approveType')}
-                value={filter.approveType}
-              />
-              <div className={style.title}>事件状态</div>
-              <CheckBoxs
-                option={dealtOption}
-                checkStatus={(i, v) => this.checkItem(i, v, 'eventState')}
-                value={[filter.eventState]}
-              />
-            </div>
-            )}
-        </ListFilter>
       </Flex>
     );
   }

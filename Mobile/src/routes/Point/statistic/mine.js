@@ -9,6 +9,7 @@ import { PersonIcon } from '../../../components/index.js';
 import CheckBox from '../../../components/ModalFilters/CheckBox';
 import MonthPicker from '../../../components/General/MonthPicker';
 import { sum, getUrlParams, urlParamsUnicode, sortArr, monthMessage } from '../../../utils/util';
+import { pointStyle } from '../../../utils/convert.js';
 import style from '../index.less';
 
 const pointCount = {
@@ -145,7 +146,6 @@ const defaultMonthly = [
   },
 ];
 
-
 const tabOptions = [
   { label: 'A分', value: 1, key: 'point_a' },
   { label: 'B分', value: 2, key: 'point_b' },
@@ -227,6 +227,9 @@ export default class Statistic extends React.Component {
       const obj = {};
       obj.value = item[key];
       obj.name = item.name;
+      obj.itemStyle = {
+        color: pointStyle(item.id),
+      };
       return obj;
     });
     newData = newData.length > 0 ? newData : [{ value: 1, name: '' }];
@@ -299,13 +302,13 @@ export default class Statistic extends React.Component {
 
   pointRedirect = () => {
     const { history } = this.props;
-    history.push(`/point_list_2${this.urlParams.staff_sn ? `?staff_sn=${this.urlParams.staff_sn}` : ''}`);
+    history.push(`/point_list${this.urlParams.staff_sn ? `?staff_sn=${this.urlParams.staff_sn}` : ''}`);
   }
 
   renderEsChart = (elementChart, key) => {
     const { data: { monthly } } = this.props;
     const sourceBMonthly = monthly.source_b_monthly || defaultMonthly;
-    const sourceAMonthly = defaultMonthly;
+    const sourceAMonthly = monthly.source_a_monthly || defaultMonthly;
     const { checked } = this.state;
     const renderMonthly = checked === 1 ? sourceAMonthly : sourceBMonthly;
     const countArr = renderMonthly.map(item => item[key]);

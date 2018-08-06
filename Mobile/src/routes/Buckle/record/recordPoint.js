@@ -155,6 +155,7 @@ export default class BuckleRecord extends React.Component {
     if (kind === 'count' && point && !/^\d+$/.test(point)) {
       return;
     }
+
     // if (point && point !== '-' && !/^(-?\d+)(\.\d+)?$/.test(point)) {
     //   return;
     // }
@@ -331,15 +332,19 @@ export default class BuckleRecord extends React.Component {
     let tmpPointA = participants[0] ? participants[0].point_a : '';
     let tmpPointB = participants[0] ? participants[0].point_b : '';
     let tmpCount = participants[0] ? participants[0].count : '';
-    const newTempA = (participants || []).filter(item => item.point_a !== tmpPointA);
+    const newTempA = (participants || []).filter(item =>
+      Number(item.point_a) !== Number(tmpPointA)
+    );
     if (newTempA.length) {
       tmpPointA = '';
     }
-    const newTempB = (participants || []).filter(item => item.point_b !== tmpPointB);
+    const newTempB = (participants || []).filter(item =>
+      Number(item.point_b) !== Number(tmpPointB)
+    );
     if (newTempB.length) {
       tmpPointB = '';
     }
-    if ((participants || []).filter(item => item.count !== tmpCount).length) {
+    if ((participants || []).filter(item => Number(item.count) !== Number(tmpCount)).length) {
       tmpCount = '';
     }
 
@@ -480,7 +485,6 @@ export default class BuckleRecord extends React.Component {
                           <Input
                             value={`${item.point_a}`}
                             range={rangeA}
-
                             style={{ ...(item.point_a_error ? { color: 'red' } : null) }}
                             onChange={v => this.pointChange(v, 'point_a', item)}
                             floatNumber={2}
@@ -489,6 +493,8 @@ export default class BuckleRecord extends React.Component {
                         <Flex.Item className={style.table_item}>
                           <Input
                             value={`${item.point_b}`}
+                            range={rangeB}
+                            floatNumber={2}
                             style={{ ...(item.point_b_error ? { color: 'red' } : null) }}
                             onChange={v => this.pointChange(v, 'point_b', item)}
                           />
@@ -496,7 +502,6 @@ export default class BuckleRecord extends React.Component {
                         <Flex.Item className={style.table_item}>
                           <Input
                             value={item.count}
-                            range={rangeA}
                             style={{ ...(item.count_error ? { color: 'red' } : null) }}
                             onChange={v => this.pointChange(v, 'count', item)}
                           />

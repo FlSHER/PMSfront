@@ -506,3 +506,12 @@ export function pageChange(obj, type = 'add') {
   return newObj;
 }
 
+
+export function isToday(str) {
+  let iscurrentDay = false;
+  if (new Date(str).toDateString() === new Date().toDateString()) {
+    // 今天
+    iscurrentDay = true;
+  }
+  return iscurrentDay;
+}

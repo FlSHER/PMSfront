@@ -24,7 +24,7 @@ class Input extends React.Component {
     const { value, onChange, type, style, floatNumber } = this.props;
     return (
       <input
-        value={value}
+        value={`${value}`}
         style={style}
         type={type}
         ref={(e) => { this.ptr = e; }}
@@ -32,19 +32,14 @@ class Input extends React.Component {
           e.target.focused = true;
           e.target.select();
          }}
-        onTouchEnd={(e) => {
-          // e.preventDefault();
-          // e.target.select();
-          if (e.target.focused) { e.target.focused = false; return false; }
-        }}
         onBlur={() => {
           if (floatNumber) {
             const a = this.ptr.value;
             const b = Number(a);
             const c = b.toFixed(floatNumber);
-            let v = c;
-            if (Math.floor(c) === Number(v)) {
-              v = Number(v);
+            let v = b;
+            if (Math.floor(c) === Number(c)) {
+              v = Number(c);
             }
             onChange(v);
           }

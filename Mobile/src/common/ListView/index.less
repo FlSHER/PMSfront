@@ -396,13 +396,14 @@
   }
   .event_num {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
+    align-items: center;
     .num {
-      border: 1px solid rgb(216, 216, 216);
       margin-right: 20/75rem;
       span {
         display: inline-block;
         text-align: center;
+        border: 1px solid rgb(216, 216, 216);
         height: 36/75rem;
         line-height: 36/75rem;
       }
@@ -415,6 +416,7 @@
         min-width: 36/75rem;
         background: #fff;
         color: rgb(216, 216, 216);
+        border-left: none;
       }
     }
   }
@@ -453,4 +455,9 @@
       color: rgb(0, 150, 136);
     }
   }
+}
+
+.show_time {
+  .base(@list-text-color,
+  12px);
 }

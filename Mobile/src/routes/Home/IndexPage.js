@@ -61,7 +61,7 @@ function IndexPage({ history }) {
               )}
               onClick={() => {
                 localStorage.clear();
-                history.back();
+                window.location.href = `${OA_PATH}/logout?redirect_uri=${OA_PATH}/home`;
               }}
             />
           </div>

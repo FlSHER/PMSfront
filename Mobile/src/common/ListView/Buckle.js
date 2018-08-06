@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import ListView from '../../components/ListView';
-
-
+import { isToday } from '../../utils/util';
 import style from './index.less';
-
 
 @ListView
 export default class Buckle extends Component {
@@ -41,12 +40,15 @@ export default class Buckle extends Component {
             {value.remark || '无'}
           </div>
           <div className={style.event_num}>
-            <div className={style.num}>
-              <span>事件数量</span><span>{value.participant_count}</span>
+            <div style={{ display: 'flex' }}>
+              <div className={style.num}>
+                <span>事件数量</span><span>{value.participant_count}</span>
+              </div>
+              <div className={style.num}>
+                <span>总人次</span><span>{value.event_count}</span>
+              </div>
             </div>
-            <div className={style.num}>
-              <span>总人次</span><span>{value.event_count}</span>
-            </div>
+            <span className={style.show_time}>{isToday(value.created_at) ? moment(value.created_at).format('HH:MM') : moment(value.created_at).format('YYYY-MM-DD')}</span>
           </div>
         </div>
         {extra && extra(value)}
