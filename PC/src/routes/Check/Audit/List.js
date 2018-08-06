@@ -327,7 +327,7 @@ export default class extends React.PureComponent {
     const { editInfo } = this.state;
     const reuslt = buckle[type];
     let x = ['addressee', 'approved'].indexOf(type) !== -1 ? 1300 : 1200;
-    x = ['recorded'].indexOf(type) !== -1 && 1100;
+    x = ['recorded'].indexOf(type) !== -1 ? 1100 : x;
     return (
       <React.Fragment>
         <OATable
