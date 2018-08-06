@@ -92,7 +92,7 @@ class Operator extends PureComponent {
       });
     });
     return (
-      <div style={{ width: 300, maxHeight: 230 }}>
+      <div style={{ width: 300, maxHeight: 230, overflowY: 'auto' }}>
         {
           filtersTag.map((item) => {
             const tag = item.label;
