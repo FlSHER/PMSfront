@@ -333,7 +333,7 @@ export default class extends React.PureComponent {
           autoScroll
           id={type}
           loading={loading || cancelLoading}
-          scroll={{ x: 1400 }}
+          scroll={{ x: 1200 }}
           columns={this.makeColums()}
           data={reuslt.data || []}
           total={reuslt.total || 0}
