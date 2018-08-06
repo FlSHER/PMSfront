@@ -326,6 +326,8 @@ export default class extends React.PureComponent {
     const { buckle, loading, type, visible, onClose, cancelLoading } = this.props;
     const { editInfo } = this.state;
     const reuslt = buckle[type];
+    let x = ['addressee', 'approved'].indexOf(type) !== -1 ? 1300 : 1200;
+    x = ['recorded'].indexOf(type) !== -1 ? 1100 : x;
     return (
       <React.Fragment>
         <OATable
@@ -333,7 +335,7 @@ export default class extends React.PureComponent {
           autoScroll
           id={type}
           loading={loading || cancelLoading}
-          scroll={{ x: 1400 }}
+          scroll={{ x }}
           columns={this.makeColums()}
           data={reuslt.data || []}
           total={reuslt.total || 0}

@@ -269,7 +269,7 @@ export function dotFieldsValue(fieldsValue, parentKey) {
 
 // table params
 
-const whereConfig = {
+export const whereConfig = {
   in: '=',
   like: '~',
   min: '>=',

@@ -443,12 +443,22 @@ class OATable extends PureComponent {
     };
   }
 
-  resetFilter = () => {
+  resetFilter = (key) => {
     const { serverSide } = this.props;
+    const { filters, searchers, filtered } = this.state;
+    if (key && filters[key]) {
+      delete filters[key];
+    } else if (key && searchers[key]) {
+      delete searchers[key];
+    }
+    let newFiltered = [];
+    if (key) {
+      newFiltered = filtered.filter(item => item !== key);
+    }
     this.setState({
-      filters: {},
-      searchers: {},
-      filtered: [],
+      filters: key ? filters : {},
+      searchers: key ? searchers : {},
+      filtered: newFiltered,
       sorter: {},
     }, () => {
       if (serverSide) {
@@ -627,8 +637,18 @@ class OATable extends PureComponent {
   }
 
   render() {
-    const { multiOperator, tableVisible, extraOperatorRight, sync } = this.props;
+    const { multiOperator, tableVisible, extraOperatorRight, sync, columns } = this.props;
     const { loading } = this.state;
+    const filterColumns = columns.map((item) => {
+      const temp = { title: item.title, dataIndex: item.dataIndex };
+      if (item.filters) {
+        temp.filterData = item.filters;
+      }
+      if (item.treeFilters) {
+        temp.filterData = item.treeFilters;
+      }
+      return temp;
+    });
     return (
       <Spin spinning={loading !== false} tip={`${loading}`}>
         <div
@@ -638,6 +658,7 @@ class OATable extends PureComponent {
             {...this.state}
             sync={sync}
             key="Operator"
+            filterColumns={filterColumns || []}
             multiOperator={multiOperator}
             extraOperator={this.makeExtraOperator()}
             extraOperatorRight={extraOperatorRight}
