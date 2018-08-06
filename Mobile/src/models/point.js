@@ -2,11 +2,8 @@ import { Toast } from 'antd-mobile';
 import {
   getPointDetail,
   getPointLog,
-  getPointLog2,
 } from '../services/point';
 import defaultReducers from './reducers/default';
-import { makerFilters } from '../utils/util.js';
-
 
 export default {
   namespace: 'point',
@@ -32,24 +29,8 @@ export default {
       }
     },
     *getPointLog({ payload }, { call, put }) {
-      const newPayload = makerFilters(payload);
-      const response = yield call(getPointLog, newPayload);
-      if (response && !response.error) {
-        yield put({
-          type: 'saveList',
-          payload: {
-            key: 'pointList',
-            // type: payload.type,
-            value: response,
-          },
-        });
-      } else {
-        Toast.fail(response.message);
-      }
-    },
-    *getPointLog2({ payload }, { call, put }) {
       // const newPayload = makerFilters(payload);
-      const response = yield call(getPointLog2, payload);
+      const response = yield call(getPointLog, payload);
       if (response && !response.error) {
         yield put({
           type: 'saveList',

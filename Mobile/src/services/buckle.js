@@ -8,13 +8,6 @@ export async function recordBuckle(params) {
     json: true,
   });
 }
-export async function getAuditList(params) {
-  return request('/api/event-logs', {
-    method: 'GET',
-    body: params,
-    json: true,
-  }, false);
-}
 
 export async function getLogsList(params) {
   return request('/api/event-logs', {
@@ -33,7 +26,7 @@ export async function getLogsGroupList(params) {
   }, false);
 }
 
-export async function getAuditList2(params) {
+export async function getAuditList(params) {
   const url = params ? `?${params}` : '';
   return request(`/api/event-logs/groups${url}`, null, false);
 }

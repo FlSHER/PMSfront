@@ -26,6 +26,9 @@ const options = [
   {
     label: '已撤回', value: '-2',
   },
+  {
+    label: '已撤销', value: '-3',
+  },
 ];
 
 const addrOption = [
@@ -216,7 +219,7 @@ export default class AuditList extends React.Component {
       },
     });
     dispatch({
-      type: 'buckle/getBuckleList2',
+      type: 'buckle/getBuckleList',
       payload: {
         url: urlparams,
         type: this.type,

@@ -9,7 +9,7 @@ import {
   getLogsList,
   getLogsGroupList,
   getLogGroupDetail,
-  getAuditList2,
+  getAuditList,
 } from '../services/buckle';
 import defaultReducers from './reducers/default';
 import { makerFilters, pageChange } from '../utils/util.js';
@@ -103,9 +103,10 @@ export default {
         // });
       }
     },
+
     *getAuditList({ payload }, { call, put }) {
-      const newPayload = makerFilters(payload);
-      const response = yield call(getLogsGroupList, newPayload);
+      // const newPayload = makerFilters(payload);
+      const response = yield call(getAuditList, payload.url);
       if (response && !response.error) {
         yield put({
           type: 'saveList',
@@ -118,24 +119,9 @@ export default {
       }
     },
 
-    *getAuditList2({ payload }, { call, put }) {
+    *getBuckleList({ payload }, { call, put }) {
       // const newPayload = makerFilters(payload);
-      const response = yield call(getAuditList2, payload.url);
-      if (response && !response.error) {
-        yield put({
-          type: 'saveList',
-          payload: {
-            key: 'auditList',
-            type: payload.type,
-            value: response,
-          },
-        });
-      }
-    },
-
-    *getBuckleList2({ payload }, { call, put }) {
-      // const newPayload = makerFilters(payload);
-      const response = yield call(getAuditList2, payload.url);
+      const response = yield call(getAuditList, payload.url);
       if (response && !response.error) {
         yield put({
           type: 'saveList',

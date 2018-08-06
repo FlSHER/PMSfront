@@ -32,21 +32,6 @@ export default {
         Toast.fail(response.message);
       }
     },
-    *getPointLog({ payload }, { call, put }) {
-      const newPayload = makerFilters(payload);
-      const response = yield call(getPointLog, newPayload);
-      if (response && !response.error) {
-        yield put({
-          type: 'save',
-          payload: {
-            store: 'pointList',
-            data: response,
-          },
-        });
-      } else {
-        Toast.fail(response.message);
-      }
-    },
 
     *getRanking({ payload }, { call, put }) {
       const newPayload = makerFilters(payload);

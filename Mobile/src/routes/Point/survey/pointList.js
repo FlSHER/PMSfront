@@ -195,7 +195,7 @@ export default class PointList2 extends React.Component {
       },
     });
     dispatch({
-      type: 'point/getPointLog2',
+      type: 'point/getPointLog',
       payload: urlparams,
     });
   }
@@ -260,7 +260,6 @@ export default class PointList2 extends React.Component {
                   onClick={() => this.handleVisible(true, 'filter')}
                 >筛选
                 </div>
-
               </Flex.Item>
             </Flex>
             <ModalFilters

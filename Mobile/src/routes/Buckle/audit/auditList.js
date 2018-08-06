@@ -228,7 +228,7 @@ export default class AuditList extends React.Component {
       },
     });
     dispatch({
-      type: 'buckle/getAuditList2',
+      type: 'buckle/getAuditList',
       payload: {
         url: urlparams,
         type: this.type,
