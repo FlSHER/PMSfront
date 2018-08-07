@@ -10,7 +10,7 @@
             ],
             "define": {
                 "OA_PATH": "http://112.74.177.132:8002",
-                "OA_CLIENT_ID": "7",
+                "OA_CLIENT_ID": "2",
                 "OA_CLIENT_SECRET": "lcBIS0l1eW038wqUgDf6qsNyUl3L69Ck8YxHXKGh"
             }
         },

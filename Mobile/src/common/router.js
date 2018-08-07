@@ -151,15 +151,15 @@ export const getRouterData = (app) => {
     '/test': {
       component: dynamicWrapper(app, ['alltabs'], () => import('../routes/test')),
     },
-    '/get_access_token': {
+    '/passport/get_access_token': {
       component: dynamicWrapper(app, ['oauth'], () => import('../routes/Oauth/GetAccessToken')),
     },
-    '/refresh_access_token': {
+    '/passport/refresh_access_token': {
       component: dynamicWrapper(app, ['oauth'], () => import('../routes/Oauth/RefreshAccessToken')),
       authority: 'refresh-token',
-      redirectPath: '/redirect_to_authorize',
+      redirectPath: '/passport/redirect_to_authorize',
     },
-    '/redirect_to_authorize': {
+    '/passport/redirect_to_authorize': {
       component: dynamicWrapper(app, ['oauth'], () => import('../routes/Oauth/RedirectToAuthorize')),
     },
     '/exception/403': {
