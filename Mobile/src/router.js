@@ -17,34 +17,34 @@ function RouterConfig({ history, app }) {
   const routerData = getRouterData(app);
   // const UserLayout = routerData['/user'].component;
   const BasicLayout = routerData['/'].component;
-  const GetAccessToken = routerData['/get_access_token'].component;
-  const RefreshAccessToken = routerData['/refresh_access_token'].component;
-  const RedirectToAuthorize = routerData['/redirect_to_authorize'].component;
+  const GetAccessToken = routerData['/passport/get_access_token'].component;
+  const RefreshAccessToken = routerData['/passport/refresh_access_token'].component;
+  const RedirectToAuthorize = routerData['/passport/redirect_to_authorize'].component;
 
 
   return (
     <ConnectedRouter history={history}>
       <Switch>
         <AuthorizedRoute
-          path="/get_access_token"
+          path="/passport/get_access_token"
           render={props => <GetAccessToken {...props} />}
-          redirectPath="/refresh_access_token"
+          redirectPath="/passport/refresh_access_token"
         />
         <AuthorizedRoute
-          path="/refresh_access_token"
+          path="/passport/refresh_access_token"
           render={props => <RefreshAccessToken {...props} />}
-          redirectPath="/refresh_access_token"
+          redirectPath="/passport/refresh_access_token"
         />
         <AuthorizedRoute
-          path="/redirect_to_authorize"
+          path="/passport/redirect_to_authorize"
           render={props => <RedirectToAuthorize {...props} />}
-          redirectPath="/refresh_access_token"
+          redirectPath="/passport/refresh_access_token"
         />
         <AuthorizedRoute
           path="/"
           render={props => <BasicLayout {...props} />}
           // authority={['token']}
-          redirectPath="/refresh_access_token"
+          redirectPath="/passport/refresh_access_token"
         // redirectPath="/home"
         />
       </Switch>
