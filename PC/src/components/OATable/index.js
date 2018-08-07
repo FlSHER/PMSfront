@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
+import classNames from 'classnames';
 import { connect } from 'dva';
 import { Table, Input, Icon, message, Button, Tooltip, Spin } from 'antd';
 import Ellipsis from '../Ellipsis';
@@ -195,8 +196,11 @@ class OATable extends PureComponent {
   makeSearchFilterOption = (key, column) => {
     const { filtered, filters, filterDropdownVisible } = this.state;
     const { serverSide } = this.props;
+    const cls = classNames({
+      [styles['table-filter-active']]: filtered.indexOf(key) !== -1,
+    });
     const searchFilterOption = {
-      filterIcon: <Icon type="search" style={{ color: filtered.indexOf(key) !== -1 ? '#108ee9' : '' }} />,
+      filterIcon: <Icon type="search" className={cls} />,
       filterDropdown: (
         <Input.Search
           ref={(ele) => {
@@ -250,8 +254,11 @@ class OATable extends PureComponent {
   makeDateFilterOption = (key, column) => {
     const { filterDropdownVisible, filtered } = this.state;
     const { serverSide } = this.props;
+    const cls = classNames({
+      [styles['table-filter-active']]: filtered.indexOf(key) !== -1,
+    });
     const dateFilterOption = {
-      filterIcon: <Icon type="clock-circle-o" style={{ color: filtered.indexOf(key) !== -1 ? '#108ee9' : '' }} />,
+      filterIcon: <Icon type="clock-circle-o" className={cls} />,
       filterDropdown: (
         <DateFilter
           onSearchTime={this.handleDateFilter(key)}
@@ -274,10 +281,12 @@ class OATable extends PureComponent {
 
   makeRangeFilterOption = (key, column) => {
     const { filterDropdownVisible, filtered } = this.state;
-
     const { serverSide } = this.props;
+    const cls = classNames({
+      [styles['table-filter-active']]: filtered.indexOf(key) !== -1,
+    });
     const rangeFilterOption = {
-      filterIcon: <Icon type="filter" style={{ color: filtered.indexOf(key) !== -1 ? '#108ee9' : '' }} />,
+      filterIcon: <Icon type="filter" className={cls} />,
       filterDropdown: (
         <RangeFilter
           width={260}

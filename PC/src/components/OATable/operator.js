@@ -50,7 +50,7 @@ class Operator extends PureComponent {
         const dataIndex = column.filterData.value;
         const text = column.filterData.title;
         newValue = filterData
-          .filter(item => (value.indexOf(item[dataIndex] !== -1)))
+          .filter(item => (value.indexOf(`${item[dataIndex]}`) !== -1))
           .map(item => item[text]);
       }
       newValue = newValue.join('，');
@@ -158,6 +158,7 @@ class Operator extends PureComponent {
                   visible={this.state.hovered}
                   placement="bottomLeft"
                   onVisibleChange={this.handleHoverChange}
+                  getPopupContainer={triggerNode => (triggerNode)}
                 >
                   <Button><Icon type="down" /></Button>
                 </Popover>
