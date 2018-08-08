@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Button, Spin, Steps } from 'antd';
+import { Input, Button, Spin, Steps, message } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
@@ -81,6 +81,10 @@ export default class extends React.PureComponent {
 
   next = () => {
     const { listFormValue } = this.state;
+    if (!listFormValue.length) {
+      message.error('事件不能为空，请添加事件');
+      return;
+    }
     const eventsError = {};
     listFormValue.forEach((item, index) => {
       const temp = {};
@@ -257,7 +261,6 @@ export default class extends React.PureComponent {
         staffNumber += item.participants.length;
       }
     });
-
     const { params } = { ...(this.props.match || { params: {} }) };
     const { id } = params;
     let formFieldsValue = {};

@@ -77,8 +77,10 @@ class OATable extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { rowSelection } = nextProps;
+    const { rowSelection, multiOperator } = nextProps;
     if (
+      multiOperator && multiOperator.length > 0
+      &&
       rowSelection
       && JSON.stringify(rowSelection) !== JSON.stringify(this.props.rowSelection)
     ) {
@@ -512,7 +514,6 @@ class OATable extends PureComponent {
       selectedRowKeys,
       onChange: this.handleRowSelectChange,
     } : rowSelection;
-
     const response = {
       rowKey: (record, index) => record.id || record.staff_sn || record.shop_sn || index,
       dataSource: data,

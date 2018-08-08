@@ -54,43 +54,46 @@ export default (CustomerFrom) => {
       }
     }
 
-    showDeleteConfirm = (key) => {
+    showDeleteConfirm = (key, index) => {
       confirm({
         title: '确定要删除吗',
         okText: '确定',
         okType: 'danger',
         cancelText: '取消',
         onOk: () => {
-          this.remove(key);
+          this.remove(key, index);
         },
       });
     }
 
-    remove = (key) => {
+    remove = (key, index) => {
       const { dataSource } = this.state;
       const newDataSource = dataSource.filter(item => item.key !== key);
-      this.setState({ dataSource: [...newDataSource] }, () => this.countNumber(null));
+      this.setState({ dataSource: [...newDataSource] }, () => this.countNumber(null, index));
     }
 
     add = () => {
       const { dataSource } = this.state;
       this.uuid += 1;
       dataSource.push({ key: this.uuid });
-      this.setState({ dataSource: [...dataSource] }, () => this.countNumber({}));
+      this.setState(
+        { dataSource: [...dataSource] },
+        () => this.countNumber({}, dataSource.length - 1)
+      );
     }
 
-    countNumber = (params) => {
+    countNumber = (params, index) => {
       const { countNumber, onChange } = this.props;
       if (countNumber) countNumber(this.state.dataSource.length);
-      onChange(params, this.state.dataSource.length - 1);
+      onChange(params, index);
     }
 
-    makeRmoveIcon = (k) => {
+    makeRmoveIcon = (k, index) => {
       return (
         <Icon
           className="dynamic-delete-button"
           type="close"
-          onClick={() => this.showDeleteConfirm(k)}
+          onClick={() => this.showDeleteConfirm(k, index)}
         />
       );
     }
@@ -120,7 +123,7 @@ export default (CustomerFrom) => {
         const content = (
           <div key={key} className={styles.container} style={style}>
             <div className={styles.header}>
-              {this.makeRmoveIcon(item.key)}
+              {this.makeRmoveIcon(item.key, i)}
             </div>
             <div className={styles.content}>
               <CustomerFrom

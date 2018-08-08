@@ -24,10 +24,9 @@ export default class BuckleSuccess extends React.PureComponent {
     });
   }
 
-  makeCurrent = () => {
-    const { status } = this.props;
+  makeCurrent = (statusId) => {
     let current = 1;
-    switch (status) {
+    switch (statusId) {
       case 0:
         current = 1;
         break;
@@ -51,7 +50,7 @@ export default class BuckleSuccess extends React.PureComponent {
     const info = buckleInfo[id] || {};
     const first = (user && user.realname === info.first_approver_name ? '我' : info.first_approver_name) || null;
     const final = (user && user.realname === info.final_approver_name ? '我' : info.final_approver_name) || null;
-    const current = id ? this.makeCurrent() : null;
+    const current = id ? this.makeCurrent(info.status_id) : null;
     const firstTitle = (
       <React.Fragment>
         初审<span className={style.userName}>{first && `（${first}）`}</span>
@@ -85,7 +84,14 @@ export default class BuckleSuccess extends React.PureComponent {
             </Button>
             <Button
               onClick={() => {
-                this.props.dispatch(routerRedux.replace('/reward/my'));
+                this.props.dispatch({
+                  type: 'tabs/save',
+                  payload: {
+                    store: 'reward',
+                    value: '2',
+                  },
+                  callBack: this.props.dispatch(routerRedux.replace('/reward/my')),
+                });
               }}
             >查看奖扣
             </Button>

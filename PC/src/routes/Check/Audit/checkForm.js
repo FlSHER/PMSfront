@@ -34,7 +34,7 @@ export default class extends React.PureComponent {
       onSuccess: () => {
         const { onCancel, onClose } = this.props;
         onCancel(false);
-        onClose(false);
+        onClose(false, update);
       },
     });
   }
@@ -89,7 +89,7 @@ export default class extends React.PureComponent {
           {getFieldDecorator('remark', {
             initialValue: '',
           })(
-            <Input.TextArea style={{ height: 90 }} placeholder="请输入主题" />
+            <Input.TextArea style={{ height: 90 }} placeholder="请输入审批意见" />
           )}
         </FormItem>
         {title === 2 && (

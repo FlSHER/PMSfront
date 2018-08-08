@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import DescriptionList from 'ant-design-pro/lib/DescriptionList';
 import Ellipsis from 'ant-design-pro/lib/Ellipsis';
 import styles from '../../Check/Audit/index.less';
@@ -15,6 +16,7 @@ export default function CheckInfo({ data }) {
   const recorder = data.recorder_name ? [data.recorder_name] : [];
   const participants = data.participants || [];
   const statusImg = getStatusImg(data.status_id);
+  const { user } = window || { user: {} };
   return (
     <React.Fragment>
       <div className={styles.contentInfo} style={{ position: 'relative' }}>
@@ -40,8 +42,11 @@ export default function CheckInfo({ data }) {
           <Description className={styles.eventInfo} style={{ marginBottom: 0 }}>
             {participants.map((item, index) => {
               const key = index;
+              const cls = classNames(styles.user, {
+                [styles.userColor]: user.staff_sn === item.staff_sn,
+              });
               return (
-                <div key={key} className={styles.user}>
+                <div key={key} className={cls}>
                   <Ellipsis lines={1} className={styles.userName}>
                     {item.staff_name}
                   </Ellipsis>
@@ -58,10 +63,10 @@ export default function CheckInfo({ data }) {
           <div className={styles.eventTitle}>
             <div>审核进度</div>
           </div>
-          {!!first.staff_sn && <Approver tip="初审人" data={first} />}
-          {!!last.staff_sn && <Approver tip="终审人" data={last} />}
+          {!!first.staff_sn && <Approver tip="初审人:" data={first} />}
+          {!!last.staff_sn && <Approver tip="终审人:" data={last} />}
           {addressees.length > 0 && <StaffCustormer title="抄送人" data={addressees} />}
-          {recorder.length > 0 && <StaffCustormer title="记录人" data={recorder} />}
+          {recorder.length > 0 && <StaffCustormer title="记录人" data={recorder} extar={data.revoke_remark} />}
         </div>
       )}
     </React.Fragment>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
+import { Tooltip } from 'antd';
 import moment from 'moment';
-import Ellipsis from '../../../components/Ellipsis';
 
 import OATable from '../../../components/OATable';
 import EventInfo from './info';
@@ -46,6 +46,7 @@ export default class extends React.PureComponent {
   }
 
   makeColums = () => {
+    const { user } = window || { user: { staff_sn: '' } };
     const columns = [
       {
         title: '事件标题',
@@ -74,6 +75,7 @@ export default class extends React.PureComponent {
       {
         title: '事件状态',
         dataIndex: 'status_id',
+        align: 'center',
         width: 120,
         filters: statusData,
         render: (statusId) => {
@@ -82,16 +84,26 @@ export default class extends React.PureComponent {
         },
       },
       {
-        title: '参与人',
-        dataIndex: 'participants.staff_name',
-        width: 200,
-        tooltip: true,
-        searcher: true,
-        render: (_, record) => {
-          const { participants } = record;
-          const staffName = participants.map(item => item.staff_name);
+        title: '得分',
+        dataIndex: 'participants',
+        width: 220,
+        render: (participants) => {
+          const mePoint = participants.find(item => item.staff_sn === user.staff_sn) || {};
           return (
-            <Ellipsis tooltip lines={1}>{staffName.join('、')}</Ellipsis>
+            <Tooltip title={(
+              <React.Fragment>
+                {`A：${mePoint.point_a * mePoint.count}（${mePoint.point_a}x${mePoint.count}） `}
+                {`B：${mePoint.point_b * mePoint.count}（${mePoint.point_b}x${mePoint.count}）`}
+              </React.Fragment>
+            )}
+            >
+              <span style={{ width: 102, display: 'inline-block' }}>
+                {`A：${mePoint.point_a * mePoint.count}`}
+              </span>
+              <span style={{ width: 102, display: 'inline-block' }}>
+                {`B：${mePoint.point_b * mePoint.count}`}
+              </span>
+            </Tooltip>
           );
         },
       },

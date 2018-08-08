@@ -22,9 +22,10 @@ export async function fetchBuckleGroups(params, id) {
 }
 
 
-export async function withdrawBuckle(id) {
+export async function withdrawBuckle(params, id) {
   return request(`/api/PMS/event-logs/${id}/withdraw`, {
     method: 'PUT',
+    body: params,
   });
 }
 
