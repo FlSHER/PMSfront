@@ -299,6 +299,21 @@ export default class BuckleRecord extends React.Component {
       },
     });
   }
+
+  validPointBothZero = (participants) => {
+    const point = ['point_a', 'point_b'];
+    let isBothZero = false;
+    for (let i = 0; i < participants.length; i += 1) {
+      const item = participants[i];
+      const [a, b] = point;
+      if (item[a] === item[b] && item[a] === 0 && item[b] === 0) {
+        isBothZero = true;
+        break;
+      }
+    }
+    return isBothZero;
+  }
+
   record = () => {
     setTimeout(() => {
       this.saveAllData();
@@ -337,6 +352,10 @@ export default class BuckleRecord extends React.Component {
 
       if (pointError.length) {
         Toast.fail('请输入正确格式的数字');
+        return;
+      }
+      if (this.validPointBothZero(newParticipant)) {
+        Toast.fail('A分和B分不能同时为0');
         return;
       }
       const eventObj = {
@@ -507,7 +526,6 @@ export default class BuckleRecord extends React.Component {
             </List>
           </WingBlank>
           <WhiteSpace size="md" />
-
           <WingBlank className={style.parcel}>
             <DatePicker
               mode="date"

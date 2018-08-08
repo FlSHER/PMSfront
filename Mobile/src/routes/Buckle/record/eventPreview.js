@@ -187,15 +187,15 @@ export default class EventPreview extends React.Component {
               </Button>
             </Flex.Item>);
         }
-        if ([-1, -2, -3].indexOf(detail.status_id) !== -1) {
-          // 再次提交
-          footerBtn.push(
-            <Flex.Item key="submit">
-              <Button type="primary" onClick={() => this.submitAgain(detail)}>
+        // if ([-1, -2, -3].indexOf(detail.status_id) !== -1) {
+        // 再次提交
+        footerBtn.push(
+          <Flex.Item key="submit">
+            <Button type="primary" onClick={() => this.submitAgain(detail)}>
                 再次提交
-              </Button>
-            </Flex.Item>);
-        }
+            </Button>
+          </Flex.Item>);
+        // }
       }
 
       const type = detail.status_id.toString();

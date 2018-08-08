@@ -235,6 +235,20 @@ export default class BuckleRecord extends React.Component {
     return newParticipants;
   }
 
+  validPointBothZero = (participants) => {
+    const point = ['point_a', 'point_b'];
+    let isBothZero = false;
+    for (let i = 0; i < participants.length; i += 1) {
+      const item = participants[i];
+      const [a, b] = point;
+      if (item[a] === item[b] && item[a] === 0 && item[b] === 0) {
+        isBothZero = true;
+        break;
+      }
+    }
+    return isBothZero;
+  }
+
   validHasError = () => {
     const { info } = this.state;
     const eventId = info.event_id;
@@ -243,11 +257,14 @@ export default class BuckleRecord extends React.Component {
     if (eventId === null) {
       msg = '请选择事件';
     }
-    if (!participants && !participants.length) {
+    if (!participants || (participants && !participants.length)) {
       msg = '请选择参与人';
     }
-    if (participants.length && this.validPointError()) {
+    if (participants && participants.length && this.validPointError()) {
       msg = '请填写正确范围的分数';
+    }
+    if (this.validPointBothZero(participants)) {
+      msg = 'A分和B分不能同时为0';
     }
     if (msg) {
       Toast.fail(msg);
@@ -357,7 +374,7 @@ export default class BuckleRecord extends React.Component {
         direction="column"
       >
         <div className={styles.con_content}>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
           <WingBlank className={[style.parcel, style.bottom].join(' ')}>
             <List>
               <List.Item arrow="horizontal" onClick={this.selEvent}>
@@ -377,9 +394,8 @@ export default class BuckleRecord extends React.Component {
               还可输入{100 - description.length}字
             </div>
           </WingBlank>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
           <div style={{ ...(!name ? { display: 'none' } : null) }}>
-            <WhiteSpace size="sm" />
             <WingBlank className={style.parcel}>
               <div className={style.players}>
                 <Flex className={style.title} id="participants">
@@ -415,7 +431,7 @@ export default class BuckleRecord extends React.Component {
                 </Flex>
               </div>
             </WingBlank>
-            <WhiteSpace size="sm" />
+            <WhiteSpace size="md" />
             <WingBlank className={style.parcel}>
               <div className={style.players} style={{ paddingBottom: '0.48rem' }}>
                 <Flex className={style.title}>
@@ -512,6 +528,7 @@ export default class BuckleRecord extends React.Component {
                 </div>
               </div>
             </WingBlank>
+            <WhiteSpace size="md" />
           </div>
         </div>
         <div className={styles.footer}>

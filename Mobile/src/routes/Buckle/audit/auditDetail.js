@@ -191,15 +191,15 @@ export default class AuditDetail extends React.Component {
               </Button>
             </Flex.Item>);
         }
-        if ([-1, -2, -3].indexOf(newDetail.status_id) !== -1) {
-          // 再次提交
-          footerBtn.push(
-            <Flex.Item key="submit">
-              <Button type="primary" onClick={() => this.submitAgain(newDetail)}>
+        // if ([-1, -2, -3].indexOf(newDetail.status_id) !== -1) {
+        // 再次提交
+        footerBtn.push(
+          <Flex.Item key="submit">
+            <Button type="primary" onClick={() => this.submitAgain(newDetail)}>
                 再次提交
-              </Button>
-            </Flex.Item>);
-        }
+            </Button>
+          </Flex.Item>);
+        // }
       }
 
       const type = newDetail.status_id.toString();
