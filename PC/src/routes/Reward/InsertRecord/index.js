@@ -265,7 +265,7 @@ export default class extends React.PureComponent {
     return (
       <div style={{ width, margin: '0 auto' }}>
         <OAForm {...this.makeFormProps()} style={{ padding: 10, width }}>
-          <FormItem label="事件标题" {...formItemLayout}>
+          <FormItem label="事件" {...formItemLayout}>
             {getFieldDecorator('event_id', {
               initialValue: {},
             })(
@@ -274,14 +274,14 @@ export default class extends React.PureComponent {
               />
             )}
           </FormItem>
-          <FormItem label="事件描述" {...formItemLayout}>
+          <FormItem label="描述" {...formItemLayout}>
             {getFieldDecorator('description', {
               initialValue: '',
             })(
               <TextArea placeholder="请输入" />
             )}
           </FormItem>
-          <FormItem label="事件配置" {...formItemLayout} >
+          <FormItem label="参与人" {...formItemLayout} >
             {getFieldDecorator('participants', {
               initialValue: [],
             })(
@@ -293,7 +293,7 @@ export default class extends React.PureComponent {
               />
             )}
           </FormItem>
-          <FormItem label="事件时间" {...formItemLayout}>
+          <FormItem label="事件日期" {...formItemLayout}>
             {getFieldDecorator('executed_at', {
               initialValue: moment().format('L'),
             })(
