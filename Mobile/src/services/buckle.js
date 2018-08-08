@@ -41,9 +41,10 @@ export async function getLogGroupDetail(id) {
 }
 
 
-export async function withdrawBuckle(id) {
-  return request(`/api/event-logs/${id}/withdraw`, {
+export async function withdrawBuckle(data) {
+  return request(`/api/event-logs/${data.id}/withdraw`, {
     method: 'PUT',
+    body: data.params,
   });
 }
 

@@ -5,7 +5,7 @@ import style from '../index.less';
 
 const defaultValue = {
   min: '',
-  max: moment(new Date()).format('YYYY-MM'),
+  max: moment(new Date()).format('YYYY-MM-DD'),
 };
 class PickerRange extends React.Component {
   constructor(props) {
@@ -21,14 +21,10 @@ class PickerRange extends React.Component {
     const { value } = nextProps;
     if (JSON.stringify(value) !== JSON.stringify(this.props.value)) {
       this.setState({
-        value: {
-          min: value.min,
-          max: value.max,
-        },
+        value: value || defaultValue,
       });
     }
   }
-
 
   handleOnChange = (key, newValue) => {
     const { value } = this.state;
@@ -46,6 +42,8 @@ class PickerRange extends React.Component {
   render() {
     const { value: { min, max } } = this.state;
     const { addonBefore } = this.props;
+    const valueMax = max.replace(/-/g, '/');
+    const valueMin = min.replace(/-/g, '/');
     return (
       <Flex
         className={style.pickerange}
@@ -56,7 +54,9 @@ class PickerRange extends React.Component {
         >
           <DatePicker
             mode="date"
+            value={new Date(valueMin)}
             format="YYYY-MM-DD"
+            maxDate={new Date()}
             onChange={date => this.handleOnChange('min', date)}
           >
             <div className={style.some_time}>{min}</div>
@@ -68,7 +68,9 @@ class PickerRange extends React.Component {
         >
           <DatePicker
             mode="date"
+            value={new Date(valueMax)}
             format="YYYY-MM-DD"
+            maxDate={new Date()}
             onChange={date => this.handleOnChange('max', date)}
           >
             <div className={style.some_time}>{max}</div>
