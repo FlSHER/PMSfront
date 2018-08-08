@@ -27,7 +27,7 @@ const options = [
     label: '已撤回', value: '-2',
   },
   {
-    label: '已撤销', value: '-3',
+    label: '已删除', value: '-3',
   },
 ];
 
@@ -78,8 +78,8 @@ const tabs = {
 const sortList = [
   { name: '记录时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
   { name: '记录时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
-  { name: '执行时间升序', value: 'executed_at-asc', icon: import('../../../assets/filter/asc.svg') },
-  { name: '执行时间降序', value: 'executed_at-desc', icon: import('../../../assets/filter/desc.svg') },
+  { name: '事件时间升序', value: 'executed_at-asc', icon: import('../../../assets/filter/asc.svg') },
+  { name: '事件时间降序', value: 'executed_at-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
 
 const auditStates = [

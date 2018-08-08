@@ -5,44 +5,39 @@
 // import stastic from '../assets/stastic.svg';
 // import stastic_ from '../assets/stastic_.svg';
 
-import home from '../assets/home.svg';
-import home_ from '../assets/home_.svg';
+import home from '../assets/jobstation/积分制-icon_工作台.png';
+import homeUncheck from '../assets/jobstation/积分制-icon_工作台uncheck.png';
 
-// import my from '../assets/my.svg';
-// import my_ from '../assets/my_.svg';
+import my from '../assets/jobstation/my.png';
+import myUncheck from '../assets/jobstation/my_uncheck.png';
 
-import appro from '../assets/appro.svg';
-import appro_ from '../assets/appro_.svg';
+import appro from '../assets/jobstation/task.png';
+import approUncheck from '../assets/jobstation/task_uncheck.png';
 import { userStorage } from './util';
 
 // 底部菜单
-export const tabbar = [{
-  title: '申请',
-  key: '',
-  to: '/home',
-  icon: home_,
-  selIcon: home,
-}, {
-  title: '审批',
-  key: 'approval',
-  to: '/audit_list',
-  icon: appro_,
-  selIcon: appro,
-},
-// {
-//   title: '统计',
-//   key: 'statistics',
-//   to: '/statistics',
-//   icon: stastic_,
-//   selIcon: stastic,
-// },
-// {
-//   title: '我的',
-//   key: 'my',
-//   to: '/my',
-//   icon: my_,
-//   selIcon: my,
-// }
+export const tabbar = [
+  {
+    title: '工作',
+    key: '',
+    to: '/home',
+    icon: homeUncheck,
+    selIcon: home,
+  },
+  {
+    title: '审批',
+    key: 'approval',
+    to: '/audit_list',
+    icon: approUncheck,
+    selIcon: appro,
+  },
+  {
+    title: '我的',
+    key: 'my',
+    to: '/my',
+    icon: myUncheck,
+    selIcon: my,
+  },
 ];
 
 
@@ -100,7 +95,7 @@ export const buckleState = (state) => {
     case -2:
       return '已撤回';
     case -3:
-      return '已撤销';
+      return '已删除';
     default:
   }
 };

@@ -39,34 +39,6 @@ function IndexPage({ history }) {
             </div>
           );
         })}
-      <div key="system">
-        <WhiteSpace size="md" />
-        <WingBlank>
-          <div className={style.entrance}>
-            <div className={style.title}> 系统</div>
-            <Grid
-              hasLine={false}
-              data={[
-                { text: '退出登录', icon: import('../../assets/jobstation/积分制-icon-我.png') },
-              ]}
-              columnNum={4}
-              square={false}
-              renderItem={dataItem => (
-                <div>
-                  <img src={dataItem.icon} alt={dataItem.text} style={{ width: '40px' }} />
-                  <div style={{ color: 'rgb(10,10,10)', fontSize: '14px', marginTop: '4px' }}>
-                    <span>{dataItem.text}</span>
-                  </div>
-                </div>
-              )}
-              onClick={() => {
-                localStorage.clear();
-                window.location.href = `${OA_PATH}/logout?redirect_uri=${OA_PATH}/home`;
-              }}
-            />
-          </div>
-        </WingBlank>
-      </div>
     </div>
   );
 }

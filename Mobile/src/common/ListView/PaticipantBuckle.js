@@ -41,7 +41,7 @@ export default class PaticipantBuckle extends Component {
           <div className={style.time}>
             {value.description}
           </div>
-          <div className={style.desc}>执行时间：{value.executed_at && moment(value.executed_at).format('YYYY-MM-DD')}</div>
+          <div className={style.desc}>事件时间：{value.executed_at && moment(value.executed_at).format('YYYY-MM-DD')}</div>
         </div>
         {extra && extra(value)}
       </div>

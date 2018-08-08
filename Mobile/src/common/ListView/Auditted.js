@@ -49,7 +49,7 @@ export default class Auditted extends Component {
                 <span>总人次</span><span>{value.event_count}</span>
               </div>
             </div>
-            <span className={style.show_time}>{isToday(value.created_at) ? moment(value.created_at).format('HH:MM') : moment(value.created_at).format('YYYY-MM-DD')}</span>
+            <span className={style.show_time}>{isToday(value.created_at) ? moment(value.created_at).format('HH:MM') : moment(value.created_at).format('YYYY-MM-DD HH:MM')}</span>
           </div>
         </div>
         {extra && extra(value)}

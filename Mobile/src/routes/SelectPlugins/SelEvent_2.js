@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {
   connect,
 } from 'dva';
-import { Flex, SearchBar, WingBlank, WhiteSpace } from 'antd-mobile';
+import { Flex, SearchBar, WingBlank } from 'antd-mobile';
 import { EventType, EventName, SearchEvent } from '../../common/ListView/index.js';
 import { Bread } from '../../components/General/index';
 import { Nothing } from '../../components/index';
@@ -295,7 +295,6 @@ export default class SelEvent extends Component {
                   dataSource={evtName || []}
                   onChange={this.getSelectResult}
                 />
-                <WhiteSpace size="md" />
               </React.Fragment>)
               : null}
             {searchValue ? (
