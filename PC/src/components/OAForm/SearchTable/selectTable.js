@@ -92,7 +92,6 @@ export default class SelectTable extends React.Component {
         selectedRowKeys: value.map(item => item[index]),
       },
     } : {};
-
     return (
       <div style={{ cursor: this.state.cursor }}>
         <OATable

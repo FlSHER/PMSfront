@@ -57,28 +57,40 @@ export default class extends React.Component {
   renderRecordedFooter = () => {
     const { fetchCancel, id, editInfo, onClose, dispatch } = this.props;
     const statusId = editInfo.status_id;
-    return ([0, 1, -1, -2].indexOf(statusId) !== -1) ? (
+
+    return (
       <div className={styles.footer}>
-        {[0, 1].indexOf(statusId) !== -1 && (
-          <div onClick={() => {
-            fetchCancel(id);
-            onClose(false);
-          }}
-          >
-            <span>撤回</span>
-          </div>
-        )}
-        {[-1, -2].indexOf(statusId) !== -1 && (
-          <div
-            onClick={() => {
-              dispatch(routerRedux.push(`/reward/buckle/submission/${id}`));
-            }}
-          >
-            <span>再次提交</span>
-          </div>
-        )}
+        {([0, 1, -1, -2].indexOf(statusId) !== -1) ? (
+          <React.Fragment>
+            {[0, 1].indexOf(statusId) !== -1 && (
+              <div onClick={() => {
+                fetchCancel(id);
+                onClose(false);
+              }}
+              >
+                <span>撤回</span>
+              </div>
+            )}
+            <div
+              onClick={() => {
+                dispatch(routerRedux.push(`/reward/buckle/submission/${id}`));
+              }}
+            >
+              <span>再次提交</span>
+            </div>
+          </React.Fragment>
+        ) :
+          (
+            <div
+              onClick={() => {
+                dispatch(routerRedux.push(`/reward/buckle/submission/${id}`));
+              }}
+            >
+              <span>再次提交</span>
+            </div>
+          )}
       </div>
-    ) : null;
+    );
   }
 
   render() {

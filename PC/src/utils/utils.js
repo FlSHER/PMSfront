@@ -501,7 +501,7 @@ export function getBuckleStatus(status) {
     case -2:
       return '已撤回';
     case -3:
-      return '已撤销';
+      return '已删除';
     default:
   }
 }
@@ -511,7 +511,7 @@ export const statusData = [
   { value: 2, text: '已通过' },
   { value: -1, text: '已驳回' },
   { value: -2, text: '已撤回' },
-  { value: -3, text: '已撤销' },
+  { value: -3, text: '已删除' },
   // { value: 1, text: '审核中' },
 ];
 
@@ -528,7 +528,7 @@ export function getBuckleTitle(status) {
     case -2:
       return '终审驳回';
     case -3:
-      return '已撤销';
+      return '已删除';
     default:
   }
 }

@@ -14,16 +14,13 @@ export default class OAModal extends React.PureComponent {
         {title}
       </div>
     );
-    const { height, top } = getModalToAndHeight();
-    const style = { height: height - 40 };
     return (
       <Modal
         destroyOnClose
-        style={{ top }}
+        style={{ ...getModalToAndHeight() }}
         {...this.props}
         bodyStyle={{
           ...bodyStyle,
-          ...style,
           // height: getModalBodyHeight(),
           overflowY: 'auto',
         }}

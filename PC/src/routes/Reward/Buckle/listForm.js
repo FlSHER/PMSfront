@@ -85,14 +85,14 @@ export default class extends React.PureComponent {
   render() {
     const { form: { getFieldDecorator }, value } = this.props;
     const { defaultPoint, eventId, pointRange } = this.state;
-    const style = { width: 540 };
+    const style = {};
     const formItemLayout = {
       labelCol: { span: 3 },
-      wrapperCol: { span: 21 },
+      wrapperCol: { span: 20 },
     };
     return (
       <OAForm {...this.makeFormProps()} style={{ padding: 10, width: 670 }}>
-        <FormItem label="事件标题" {...formItemLayout}>
+        <FormItem label="事件" {...formItemLayout}>
           {getFieldDecorator('event_id', {
             initialValue: value.event_id ? { id: value.event_id } : {},
           })(
@@ -103,18 +103,19 @@ export default class extends React.PureComponent {
             />
           )}
         </FormItem>
-        <FormItem label="事件描述" {...formItemLayout}>
+        <FormItem label="描述" {...formItemLayout}>
           {getFieldDecorator('description', {
             initialValue: value.description || '',
           })(
             <TextArea placeholder="请输入" style={style} />
           )}
         </FormItem>
-        <FormItem label="事件配置" {...formItemLayout} >
+        <FormItem label="参与人" {...formItemLayout} >
           {getFieldDecorator('participants', {
             initialValue: value.participants || [],
           })(
             <WorkingStaff
+              {...style}
               eventId={eventId}
               pointRange={pointRange}
               defaultPoint={defaultPoint}

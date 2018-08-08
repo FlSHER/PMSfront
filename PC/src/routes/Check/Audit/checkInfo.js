@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import DescriptionList from 'ant-design-pro/lib/DescriptionList';
 import 'ant-design-pro/dist/ant-design-pro.css';
 import Ellipsis from 'ant-design-pro/lib/Ellipsis';
@@ -25,11 +26,17 @@ function EventInfo({ data }) {
       <Description term="事件内容">
         {data.description || '无'}
       </Description>
-      <Description term="事件配置">
+      <Description term={(
+        <span>事件配置</span>
+      )}
+      >
         {list.map((item, index) => {
           const key = index;
+          const cls = classNames(styles.user, {
+            [styles.userColor]: user.staff_sn === item.staff_sn,
+          });
           return (
-            <div key={key} className={styles.user}>
+            <div key={key} className={cls}>
               <Ellipsis lines={1} className={styles.userName}>
                 {item.staff_name}
               </Ellipsis>
@@ -65,37 +72,40 @@ function Approver({ tip, data }) {
             <UserCircle>
               {data.staff_name}
             </UserCircle>
-            {(data.time || data.rejected || data.status_id === 0 || data.status_id === 1) && (
-              <div className={styles.dec}>
-                <div
-                  className={styles.describe}
-                >
-                  <div className={styles.arrow}>
-                    <span />
+            {
+              (data.time || data.rejected || data.status_id === 0 || data.status_id === 1) &&
+              (data.statusText)
+              && (
+                <div className={styles.dec}>
+                  <div
+                    className={styles.describe}
+                  >
+                    <div className={styles.arrow}>
+                      <span />
+                    </div>
+                    <p className={statusTextClassName}>
+                      {data.statusText}
+                    </p>
+                    <p className={styles.description}>
+                      {data.remark}
+                    </p>
                   </div>
-                  <p className={statusTextClassName}>
-                    {data.statusText}
-                  </p>
-                  <p className={styles.description}>
-                    {data.remark}
-                  </p>
+                  {
+                    data.point && data.point.recorder_name && data.point.recorder !== 0 && (
+                      <p style={{ color: '#969696', marginTop: 10 }}>
+                        记录人：{data.point.recorder_name} {data.point.recorder > 0 ? `+${data.point.recorder}` : data.point.recorder}
+                      </p>
+                    )
+                  }
+                  {
+                    data.point && data.point.first_approver_name && (
+                      <p style={{ color: '#969696', marginTop: 10 }}>
+                        初审人：{data.point.first_approver_name} {data.point.first_approver > 0 ? `+${data.point.first_approver}` : data.point.first_approver}
+                      </p>
+                    )
+                  }
                 </div>
-                {
-                  data.point && data.point.recorder_name && data.point.recorder !== 0 && (
-                    <p style={{ color: '#969696', marginTop: 10 }}>
-                      记录人：{data.point.recorder_name} {data.point.recorder > 0 ? `+${data.point.recorder}` : data.point.recorder}
-                    </p>
-                  )
-                }
-                {
-                  data.point && data.point.first_approver_name && (
-                    <p style={{ color: '#969696', marginTop: 10 }}>
-                      初审人：{data.point.first_approver_name} {data.point.first_approver > 0 ? `+${data.point.first_approver}` : data.point.first_approver}
-                    </p>
-                  )
-                }
-              </div>
-            )}
+              )}
           </div>
         </Description>
       </DescriptionList>
@@ -103,18 +113,39 @@ function Approver({ tip, data }) {
   );
 }
 
-function StaffCustormer({ title, data }) {
+function StaffCustormer({ title, data, extar }) {
   return (
     <div className={styles.approver}>
       <DescriptionList size="large" col={1} layout="vertical">
-        <Description term={title}>
-          <div style={{ marginLeft: 10 }}>
+        <Description
+          term={(
+            <span style={{ color: '#969696' }}>{title}</span>
+          )}
+        >
+          <div >
             {data.map((item, i) => {
               const key = i;
               return (
-                <UserCircle key={key}>
-                  {item}
-                </UserCircle>
+                <div style={{ display: 'flex', marginLeft: 10 }} key={key} >
+                  <UserCircle key={key}>
+                    {item}
+                  </UserCircle>
+                  {extar !== '' && (
+                    <div className={styles.dec}>
+                      <div
+                        className={styles.describe}
+                      >
+                        <div className={styles.arrow}>
+                          <span />
+                        </div>
+                        <p className={styles.description}>
+                          {extar}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                </div>
               );
             })}
           </div>
@@ -166,7 +197,9 @@ function getApproverData(data) {
     },
   };
 
-  if (data.status_id === 1 && !data.final_approved_at) {
+  if (data.status_id === 0) {
+    last.statusText = '';
+  } else if (data.status_id === 1 && !data.final_approved_at) {
     last.statusText = '审核中...';
   } else if (data.final_approved_at) {
     last.remark = data.final_approve_remark || '无';
@@ -243,10 +276,10 @@ export default function CheckInfo({ data }) {
           <div className={styles.eventTitle}>
             <div>审核进度</div>
           </div>
-          {!!first.staff_sn && <Approver tip="初审人" data={first} />}
-          {!!last.staff_sn && <Approver tip="终审人" data={last} />}
+          {!!first.staff_sn && <Approver tip="初审人:" data={first} />}
+          {!!last.staff_sn && <Approver tip="终审人:" data={last} />}
           {addressees.length > 0 && <StaffCustormer title="抄送人" data={addressees} />}
-          {recorder.length > 0 && <StaffCustormer title="记录人" data={recorder} />}
+          {recorder.length > 0 && <StaffCustormer title="记录人" data={recorder} extar={data.revoke_remark} />}
         </div>
       )}
     </React.Fragment>

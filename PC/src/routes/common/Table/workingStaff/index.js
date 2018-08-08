@@ -15,6 +15,8 @@ export default class WorkingStaff extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      selectedRowKeys: [],
+      selectedRows: [],
       value: props.value || [],
       batchInitValue: [],
       visible: false,
@@ -111,14 +113,18 @@ export default class WorkingStaff extends React.PureComponent {
     const newDataSource = dataSource.filter((item) => {
       return staffSn.indexOf(item.staff_sn) === -1;
     });
-    const { selectedRows, selectedRowKeys } = this.oatable.state;
-    this.oatable.state.selectedRows = selectedRows.filter((item) => {
+    const { selectedRows, selectedRowKeys } = this.state;
+    const newSelectedRows = selectedRows.filter((item) => {
       return staffSn.indexOf(item.staff_sn) === -1;
     });
-    this.oatable.state.selectedRowKeys = selectedRowKeys.filter(item =>
+    const newSelectedRowKeys = selectedRowKeys.filter(item =>
       (staffSn.indexOf(item) === -1)
     );
-    this.setState({ value: newDataSource }, this.handleOnChange);
+    this.setState({
+      value: newDataSource,
+      selectedRows: [...newSelectedRows],
+      selectedRowKeys: [...newSelectedRowKeys],
+    }, this.handleOnChange);
   }
 
   addCurrentUser = () => {
@@ -167,23 +173,27 @@ export default class WorkingStaff extends React.PureComponent {
       {
         title: '单次A分',
         dataIndex: 'point_a',
-        width: 80,
+        align: 'center',
+        width: 90,
         render: this.ediTableCell('point_a'),
       },
       {
         title: '单次B分',
         dataIndex: 'point_b',
-        width: 80,
+        align: 'center',
+        width: 90,
         render: this.ediTableCell('point_b'),
       },
       {
         title: '次数',
         dataIndex: 'count',
-        width: 80,
+        align: 'center',
+        width: 90,
         render: this.ediTableCell('count'),
       },
       {
         title: '总分',
+        width: 100,
         dataIndex: 'pointCount',
         render: (_, record) => {
           const number = parseInt(record.count, 10);
@@ -191,15 +201,15 @@ export default class WorkingStaff extends React.PureComponent {
           const bPoint = parseInt(record.point_b, 10) * number;
           return (
             <div style={{ color: 'rgb(150, 150, 150)' }}>
-              <span style={{ marginRight: '20px' }}>{`A：${aPoint}`}</span>
-              <span>{`B：${bPoint}`}</span>
+              <span style={{ marginRight: '10px' }}>{`A:${aPoint}`}</span>
+              <span>{`B:${bPoint}`}</span>
             </div>
           );
         },
       },
       {
         dataIndex: 'staff_sn',
-        width: 20,
+        width: 50,
         render: (staffSn) => {
           return (
             <span
@@ -253,6 +263,7 @@ export default class WorkingStaff extends React.PureComponent {
       extraOperator,
       extraOperatorRight,
       multiOperator,
+      size: 'small',
       tableVisible: value.length > 0,
     };
     return response;
@@ -266,10 +277,17 @@ export default class WorkingStaff extends React.PureComponent {
       point_b: ` ${pointRange.point_b.min} 至 ${pointRange.point_b.max} `,
     };
     return (
-      <div style={{ width: width || 540 }}>
+      <div style={{ width }}>
         <OATable
-          ref={(e) => { this.oatable = e; }}
           {...this.makeTableProps()}
+          rowSelection={{
+            columnWidth: 25,
+            selectedRowKeys: this.state.selectedRowKeys,
+            selectedRows: this.state.selectedRows,
+            onChange: (selectedRowKeys, selectedRows) => {
+              this.setState({ selectedRowKeys, selectedRows });
+            },
+          }}
           footer={() => {
             return (
               <div className={styles.footers}>

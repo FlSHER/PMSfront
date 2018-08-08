@@ -139,8 +139,8 @@ export default {
     },
     * withdrawBuckle({ payload, onSuccess, onError }, { call, put }) {
       try {
-        const { id, type } = payload;
-        const response = yield call(withdrawBuckle, id);
+        const { id, type, remark } = payload;
+        const response = yield call(withdrawBuckle, { remark }, id);
         if (response.errors && onError) {
           onError(response.errors);
         } else {

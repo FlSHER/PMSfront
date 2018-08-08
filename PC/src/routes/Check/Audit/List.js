@@ -1,9 +1,10 @@
 import React from 'react';
-import { Divider, Modal } from 'antd';
+import { Divider, Input } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
 import OATable from '../../../components/OATable';
+import OAForm from '../../../components/OAForm';
 import BuckleInfo from './info';
 import { makerFilters, getBuckleStatus, statusData } from '../../../utils/utils';
 import styles from './index.less';
@@ -23,15 +24,28 @@ const cate = [
   { value: 'reject', text: '驳回' },
 ];
 
-const { confirm } = Modal;
+const FormItem = OAForm.Item;
+const { OAModal } = OAForm;
+
 
 @connect(({ buckle, loading }) => ({
   buckle,
   loading: loading.effects['buckle/fetchBuckleGroups'],
   cancelLoading: loading.effects['buckle/withdrawBuckle'],
 }))
+@OAForm.create()
 export default class extends React.PureComponent {
-  state = { editInfo: {} };
+  state = {
+    editInfo: {},
+    visible: false,
+    id: null,
+  };
+
+  componentWillMount() {
+    const { bindForm, form } = this.props;
+    bindForm(form);
+  }
+
 
   fetch = (_, params) => {
     const { dispatch, type } = this.props;
@@ -61,6 +75,7 @@ export default class extends React.PureComponent {
       }
     }
     newParams = makerFilters(newParams);
+    this[type] = newParams;
     dispatch({
       type: 'buckle/fetchBuckleGroups',
       payload: {
@@ -107,6 +122,7 @@ export default class extends React.PureComponent {
         filters: cate,
         width: 100,
         filterMultiple: false,
+        align: 'center',
         onFilter: () => {
           return true;
         },
@@ -134,9 +150,7 @@ export default class extends React.PureComponent {
         filters: step,
         width: 100,
         filterMultiple: false,
-        onFilter: () => {
-          return true;
-        },
+        align: 'center',
         render: (_, record) => {
           if (currentSn === record.final_approver_sn) {
             return '终审';
@@ -153,9 +167,7 @@ export default class extends React.PureComponent {
         dataIndex: 'status_id',
         width: 110,
         filters: statusData,
-        onFilter: () => {
-          return true;
-        },
+        align: 'center',
         render: (statusId) => {
           if (type !== 'approved') return getBuckleStatus(statusId) || '审核中';
           const { text } = status.find(item => item.value === statusId) || { text: '' };
@@ -243,30 +255,39 @@ export default class extends React.PureComponent {
     }
   }
 
-  fetchCancel = (id) => {
-    const { dispatch, type } = this.props;
-    dispatch({
-      type: 'buckle/withdrawBuckle',
-      payload: { id, type },
-    });
-  }
+  // fetchCancel = (id) => {
+  //   const { dispatch, type, onError } = this.props;
+  //   dispatch({
+  //     type: 'buckle/withdrawBuckle',
+  //     payload: { id, type },
+  //     onError,
+  //     onSuccess: this.setState({ visible: false }),
+  //   });
+  // }
 
   showCancelConfirm = (id) => {
-    confirm({
-      title: '确定要撤回该条记录吗?',
-      okText: '确定',
-      okType: 'danger',
-      cancelText: '取消',
-      onOk: () => {
-        this.fetchCancel(id);
-      },
-    });
+    this.setState({ visible: true, id });
   }
 
   showInfo = (record) => {
     this.setState({ editInfo: { ...record } }, () => {
       const { onClose, type } = this.props;
       onClose(true, type);
+    });
+  }
+
+  handleSubmit = (params) => {
+    const { dispatch, type, onError } = this.props;
+    const { id } = this.state;
+    dispatch({
+      type: 'buckle/withdrawBuckle',
+      payload: {
+        id,
+        type,
+        ...params,
+      },
+      onError,
+      onSuccess: this.setState({ visible: false, id: null }),
     });
   }
 
@@ -305,10 +326,10 @@ export default class extends React.PureComponent {
           dispatch(routerRedux.push(`/reward/buckle/submission/${record.id}`));
         },
       };
-      if ([-1, -2, -3].indexOf(record.status_id) === -1) {
-        linkResubmitProps.className = styles.noAllowed;
-        linkResubmitProps.onClick = () => { };
-      }
+      // if ([-1, -2, -3].indexOf(record.status_id) === -1) {
+      //   linkResubmitProps.className = styles.noAllowed;
+      //   linkResubmitProps.onClick = () => { };
+      // }
       action.push(<Divider key="v2" type="vertical" />);
       action.push((
         <a
@@ -323,18 +344,41 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { buckle, loading, type, visible, onClose, cancelLoading } = this.props;
+    const { form, buckle, loading, type, visible, onClose, cancelLoading } = this.props;
+    const { getFieldDecorator } = form;
     const { editInfo } = this.state;
     const reuslt = buckle[type];
-    let x = ['addressee', 'approved'].indexOf(type) !== -1 ? 1300 : 1200;
-    x = ['recorded'].indexOf(type) !== -1 ? 1100 : x;
+    const x = ['addressee', 'approved'].indexOf(type) !== -1 ? 1300 : 1200;
+    const formItemLayout = {
+      labelCol: { span: 4 },
+      wrapperCol: { span: 20 },
+    };
     return (
       <React.Fragment>
+        <OAModal
+          width={550}
+          form={form}
+          loading={cancelLoading}
+          visible={this.state.visible}
+          title="撤回"
+          onSubmit={this.handleSubmit}
+          onCancel={() => {
+            this.setState({ visible: false });
+          }}
+        >
+          <FormItem label="理由" {...formItemLayout}>
+            {getFieldDecorator('remark', {
+              initialValue: '',
+            })(
+              <Input.TextArea style={{ height: 90 }} placeholder="请输入理由" />
+            )}
+          </FormItem>
+        </OAModal>
         <OATable
           serverSide
           autoScroll
           id={type}
-          loading={loading || cancelLoading}
+          loading={loading}
           scroll={{ x }}
           columns={this.makeColums()}
           data={reuslt.data || []}
@@ -346,9 +390,10 @@ export default class extends React.PureComponent {
           visible={visible}
           id={editInfo.id}
           editInfo={editInfo}
-          fetchCancel={this.fetchCancel}
-          onClose={() => {
+          fetchCancel={this.showCancelConfirm}
+          onClose={(_, update) => {
             this.setState({ editInfo: {} }, () => {
+              if (update) this.fetch({}, this[type]);
               onClose(false, type);
             });
           }}

@@ -76,6 +76,7 @@ const model = [
   'event',
   'buckle',
   'table',
+  'tabs',
 ];
 
 export const getRouterData = (app) => {

@@ -76,6 +76,19 @@ class OATable extends PureComponent {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { rowSelection, multiOperator } = nextProps;
+    if (
+      multiOperator && multiOperator.length > 0
+      &&
+      rowSelection
+      && JSON.stringify(rowSelection) !== JSON.stringify(this.props.rowSelection)
+    ) {
+      const { selectedRowKeys, selectedRows } = rowSelection;
+      this.setState({ selectedRowKeys, selectedRows });
+    }
+  }
+
   onEnd = (e) => {
     const dom = e.target;
     dom.style.height = 'auto';

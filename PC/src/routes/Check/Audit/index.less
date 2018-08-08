@@ -92,6 +92,9 @@
     .user {
       margin-bottom: 10px;
     }
+    .user:last-child {
+      margin: 0;
+    }
     span {
       vertical-align: middle;
       display: inline-block;
@@ -101,6 +104,12 @@
       margin-right: 10px; // overflow: inherit;
       vertical-align: middle;
       display: -webkit-inline-box;
+    }
+    .userColor {
+      color: @primary-color  !important;
+      .userPoint i {
+        color: @primary-color
+      }
     }
     .userPoint {
       width: 110px;
@@ -140,58 +149,6 @@
         width: 100%;
       }
     }
-    .dec {
-      max-width: 300px;
-      flex-grow: 1;
-    }
-    .describe {
-      position: relative;
-      border: 1px solid #c7c7c7;
-      border-radius: 4px; // height: 60px;
-      color: #969696;
-      font-size: 12px;
-      .arrow {
-        position: relative;
-        width: 10px;
-        height: 10px;
-        left: -9px;
-        top: 15px;
-        overflow: hidden;
-        background: #fff;
-      }
-      span {
-        width: 10px;
-        height: 10px;
-        position: absolute;
-        left: 5px;
-        border: 1px solid #c7c7c7;
-        border-right-color: transparent;
-        border-top-color: transparent;
-        transform: rotateZ(45deg); // border-right-color: #fff;
-      }
-    }
-    .default {
-      color: #666;
-      padding: 0 10px;
-    }
-    .pass {
-      color: @primary-color; // position: absolute;
-      padding: 0 10px; // top: 10px;
-      // left: 10px;
-    }
-    .reject {
-      color: #cf4252; // position: absolute;
-      padding: 0 10px; // top: 10px;
-      // left: 10px;
-    }
-    .description {
-      // position: absolute;
-      // bottom: -5px;
-      // left: 10px;
-      padding: 0 10px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
   }
   :global {
     .antd-pro-description-list-descriptionList.antd-pro-description-list-large .antd-pro-description-list-title {
@@ -212,4 +169,62 @@
       line-height: 20px;
     }
   }
+}
+
+.dec {
+  max-width: 300px;
+  flex-grow: 1;
+}
+
+.describe {
+  position: relative;
+  border: 1px solid #c7c7c7;
+  border-radius: 4px; // height: 60px;
+  color: #969696;
+  font-size: 12px;
+  .arrow {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    left: -9px;
+    top: 15px;
+    overflow: hidden;
+    background: #fff;
+  }
+  span {
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    left: 5px;
+    border: 1px solid #c7c7c7;
+    border-right-color: transparent;
+    border-top-color: transparent;
+    transform: rotateZ(45deg); // border-right-color: #fff;
+  }
+}
+
+.default {
+  color: #666;
+  padding: 0 10px;
+}
+
+.pass {
+  color: @primary-color; // position: absolute;
+  padding: 0 10px; // top: 10px;
+  // left: 10px;
+}
+
+.reject {
+  color: #cf4252; // position: absolute;
+  padding: 0 10px; // top: 10px;
+  // left: 10px;
+}
+
+.description {
+  // position: absolute;
+  // bottom: -5px;
+  // left: 10px;
+  padding: 0 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

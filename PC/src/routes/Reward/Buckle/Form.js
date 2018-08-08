@@ -1,11 +1,12 @@
 import React from 'react';
-import { Input, Button, Spin } from 'antd';
+import { Input, Button, Spin, Steps, message } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
 import OAForm from '../../../components/OAForm';
 import ListForm from './listForm';
 // import { unicodeFieldsError } from '../../../utils/utils';
+const { Step } = Steps;
 
 const FormItem = OAForm.Item;
 const {
@@ -28,6 +29,7 @@ export default class extends React.PureComponent {
     this.state = {
       listFormValue: [{}],
       eventsError: {},
+      current: 0,
     };
   }
 
@@ -68,13 +70,39 @@ export default class extends React.PureComponent {
     } else if (name === 'first_approver_name') {
       setFields({ first: error });
     } else if (name === 'events') {
-      this.setState({ eventsError: error });
+      this.setState({ eventsError: error, current: 0 });
     }
   }
 
   handleError = (error) => {
     const { onError } = this.props;
     onError(error, this.extraError);
+  }
+
+  next = () => {
+    const { listFormValue } = this.state;
+    if (!listFormValue.length) {
+      message.error('事件不能为空，请添加事件');
+      return;
+    }
+    const eventsError = {};
+    listFormValue.forEach((item, index) => {
+      const temp = {};
+      if (!item.event_id) {
+        temp.event_id = { errors: [new Error('请选择事件')] };
+      }
+      if (!item.participants || !item.participants.length) {
+        temp.participants = { errors: [new Error('请选择参与人')] };
+      }
+      if (Object.keys(temp).length) {
+        eventsError[index] = temp;
+      }
+    });
+    if (!Object.keys(eventsError).length) {
+      this.setState({ current: 1 });
+    } else {
+      this.setState({ eventsError });
+    }
   }
 
   handleSubmit = () => {
@@ -220,7 +248,7 @@ export default class extends React.PureComponent {
 
   render() {
     const { form: { getFieldDecorator }, buckleInfo, loadingInfo, loading } = this.props;
-    const { listFormValue, eventsError } = this.state;
+    const { listFormValue, eventsError, current } = this.state;
     const userInfo = window.user || {};
     const formItemLayout = {
       labelCol: { span: 3 },
@@ -233,7 +261,6 @@ export default class extends React.PureComponent {
         staffNumber += item.participants.length;
       }
     });
-
     const { params } = { ...(this.props.match || { params: {} }) };
     const { id } = params;
     let formFieldsValue = {};
@@ -243,18 +270,20 @@ export default class extends React.PureComponent {
     return (
       <div style={{ width, margin: '0 auto' }}>
         <Spin spinning={loadingInfo || loading || false}>
-          <ListForm
-            errors={eventsError}
-            initialValue={id ? (formFieldsValue.logs || []) : listFormValue}
-            onChange={this.handleListFormChange}
-            style={{ width, marginTop: 10 }}
-            placeholder="添加事件"
-          />
-          <div id="ccc" style={{ fontSize: 12, color: '#969696', padding: '20px 0 20px 100px' }}>
-            <span style={{ marginRight: 30 }}>事件数量：{listFormValue.length}</span>
-            <span>总人次：{staffNumber}</span>
+          <Steps current={current} style={{ marginBottom: 20 }}>
+            <Step title="添加事件" />
+            <Step title="编辑主题" />
+          </Steps>
+          <div style={{ display: current === 0 ? 'block' : 'none' }}>
+            <ListForm
+              errors={eventsError}
+              initialValue={id ? (formFieldsValue.logs || []) : listFormValue}
+              onChange={this.handleListFormChange}
+              style={{ width, marginTop: 10 }}
+              placeholder="添加事件"
+            />
           </div>
-          <OAForm {...this.makeFormProps()} style={{ padding: 10, width }}>
+          <OAForm {...this.makeFormProps()} style={{ padding: 10, width, display: current === 1 ? 'block' : 'none' }}>
             <FormItem label="主题" {...formItemLayout}>
               {getFieldDecorator('title', {
                 initialValue: formFieldsValue.title || '',
@@ -262,7 +291,7 @@ export default class extends React.PureComponent {
                 <Input placeholder="请输入" />
               )}
             </FormItem>
-            <FormItem label="事件时间" {...formItemLayout}>
+            <FormItem label="事件日期" {...formItemLayout}>
               {getFieldDecorator('executed_at', {
                 initialValue: formFieldsValue.executed_at || moment().format('L'),
               })(
@@ -332,10 +361,44 @@ export default class extends React.PureComponent {
                 <Input.TextArea placeholder="请输入备注说明......" style={{ height: 90 }} />
               )}
             </FormItem>
-            <FormItem style={{ left: '50%', marginLeft: '-60px' }}>
-              <Button style={{ width: 120 }} type="primary" htmlType="submit" onClick={this.handleSubmit}>提交</Button>
-            </FormItem>
           </OAForm>
+          {
+            current === 0
+            && (
+              <React.Fragment>
+                <FormItem style={{ textAlign: 'right', marginTop: 20 }}>
+                  <span id="ccc" style={{ fontSize: 12, color: '#969696', marginRight: 10 }}>
+                    <span style={{ marginRight: 30 }}>事件数量：{listFormValue.length}</span>
+                    <span>总人次：{staffNumber}</span>
+                  </span>
+                  <Button
+                    type="primary"
+                    style={{ width: 120 }}
+                    onClick={() => this.next()}
+                  >下一步
+                  </Button>
+                </FormItem>
+              </React.Fragment>
+            )
+          }
+          {
+            current === 1
+            && (
+              <React.Fragment>
+                <FormItem style={{ textAlign: 'right' }}>
+                  <Button
+                    style={{ width: 60 }}
+                    onClick={() => {
+                      this.setState({ current: 0 });
+                    }}
+                  >上一步
+                  </Button>
+                  <Button style={{ width: 120, marginLeft: 20 }} type="primary" htmlType="submit" onClick={this.handleSubmit}>提交</Button>
+
+                </FormItem>
+              </React.Fragment>
+            )
+          }
         </Spin>
       </div>
     );
