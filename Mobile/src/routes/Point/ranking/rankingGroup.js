@@ -17,7 +17,6 @@ export default class RankingGroup extends React.Component {
   state = {
     userInfo: {},
     height: document.documentElement.clientHeight,
-
   }
 
   componentWillMount() {

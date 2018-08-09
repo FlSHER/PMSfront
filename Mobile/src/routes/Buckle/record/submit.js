@@ -121,7 +121,7 @@ export default class BuckleRecord extends React.Component {
     const newAddressees = addressees.map((item) => {
       const obj = {
         staff_sn: item.staff_sn,
-        staff_name: item.realname,
+        staff_name: item.realname || item.staff_name,
       };
       return obj;
     });
@@ -258,7 +258,7 @@ export default class BuckleRecord extends React.Component {
                     <PersonIcon
                       key={idx}
                       value={item}
-                      nameKey="realname"
+                      nameKey="staff_name"
                       showNum={2}
                       type="2"
                       handleDelClick={(e, v) => this.remove(e, v, 'addressees', idx)}

@@ -35,6 +35,19 @@ export default {
   },
   reducers: {
     ...defaultReducers,
+    clearModal(state) {
+      return {
+        ...state,
+        tabs: {
+          processing: 'sort=created_at-desc&type=processing',
+          approved: 'sort=created_at-desc&type=approved',
+          participant: 'sort=created_at-desc&type=participant',
+          addressee: 'sort=created_at-desc&type=addressee',
+          recorded: 'sort=created_at-desc&type=recorded',
+          point: 'sort=created_at-desc',
+        },
+      };
+    },
     saveKey(state, action) {
       const { tabs } = state;
       const { type, value } = action.payload;

@@ -382,12 +382,16 @@ export default class EventPreview extends React.Component {
                         itemStyle={{ marginBottom: 0 }}
                       />
                     </div>
-                    {detail.revoke_remark && (
+                    {detail.status_id === -2 && (
                     <div className={style.dec} >
                       <div
                         className={style.describe}
+                        style={{ background: 'rgb(240,240,240)' }}
                       >
-                        <span />
+                        <span style={{ borderRightColor: 'rgb(240,240,240)' }} />
+                        <p style={{ color: '#666' }}>
+                          撤回
+                        </p>
                         <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{detail.revoke_remark}</p>
                       </div>
                     </div>

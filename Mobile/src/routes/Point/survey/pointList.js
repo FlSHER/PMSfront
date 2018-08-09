@@ -5,7 +5,8 @@ import {
 import moment from 'moment';
 import { Flex } from 'antd-mobile';
 import { Point } from '../../../common/ListView/index';
-import { CheckBoxs } from '../../../components/index';
+import { CheckBoxs, PersonIcon } from '../../../components/index';
+
 import ModalFilters from '../../../components/ModalFilters';
 import { pointSource } from '../../../utils/convert';
 import { getUrlParams, getUrlString, parseParamsToUrl, doConditionValue, parseParams } from '../../../utils/util';
@@ -17,9 +18,9 @@ const sortList = [
   { name: '记录时间升序', value: 'created_at-asc', icon: import('../../../assets/filter/asc.svg') },
   { name: '记录时间降序', value: 'created_at-desc', icon: import('../../../assets/filter/desc.svg') },
   { name: 'A分升序', value: 'point_a-asc', icon: import('../../../assets/filter/asc.svg') },
-  { name: 'A分降序', value: 'point_a_-desc', icon: import('../../../assets/filter/desc.svg') },
-  { name: 'B分升序', value: 'point_b_-asc', icon: import('../../../assets/filter/asc.svg') },
-  { name: 'B分降序', value: 'point_b_-desc', icon: import('../../../assets/filter/desc.svg') },
+  { name: 'A分降序', value: 'point_a-desc', icon: import('../../../assets/filter/desc.svg') },
+  { name: 'B分升序', value: 'point_b-asc', icon: import('../../../assets/filter/asc.svg') },
+  { name: 'B分降序', value: 'point_b-desc', icon: import('../../../assets/filter/desc.svg') },
 ];
 
 const type = 'point';
@@ -73,9 +74,10 @@ const filterColumns = [
   },
 ];
 
-@connect(({ point, alltabs }) => ({
+@connect(({ point, alltabs, statistic }) => ({
   pointList: point.pointList,
   allTabs: alltabs.tabs,
+  data: statistic.data,
 }))
 export default class PointList2 extends React.Component {
   state = {
@@ -84,14 +86,22 @@ export default class PointList2 extends React.Component {
     page: 1,
     totalpage: 10,
   }
-
   componentWillMount() {
-    const { pointList } = this.props;
+    const { pointList, history: { location }, data } = this.props;
+    const { search } = location;
     if (pointList[type] && pointList[type].page !== 1) {
       this.currentFilter();
       return;
     }
     this.fetchDataSource({});
+    if (data && !Object.keys(data.monthly).length) {
+      let paramsUrl = '';
+      if (search && search.length > 1 && search[0] === '?') {
+        paramsUrl = search.slice(1);
+      }
+      this.staff_sn = getUrlString('staff_sn', paramsUrl);
+      this.getStatisticData(this.staff_sn ? { staff_sn: this.staff_sn } : {});
+    }
   }
 
   componentWillReceiveProps(props) {
@@ -148,6 +158,14 @@ export default class PointList2 extends React.Component {
     });
   }
 
+  getStatisticData = (params) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'statistic/pointStatistic',
+      payload: { ...params },
+    });
+  }
+
   fetchFiltersDataSource = (params) => {
     this.setState({
       page: 1,
@@ -181,8 +199,8 @@ export default class PointList2 extends React.Component {
   fetchDataSource = (params) => {
     const { dispatch, allTabs, location } = this.props;
     const currentTab = allTabs[type];
-    this.sorter = (params && params.sort) || 'created_at-desc';
     const currentParams = parseParams(currentTab);
+    this.sorter = (params && params.sort) || currentParams.sort || 'created_at-desc';
     const newParams = { page: 1, pagesize: 10, ...currentParams, ...params };
     const staffSn = getUrlParams(location.search).staff_sn;
     if (staffSn) newParams.staff_sn = staffSn;
@@ -224,7 +242,7 @@ export default class PointList2 extends React.Component {
   }
 
   render() {
-    const { pointList } = this.props;
+    const { pointList, data: { monthly } } = this.props;
     const { data } = pointList;
     const { page, totalpage } = this.state;
     let [sortItem] = sortList.filter(item => item.value === this.sorter);
@@ -235,6 +253,20 @@ export default class PointList2 extends React.Component {
     return (
       <Flex direction="column">
         <Flex.Item className={style.header}>
+          <div className={style.header_info}>
+            <div className={style.ranking_user_info}>
+              <PersonIcon
+                value={monthly}
+                footer={false}
+                nameKey="staff_name"
+                itemStyle={{ marginBottom: 0, marginRight: '0.5333rem' }}
+              />
+              <div>
+                <p style={{ fontSize: '14px' }}>{monthly.staff_name}({monthly.staff_sn})</p>
+                <p style={{ fontSize: '12px', marginTop: '0.26667rem' }}>{monthly.department_name}/{monthly.brand_name}</p>
+              </div>
+            </div>
+          </div>
           <div className={style.filter_con}>
             <Flex
               justify="between"
@@ -267,7 +299,7 @@ export default class PointList2 extends React.Component {
               model={this.state.model}
               filters={this.filters}
               sorter={this.sorter}
-              top="1.17333rem"
+              top="3.62rem"
               onResetForm={this.onResetForm}
               filterColumns={filterColumns}
               sorterData={sortList}
