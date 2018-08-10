@@ -27,7 +27,7 @@ function EventInfo({ data }) {
         {data.description || '无'}
       </Description>
       <Description term={(
-        <span>事件配置</span>
+        <span>参与人</span>
       )}
       >
         {list.map((item, index) => {

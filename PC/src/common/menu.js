@@ -43,6 +43,20 @@ const menuData = [
   {
     name: '积分',
     path: 'point',
+    children: [
+      {
+        name: '我的积分',
+        path: 'my',
+      },
+      {
+        name: '积分明细',
+        path: 'detail',
+      },
+      {
+        name: '积分排名',
+        path: 'ranking',
+      },
+    ],
   },
 ];
 

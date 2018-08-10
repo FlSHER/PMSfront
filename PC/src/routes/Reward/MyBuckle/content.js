@@ -35,7 +35,7 @@ export default function CheckInfo({ data }) {
       </div>
       <div className={styles.contentInfo}>
         <div className={styles.eventTitle}>
-          <div>事件配置</div>
+          <div>参与人</div>
           <div className={styles.eventCount} />
         </div>
         <DescriptionList size="large" col={1} >
@@ -47,7 +47,7 @@ export default function CheckInfo({ data }) {
               });
               return (
                 <div key={key} className={cls}>
-                  <Ellipsis lines={1} className={styles.userName}>
+                  <Ellipsis lines={1} className={styles.userName} style={{ marginRight: 36 }}>
                     {item.staff_name}
                   </Ellipsis>
                   <span className={styles.userPoint}>A：<i>{`${item.point_a * item.count} (${item.point_a}x${item.count})`}</i></span>

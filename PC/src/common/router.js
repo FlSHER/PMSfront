@@ -77,6 +77,7 @@ const model = [
   'buckle',
   'table',
   'tabs',
+  'point',
 ];
 
 export const getRouterData = (app) => {
@@ -108,6 +109,10 @@ export const getRouterData = (app) => {
     '/check/my-peruser': {
       component: dynamicWrapper(app, [], () => import('../routes/Check/MyPeruser')),
     },
+    '/point/detail': {
+      component: dynamicWrapper(app, [], () => import('../routes/Point/detail')),
+    },
+
     '/exception/403': {
       component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
     },
