@@ -1,17 +1,12 @@
-import { Form } from 'antd';
-import Config from './Config';
+import React from 'react';
 
-export default function create(options) {
-  const newOption = {
-    ...options,
-    onValuesChange(props, fieldValue, allValues) {
-      props.onChange(allValues, props.index);
-      const [name] = Object.keys(fieldValue);
-      props.setFiedError(name);
-    },
+import { Form } from 'antd';
+
+export default option => (Component) => {
+  const FormComponent = (props) => {
+    const { bindForm, form } = props;
+    bindForm(form);
+    return <Component {...props} />;
   };
-  return function configAndCreate(FormComponet) {
-    const createdComponent = Form.create(newOption)(FormComponet);
-    return Config(createdComponent);
-  };
-}
+  return Form.create(option)(FormComponent);
+};

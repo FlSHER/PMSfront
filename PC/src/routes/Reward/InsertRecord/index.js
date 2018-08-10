@@ -3,28 +3,26 @@ import { Input, Button } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
-import OAForm from '../../../components/OAForm';
+import OAForm, {
+  create,
+  DatePicker,
+  SearchTable,
+} from '../../../components/OAForm';
 import { EventSearch } from '../../../components/SearchSelect';
 import WorkingStaff from '../../common/Table/workingStaff';
 // import { unicodeFieldsError } from '../../../utils/utils';
 
 const FormItem = OAForm.Item;
 const { TextArea } = Input;
-const {
-  DatePicker,
-  SearchTable,
-} = OAForm;
-@OAForm.create()
 @connect(({ event, loading }) => ({
   finalStaff: event.finalStaff,
   loading: loading.effects['buckle/addBuckle'],
   finalLoading: loading.effects['event/fetchFinalStaff'],
 }))
+@create()
 export default class extends React.PureComponent {
   constructor(props) {
     super(props);
-    const { form, bindForm } = props;
-    bindForm(form);
     this.state = {
       eventId: null,
       pointRange: {
@@ -38,7 +36,6 @@ export default class extends React.PureComponent {
       },
     };
   }
-
 
   handleChange = (value) => {
     const a = parseFloat(value.point_a_default);
@@ -109,47 +106,45 @@ export default class extends React.PureComponent {
     onError(error, this.extraError);
   }
 
-  handleSubmit = () => {
-    const { form: { validateFields }, dispatch } = this.props;
-    validateFields((_, values) => {
-      const events = [];
-      events.push({
-        event_id: values.event_id.id || '',
-        description: values.description || '',
-        participants: values.participants || '',
-      });
-      const params = { events, ...values };
-      params.remaker = values.description || '';
-      params.title = values.event_id.name || '';
+  handleSubmit = (values) => {
+    const { dispatch } = this.props;
+    const events = [];
+    events.push({
+      event_id: values.event_id.id || '',
+      description: values.description || '',
+      participants: values.participants || '',
+    });
+    const params = { events, ...values };
+    params.remaker = values.description || '';
+    params.title = values.event_id.name || '';
 
-      params.first_approver_sn = params.first.first_approver_sn || '';
-      params.first_approver_name = params.first.first_approver_name || '';
-      params.final_approver_sn = params.last.final_approver_sn || '';
-      params.final_approver_name = params.last.final_approver_name || '';
-      params.event_count = 1;
-      params.participant_count = values.participants.length;
+    params.first_approver_sn = params.first.first_approver_sn || '';
+    params.first_approver_name = params.first.first_approver_name || '';
+    params.final_approver_sn = params.last.final_approver_sn || '';
+    params.final_approver_name = params.last.final_approver_name || '';
+    params.event_count = 1;
+    params.participant_count = values.participants.length;
 
-      params.addressees = values.addressees.map((item) => {
-        const temp = { ...item };
-        delete temp.disabled;
-        return temp;
-      });
+    params.addressees = values.addressees.map((item) => {
+      const temp = { ...item };
+      delete temp.disabled;
+      return temp;
+    });
 
 
-      delete params.first;
-      delete params.last;
-      delete params.event_id;
-      delete params.description;
-      delete params.participants;
+    delete params.first;
+    delete params.last;
+    delete params.event_id;
+    delete params.description;
+    delete params.participants;
 
-      dispatch({
-        type: 'buckle/addBuckle',
-        payload: params,
-        onError: this.handleError,
-        onSuccess: (result) => {
-          dispatch(routerRedux.push(`/reward/buckle/success/${result.id}`));
-        },
-      });
+    dispatch({
+      type: 'buckle/addBuckle',
+      payload: params,
+      onError: this.handleError,
+      onSuccess: (result) => {
+        dispatch(routerRedux.push(`/reward/buckle/success/${result.id}`));
+      },
     });
   }
 
@@ -159,14 +154,6 @@ export default class extends React.PureComponent {
     dispatch({ type: 'event/fetchFinalStaff', payload: params });
   }
 
-  makeFormProps = () => {
-    const { form, loading } = this.props;
-    const response = {
-      form,
-      loading,
-    };
-    return response;
-  }
 
   makeColumns = () => {
     return [
@@ -253,7 +240,7 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { form: { getFieldDecorator } } = this.props;
+    const { form: { getFieldDecorator }, onSubmit } = this.props;
     const { defaultPoint, eventId, pointRange } = this.state;
     const userInfo = window.user || {};
     const formItemLayout = {
@@ -264,7 +251,10 @@ export default class extends React.PureComponent {
 
     return (
       <div style={{ width, margin: '0 auto' }}>
-        <OAForm {...this.makeFormProps()} style={{ padding: 10, width }}>
+        <OAForm
+          onSubmit={onSubmit(this.handleSubmit)}
+          style={{ padding: 10, width }}
+        >
           <FormItem label="事件" {...formItemLayout}>
             {getFieldDecorator('event_id', {
               initialValue: {},
@@ -354,7 +344,7 @@ export default class extends React.PureComponent {
             )}
           </FormItem>
           <FormItem style={{ left: '50%', marginLeft: '-60px' }}>
-            <Button style={{ width: 120 }} type="primary" htmlType="submit" onClick={this.handleSubmit}>提交</Button>
+            <Button style={{ width: 120 }} type="primary" htmlType="submit" >提交</Button>
           </FormItem>
         </OAForm>
       </div>

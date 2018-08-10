@@ -1,15 +1,12 @@
 import React, { PureComponent } from 'react';
-import { notification } from 'antd';
 import OAForm from './index';
 import OAModal from '../OAModal';
+import Operator from './operator';
 import './notification.less';
 
 const defaultProps = {
-  form: {},
-  children: {},
   formProps: {},
   onChange: null,
-  id: null,
   loading: false,
   onSubmit: () => {
 
@@ -19,38 +16,13 @@ const defaultProps = {
   },
 };
 export default class Modal extends PureComponent {
-  handleSubmit = () => {
-    const { form, onSubmit } = this.props;
-    form.validateFields((err, values) => {
-      if (!err) {
-        onSubmit(values, this.handleOnError);
-      }
-    });
-  }
-
-  handleOnError = (error, message) => {
-    if (Object.keys(error).length) {
-      Object.keys(error).forEach((i) => {
-        this.props.form.setFields({
-          [i]: { errors: [new Error(error[i][0])] },
-        });
-      });
-      this.props.onError(error);
-    } else if (message) {
-      notification.error({
-        message: '错误信息!!',
-        description: message,
-      });
-    }
-  }
-
   makeModalProps = () => {
-    const { title, okText } = this.props;
+    const { title, okText, onSubmit } = this.props;
     const response = {
       ...this.props,
       title: title || '表单',
       okText: okText || '确定',
-      onOk: this.handleSubmit,
+      onOk: onSubmit,
       destroyOnClose: true,
     };
     Object.keys(defaultProps).forEach((key) => {
@@ -60,25 +32,27 @@ export default class Modal extends PureComponent {
   }
 
   makeOAFormProps = () => {
-    const { formProps, form, autoSave, loading } = this.props;
-    const response = {
-      form,
-      autoSave,
-      loading,
-      ...formProps,
-    };
+    const { formProps } = this.props;
+    const response = { ...formProps };
     return response;
   }
 
   render() {
-    const { children } = this.props;
+    const { children, localBackUpKey, savelocalBackUp } = this.props;
     return (
-      <OAModal
-        {...this.makeModalProps()}
-      >
-        <OAForm
-          {...this.makeOAFormProps()}
-        >
+      <OAModal {...this.makeModalProps()}>
+        {(savelocalBackUp) && (
+          <Operator
+            autoSave
+            ref={(e) => {
+              this.opertor = e;
+            }}
+            localBackUpKey={localBackUpKey}
+            savelocalBackUp={this.props.savelocalBackUp}
+            getlocalBackUp={this.props.getlocalBackUp}
+          />
+        )}
+        <OAForm {...this.makeOAFormProps()}>
           {children}
         </OAForm>
       </OAModal>

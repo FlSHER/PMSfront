@@ -2,26 +2,21 @@ import React from 'react';
 import { InputNumber, Input } from 'antd';
 import { connect } from 'dva';
 import Ellipsis from 'ant-design-pro/lib/Ellipsis';
-import OAForm from '../../../components/OAForm';
+import OAForm, { create, OAModal } from '../../../components/OAForm';
 import styles from './index.less';
 import { getBuckleTitle } from '../../../utils/utils';
 
 const FormItem = OAForm.Item;
-const {
-  OAModal,
-} = OAForm;
 
+@create()
 @connect(({ loading }) => ({
-  approveLoading: loading.effects['buckle/approve'],
-  rejectLoading: loading.effects['buckle/reject'],
+  loading: (
+    loading.effects['buckle/approve']
+    ||
+    loading.effects['buckle/reject']
+  ),
 }))
-@OAForm.create()
 export default class extends React.PureComponent {
-  componentWillMount() {
-    const { bindForm, form } = this.props;
-    bindForm(form);
-  }
-
   fetch = (params, type) => {
     const { dispatch, onError, editInfo } = this.props;
     dispatch({
@@ -67,6 +62,8 @@ export default class extends React.PureComponent {
       form,
       title,
       editInfo,
+      loading,
+      onSubmit,
       form: { getFieldDecorator },
     } = this.props;
     const formItemLayout = {
@@ -74,7 +71,6 @@ export default class extends React.PureComponent {
       wrapperCol: { span: 20 },
     };
     const newTitle = getBuckleTitle(title);
-    const loading = this.props.approveLoading || this.props.rejectLoading;
     return (
       <OAModal
         width={550}
@@ -82,7 +78,7 @@ export default class extends React.PureComponent {
         loading={loading}
         visible={visible}
         title={`${newTitle}`}
-        onSubmit={this.handleSubmit}
+        onSubmit={onSubmit(this.handleSubmit)}
         onCancel={() => onCancel(false)}
       >
         <FormItem label="审批意见" {...formItemLayout}>

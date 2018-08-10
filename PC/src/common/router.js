@@ -84,6 +84,9 @@ export const getRouterData = (app) => {
     '/': {
       component: dynamicWrapper(app, model, () => import('../layouts/BasicLayout')),
     },
+    '/test': {
+      component: dynamicWrapper(app, [], () => import('../routes/Test')),
+    },
     '/reward/buckle': {
       component: dynamicWrapper(app, [], () => import('../routes/Reward/Buckle')),
     },

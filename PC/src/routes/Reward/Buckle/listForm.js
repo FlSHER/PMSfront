@@ -1,28 +1,18 @@
 import React from 'react';
 import { Input } from 'antd';
-import OAForm from '../../../components/OAForm';
+import OAForm, { FormList, create } from '../../../components/OAForm';
 import { EventSearch } from '../../../components/SearchSelect';
 import WorkingStaff from '../../common/Table/workingStaff';
 
-
 const { TextArea } = Input;
 const FormItem = OAForm.Item;
-const {
-  FormList,
-} = OAForm;
+
 @FormList
-@OAForm.create({
-  onValuesChange(props, fieldValue, allValues) {
-    props.onChange(allValues, props.index);
-    const [name] = Object.keys(fieldValue);
-    props.setFiedError(name);
-  },
-})
+@create()
 export default class extends React.PureComponent {
   constructor(props) {
     super(props);
-    const { form, bindForm, value } = props;
-    bindForm(form);
+    const { value } = props;
     this.state = {
       eventId: value.event_id || null,
       pointRange: {
@@ -74,13 +64,6 @@ export default class extends React.PureComponent {
     });
   }
 
-  makeFormProps = () => {
-    const { form } = this.props;
-    const response = {
-      form,
-    };
-    return response;
-  }
 
   render() {
     const { form: { getFieldDecorator }, value } = this.props;
@@ -91,7 +74,7 @@ export default class extends React.PureComponent {
       wrapperCol: { span: 20 },
     };
     return (
-      <OAForm {...this.makeFormProps()} style={{ padding: 10, width: 670 }}>
+      <OAForm style={{ padding: 10, width: 670 }}>
         <FormItem label="事件" {...formItemLayout}>
           {getFieldDecorator('event_id', {
             initialValue: value.event_id ? { id: value.event_id } : {},

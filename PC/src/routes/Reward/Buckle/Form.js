@@ -1,31 +1,31 @@
 import React from 'react';
-import { Input, Button, Spin, Steps, message } from 'antd';
+import { Input, Button, Steps, message } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
-import OAForm from '../../../components/OAForm';
+import OAForm, {
+  DatePicker,
+  SearchTable,
+  create,
+} from '../../../components/OAForm';
 import ListForm from './listForm';
 // import { unicodeFieldsError } from '../../../utils/utils';
 const { Step } = Steps;
-
 const FormItem = OAForm.Item;
-const {
-  DatePicker,
-  SearchTable,
-} = OAForm;
-@OAForm.create()
+@create()
 @connect(({ event, buckle, loading }) => ({
   finalStaff: event.finalStaff,
   buckleInfo: buckle.buckleGropusDetails,
-  loadingInfo: loading.effects['buckle/fetchBuckleGroupsInfo'],
-  loading: loading.effects['buckle/addBuckle'],
+  loading: (
+    loading.effects['buckle/addBuckle']
+    ||
+    loading.effects['buckle/fetchBuckleGroupsInfo']
+  ),
   finalLoading: loading.effects['event/fetchFinalStaff'],
 }))
 export default class extends React.PureComponent {
   constructor(props) {
     super(props);
-    const { form, bindForm } = props;
-    bindForm(form);
     this.state = {
       listFormValue: [{}],
       eventsError: {},
@@ -105,47 +105,45 @@ export default class extends React.PureComponent {
     }
   }
 
-  handleSubmit = () => {
-    const { form: { validateFields }, dispatch } = this.props;
+  handleSubmit = (values) => {
+    const { dispatch } = this.props;
     const { listFormValue } = this.state;
-    validateFields((_, values) => {
-      const events = [];
-      listFormValue.forEach((item) => {
-        if (Object.keys(item).length) {
-          events.push(item);
-        } else {
-          events.push({
-            description: '',
-            event_id: '',
-            participants: [],
-          });
-        }
-      });
-      const params = {
-        events,
-        ...values,
-      };
-      params.first_approver_sn = params.first.first_approver_sn || '';
-      params.first_approver_name = params.first.first_approver_name || '';
-      params.final_approver_sn = params.last.final_approver_sn || '';
-      params.final_approver_name = params.last.final_approver_name || '';
-      params.event_count = events.length;
-      params.participant_count = 0;
-      listFormValue.forEach((item) => {
-        if (item && item.participants) {
-          params.participant_count += item.participants.length;
-        }
-      });
-      delete params.first;
-      delete params.last;
-      dispatch({
-        type: 'buckle/addBuckle',
-        payload: params,
-        onError: this.handleError,
-        onSuccess: (result) => {
-          dispatch(routerRedux.push(`/reward/buckle/success/${result.id}`));
-        },
-      });
+    const events = [];
+    listFormValue.forEach((item) => {
+      if (Object.keys(item).length) {
+        events.push(item);
+      } else {
+        events.push({
+          description: '',
+          event_id: '',
+          participants: [],
+        });
+      }
+    });
+    const params = {
+      events,
+      ...values,
+    };
+    params.first_approver_sn = params.first.first_approver_sn || '';
+    params.first_approver_name = params.first.first_approver_name || '';
+    params.final_approver_sn = params.last.final_approver_sn || '';
+    params.final_approver_name = params.last.final_approver_name || '';
+    params.event_count = events.length;
+    params.participant_count = 0;
+    listFormValue.forEach((item) => {
+      if (item && item.participants) {
+        params.participant_count += item.participants.length;
+      }
+    });
+    delete params.first;
+    delete params.last;
+    dispatch({
+      type: 'buckle/addBuckle',
+      payload: params,
+      onError: this.handleError,
+      onSuccess: (result) => {
+        dispatch(routerRedux.push(`/reward/buckle/success/${result.id}`));
+      },
     });
   }
 
@@ -155,13 +153,6 @@ export default class extends React.PureComponent {
     dispatch({ type: 'event/fetchFinalStaff', payload: params });
   }
 
-  makeFormProps = () => {
-    const { form } = this.props;
-    const response = {
-      form,
-    };
-    return response;
-  }
 
   makeColumns = () => {
     return [
@@ -247,7 +238,7 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { form: { getFieldDecorator }, buckleInfo, loadingInfo, loading } = this.props;
+    const { form: { getFieldDecorator }, buckleInfo, onSubmit, validatorRequired } = this.props;
     const { listFormValue, eventsError, current } = this.state;
     const userInfo = window.user || {};
     const formItemLayout = {
@@ -269,118 +260,106 @@ export default class extends React.PureComponent {
     }
     return (
       <div style={{ width, margin: '0 auto' }}>
-        <Spin spinning={loadingInfo || loading || false}>
-          <Steps current={current} style={{ marginBottom: 20 }}>
-            <Step title="添加事件" />
-            <Step title="编辑主题" />
-          </Steps>
-          <div style={{ display: current === 0 ? 'block' : 'none' }}>
-            <ListForm
-              errors={eventsError}
-              initialValue={id ? (formFieldsValue.logs || []) : listFormValue}
-              onChange={this.handleListFormChange}
-              style={{ width, marginTop: 10 }}
-              placeholder="添加事件"
-            />
-          </div>
-          <OAForm {...this.makeFormProps()} style={{ padding: 10, width, display: current === 1 ? 'block' : 'none' }}>
-            <FormItem label="主题" {...formItemLayout}>
-              {getFieldDecorator('title', {
-                initialValue: formFieldsValue.title || '',
-              })(
-                <Input placeholder="请输入" />
-              )}
-            </FormItem>
-            <FormItem label="事件日期" {...formItemLayout}>
-              {getFieldDecorator('executed_at', {
-                initialValue: formFieldsValue.executed_at || moment().format('L'),
-              })(
-                <DatePicker
-                  disabledDate={(currentData) => {
-                    return currentData > moment();
-                  }}
-                  placeholder="请输入"
-                  showToday={false}
-                  style={{ width: '100%' }}
-                />
-              )}
-            </FormItem>
-            <FormItem label="初审人" {...formItemLayout} >
-              {getFieldDecorator('first', {
-                initialValue: {
-                  first_approver_sn: formFieldsValue.first_approver_sn || userInfo.staff_sn || '',
-                  first_approver_name: formFieldsValue.first_approver_name || userInfo.realname || '',
-                },
-              })(
-                <SearchTable.Staff
-                  mode="user"
-                  name={{
-                    first_approver_sn: 'staff_sn',
-                    first_approver_name: 'realname',
-                  }}
-                  showName="first_approver_name"
-                />
-              )}
-            </FormItem>
-            <FormItem label="终审人" {...formItemLayout} >
-              {getFieldDecorator('last', {
-                initialValue: formFieldsValue.final_approver_sn ? {
-                  final_approver_sn: formFieldsValue.final_approver_sn,
-                  final_approver_name: formFieldsValue.final_approver_name,
-                } : {},
-              })(
-                <SearchTable
-                  mode="user"
-                  name={{
-                    final_approver_sn: 'staff_sn',
-                    final_approver_name: 'staff_name',
-                  }}
-                  showName="final_approver_name"
-                  tableProps={{
-                    ...this.makeLastApproverProps(),
-                  }}
-                />
-              )}
-            </FormItem>
-            <FormItem label="抄送人" {...formItemLayout} >
-              {getFieldDecorator('addressees', {
-                initialValue: formFieldsValue.addressees || [],
-              })(
-                <SearchTable.Staff
-                  mode="user"
-                  multiple
-                  name={{ staff_sn: 'staff_sn', staff_name: 'realname' }}
-                  showName="staff_name"
-                />
-              )}
-            </FormItem>
-            <FormItem label="备注" {...formItemLayout}>
-              {getFieldDecorator('remark', {
-                initialValue: formFieldsValue.remark || '',
-              })(
-                <Input.TextArea placeholder="请输入备注说明......" style={{ height: 90 }} />
-              )}
-            </FormItem>
-          </OAForm>
-          {
-            current === 0
-            && (
-              <React.Fragment>
-                <FormItem style={{ textAlign: 'right', marginTop: 20 }}>
-                  <span id="ccc" style={{ fontSize: 12, color: '#969696', marginRight: 10 }}>
-                    <span style={{ marginRight: 30 }}>事件数量：{listFormValue.length}</span>
-                    <span>总人次：{staffNumber}</span>
-                  </span>
-                  <Button
-                    type="primary"
-                    style={{ width: 120 }}
-                    onClick={() => this.next()}
-                  >下一步
-                  </Button>
-                </FormItem>
-              </React.Fragment>
-            )
-          }
+
+        <Steps current={current} style={{ marginBottom: 20 }}>
+          <Step title="添加事件" />
+          <Step title="编辑主题" />
+        </Steps>
+        <div style={{ display: current === 0 ? 'block' : 'none' }}>
+          <ListForm
+            errors={eventsError}
+            initialValue={id ? (formFieldsValue.logs || []) : listFormValue}
+            onChange={this.handleListFormChange}
+            style={{ width, marginTop: 10 }}
+            placeholder="添加事件"
+          />
+        </div>
+        <OAForm
+          hideRequiredMark
+          onSubmit={onSubmit(this.handleSubmit)}
+          style={{ padding: 10, width, display: current === 1 ? 'block' : 'none' }}
+        >
+          <FormItem label="主题" {...formItemLayout}>
+            {getFieldDecorator('title', {
+              initialValue: formFieldsValue.title || '',
+              rules: [validatorRequired],
+            })(
+              <Input placeholder="请输入" />
+            )}
+          </FormItem>
+          <FormItem label="事件日期" {...formItemLayout}>
+            {getFieldDecorator('executed_at', {
+              initialValue: formFieldsValue.executed_at || moment().format('L'),
+              rules: [validatorRequired],
+            })(
+              <DatePicker
+                disabledDate={(currentData) => {
+                  return currentData > moment();
+                }}
+                placeholder="请输入"
+                showToday={false}
+                style={{ width: '100%' }}
+              />
+            )}
+          </FormItem>
+          <FormItem label="初审人" {...formItemLayout} >
+            {getFieldDecorator('first', {
+              initialValue: {
+                first_approver_sn: formFieldsValue.first_approver_sn || userInfo.staff_sn || '',
+                first_approver_name: formFieldsValue.first_approver_name || userInfo.realname || '',
+              },
+              rules: [validatorRequired],
+            })(
+              <SearchTable.Staff
+                mode="user"
+                name={{
+                  first_approver_sn: 'staff_sn',
+                  first_approver_name: 'realname',
+                }}
+                showName="first_approver_name"
+              />
+            )}
+          </FormItem>
+          <FormItem label="终审人" {...formItemLayout} >
+            {getFieldDecorator('last', {
+              initialValue: formFieldsValue.final_approver_sn ? {
+                final_approver_sn: formFieldsValue.final_approver_sn,
+                final_approver_name: formFieldsValue.final_approver_name,
+              } : {},
+              rules: [validatorRequired],
+            })(
+              <SearchTable
+                mode="user"
+                name={{
+                  final_approver_sn: 'staff_sn',
+                  final_approver_name: 'staff_name',
+                }}
+                showName="final_approver_name"
+                tableProps={{
+                  ...this.makeLastApproverProps(),
+                }}
+              />
+            )}
+          </FormItem>
+          <FormItem label="抄送人" {...formItemLayout} >
+            {getFieldDecorator('addressees', {
+              initialValue: formFieldsValue.addressees || [],
+            })(
+              <SearchTable.Staff
+                mode="user"
+                multiple
+                name={{ staff_sn: 'staff_sn', staff_name: 'realname' }}
+                showName="staff_name"
+              />
+            )}
+          </FormItem>
+          <FormItem label="备注" {...formItemLayout}>
+            {getFieldDecorator('remark', {
+              initialValue: formFieldsValue.remark || '',
+            })(
+              <Input.TextArea placeholder="请输入备注说明......" style={{ height: 90 }} />
+            )}
+          </FormItem>
           {
             current === 1
             && (
@@ -393,13 +372,31 @@ export default class extends React.PureComponent {
                     }}
                   >上一步
                   </Button>
-                  <Button style={{ width: 120, marginLeft: 20 }} type="primary" htmlType="submit" onClick={this.handleSubmit}>提交</Button>
-
+                  <Button style={{ width: 120, marginLeft: 20 }} type="primary" htmlType="submit" >提交</Button>
                 </FormItem>
               </React.Fragment>
             )
           }
-        </Spin>
+        </OAForm>
+        {
+          current === 0
+          && (
+            <React.Fragment>
+              <FormItem style={{ textAlign: 'right', marginTop: 20 }}>
+                <span id="ccc" style={{ fontSize: 12, color: '#969696', marginRight: 10 }}>
+                  <span style={{ marginRight: 30 }}>事件数量：{listFormValue.length}</span>
+                  <span>总人次：{staffNumber}</span>
+                </span>
+                <Button
+                  type="primary"
+                  style={{ width: 120 }}
+                  onClick={() => this.next()}
+                >下一步
+                </Button>
+              </FormItem>
+            </React.Fragment>
+          )
+        }
       </div>
     );
   }

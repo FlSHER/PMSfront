@@ -1,32 +1,29 @@
 import React from 'react';
 import { Input, Icon } from 'antd';
-import OAForm from '../../../../components/OAForm';
+import OAForm, { OAModal, create } from '../../../../components/OAForm';
 import styles from './index.less';
 
 const FormItem = OAForm.Item;
-const {
-  OAModal,
-} = OAForm;
-@OAForm.create()
+
+@create()
 export default class BatchForm extends React.PureComponent {
   makeModalProps = () => {
-    const { visible, onCancel, handleChange } = this.props;
+    const { visible, onCancel, handleChange, onSubmit } = this.props;
     const response = {
       visible,
       width: 550,
       title: '批量修改',
-      onSubmit: handleChange,
+      onSubmit: onSubmit(handleChange),
       onCancel: () => onCancel(false),
     };
     return response;
   }
 
   render() {
-    const { form, form: { getFieldDecorator }, pointRange } = this.props;
+    const { form: { getFieldDecorator }, pointRange } = this.props;
     const style = { width: '90px' };
     return (
       <OAModal
-        form={form}
         formProps={{ layout: 'inline' }}
         {...this.makeModalProps()}
       >

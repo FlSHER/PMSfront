@@ -4,7 +4,7 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
 import OATable from '../../../components/OATable';
-import OAForm from '../../../components/OAForm';
+import OAForm, { OAModal, create } from '../../../components/OAForm';
 import BuckleInfo from './info';
 import { makerFilters, getBuckleStatus, statusData } from '../../../utils/utils';
 import styles from './index.less';
@@ -25,27 +25,19 @@ const cate = [
 ];
 
 const FormItem = OAForm.Item;
-const { OAModal } = OAForm;
 
-
+@create()
 @connect(({ buckle, loading }) => ({
   buckle,
-  loading: loading.effects['buckle/fetchBuckleGroups'],
-  cancelLoading: loading.effects['buckle/withdrawBuckle'],
+  fetching: loading.effects['buckle/fetchBuckleGroups'],
+  loading: loading.effects['buckle/withdrawBuckle'],
 }))
-@OAForm.create()
 export default class extends React.PureComponent {
   state = {
     editInfo: {},
     visible: false,
     id: null,
   };
-
-  componentWillMount() {
-    const { bindForm, form } = this.props;
-    bindForm(form);
-  }
-
 
   fetch = (_, params) => {
     const { dispatch, type } = this.props;
@@ -344,7 +336,7 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { form, buckle, loading, type, visible, onClose, cancelLoading } = this.props;
+    const { form, buckle, fetching, type, visible, onClose, onSubmit } = this.props;
     const { getFieldDecorator } = form;
     const { editInfo } = this.state;
     const reuslt = buckle[type];
@@ -357,11 +349,9 @@ export default class extends React.PureComponent {
       <React.Fragment>
         <OAModal
           width={550}
-          form={form}
-          loading={cancelLoading}
           visible={this.state.visible}
           title="撤回"
-          onSubmit={this.handleSubmit}
+          onSubmit={onSubmit(this.handleSubmit)}
           onCancel={() => {
             this.setState({ visible: false });
           }}
@@ -378,7 +368,7 @@ export default class extends React.PureComponent {
           serverSide
           autoScroll
           id={type}
-          loading={loading}
+          loading={fetching}
           scroll={{ x }}
           columns={this.makeColums()}
           data={reuslt.data || []}

@@ -90,17 +90,18 @@ export default class extends React.PureComponent {
         render: (participants) => {
           const mePoint = participants.find(item => item.staff_sn === user.staff_sn) || {};
           return (
-            <Tooltip title={(
-              <React.Fragment>
-                {`A：${mePoint.point_a * mePoint.count}（${mePoint.point_a}x${mePoint.count}） `}
-                {`B：${mePoint.point_b * mePoint.count}（${mePoint.point_b}x${mePoint.count}）`}
-              </React.Fragment>
-            )}
+            <Tooltip
+              title={(
+                <React.Fragment>
+                  {`A：${mePoint.point_a * mePoint.count}（${mePoint.point_a}x${mePoint.count}） `}
+                  {`B：${mePoint.point_b * mePoint.count}（${mePoint.point_b}x${mePoint.count}）`}
+                </React.Fragment>
+              )}
             >
-              <span style={{ width: 102, display: 'inline-block' }}>
+              <span style={{ width: '50%', display: 'inline-block' }}>
                 {`A：${mePoint.point_a * mePoint.count}`}
               </span>
-              <span style={{ width: 102, display: 'inline-block' }}>
+              <span style={{ width: '50%', display: 'inline-block' }}>
                 {`B：${mePoint.point_b * mePoint.count}`}
               </span>
             </Tooltip>
