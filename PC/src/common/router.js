@@ -112,6 +112,9 @@ export const getRouterData = (app) => {
     '/point/detail': {
       component: dynamicWrapper(app, [], () => import('../routes/Point/detail')),
     },
+    '/point/my': {
+      component: dynamicWrapper(app, [], () => import('../routes/Point/my')),
+    },
 
     '/exception/403': {
       component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
