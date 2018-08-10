@@ -24,7 +24,7 @@ const person = [
 @connect(({ buckle }) => ({
   detail: buckle.detail,
 }))
-export default class BuckleRecord extends React.Component {
+export default class AuditReason extends React.Component {
   constructor(props) {
     if (!Object.keys(props.detail).length) {
       props.history.goBack(-1);
@@ -118,7 +118,7 @@ export default class BuckleRecord extends React.Component {
         direction="column"
       >
         <div className={styles.con_content}>
-          <WhiteSpace size="sm" />
+          <WhiteSpace size="md" />
           {type === '1' && state === 'yes' ? (
             <WingBlank className={style.parcel}>
               <div className={style.players}>
@@ -172,11 +172,9 @@ export default class BuckleRecord extends React.Component {
 
         </div>
         <div className={styles.footer}>
-          <WingBlank>
-            <div className={style.opt}>
-              {state === 'yes' ? <Button type="primary" onClick={this.doAudit}>通过</Button> : <Button type="primary" onClick={this.doAudit}>驳回</Button>}
-            </div>
-          </WingBlank>
+          <div className={style.opt}>
+            {state === 'yes' ? <Button type="primary" onClick={this.doAudit}>通过</Button> : <Button type="primary" onClick={this.doAudit}>驳回</Button>}
+          </div>
         </div>
       </div>
     );

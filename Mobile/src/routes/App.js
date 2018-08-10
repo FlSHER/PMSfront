@@ -32,11 +32,13 @@ export default class App extends React.Component {
       });
     }
   }
+
   componentWillReceiveProps(props) {
     if (this.props.location !== props.location) {
       spin(false);
     }
   }
+
   render() {
     const {
       // loading,

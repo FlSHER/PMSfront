@@ -74,7 +74,7 @@ export default {
     },
 
     *withdrawBuckle({ payload }, { call }) {
-      const response = yield call(withdrawBuckle, payload.id);
+      const response = yield call(withdrawBuckle, payload.data);
       if (response && !response.error) {
         Toast.success(response.message);
         payload.cb();

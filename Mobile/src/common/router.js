@@ -102,6 +102,9 @@ export const getRouterData = (app) => {
     '/audit_reason/:type/:state/:level': {
       component: dynamicWrapper(app, [], () => import('../routes/Buckle/audit/auditReason')),
     },
+    '/operate_reason/:id': {
+      component: dynamicWrapper(app, [], () => import('../routes/Buckle/mine/operateReason')),
+    },
     '/audit_detail/:id': {
       component: dynamicWrapper(app, ['buckle', 'oauth'], () => import('../routes/Buckle/audit/auditDetail')),
     },

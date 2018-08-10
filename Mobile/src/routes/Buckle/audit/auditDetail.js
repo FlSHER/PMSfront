@@ -359,26 +359,44 @@ export default class AuditDetail extends React.Component {
             </React.Fragment>
           ) : null}
           {newDetail.recorder_name && (
-          <React.Fragment>
-            <WhiteSpace size="md" />
-            <WingBlank className={style.parcel}>
-              <div className={style.players}>
-                <Flex className={style.title}> 记录人</Flex>
-                <Flex
-                  className={style.person_list}
-                  wrap="wrap"
-                >
-                  <PersonIcon
-                    value={newDetail}
-                    type="1"
-                    nameKey="recorder_name"
-                  />
-                </Flex>
-              </div>
-            </WingBlank>
-          </React.Fragment>
-          )
-         }
+            <React.Fragment>
+              <WhiteSpace size="md" />
+              <WingBlank className={style.parcel} >
+                <div className={style.players}>
+                  <Flex className={style.title}>记录人 </Flex>
+                  <Flex
+                    wrap="wrap"
+                    align="start"
+                    style={{ paddingTop: '0.4rem', paddingBottom: '0.4rem' }}
+                  >
+                    <div style={{ marginRight: '0.64rem' }}>
+                      <PersonIcon
+                        value={detail}
+                        type="1"
+                        nameKey="recorder_name"
+                        showNum={2}
+                        itemStyle={{ marginBottom: 0 }}
+                      />
+                    </div>
+                    {detail.status_id === -2 && (
+                    <div className={style.dec} >
+                      <div
+                        className={style.describe}
+                        style={{ background: 'rgb(240,240,240)' }}
+                      >
+                        <span style={{ borderRightColor: 'rgb(240,240,240)' }} />
+                        <p style={{ color: '#666' }}>
+                          撤回
+                        </p>
+                        <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{detail.revoke_remark}</p>
+                      </div>
+                    </div>
+                    )}
+                  </Flex>
+                </div>
+              </WingBlank>
+            </React.Fragment>
+          )}
 
           <WhiteSpace size="md" />
         </div>

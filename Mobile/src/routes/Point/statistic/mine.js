@@ -302,7 +302,15 @@ export default class Statistic extends React.Component {
 
   pointRedirect = () => {
     const { history } = this.props;
+    this.clearModal();
     history.push(`/point_list${this.urlParams.staff_sn ? `?staff_sn=${this.urlParams.staff_sn}` : ''}`);
+  }
+
+  clearModal = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'alltabs/clearModal',
+    });
   }
 
   renderEsChart = (elementChart, key) => {

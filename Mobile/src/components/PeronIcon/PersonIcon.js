@@ -14,7 +14,7 @@ class PersonIcon extends React.Component {
       value = {},
       nameKey,
     } = this.props;
-    const name = value[nameKey] ? value[nameKey] : '';
+    const name = value[nameKey] ? value[nameKey] : (value.realname || '');
     const newName = name.slice(name.length - (name.length < showNum ? name.length : showNum));
     return (
       <div

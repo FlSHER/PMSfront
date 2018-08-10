@@ -68,22 +68,29 @@ export default class EventPreview extends React.Component {
   }
 
   withDraw = () => {
-    const { dispatch, history } = this.props;
+    const { history } = this.props;
     const { id } = this.state;
-    dispatch({
-      type: 'buckle/withdrawBuckle',
-      payload: {
-        id,
-        cb: () => {
-          // history.push('/buckle_list');
-          history.goBack(-1);
-        },
-      },
-    });
+    // dispatch({
+    //   type: 'buckle/withdrawBuckle',
+    //   payload: {
+    //     id,
+    //     cb: () => {
+    //       // history.push('/buckle_list');
+    //       history.goBack(-1);
+    //     },
+    //   },
+    // });
+    history.push(`/operate_reason/${id}`);
   }
 
   doAudit = (type, state) => {
-    const { history, dispatch } = this.props;
+    const { history } = this.props;
+    this.saveCurrentDetail();
+    history.push(`/audit_reason/${type}/${state}/-1`);
+  }
+
+  saveCurrentDetail = () => {
+    const { dispatch } = this.props;
     const { details } = this.props;
     const { id } = this.state;
     const detail = { ...details[id] || {} };
@@ -94,9 +101,7 @@ export default class EventPreview extends React.Component {
         data: detail,
       },
     });
-    history.push(`/audit_reason/${type}/${state}/-1`);
   }
-
   makeApprover = (approver) => {
     const { details } = this.props;
     const { id } = this.state;
@@ -360,18 +365,37 @@ export default class EventPreview extends React.Component {
           {detail.recorder_name && (
             <React.Fragment>
               <WhiteSpace size="md" />
-              <WingBlank className={style.parcel}>
+              <WingBlank className={style.parcel} >
                 <div className={style.players}>
-                  <Flex className={style.title}> 记录人</Flex>
+                  <Flex className={style.title}>记录人 </Flex>
                   <Flex
-                    className={style.person_list}
                     wrap="wrap"
+                    align="start"
+                    style={{ paddingTop: '0.4rem', paddingBottom: '0.4rem' }}
                   >
-                    <PersonIcon
-                      value={detail}
-                      type="1"
-                      nameKey="recorder_name"
-                    />
+                    <div style={{ marginRight: '0.64rem' }}>
+                      <PersonIcon
+                        value={detail}
+                        type="1"
+                        nameKey="recorder_name"
+                        showNum={2}
+                        itemStyle={{ marginBottom: 0 }}
+                      />
+                    </div>
+                    {detail.status_id === -2 && (
+                    <div className={style.dec} >
+                      <div
+                        className={style.describe}
+                        style={{ background: 'rgb(240,240,240)' }}
+                      >
+                        <span style={{ borderRightColor: 'rgb(240,240,240)' }} />
+                        <p style={{ color: '#666' }}>
+                          撤回
+                        </p>
+                        <p style={{ color: 'rgb(155,155,155)', marginTop: '0.1333rem' }}>{detail.revoke_remark}</p>
+                      </div>
+                    </div>
+                    )}
                   </Flex>
                 </div>
               </WingBlank>
