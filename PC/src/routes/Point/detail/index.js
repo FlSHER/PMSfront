@@ -5,11 +5,11 @@ import OATable from '../../../components/OATable';
 
 @connect(({ point, loading }) => ({
   list: point.pointDetails,
-  source: point.source,
+  source: point.type,
   loading: (
     loading.effects['point/fetchDetail']
     ||
-    loading.effects['point/fetchSource']
+    loading.effects['point/fetchType']
   ),
 }))
 export default class extends React.PureComponent {
@@ -20,7 +20,7 @@ export default class extends React.PureComponent {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch({ type: 'point/fetchSource' });
+    dispatch({ type: 'point/fetchType' });
   }
 
   fetch = (params) => {

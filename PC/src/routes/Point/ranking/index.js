@@ -8,10 +8,10 @@ export default class extends React.PureComponent {
     return (
       <div className={styles.tabs}>
         <Tabs defaultActiveKey="1">
-          <TabPane key="1" tab="当月积分" forceRender>
+          <TabPane key="1" tab="我的分组" forceRender>
             222
           </TabPane>
-          <TabPane tab="累计积分" key="2" forceRender>
+          <TabPane tab="可见分组" key="2" forceRender>
             111
           </TabPane>
         </Tabs>

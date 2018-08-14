@@ -1,16 +1,169 @@
-.content {
-  max-width: 1440px;
-  min-width: 720px;
+@import "~antd/lib/style/themes/default.less";
+.viewContent {
+  max-width: 1440px; // min-width: 720px;
   margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  .graphContent {
-    width: 320px;
-    float: left;
-    .graph {
+  .monthSelect {
+    text-align: center;
+    width: 360px;
+    margin: 0 auto;
+    line-height: 30px;
+    font-size: 18px;
+    border: 1px solid #c8c8c8;
+    border-radius: @border-radius-base;
+    color: @primary-color;
+    margin-bottom: 50px;
+    position: relative;
+    i {
+      cursor: pointer;
+      line-height: 30px;
+    }
+    .disabled {
+      color: @disabled-color;
+    }
+    .arrowLeft {
+      position: absolute;
+      left: 5px;
+    }
+    .arrowRight {
+      position: absolute;
+      right: 5px;
+    }
+    span {
+      display: inline-block;
+      width: 100px;
       margin: 0 auto;
-      width: 270px;
-      height: 260px;
+    }
+  }
+  .content {
+    display: flex;
+    justify-content: space-between;
+    .item {
+      max-width: 640px;
+      width: 50%;
+      text-align: center;
+      .header {
+        margin-bottom: 20px;
+        text-align: left;
+        .monthSelect {
+          font-size: 12px;
+          width: 200px;
+          display: inline-block;
+          margin: 0;
+          margin-left: 15px;
+          line-height: 20px;
+          i {
+            line-height: 20px;
+          }
+          .around {
+            color: #c8c8c8;
+          }
+          span {
+            width: 135px;
+          }
+        }
+      }
+      .subItem {
+        text-align: left;
+        width: 320px;
+        display: inline-block; // float:left;
+        // margin:0 auto;
+        p {
+          margin: 0 25px;
+          span {
+            margin-left: 24px;
+            font-size: 36px;
+          }
+        }
+      }
+    }
+    .graphContent {
+      width: 320px;
+      margin-top: 18px;
+      .graph {
+        margin: 0 auto;
+        width: 270px;
+        height: 260px;
+      }
+    }
+    .pie {
+      height: 165px;
+      margin-top: 0;
+    }
+  }
+}
+
+.accoum {
+  max-width: 1530px;
+  margin: 0 auto;
+  text-align: center;
+  .monthSelect {
+    text-align: center;
+    width: 360px;
+    margin: 0 auto;
+    line-height: 30px;
+    font-size: 18px;
+    border: 1px solid #c8c8c8;
+    border-radius: @border-radius-base;
+    color: @primary-color;
+    margin-bottom: 50px;
+    position: relative;
+    i {
+      cursor: pointer;
+      line-height: 30px;
+    }
+    .disabled {
+      color: @disabled-color;
+    }
+    .arrowLeft {
+      position: absolute;
+      left: 5px;
+    }
+    .arrowRight {
+      position: absolute;
+      right: 5px;
+    }
+    span {
+      display: inline-block;
+      width: 100px;
+      margin: 0 auto;
+    }
+  }
+  .content {
+    // display: flex;
+    // justify-content: space-between;
+    .item {
+      width: 720px;
+      float: left; // display: inline-block;
+      // text-align: center;
+      .subItem {
+        float: left;
+        text-align: left;
+        p {
+          margin: 0 25px;
+          margin-bottom: 15px;
+          span {
+            margin-left: 24px;
+            font-size: 36px;
+          }
+        }
+      }
+      .monthSelect {
+        font-size: 12px;
+        width: 200px;
+        display: inline-block;
+        margin: 0;
+        margin-left: 15px;
+        line-height: 20px;
+        i {
+          line-height: 20px;
+        }
+        .around {
+          color: #c8c8c8;
+        }
+        span {
+          width: 135px;
+        }
+      }
     }
   }
 }

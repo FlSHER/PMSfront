@@ -115,6 +115,9 @@ export const getRouterData = (app) => {
     '/point/my': {
       component: dynamicWrapper(app, [], () => import('../routes/Point/my')),
     },
+    '/point/ranking': {
+      component: dynamicWrapper(app, [], () => import('../routes/Point/ranking')),
+    },
 
     '/exception/403': {
       component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),

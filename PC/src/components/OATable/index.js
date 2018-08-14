@@ -32,6 +32,7 @@ const defaultProps = {
   extraExportFields: [],
   filtered: 0,
   sync: true,
+  operatorVisble: true,
   tableVisible: true,
   autoScroll: false,
   fetchDataSource: () => {
@@ -659,7 +660,14 @@ class OATable extends PureComponent {
   }
 
   render() {
-    const { multiOperator, tableVisible, extraOperatorRight, sync, columns } = this.props;
+    const {
+      multiOperator,
+      tableVisible,
+      extraOperatorRight,
+      sync,
+      columns,
+      operatorVisble,
+    } = this.props;
     const { loading } = this.state;
     const filterColumns = columns.map((item) => {
       const temp = { title: item.title, dataIndex: item.dataIndex };
@@ -676,18 +684,20 @@ class OATable extends PureComponent {
         <div
           className={styles.filterTable}
         >
-          <Operator
-            {...this.state}
-            sync={sync}
-            key="Operator"
-            filterColumns={filterColumns || []}
-            multiOperator={multiOperator}
-            extraOperator={this.makeExtraOperator()}
-            extraOperatorRight={extraOperatorRight}
-            fetchTableDataSource={() => { this.fetchTableDataSource(null, true); }}
-            resetFilter={this.resetFilter}
-            clearSelectedRows={this.clearSelectedRows}
-          />
+          {operatorVisble && (
+            <Operator
+              {...this.state}
+              sync={sync}
+              key="Operator"
+              filterColumns={filterColumns || []}
+              multiOperator={multiOperator}
+              extraOperator={this.makeExtraOperator()}
+              extraOperatorRight={extraOperatorRight}
+              fetchTableDataSource={() => { this.fetchTableDataSource(null, true); }}
+              resetFilter={this.resetFilter}
+              clearSelectedRows={this.clearSelectedRows}
+            />
+          )}
           {(tableVisible === true) && (
             <Table
               ref={(e) => {

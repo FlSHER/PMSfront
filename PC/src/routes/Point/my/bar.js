@@ -25,13 +25,9 @@ const axisLine = {
     color: '#969696',
   },
 };
-
-export const color = ['#66cbff', '#b4e682', '#fff04c', '#ffb266', '#ff7f94'];
-export const xAxisData = ['固定', '系统', '奖扣', '其他', '基础'];
-const itemStyle = color.map(item => ({ color: item }));
-const values = [-120, 120, 60, 60, 40];
-const data = values.map((item, index) => ({ value: item, itemStyle: itemStyle[index] }));
+const color = ['#66cbff', '#b4e682', '#fff04c', '#ffb266', '#ff7f94'];
 const option = {
+  color,
   tooltip: {
     trigger: 'axis',
     axisPointer: {
@@ -39,9 +35,10 @@ const option = {
     },
   },
   grid: {
-    left: '3%',
-    right: '4%',
-    bottom: '3%',
+    top: '5',
+    left: '5',
+    right: '1',
+    bottom: '10',
     containLabel: true,
   },
   xAxis: {
@@ -54,7 +51,6 @@ const option = {
     axisLabel: {
       show: false,
     },
-    data: xAxisData,
   },
   yAxis: {
     type: 'value',
@@ -66,23 +62,41 @@ const option = {
   series: [{
     type: 'bar',
     barMaxWidth: 20,
-    data,
   }],
 };
 
 
 export default class extends React.PureComponent {
   componentDidMount() {
-    this.myChart = echarts.init(this.test);
-    this.myChart.setOption(option);
+    this.myChart = echarts.init(this.bar);
+  }
+
+  makeSeriesDataTextColor = (data) => {
+    const newData = data.map((item, index) => {
+      return { ...item, itemStyle: { color: color[index] } };
+    });
+    return [...newData];
   }
 
   render() {
+    const { data, source } = this.props;
+    let dataSource = [];
+    if (data && data.length) {
+      dataSource = data;
+    } else if (source && source.length) {
+      dataSource = source.map(item => ({ value: 0, name: item.name }));
+    }
+    if (this.myChart) {
+      const newInitOption = JSON.parse(JSON.stringify({ ...option }));
+      newInitOption.xAxis.data = data.map(item => item.name);
+      newInitOption.series[0].data = this.makeSeriesDataTextColor(dataSource);
+      this.myChart.setOption(newInitOption);
+    }
     return (
       <div className={styles.graphContent}>
         <div
           className={styles.graph}
-          ref={(e) => { this.test = e; }}
+          ref={(e) => { this.bar = e; }}
           style={{ width: 270, height: 260 }}
         />
       </div>
