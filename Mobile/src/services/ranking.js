@@ -9,7 +9,7 @@ export async function getRanking(params) {
     method: 'GET',
     body: params,
     json: true,
-  });
+  }, false);
 }
 export async function getStatiRanking(params) {
   return request('/api/points/statistic/ranking', {
