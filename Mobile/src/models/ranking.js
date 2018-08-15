@@ -13,7 +13,9 @@ export default {
   state: {
     group: {},
     ranking: {},
+    rankingDetails: {},
     optRanking: {},
+    optRankingDetails: {},
   },
   effects: {
     *getAuthorityGroup(_, { call, put, select }) {
@@ -33,30 +35,47 @@ export default {
       }
     },
 
-    *getRanking({ payload }, { call, put }) {
+    *getRanking({ payload }, { call, put, select }) {
+      const key = JSON.stringify(payload);
+      const { rankingDetails } = yield select(v => v.ranking);
+      const current = rankingDetails[key];
+      if (current) { return; }
       const newPayload = makerFilters(payload);
       const response = yield call(getRanking, newPayload);
       if (response && !response.error) {
+        // yield put({
+        //   type: 'save',
+        //   payload: {
+        //     store: 'ranking',
+        //     data: response,
+        //   },
+        // });
         yield put({
           type: 'save',
           payload: {
             store: 'ranking',
             data: response,
+            id: key,
           },
         });
       } else {
         Toast.fail(response.message);
       }
     },
-    *getStatiRanking({ payload }, { call, put }) {
-      const newPayload = makerFilters(payload);
-      const response = yield call(getStatiRanking, newPayload);
+    *getStatiRanking({ payload }, { call, put, select }) {
+      const key = JSON.stringify(payload);
+      const { optRankingDetails } = yield select(v => v.ranking);
+      const current = optRankingDetails[key];
+      if (current) { return; }
+      // const newPayload = makerFilters(payload);
+      const response = yield call(getStatiRanking, payload);
       if (response && !response.error) {
         yield put({
           type: 'save',
           payload: {
             store: 'optRanking',
             data: response,
+            id: key,
           },
         });
       } else {

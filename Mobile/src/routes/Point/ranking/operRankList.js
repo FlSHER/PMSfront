@@ -7,7 +7,7 @@ import { WingBlank, WhiteSpace, Flex, DatePicker } from 'antd-mobile';
 import moment from 'moment';
 import { Ranking } from '../../../common/ListView';
 import { TimeRange } from '../../../components/General';
-import { userStorage, getUrlParams } from '../../../utils/util';
+import { userStorage, parseParamsToUrl, getUrlParams } from '../../../utils/util';
 import { ListSort } from '../../../components/index';
 import style from '../index.less';
 
@@ -21,7 +21,9 @@ import style from '../index.less';
 //   { name: 'B分升序', value: 'point_b_-asc', icon: import('../../../assets/filter/asc.svg') },
 //   { name: 'B分降序', value: 'point_b_-desc', icon: import('../../../assets/filter/desc.svg') },
 // ];
-
+const stageArr = [
+  'month', 'stage', 'total',
+];
 const tabs = [
   {
     value: 'month',
@@ -37,8 +39,8 @@ const tabs = [
   },
 ];
 @connect(({ ranking, loading }) => ({
-  ranking: ranking.optRanking,
   loading,
+  optRankingDetails: ranking.optRankingDetails,
   group: ranking.group,
 }))
 export default class PointRanking extends React.Component {
@@ -59,9 +61,7 @@ export default class PointRanking extends React.Component {
   componentWillMount() {
     const { dispatch, location } = this.props;
     this.urlParams = getUrlParams(location.search);
-    this.month = this.setInitValue('month');
-    this.stage = this.setInitValue('stage');
-    this.total = this.setInitValue('total');
+    this.initStage();
     this.fetchRanking(this.urlParams);
     dispatch({
       type: 'ranking/getAuthorityGroup',
@@ -83,6 +83,8 @@ export default class PointRanking extends React.Component {
     const { location: { search } } = nextProps;
     if (search !== this.props.location.search) {
       this.urlParams = getUrlParams(search);
+      const { stage } = this.urlParams;
+      this[stage] = search;
       this.fetchRanking(this.urlParams);
     }
   }
@@ -99,12 +101,36 @@ export default class PointRanking extends React.Component {
   }
 
   setInitValue = (tab) => {
-    return `?group_id=${this.urlParams.group_id}&stage=${tab}`;
+    const lastMonth = moment().subtract(1, 'months');
+    const maxMonth = moment().subtract(6, 'months');
+    const urlParams = {};
+    if (tab === 'stage') {
+      urlParams.start_at = moment(maxMonth).format('YYYY-MM');
+      urlParams.end_at = moment(lastMonth).format('YYYY-MM');
+    }
+    if (tab === 'month') {
+      urlParams.datetime = moment(maxMonth).format('YYYY-MM');
+    }
+    const url = parseParamsToUrl(urlParams);
+    const addUrl = url ? `&${url}` : '';
+    return `?group_id=${this.urlParams.group_id}&stage=${tab}${addUrl}`;
   }
 
   setNewState = (key, newValue) => {
     this.setState({
       [key]: newValue,
+    });
+  }
+
+  initStage = () => {
+    const { location: { search } } = this.props;
+    const { stage } = this.urlParams;
+    stageArr.forEach((item) => {
+      if (stage === item) {
+        this[item] = search;
+      } else {
+        this[item] = this.setInitValue(item);
+      }
     });
   }
 
@@ -114,28 +140,12 @@ export default class PointRanking extends React.Component {
     newModal[feild] = !newModal[feild];
     this.setNewState('modal', newModal);
   }
-  // dealFilter = () => {
-  //   const { params } = this.state;
-  //   const { dispatch } = this.props;
-  //   const newParams = {};
-  //   for (const key in params) {
-  //     if (key !== undefined) {
-  //       if (params[key]) {
-  //         newParams[key] = params[key];
-  //       }
-  //     }
-  //   }
-  //   dispatch({
-  //     type: 'ranking/getRanking',
-  //     payload: { ...newParams },
-  //   });
-  // }
 
   tabChange = (item) => {
     const { history } = this.props;
     const stage = item.value;
     const params = this[stage];
-    const url = `/ranking${params}`;
+    const url = `/opt_ranking${params}`;
     history.replace(url);
   }
 
@@ -165,25 +175,38 @@ export default class PointRanking extends React.Component {
     let url = '/opt_ranking';
     const params = this.urlParamsUnicode(this.urlParams);
     url += params ? `?${params}` : '';
-    this.props.history.push(url);
+    this.props.history.replace(url);
   }
 
   toPointList = (item) => {
     const { history } = this.props;
-    history.push(`/point_statistic?staff_sn=${item.staff_sn}`);
+    const stageParams = getUrlParams(this.month);
+    const { datetime } = stageParams;
+    const datetimeUrl = datetime || moment(new Date()).format('YYYY-MM');
+    history.push(`/point_statistic?staff_sn=${item.staff_sn}&datetime=${datetimeUrl}`);
   }
 
   render() {
-    const { ranking, loading, group } = this.props;
+    const { optRankingDetails, loading, group } = this.props;
+    const current = optRankingDetails[JSON.stringify(this.urlParams)] || {};
     const statisGroup = group.statis_group || [];
-    const { list } = ranking;
+    const { list } = current || {};
     const params = this.urlParams;
     const { stage = 'month' } = params;
     const { offsetBottom } = this.state;
     const [sortItem] = statisGroup.filter(item => item.id.toString() === this.urlParams.group_id);
-    const endAt = new Date();
-    const startAt = new Date('2018/7/1');
-    const iosTime = (params.datetime ? `${params.datetime}/1` : '').replace(/-/g, '/');
+    const lastMonth = moment().subtract(1, 'months');
+    const startAt = params.stage ?
+      (params.start_at ? `${params.start_at}/1` : '2018/7/1').replace(/-/g, '/')
+      : '2018/7/1';
+    const endAt = params.stage ?
+      (params.end_at ?
+        (`${params.end_at}/1`).replace(/-/g, '/') : moment(lastMonth).format('YYYY/MM/DD')) : moment(lastMonth).format('YYYY/MM/DD');
+    const range = {
+      max: new Date(lastMonth),
+      min: new Date('2018/7/1'),
+    };
+    const iosTime = params.datetime ? (`${params.datetime}/1`).replace(/-/g, '/') : moment(new Date()).format('YYYY/MM/DD');
 
     return (
       <Flex direction="column">
@@ -207,6 +230,7 @@ export default class PointRanking extends React.Component {
                   value={moment(params.datetime).isValid() ? new Date(iosTime) : '请选择时间'}
                   mode="month"
                   maxDate={new Date()}
+                  minDate={new Date('2018/7/1')}
                   onChange={(date) => {
                   const time = moment(date).format('YYYY-MM');
                   if (time !== this.urlParams.datetime) {
@@ -224,6 +248,7 @@ export default class PointRanking extends React.Component {
                 {stage === 'stage' && (
                 <TimeRange
                   distance={6}
+                  range={range}
                   value={{ min: startAt, max: endAt }}
                   onChange={(start, end) => this.sortReasult({ start_at: start, end_at: end })}
                 />
@@ -269,10 +294,10 @@ export default class PointRanking extends React.Component {
           <WingBlank size="lg">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p style={{ padding: '0.26667rem 0.48rem', fontSize: '14px' }}> 排名详情</p>
-              {ranking.calculated_at ?
+              {current.calculated_at ?
                 (
                   <span style={{ fontSize: '12px', color: 'rgb(24, 116, 208)' }}>
-                    结算日期：{ranking.calculated_at}
+                    结算日期：{current.calculated_at}
                   </span>
                 )
                 : null}

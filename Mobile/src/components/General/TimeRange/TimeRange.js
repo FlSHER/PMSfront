@@ -6,22 +6,43 @@ import style from './index.less';
 export default class TimeRange extends React.Component {
   constructor(props) {
     super(props);
-    const { value, distance } = props;
-    this.monthData = this.calculateDate(value.max, value.min);
-    const valueMin = distance > this.monthData.length ? this.monthData.length : distance;
+    const { value, range, distance } = props;
+    this.monthData = this.calculateDate(range.max, range.min);
+    const maxValue = value.max;
+    const minValue = value.min;
+    let maxIndex = 0;
+    let minIndex = distance > this.monthData.length ? this.monthData.length - 1 : distance;
+    for (let i = 0; i < this.monthData.length; i += 1) {
+      const item = this.monthData[i];
+      if (`${item.year}` === `${new Date(maxValue).getFullYear()}`
+       && `${item.month}` === `${new Date(maxValue).getMonth() + 1}`) { maxIndex = i; }
+      if (`${item.year}` === `${new Date(minValue).getFullYear()}`
+       && `${item.month}` === `${new Date(minValue).getMonth() + 1}`) { minIndex = i; }
+    }
     this.state = {
-      date: [valueMin > 0 ? valueMin - 1 : 0, 0],
+      date: [minIndex, maxIndex],
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { value, distance } = nextProps;
-    const { min, max } = value;
+    const { value, range, distance } = nextProps;
+    const { min, max } = range;
     this.monthData = this.calculateDate(max, min);
-    const valueMin = distance > this.monthData.length ? this.monthData.length : distance;
+    const maxValue = value.max;
+    const minValue = value.min;
+    let maxIndex = 0;
+    let minIndex = distance > this.monthData.length ? this.monthData.length - 1 : distance;
+    for (let i = 0; i < this.monthData.length; i += 1) {
+      const item = this.monthData[i];
+      if (`${item.year}` === `${new Date(maxValue).getFullYear()}`
+       && `${item.month}` === `${new Date(maxValue).getMonth() + 1}`) { maxIndex = i; }
+      if (`${item.year}` === `${new Date(minValue).getFullYear()}`
+       && `${item.month}` === `${new Date(minValue).getMonth() + 1}`) { minIndex = i; }
+    }
+    // const valueMin = distance > this.monthData.length ? this.monthData.length : distance;
     if (JSON.stringify(value) !== JSON.stringify(this.props.value)) {
       this.setState({
-        date: [valueMin > 0 ? valueMin - 1 : 0, 0],
+        date: [minIndex, maxIndex],
       });
     }
   }
@@ -29,9 +50,9 @@ export default class TimeRange extends React.Component {
   calculateDate = (date1, date2) => {
     const d1 = date1;
     const d2 = date2;
-    let m1 = d1.getMonth() === 0 ? 12 : d1.getMonth() + 1;
+    let m1 = d1.getMonth() + 1;
     let y1 = d1.getFullYear();
-    const m2 = d2.getMonth() === 0 ? 12 : d2.getMonth();
+    const m2 = d2.getMonth();
     const y2 = d2.getFullYear();
     const arr = [];
     while ((y2 === y1 && !(m2 > m1)) || (y2 < y1)) {
@@ -105,13 +126,11 @@ export default class TimeRange extends React.Component {
   }
 
   render() {
-    // const { value } = this.state;
     this.startData = this.makeMonthData(this.monthData);
     const { date } = this.state;
     this.start = this.monthData[date[0]];
     this.end = this.monthData[date[1]];
     const data = [this.startData, this.startData];
-    // console.log(this.monthData, start, end, data);
     return (
       <Picker
         data={data || []}

@@ -13,7 +13,7 @@ export default {
       participant: 'sort=created_at-desc&type=participant',
       addressee: 'sort=created_at-desc&type=addressee',
       recorded: 'sort=created_at-desc&type=recorded',
-      point: 'sort=created_at-desc',
+      point: 'sort=changed_at-desc',
     },
   },
   effects: {
