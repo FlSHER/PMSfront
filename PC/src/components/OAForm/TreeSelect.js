@@ -79,9 +79,9 @@ export default class OATreeSelect extends PureComponent {
   makeProps = () => {
     const { dataSource: { data, fields, parentValue } } = this.props;
     const response = {
+      dropdownStyle: { maxHeight: 400, overflow: 'auto' },
       ...this.props,
       value: this.makeTreeValue(),
-      dropdownStyle: { maxLength: '400px' },
       treeData: markTreeData(data, fields, parentValue),
     };
     Object.keys(defaultProps).forEach((key) => {
@@ -93,7 +93,9 @@ export default class OATreeSelect extends PureComponent {
 
   render() {
     return (
-      <TreeSelect {...this.makeProps()} />
+      <TreeSelect
+        {...this.makeProps()}
+      />
     );
   }
 }

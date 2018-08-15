@@ -50,7 +50,7 @@ export default class extends React.PureComponent {
     this.setState({ month: newMonth }, this.fetch);
   }
 
-  makeSourcePoint = (data, key) => {
+  makeSourcePoint = (data) => {
     const temp = {
       addPoint: [],
       minusPoint: [],
@@ -58,9 +58,7 @@ export default class extends React.PureComponent {
       addPointTotal: 0,
       minusPintTotal: 0,
     };
-    const pointKey = key === 'a' ?
-      { addPoint: 'add_a_point', minusPoint: 'sub_a_point', totalPoint: 'point_a_total' } :
-      { addPoint: 'add_point', minusPoint: 'sub_point', totalPoint: 'point_b_total' };
+    const pointKey = { addPoint: 'add_point', minusPoint: 'sub_point', totalPoint: 'point' };
     data.forEach((item) => {
       const { name } = item;
       const commo = {
@@ -93,8 +91,8 @@ export default class extends React.PureComponent {
     const monthly = thisMonthPoint.monthly || {};
     const AMonthly = monthly.source_a_monthly || [];
     const BMonthly = monthly.source_b_monthly || [];
-    const sourceAMonthly = this.makeSourcePoint(AMonthly, 'a');
-    const sourceBMonthly = this.makeSourcePoint(BMonthly, 'b');
+    const sourceAMonthly = this.makeSourcePoint(AMonthly);
+    const sourceBMonthly = this.makeSourcePoint(BMonthly);
     return {
       monthly,
       sourceAMonthly,

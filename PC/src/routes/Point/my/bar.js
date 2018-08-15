@@ -67,8 +67,16 @@ const option = {
 
 
 export default class extends React.PureComponent {
+  state = {
+    myChart: null,
+  }
+
   componentDidMount() {
-    this.myChart = echarts.init(this.bar);
+    this.initEcharts();
+  }
+
+  initEcharts = () => {
+    this.setState({ myChart: echarts.init(this.bar) });
   }
 
   makeSeriesDataTextColor = (data) => {
@@ -86,11 +94,11 @@ export default class extends React.PureComponent {
     } else if (source && source.length) {
       dataSource = source.map(item => ({ value: 0, name: item.name }));
     }
-    if (this.myChart) {
+    if (this.state.myChart) {
       const newInitOption = JSON.parse(JSON.stringify({ ...option }));
       newInitOption.xAxis.data = data.map(item => item.name);
       newInitOption.series[0].data = this.makeSeriesDataTextColor(dataSource);
-      this.myChart.setOption(newInitOption);
+      this.state.myChart.setOption(newInitOption);
     }
     return (
       <div className={styles.graphContent}>

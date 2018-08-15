@@ -49,11 +49,15 @@ const option = {
 
 export default class extends React.PureComponent {
   state = {
-    initOption: option,
+    myChart: null,
   }
 
   componentDidMount() {
-    this.myChart = echarts.init(this.test);
+    this.initEcharts();
+  }
+
+  initEcharts = () => {
+    this.setState({ myChart: echarts.init(this.pie) });
   }
 
   reckonPercent = (key, data) => {
@@ -86,15 +90,15 @@ export default class extends React.PureComponent {
 
   render() {
     const { className, data, total, source } = this.props;
-    const { initOption } = this.state;
+
     let dataSource = [];
     if (data && data.length) {
       dataSource = data;
     } else if (source && source.length) {
       dataSource = source.map(item => ({ value: 0, name: `key${item.id}`, text: item.name }));
     }
-    if (this.myChart) {
-      const newInitOption = JSON.parse(JSON.stringify({ ...initOption }));
+    if (this.state.myChart) {
+      const newInitOption = JSON.parse(JSON.stringify({ ...option }));
       const count = {
         ...pointCount,
         name: `${total || 0}`,
@@ -104,14 +108,14 @@ export default class extends React.PureComponent {
       newInitOption.legend.data = source.map(item => `key${item.id}`);
       newInitOption.tooltip.formatter = this.makeTooltipFormatter(dataSource);
       newInitOption.legend.formatter = this.makeLegendFormatter(dataSource);
-      this.myChart.setOption(newInitOption);
+      this.state.myChart.setOption(newInitOption);
     }
     return (
       <div className={`${styles.graphContent} ${styles.pie} ${className}`}>
         <p style={{ marginBottom: 5 }}>{this.props.title}</p>
         <div
           className={styles.graph}
-          ref={(e) => { this.test = e; }}
+          ref={(e) => { this.pie = e; }}
           style={{ width: 270, height: 120 }}
         />
       </div>

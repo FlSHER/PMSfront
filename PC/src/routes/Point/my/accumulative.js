@@ -1,7 +1,6 @@
 import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'dva';
-
 import Bar from './bar';
 import OATable from '../../../components/OATable';
 import Line from './line';
@@ -10,98 +9,72 @@ import styles from './index.less';
 
 const columns = [{
   title: '月份/分值',
-  dataIndex: 'name',
-  key: 'name',
+  dataIndex: 'month',
   width: 100,
   align: 'center',
   fixed: 'left',
 }, {
   title: 'A分',
   align: 'center',
+  dataIndex: 'source_a_total',
   children: [{
     title: '基础',
-    dataIndex: 'age',
+    dataIndex: 'source_a_total.0.point',
     align: 'center',
-    key: 'age',
   }, {
     title: '工作',
-    dataIndex: 'working',
+    dataIndex: 'source_a_total.1.point',
     align: 'center',
-    key: 'working',
   }, {
     title: '行政',
-    dataIndex: 'xingzheng',
+    dataIndex: 'source_a_total.2.point',
     align: 'center',
-    key: 'xingzheng',
   }, {
     title: '创新',
-    dataIndex: 'chuangxin',
+    dataIndex: 'source_a_total.3.point',
     align: 'center',
-    key: 'chuangxin',
   }, {
     title: '其他',
-    dataIndex: 'qita',
+    dataIndex: 'source_a_total.4.point',
     align: 'center',
-    key: 'qita',
   }, {
     title: '总分',
-    dataIndex: 'zongfen',
+    dataIndex: 'point_a_total',
     align: 'center',
-    key: 'zongfen',
   }],
 }, {
   title: 'B分',
+  dataIndex: 'source_b_total',
   children: [{
     title: '基础',
-    dataIndex: 'bage',
+    dataIndex: 'source_b_total.0.point',
     align: 'center',
-    key: 'bage',
   }, {
     title: '工作',
-    dataIndex: 'bworking',
+    dataIndex: 'source_b_total.1.point',
     align: 'center',
-    key: 'bworking',
   }, {
     title: '行政',
-    dataIndex: 'bxingzheng',
+    dataIndex: 'source_b_total.2.point',
     align: 'center',
-    key: 'bxingzheng',
   }, {
     title: '创新',
-    dataIndex: 'bchuangxin',
+    dataIndex: 'source_b_total.3.point',
     align: 'center',
-    key: 'bchuangxin',
   }, {
     title: '其他',
-    dataIndex: 'bqita',
+    dataIndex: 'source_b_total.4.point',
     align: 'center',
-    key: 'bqita',
   }, {
     title: '总分',
-    dataIndex: 'bzongfen',
+    dataIndex: 'point_b_total',
     align: 'center',
-    key: 'bzongfen',
   }],
 }];
 
-const data = [];
-for (let i = 0; i < 12; i += 1) {
-  data.push({
-    key: i,
-    name: '2018-08',
-    street: 'Lake Park',
-    building: 'C',
-    age: 2035,
-    working: 2035,
-    bzongfen: 2035,
-    gender: 'M',
-  });
-}
-
-
 @connect(({ point, loading }) => ({
-  data: point.me,
-  source: point.source,
+  accumulative: point.accumulative,
+  source: point.type,
   loading: (
     loading.effects['point/fetchAccumulative'] ||
     loading.effects['point/fetchType']
@@ -120,25 +93,63 @@ export default class extends React.PureComponent {
     });
   }
 
-  render() {
-    const { loading, source } = this.props;
+  makeSourcePoint = (total) => {
+    const temp = {
+      totalPoint: [],
+    };
+    const pointKey = { addPoint: 'add_point', minusPoint: 'sub_point', totalPoint: 'point' };
+    total.forEach((item) => {
+      const { name } = item;
+      temp.totalPoint.push({
+        name,
+        key: item.id,
+        value: item[pointKey.totalPoint],
+      });
+    });
+    return temp;
+  }
 
-    // const { monthly, sourceAMonthly, sourceBMonthly } = this.makePieDataSource();
+  makeAccumulativeTotal = () => {
+    const { accumulative } = this.props;
+    const total = accumulative.total || {};
+    const { totalPoint } = this.makeSourcePoint(total.source_b_total || []);
+    return totalPoint;
+  }
+
+  render() {
+    const { loading, source, accumulative } = this.props;
+    const total = accumulative.total || {};
+    const hisotryTota = {
+      month: [],
+      aTotal: [],
+      bTotal: [],
+    };
+    const dataSource = [];
+    if (accumulative.list) {
+      Object.keys(accumulative.list).forEach((key) => {
+        const value = accumulative.list[key];
+        dataSource.push({
+          month: key,
+          ...value,
+        });
+        hisotryTota.month.push(key);
+        hisotryTota.aTotal.push(value.point_a_total);
+        hisotryTota.bTotal.push(value.point_b_total);
+      });
+    }
+    const accumulativeTotal = this.makeAccumulativeTotal();
     return (
       <Spin spinning={loading}>
         <div className={`${styles.accoum}`}>
           <div className={styles.content}>
             <div className={styles.item}>
               <div className={styles.subItem} style={{ marginRight: 96 }}>
-                <p>累计积分<span>5000</span></p>
-                <Bar
-                  data={[]}
-                  source={source}
-                />
+                <p>累计积分<span>{total.point_b_total}</span></p>
+                <Bar source={source} data={accumulativeTotal} />
               </div>
               <div className={styles.subItem}>
                 <p >积分变化趋势<span>&nbsp;</span></p>
-                <Line />
+                <Line data={hisotryTota} />
               </div>
             </div>
             <div className={styles.item}>
@@ -151,7 +162,7 @@ export default class extends React.PureComponent {
                 size="small"
                 operatorVisble={false}
                 columns={columns}
-                dataSource={data}
+                dataSource={dataSource}
                 pagination={{ defaultPageSize: 12, hideOnSinglePage: true }}
               />
             </div>

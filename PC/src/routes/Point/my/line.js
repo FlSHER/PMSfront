@@ -1,5 +1,6 @@
 import React from 'react';
 import echarts from 'echarts';
+import moment from 'moment';
 import styles from './index.less';
 
 const colors = ['#cf4252', '#59c3c3'];
@@ -31,9 +32,8 @@ const axisLine = {
 
 const option = {
   color: colors,
-
   tooltip: {
-    trigger: 'item',
+    trigger: 'axis',
   },
   legend: {
     data: ['A分', 'B分'],
@@ -42,6 +42,7 @@ const option = {
   },
   grid: {
     top: 30,
+    left: 40,
     bottom: 30,
   },
   xAxis: [
@@ -91,17 +92,41 @@ const option = {
 };
 
 export default class extends React.PureComponent {
+  state = {
+    myChart: null,
+  }
+
   componentDidMount() {
-    this.myChart = echarts.init(this.test);
-    this.myChart.setOption(option);
+    this.initEcharts();
+  }
+
+  initEcharts = () => {
+    this.setState({ myChart: echarts.init(this.line) });
   }
 
   render() {
+    const { data } = this.props;
+    const { myChart } = this.state;
+    const rangDate = data.month;
+    const xAxisData = rangDate;
+    if (!rangDate.length) {
+      for (let i = 1; i < 13; i += 1) {
+        xAxisData.push(`${moment().year()}-${i}`);
+      }
+    }
+    const { aTotal, bTotal } = data;
+    if (myChart) {
+      const newInitOption = JSON.parse(JSON.stringify({ ...option }));
+      newInitOption.xAxis[0].data = xAxisData;
+      newInitOption.series[0].data = aTotal;
+      newInitOption.series[1].data = bTotal;
+      this.state.myChart.setOption(newInitOption);
+    }
     return (
       <div className={styles.graphContent}>
         <div
           className={styles.graph}
-          ref={(e) => { this.test = e; }}
+          ref={(e) => { this.line = e; }}
           style={{ width: 350, height: 260 }}
         />
       </div>
