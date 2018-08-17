@@ -109,14 +109,14 @@ export const getRouterData = (app) => {
     '/check/my-peruser': {
       component: dynamicWrapper(app, [], () => import('../routes/Check/MyPeruser')),
     },
-    '/point/detail': {
-      component: dynamicWrapper(app, [], () => import('../routes/Point/detail')),
-    },
     '/point/my': {
       component: dynamicWrapper(app, [], () => import('../routes/Point/my')),
     },
     '/point/ranking': {
       component: dynamicWrapper(app, [], () => import('../routes/Point/ranking')),
+    },
+    '/point/ranking/count/:id': {
+      component: dynamicWrapper(app, [], () => import('../routes/Point/ranking/count')),
     },
 
     '/exception/403': {

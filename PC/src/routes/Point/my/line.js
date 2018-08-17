@@ -30,19 +30,25 @@ const axisLine = {
   },
 };
 
+const seriesItem = {
+  type: 'line',
+  smooth: true,
+};
+
 const option = {
-  color: colors,
+  color: [],
   tooltip: {
     trigger: 'axis',
   },
   legend: {
-    data: ['A分', 'B分'],
+    data: [],
     zoomLock: 20,
     top: 0,
   },
   grid: {
     top: 30,
     left: 40,
+    right: 10,
     bottom: 30,
   },
   xAxis: [
@@ -75,20 +81,7 @@ const option = {
     start: 0,
     end: 50,
   }],
-  series: [
-    {
-      name: 'A分',
-      type: 'line',
-      smooth: true,
-      data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
-    },
-    {
-      name: 'B分',
-      type: 'line',
-      smooth: true,
-      data: [3.9, 5.9, 11.1, 18.7, 48.3, 69.2, 231.6, 46.6, 55.4, 18.4, 10.3, 0.7],
-    },
-  ],
+  series: [],
 };
 
 export default class extends React.PureComponent {
@@ -105,7 +98,7 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { data } = this.props;
+    const { data, width, height } = this.props;
     const { myChart } = this.state;
     const rangDate = data.month;
     const xAxisData = rangDate;
@@ -118,8 +111,24 @@ export default class extends React.PureComponent {
     if (myChart) {
       const newInitOption = JSON.parse(JSON.stringify({ ...option }));
       newInitOption.xAxis[0].data = xAxisData;
-      newInitOption.series[0].data = aTotal;
-      newInitOption.series[1].data = bTotal;
+      if (aTotal) {
+        newInitOption.color.push(colors[0]);
+        newInitOption.legend.data.push('A分');
+        newInitOption.series.push({
+          ...seriesItem,
+          name: 'A分',
+          data: aTotal,
+        });
+      }
+      if (bTotal) {
+        newInitOption.color.push(colors[1]);
+        newInitOption.legend.data.push('B分');
+        newInitOption.series.push({
+          ...seriesItem,
+          name: 'B分',
+          data: bTotal,
+        });
+      }
       this.state.myChart.setOption(newInitOption);
     }
     return (
@@ -127,7 +136,7 @@ export default class extends React.PureComponent {
         <div
           className={styles.graph}
           ref={(e) => { this.line = e; }}
-          style={{ width: 350, height: 260 }}
+          style={{ width: width || 350, height: height || 260 }}
         />
       </div>
     );

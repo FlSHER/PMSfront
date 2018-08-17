@@ -123,7 +123,7 @@ export default class extends React.PureComponent {
       <div style={{ margin: '30px 30px 0' }}>
         <OATable
           serverSide
-          autoScroll
+          size="middle"
           loading={loading}
           scroll={{ x: 1400 }}
           columns={this.makeColums()}

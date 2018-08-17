@@ -201,25 +201,6 @@ export function makePositionData(brandId, brand) {
   return pushPosition;
 }
 
-
-// export function undotFieldsValue(fieldsValue) {
-//   const params = {};
-//   Object.keys(fieldsValue).forEach((key) => {
-//     const value = fieldsValue[key];
-//     const keyGroup = key.split('.');
-//     let fieldsValueMd = params;
-//     keyGroup.forEach((item, index) => {
-//       if (index === keyGroup.length - 1) {
-//         fieldsValueMd[item] = value;
-//       } else {
-//         fieldsValueMd[item] = fieldsValueMd[item] || {};
-//         fieldsValueMd = fieldsValueMd[item];
-//       }
-//     });
-//   });
-//   return params;
-// }
-
 export function unicodeFieldsError(temp, isUnicode = true) {
   if (!isUnicode) return temp;
   const fieldsValue = { ...temp };
@@ -512,7 +493,6 @@ export const statusData = [
   { value: -1, text: '已驳回' },
   { value: -2, text: '已撤回' },
   { value: -3, text: '已删除' },
-  // { value: 1, text: '审核中' },
 ];
 
 export function getBuckleTitle(status) {
@@ -555,12 +535,15 @@ export function getStatusImg(status) {
   }
 }
 
-// export const statusImg = [
-//   { value: 2, uri: '/public/pass.png' },
-//   { value: -1, uri: '/public/reject.png' },
-//   { value: -2, uri: '/public/rollback.png' },
-//   { value: -3, uri: '/public/cancel.png' },
-//   { value: 0, uri: '/public/checkin.png' },
-//   { value: 1, uri: '/public/checkin.png' },
-// ];
-
+/**
+ * 滚动到页面制定元素
+ * @param {元素ID} anchorName
+ */
+export function scrollToAnchor(anchorName) {
+  if (anchorName) {
+    // 找到锚点
+    const anchorElement = document.getElementById(anchorName);
+    // 如果对应id的锚点存在，就跳转到锚点
+    if (anchorElement) { anchorElement.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+  }
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import echarts from 'echarts';
+import moment from 'moment';
 import styles from './index.less';
 
 /**
@@ -20,19 +21,25 @@ const splitLine = {
 };
 
 const axisLine = {
-  show: false,
+  show: true,
   lineStyle: {
     color: '#969696',
   },
 };
-const color = ['#66cbff', '#b4e682', '#fff04c', '#ffb266', '#ff7f94'];
+const colors = ['#cf4252', '#59c3c3'];
 const option = {
-  color,
+  color: colors,
   tooltip: {
     trigger: 'axis',
     axisPointer: {
-      type: 'line',
+      type: 'shadow',
     },
+  },
+  legend: {
+    data: ['A分', 'B分'],
+    zoomLock: 20,
+    top: 0,
+    right: 10,
   },
   grid: {
     top: 30,
@@ -49,8 +56,9 @@ const option = {
       show: true,
     },
     axisLabel: {
-      show: false,
+      show: true,
     },
+    data: ['2018-1', '2018-2', '2018-3', '2018-4', '2018-5', '2018-6', '2018-7', '2018-8', '2018-9', '2018-10', '2018-11', '2018-12'],
   },
   yAxis: {
     type: 'value',
@@ -59,10 +67,27 @@ const option = {
     axisTick,
     axisLine,
   },
-  series: [{
-    type: 'bar',
-    barMaxWidth: 20,
+  dataZoom: [{
+    type: 'inside',
+    zoomLock: true,
+    start: 0,
+    end: 50,
   }],
+  series: [
+    {
+      type: 'bar',
+      name: 'A分',
+      barMaxWidth: 20,
+      barGap: '30%', // Make series be overlap·
+      data: [],
+    },
+    {
+      type: 'bar',
+      name: 'B分',
+      barMaxWidth: 20,
+      data: [],
+    },
+  ],
 };
 
 
@@ -79,26 +104,23 @@ export default class extends React.PureComponent {
     this.setState({ myChart: echarts.init(this.bar) });
   }
 
-  makeSeriesDataTextColor = (data) => {
-    const newData = data.map((item, index) => {
-      return { ...item, itemStyle: { color: color[index] } };
-    });
-    return [...newData];
-  }
-
   render() {
-    const { data, source, width, height, style } = this.props;
-    let dataSource = [];
-    if (data && data.length) {
-      dataSource = data;
-    } else if (source && source.length) {
-      dataSource = source.map(item => ({ value: 0, name: item.name }));
+    const { data, width, height, style } = this.props;
+    const { myChart } = this.state;
+    const rangDate = data.month;
+    const xAxisData = rangDate;
+    if (!rangDate.length) {
+      for (let i = 1; i < 13; i += 1) {
+        xAxisData.push(`${moment().year()}-${i}`);
+      }
     }
-    if (this.state.myChart) {
+    const { aTotal, bTotal } = data;
+    if (myChart) {
       const newInitOption = JSON.parse(JSON.stringify({ ...option }));
-      newInitOption.xAxis.data = data.map(item => item.name);
-      newInitOption.series[0].data = this.makeSeriesDataTextColor(dataSource);
-      this.state.myChart.setOption(newInitOption);
+      newInitOption.xAxis.data = xAxisData;
+      newInitOption.series[0].data = aTotal;
+      newInitOption.series[1].data = bTotal;
+      myChart.setOption(newInitOption);
     }
     return (
       <div className={styles.graphContent} style={style}>

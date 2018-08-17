@@ -56,3 +56,25 @@ export async function fetchAccumulative() {
     method: 'GET',
   });
 }
+
+
+/**
+ * 积分排行
+ */
+
+export async function fetchRank(params) {
+  return request('/api/PMS/points/ranking/staff', {
+    method: 'GET',
+    body: params,
+  });
+}
+
+/**
+ * 获取员工权限分组
+ */
+
+export async function fetchStaffAuthority() {
+  return request('/api/PMS/authority-group/rank', {
+    method: 'GET',
+  });
+}

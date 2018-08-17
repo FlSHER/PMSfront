@@ -1,10 +1,10 @@
 import React from 'react';
-import Group from './group';
+import UserCount from '../my';
 
 export default class extends React.Component {
   render() {
     return (
-      <Group type="statis_group" />
+      <UserCount />
     );
   }
 }

@@ -49,12 +49,15 @@ const menuData = [
         path: 'my',
       },
       {
-        name: '积分明细',
-        path: 'detail',
-      },
-      {
         name: '积分排名',
         path: 'ranking',
+        children: [
+          {
+            name: '个人统计',
+            path: 'count/:id',
+            hiddenMenu: true,
+          },
+        ],
       },
     ],
   },

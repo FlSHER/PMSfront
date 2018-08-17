@@ -2,71 +2,81 @@ import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'dva';
 import Bar from './bar';
+import HistoryBar from './historyBar';
 import OATable from '../../../components/OATable';
 import Line from './line';
 import styles from './index.less';
 
 
 const columns = [{
-  title: '月份/分值',
+  title: '月份',
   dataIndex: 'month',
   width: 100,
   align: 'center',
-  fixed: 'left',
 }, {
   title: 'A分',
   align: 'center',
-  dataIndex: 'source_a_total',
   children: [{
     title: '基础',
+    width: 50,
     dataIndex: 'source_a_total.0.point',
     align: 'center',
   }, {
     title: '工作',
+    width: 50,
     dataIndex: 'source_a_total.1.point',
     align: 'center',
   }, {
     title: '行政',
+    width: 50,
     dataIndex: 'source_a_total.2.point',
     align: 'center',
   }, {
     title: '创新',
+    width: 50,
     dataIndex: 'source_a_total.3.point',
     align: 'center',
   }, {
     title: '其他',
+    width: 50,
     dataIndex: 'source_a_total.4.point',
     align: 'center',
   }, {
     title: '总分',
+    width: 50,
     dataIndex: 'point_a_total',
     align: 'center',
   }],
 }, {
   title: 'B分',
-  dataIndex: 'source_b_total',
   children: [{
     title: '基础',
+    width: 50,
     dataIndex: 'source_b_total.0.point',
     align: 'center',
   }, {
     title: '工作',
+    width: 50,
     dataIndex: 'source_b_total.1.point',
     align: 'center',
   }, {
     title: '行政',
+    width: 50,
     dataIndex: 'source_b_total.2.point',
     align: 'center',
   }, {
     title: '创新',
+    width: 50,
     dataIndex: 'source_b_total.3.point',
     align: 'center',
   }, {
     title: '其他',
+    width: 50,
     dataIndex: 'source_b_total.4.point',
     align: 'center',
   }, {
     title: '总分',
+    width: 50,
     dataIndex: 'point_b_total',
     align: 'center',
   }],
@@ -119,9 +129,14 @@ export default class extends React.PureComponent {
   render() {
     const { loading, source, accumulative } = this.props;
     const total = accumulative.total || {};
-    const hisotryTota = {
+    const hisotryTotal = {
       month: [],
       aTotal: [],
+      bTotal: [],
+    };
+    const addUp = {
+      month: [],
+      // aTotal: [],
       bTotal: [],
     };
     const dataSource = [];
@@ -132,9 +147,13 @@ export default class extends React.PureComponent {
           month: key,
           ...value,
         });
-        hisotryTota.month.push(key);
-        hisotryTota.aTotal.push(value.point_a_total);
-        hisotryTota.bTotal.push(value.point_b_total);
+        hisotryTotal.month.push(key);
+        hisotryTotal.aTotal.push(value.point_a);
+        hisotryTotal.bTotal.push(value.point_b_monthly);
+
+        addUp.month.push(key);
+        // hisotryTotal.aTotal.push(value.point_a);
+        addUp.bTotal.push(value.point_b_total);
       });
     }
     const accumulativeTotal = this.makeAccumulativeTotal();
@@ -143,26 +162,31 @@ export default class extends React.PureComponent {
         <div className={`${styles.accoum}`}>
           <div className={styles.content}>
             <div className={styles.item}>
-              <div className={styles.subItem} style={{ marginRight: 96 }}>
+              <div className={styles.subItem} >
                 <p>累计积分<span>{total.point_b_total}</span></p>
-                <Bar source={source} data={accumulativeTotal} />
+                <Bar source={source} data={accumulativeTotal} width={500} />
               </div>
-              <div className={styles.subItem}>
-                <p >积分变化趋势<span>&nbsp;</span></p>
-                <Line data={hisotryTota} />
+              <div className={styles.subItem} >
+                <Line data={addUp} width={500} />
               </div>
             </div>
             <div className={styles.item}>
               <p style={{ textAlign: 'left' }}>
-                历史累计积分
+                历史积分
                 <span style={{ fontSize: 36 }}>&nbsp;</span>
               </p>
+              <HistoryBar
+                data={hisotryTotal}
+                width={500}
+                style={{ marginBottom: 40 }}
+              />
               <OATable
                 bordered
                 size="small"
                 operatorVisble={false}
                 columns={columns}
                 dataSource={dataSource}
+                scroll={{ y: 450 }}
                 pagination={{ defaultPageSize: 12, hideOnSinglePage: true }}
               />
             </div>

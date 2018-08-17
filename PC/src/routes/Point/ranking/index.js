@@ -1,23 +1,16 @@
-import React from 'react';
-import { Tabs } from 'antd';
-import MyGroup from './myGroup';
-import VisibleGroup from './visibleGroup';
-import styles from '../../Reward/MyBuckle/index.less';
+import React, { PureComponent } from 'react';
+import RouterIndex from '../../index';
+import Component from './default';
 
-const { TabPane } = Tabs;
-export default class extends React.PureComponent {
+export default class extends PureComponent {
   render() {
+    const { match, routerData } = this.props;
     return (
-      <div className={styles.tabs}>
-        <Tabs defaultActiveKey="1">
-          <TabPane key="1" tab="我的分组" forceRender>
-            <MyGroup />
-          </TabPane>
-          <TabPane tab="可见分组" key="2" forceRender>
-            <VisibleGroup />
-          </TabPane>
-        </Tabs>
-      </div>
+      <RouterIndex
+        match={match}
+        routerData={routerData}
+        Component={Component}
+      />
     );
   }
 }

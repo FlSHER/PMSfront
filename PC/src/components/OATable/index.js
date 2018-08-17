@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { connect } from 'dva';
-import { Table, Input, Icon, message, Button, Tooltip, Spin } from 'antd';
+import { Table, Input, Icon, message, Button, Tooltip } from 'antd';
 import Ellipsis from '../Ellipsis';
 
 import { makerFilters } from '../../utils/utils';
@@ -195,13 +195,17 @@ class OATable extends PureComponent {
       }
       if (column.dataIndex !== undefined && !column.render) {
         const { tooltip } = column;
-        response.render = (text) => {
+        let render = (text) => {
           return (
             <Ellipsis tooltip={tooltip || false} lines={1}>
               {text}
             </Ellipsis>
           );
         };
+        if (column.searcher) {
+          render = this.makeTooltipSearchRender(key, tooltip);
+        }
+        response.render = render;
       }
       return response;
     });
@@ -466,6 +470,27 @@ class OATable extends PureComponent {
     };
   }
 
+  makeTooltipSearchRender = (key, tooltip) => {
+    const { filters } = this.state;
+    return (val) => {
+      if (filters[key]) {
+        const reg = new RegExp(filters[key][0], 'gi');
+        const match = `${val}`.match(reg);
+        return (
+          <Ellipsis tooltip={tooltip || false} lines={1}>
+            {`${val}`.split(reg).map(
+              (text, i) => (
+                i > 0 ? [<span key={key} className="ant-table-search-highlight">{match[0]}</span>, text] : text
+              )
+            )}
+          </Ellipsis>
+        );
+      } else {
+        return val;
+      }
+    };
+  }
+
   resetFilter = (key) => {
     const { serverSide } = this.props;
     const { filters, searchers, filtered } = this.state;
@@ -505,7 +530,15 @@ class OATable extends PureComponent {
 
   makeTableProps = () => {
     const { pagination, selectedRowKeys } = this.state;
-    const { multiOperator, data, serverSide, total, rowSelection, autoScroll } = this.props;
+    const {
+      multiOperator,
+      data,
+      serverSide,
+      total,
+      rowSelection,
+      autoScroll,
+      loading,
+    } = this.props;
     const { bodyHeight } = this.props.table;
     if (serverSide) {
       pagination.total = total;
@@ -527,6 +560,7 @@ class OATable extends PureComponent {
         ...this.props.pagination,
       },
       ...this.props,
+      loading: loading || this.state.loading,
       rowSelection: newRowSelection,
       columns: this.mapColumns(),
     };
@@ -668,7 +702,6 @@ class OATable extends PureComponent {
       columns,
       operatorVisble,
     } = this.props;
-    const { loading } = this.state;
     const filterColumns = columns.map((item) => {
       const temp = { title: item.title, dataIndex: item.dataIndex };
       if (item.filters) {
@@ -680,35 +713,33 @@ class OATable extends PureComponent {
       return temp;
     });
     return (
-      <Spin spinning={loading !== false} tip={`${loading}`}>
-        <div
-          className={styles.filterTable}
-        >
-          {operatorVisble && (
-            <Operator
-              {...this.state}
-              sync={sync}
-              key="Operator"
-              filterColumns={filterColumns || []}
-              multiOperator={multiOperator}
-              extraOperator={this.makeExtraOperator()}
-              extraOperatorRight={extraOperatorRight}
-              fetchTableDataSource={() => { this.fetchTableDataSource(null, true); }}
-              resetFilter={this.resetFilter}
-              clearSelectedRows={this.clearSelectedRows}
-            />
-          )}
-          {(tableVisible === true) && (
-            <Table
-              ref={(e) => {
-                this.table = e;
-              }}
-              {...this.makeTableProps()}
-              key="table"
-            />
-          )}
-        </div>
-      </Spin>
+      <div
+        className={styles.filterTable}
+      >
+        {operatorVisble && (
+          <Operator
+            {...this.state}
+            sync={sync}
+            key="Operator"
+            filterColumns={filterColumns || []}
+            multiOperator={multiOperator}
+            extraOperator={this.makeExtraOperator()}
+            extraOperatorRight={extraOperatorRight}
+            fetchTableDataSource={() => { this.fetchTableDataSource(null, true); }}
+            resetFilter={this.resetFilter}
+            clearSelectedRows={this.clearSelectedRows}
+          />
+        )}
+        {(tableVisible === true) && (
+          <Table
+            ref={(e) => {
+              this.table = e;
+            }}
+            {...this.makeTableProps()}
+            key="table"
+          />
+        )}
+      </div>
     );
   }
 }
