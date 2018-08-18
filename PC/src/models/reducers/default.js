@@ -30,6 +30,15 @@ export default {
       [`${store}Filtered`]: filtered,
     };
   },
+  saveKey(state, action) {
+    const { store, key, data } = action.payload;
+    const dataSource = { ...state[store] };
+    dataSource[key] = data;
+    return {
+      ...state,
+      [store]: dataSource,
+    };
+  },
   add(state, action) {
     const { store, data } = action.payload;
     if (data.message) {

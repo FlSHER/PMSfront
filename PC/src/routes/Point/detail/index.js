@@ -23,11 +23,19 @@ export default class extends React.PureComponent {
     dispatch({ type: 'point/fetchType' });
   }
 
+  makeParams = (params) => {
+    const { staffSn } = this.props;
+    const newParams = { ...params };
+    if (staffSn) newParams.staff_sn = staffSn;
+    return newParams;
+  }
+
   fetch = (params) => {
     const { dispatch } = this.props;
+    const newParams = this.makeParams(params);
     dispatch({
       type: 'point/fetchDetail',
-      payload: params,
+      payload: newParams,
     });
   }
 
@@ -81,7 +89,7 @@ export default class extends React.PureComponent {
         title: '记录时间',
         dataIndex: 'created_at',
         sorter: true,
-        sortOrder: 'desced',
+        defaultSortOrder: 'desced',
       },
       {
         title: '初审人',
@@ -120,7 +128,7 @@ export default class extends React.PureComponent {
     const { editInfo, visible } = this.state;
 
     return (
-      <div style={{ margin: '30px 30px 0' }}>
+      <div style={{ margin: '0px 10px 0' }}>
         <OATable
           serverSide
           size="middle"

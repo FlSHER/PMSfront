@@ -1,5 +1,5 @@
 import React from 'react';
-import { Progress, Radio, Select } from 'antd';
+import { Progress, Radio, Select, Tooltip, Button } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
@@ -22,6 +22,15 @@ const stage = {
 
 function disabledDate(current) {
   return current && current > moment().endOf('day');
+}
+
+function TableCell(props) {
+  const { dataIndex, ...restProps } = props;
+  return (
+    <td {...restProps} style={{ ...(dataIndex ? { color: '#59c3c3' } : {}) }}>
+      {restProps.children}
+    </td>
+  );
 }
 
 
@@ -93,12 +102,13 @@ export default class extends React.Component {
     return params;
   }
 
-  fetch = () => {
+  fetch = (update) => {
     const { dispatch } = this.props;
     const params = this.makeParams();
     dispatch({
       type: 'point/fetchRank',
       payload: params,
+      update: update || false,
     });
   }
 
@@ -158,25 +168,40 @@ export default class extends React.Component {
         }
       });
     }
+    const userInfo = window.user || {};
     const columns = [{
       title: '排名',
       width: 90,
       dataIndex: 'rank',
+      onCell: (record) => {
+        if (userInfo.staff_sn === record.staff_sn) {
+          return { dataIndex: 'rank' };
+        }
+      },
     }, {
       title: '姓名',
       width: 150,
       dataIndex: 'staff_name',
       searcher: true,
+      onCell: (record) => {
+        if (userInfo.staff_sn === record.staff_sn) {
+          return { dataIndex: 'staff_name' };
+        }
+      },
     }, {
       title: '积分',
       dataIndex: 'total',
       sorter: true,
       width: 370,
-      render: (point) => {
+      render: (point, record) => {
         const percent = first ? (point / first).toFixed(2) * 100 : 0;
+        const style = {};
+        if (userInfo.staff_sn === record.staff_sn) {
+          style.color = '#59c3c3';
+        }
         return (
           <React.Fragment>
-            {point}
+            <span style={style}>{point}</span>
             <span style={{ display: 'inline-block', width: '300px', float: 'right' }}>
               <Progress
                 percent={percent}
@@ -190,13 +215,13 @@ export default class extends React.Component {
     }, {
       title: '操作',
       width: 90,
-      render: () => {
+      render: (_, record) => {
         return (
           <React.Fragment>
             <a
               style={{ color: '#59c3c3' }}
               onClick={() => {
-                this.props.dispatch(routerRedux.push('/point/ranking/count/1'));
+                this.props.dispatch(routerRedux.push(`/point/ranking/count/${record.staff_sn}`));
               }}
             >查看
             </a>
@@ -216,13 +241,23 @@ export default class extends React.Component {
     const rankValue = ranking[key] || {};
     const userRank = rankValue.user || {};
     const columns = this.makeColumns();
-
+    const components = {
+      body: {
+        cell: TableCell,
+      },
+    };
     return (
       <div className={styles.container}>
+        <Tooltip title="刷新数据">
+          <Button
+            icon="sync"
+            onClick={() => this.fetch(true)}
+          />
+        </Tooltip>
         <Select
           showSearch
           value={filters.group_id}
-          style={{ width: 200 }}
+          style={{ width: 200, marginLeft: 10 }}
           placeholder="请选择分组"
           optionFilterProp="children"
           onChange={this.handleChange}
@@ -274,6 +309,7 @@ export default class extends React.Component {
         <OATable
           autoScroll
           columns={columns}
+          components={components}
           dataSource={rankValue.list || []}
           loading={loading}
           operatorVisble={false}

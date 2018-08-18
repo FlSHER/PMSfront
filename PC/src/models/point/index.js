@@ -12,6 +12,7 @@ export default {
   state: {
     pointDetails: {},
     accumulative: {},
+    accumulativeStaff: {},
     source: [],
     type: [],
     staffAuthority: {},
@@ -29,14 +30,5 @@ export default {
   },
   reducers: {
     ...defaultReducers,
-    saveMyPoint(state, action) {
-      const { store, datetime, data } = action.payload;
-      const dataSource = { ...state[store] };
-      dataSource[datetime] = data;
-      return {
-        ...state,
-        [store]: dataSource,
-      };
-    },
   },
 };

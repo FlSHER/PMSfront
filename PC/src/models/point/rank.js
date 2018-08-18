@@ -4,12 +4,12 @@ import { fetchRank } from '../../services/point';
 const store = 'rank';
 
 export default {
-  * fetchRank({ payload }, { call, put, select }) {
+  * fetchRank({ payload, update }, { call, put, select }) {
     try {
       let response;
       const params = { ...payload };
       response = yield select(model => model.point[`${store}Details`][JSON.stringify(params)]);
-      if (!response) {
+      if (!response || update) {
         response = yield call(fetchRank, params);
         yield put({
           type: 'save',

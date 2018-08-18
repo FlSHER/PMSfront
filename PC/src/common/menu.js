@@ -54,7 +54,7 @@ const menuData = [
         children: [
           {
             name: '个人统计',
-            path: 'count/:id',
+            path: 'count/:staff_sn',
             hiddenMenu: true,
           },
         ],

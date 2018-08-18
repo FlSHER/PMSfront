@@ -217,7 +217,7 @@ export default class extends React.PureComponent {
         dataIndex: 'created_at',
         dateFilters: true,
         sorter: true,
-        sortOrder: 'descend',
+        defaultSortOrder: 'descend',
         width: 150,
         render: (time) => {
           return moment(time).format('YYYY-MM-DD HH:mm');

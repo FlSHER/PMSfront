@@ -6,15 +6,14 @@ export default {
   * fetchMyPoint({ payload }, { call, put, select }) {
     try {
       const params = { ...payload };
-      const { datetime } = params;
       let response;
-      response = yield select(model => model.point[store][datetime]);
+      response = yield select(model => model.point[store][JSON.stringify(params)]);
       if (!response) response = yield call(fetchMyPoint, params);
       yield put({
-        type: 'saveMyPoint',
+        type: 'saveKey',
         payload: {
           store,
-          datetime,
+          key: JSON.stringify(params),
           data: response,
         },
       });

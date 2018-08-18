@@ -28,12 +28,20 @@ export default class extends React.PureComponent {
     this.props.dispatch({ type: 'point/fetchType' });
   }
 
+  makeParams = () => {
+    const { month } = this.state;
+    const { staffSn } = this.props;
+    const params = { datetime: month };
+    if (staffSn) params.staff_sn = staffSn;
+    return params;
+  }
+
   fetch = () => {
     const { dispatch } = this.props;
-    const { month } = this.state;
+    const params = this.makeParams();
     dispatch({
       type: 'point/fetchMyPoint',
-      payload: { datetime: month },
+      payload: params,
     });
   }
 
@@ -85,9 +93,10 @@ export default class extends React.PureComponent {
   }
 
   makePieDataSource = () => {
-    const { month } = this.state;
-    const { data } = this.props;
-    const thisMonthPoint = data[month] || {};
+    const result = this.props.data;
+    const key = JSON.stringify(this.makeParams());
+    const data = result[key] || {};
+    const thisMonthPoint = data || {};
     const monthly = thisMonthPoint.monthly || {};
     const AMonthly = monthly.source_a_monthly || [];
     const BMonthly = monthly.source_b_monthly || [];

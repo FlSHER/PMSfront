@@ -51,9 +51,10 @@ export async function fetchMyPoint(params) {
 /**
  * 累计积分
  */
-export async function fetchAccumulative() {
+export async function fetchAccumulative(params) {
   return request('/api/PMS/points/all', {
     method: 'GET',
+    body: params,
   });
 }
 

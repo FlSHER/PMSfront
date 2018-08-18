@@ -4,19 +4,13 @@ import classNames from 'classnames';
 import { connect } from 'dva';
 import { Table, Input, Icon, message, Button, Tooltip } from 'antd';
 import Ellipsis from '../Ellipsis';
-
 import { makerFilters } from '../../utils/utils';
-
 import TreeFilter from './treeFilter';
 import DateFilter from './dateFilter';
 import RangeFilter from './rangeFilter';
-
 import Operator from './operator';
 import TableUpload from './upload';
-
 import EdiTableCell from './editTableCell';
-
-
 import styles from './index.less';
 import request from '../../utils/request';
 
@@ -61,7 +55,6 @@ class OATable extends PureComponent {
       sorter: {},
       loading: false,
     };
-    this.sortOrder = {};
   }
 
   componentDidMount() {
@@ -105,9 +98,10 @@ class OATable extends PureComponent {
       const tableTo = table.top;
       const tableToContetnTop = tableTo - contentTop;
       const { pagination } = this.props;
-      scrollY = contentHeigth - tableToContetnTop;
-      if (!pagination) {
-        scrollY -= (bodyHeight || this.bodyHeight) > 660 ? 120 : 100;
+      const page = (bodyHeight || this.bodyHeight) > 660 ? 120 : 100;
+      scrollY = contentHeigth - tableToContetnTop - page;
+      if (pagination === false) {
+        scrollY += (page / 2) - 15;
       }
       return scrollY;
     }
@@ -146,13 +140,8 @@ class OATable extends PureComponent {
           ...searcherParam,
         },
       };
-      const defaultSorter = Object.keys(this.sortOrder);
       if (sorter.field) {
         params.sort = `${sorter.field}-${sorter.order === 'ascend' ? 'asc' : 'desc'}`;
-      } else if (defaultSorter.length) {
-        defaultSorter.forEach((key) => {
-          params.sort = `${key}-${defaultSorter[key] === 'ascend' ? 'asc' : 'desc'}`;
-        });
       }
       urlPath = makerFilters(params);
     }
@@ -177,16 +166,17 @@ class OATable extends PureComponent {
         response.sorter = column.sorter === true ? this.makeDefaultSorter(key) : column.sorter;
       }
       response.filteredValue = filters[key] || null;
-      if (column.dataIndex && column.sorter && column.sortOrder) {
-        this.sortOrder[column.dataIndex] = column.sortOrder;
+      if (!sorter.field && column.defaultSortOrder) {
+        sorter.field = key;
+        sorter.order = column.sortOrder || column.defaultSortOrder;
       }
-      response.sortOrder = sorter.columnKey === key && sorter.order;
+      response.sortOrder = sorter.field === key && sorter.order;
       if (column.searcher) {
         Object.assign(response, this.makeSearchFilterOption(key, column));
         response.render = response.render || this.makeDefaultSearchRender(key);
       } else if (column.treeFilters) {
         Object.assign(response, this.makeTreeFilterOption(key, column));
-      } else if (column.filters && !serverSide) {
+      } else if (column.filters) {
         response.onFilter = column.onFilter || this.makeDefaultOnFilter(key);
       } else if (column.dateFilters) {
         Object.assign(response, this.makeDateFilterOption(key, column));
@@ -425,28 +415,37 @@ class OATable extends PureComponent {
   }
 
   makeDefaultOnFilter = (key) => {
-    return (value, record) => {
-      if (Array.isArray(record[key])) {
-        const able = record[key].find(item => item.toString() === value);
+    return (value) => {
+      const { serverSide } = this.props;
+      if (serverSide) return true;
+      const valueInfo = eval(`arguments[1].${key}`);
+      if (Array.isArray(valueInfo)) {
+        const able = valueInfo.find(item => item.toString() === value);
         return able;
       }
-      return `${record[key]}` === `${value}`;
+      return `${valueInfo}` === `${value}`;
     };
   }
 
   makeDefaultOnRangeFilter = (key) => {
-    return ({ min, max }, record) => min <= record[key] && max >= record[key];
+    const valueInfo = eval(`arguments[1].${key}`);
+    return ({ min, max }) => min <= valueInfo && max >= valueInfo;
   }
 
 
   makeDefaultOnSearch = (key) => {
-    return (value, record) => {
-      return `${record[key]}`.match(new RegExp(value, 'gi'));
+    return (value) => {
+      const valueInfo = eval(`arguments[1].${key}`);
+      return `${valueInfo}`.match(new RegExp(value, 'gi'));
     };
   }
 
   makeDefaultSorter = (key) => {
-    return (a, b) => a[key] - b[key];
+    return () => {
+      const a = eval(`arguments[0].${key}`);
+      const b = eval(`arguments[1].${key}`);
+      return a - b;
+    };
   }
 
   makeDefaultSearchRender = (key) => {

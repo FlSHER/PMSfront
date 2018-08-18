@@ -8,17 +8,18 @@ import styles from '../../Reward/MyBuckle/index.less';
 const { TabPane } = Tabs;
 export default class extends React.PureComponent {
   render() {
+    const { staffSn } = this.props;
     return (
       <div className={styles.tabs}>
         <Tabs defaultActiveKey="1">
           <TabPane key="1" tab="当月积分" forceRender>
-            <ThisMonth />
+            <ThisMonth staffSn={staffSn} />
           </TabPane>
           <TabPane tab="累计积分" key="2" forceRender>
-            <Accumulative />
+            <Accumulative staffSn={staffSn} />
           </TabPane>
           <TabPane tab="积分明细" key="3" >
-            <PointDetail />
+            <PointDetail staffSn={staffSn} />
           </TabPane>
         </Tabs>
       </div>

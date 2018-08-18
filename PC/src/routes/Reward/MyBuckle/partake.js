@@ -65,7 +65,7 @@ export default class extends React.PureComponent {
         title: '事件时间',
         dataIndex: 'executed_at',
         sorter: true,
-        sortOrder: 'descend',
+        defaultSortOrder: 'descend',
         dateFilters: true,
         width: 132,
         render: (time) => {

@@ -96,11 +96,17 @@ export default class extends React.PureComponent {
     this.props.dispatch({ type: 'point/fetchType' });
   }
 
+  makeParams = () => {
+    const { staffSn } = this.props;
+    const params = {};
+    if (staffSn) params.staff_sn = staffSn;
+    return params;
+  }
+
   fetch = () => {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'point/fetchAccumulative',
-    });
+    const params = this.makeParams();
+    dispatch({ type: 'point/fetchAccumulative', payload: params });
   }
 
   makeSourcePoint = (total) => {
@@ -119,15 +125,23 @@ export default class extends React.PureComponent {
     return temp;
   }
 
+  makeResult = () => {
+    const result = this.props.accumulative;
+    const key = JSON.stringify(this.makeParams());
+    const accumulative = result[key] || {};
+    return { accumulative };
+  }
+
   makeAccumulativeTotal = () => {
-    const { accumulative } = this.props;
+    const { accumulative } = this.makeResult();
     const total = accumulative.total || {};
     const { totalPoint } = this.makeSourcePoint(total.source_b_total || []);
     return totalPoint;
   }
 
   render() {
-    const { loading, source, accumulative } = this.props;
+    const { loading, source } = this.props;
+    const { accumulative } = this.makeResult();
     const total = accumulative.total || {};
     const hisotryTotal = {
       month: [],
@@ -180,15 +194,17 @@ export default class extends React.PureComponent {
                 width={500}
                 style={{ marginBottom: 40 }}
               />
-              <OATable
-                bordered
-                size="small"
-                operatorVisble={false}
-                columns={columns}
-                dataSource={dataSource}
-                scroll={{ y: 450 }}
-                pagination={{ defaultPageSize: 12, hideOnSinglePage: true }}
-              />
+              <div style={{ border: '1px solid #e8e8e8' }}>
+                <OATable
+                  bordered
+                  size="small"
+                  operatorVisble={false}
+                  columns={columns}
+                  dataSource={dataSource}
+                  scroll={{ y: 450 }}
+                  pagination={{ defaultPageSize: 12, hideOnSinglePage: true }}
+                />
+              </div>
             </div>
           </div>
         </div>

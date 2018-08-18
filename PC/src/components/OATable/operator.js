@@ -113,7 +113,7 @@ class Operator extends PureComponent {
   render() {
     const {
       selectedRows,
-      sorter,
+      // sorter,
       filters,
       multiOperator,
       extraOperator,
@@ -126,6 +126,7 @@ class Operator extends PureComponent {
     const hasFilter = Object.keys(filters)
       .filter(key => filters[key] && filters[key].length)
       .length > 0;
+    // console.log(filters);
     return (
       <div style={{ display: 'flex' }}>
         <div
@@ -148,7 +149,7 @@ class Operator extends PureComponent {
             </Tooltip>
           )}
           {
-            (Object.keys(sorter).length > 0 || hasFilter) &&
+            (hasFilter) &&
             (
               <ButtonGroup>
                 <Button onClick={() => resetFilter()}>清空筛选</Button>

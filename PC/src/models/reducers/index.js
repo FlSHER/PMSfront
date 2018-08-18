@@ -22,6 +22,15 @@ export default {
       };
     }
   },
+  saveKey(state, action) {
+    const { store, key, data } = action.payload;
+    const dataSource = { ...state[store] };
+    dataSource[key] = data;
+    return {
+      ...state,
+      [store]: dataSource,
+    };
+  },
   add(state, action) {
     const { store, data } = action.payload;
     if (data.message) {
@@ -109,13 +118,14 @@ export default {
 
     const dataState = Array.isArray(state[store]) ? (
       state[store] ? state[store].filter(item => item.id !== id) : []
-    ) : (
-      state[store].data ? {
-        ...state[store],
-        total: state[store].total - 1,
-        data: state[store].data.filter(item => item.id !== id),
-      } : {}
-    );
+    ) :
+      (
+        state[store].data ? {
+          ...state[store],
+          total: state[store].total - 1,
+          data: state[store].data.filter(item => item.id !== id),
+        } : {}
+      );
     return {
       ...state,
       [store]: dataState,

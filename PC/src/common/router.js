@@ -115,7 +115,7 @@ export const getRouterData = (app) => {
     '/point/ranking': {
       component: dynamicWrapper(app, [], () => import('../routes/Point/ranking')),
     },
-    '/point/ranking/count/:id': {
+    '/point/ranking/count/:staff_sn': {
       component: dynamicWrapper(app, [], () => import('../routes/Point/ranking/count')),
     },
 
