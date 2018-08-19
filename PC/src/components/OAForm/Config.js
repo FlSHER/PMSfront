@@ -103,7 +103,7 @@ export default formCreate => option => (Componet) => {
         bindModalAutoSave: this.bindModalAutoSave,
         setFiedError: this.handleFieldsError,
         onChange: this.handleOnChange,
-        onSubmit: this.handleSubmit,
+        validateFields: this.handleSubmit,
         onError: this.handleOnError,
       };
       delete respone.loading;

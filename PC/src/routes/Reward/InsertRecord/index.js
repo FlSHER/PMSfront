@@ -239,7 +239,7 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { form: { getFieldDecorator }, onSubmit } = this.props;
+    const { form: { getFieldDecorator }, validateFields } = this.props;
     const { defaultPoint, eventId, pointRange } = this.state;
     const userInfo = window.user || {};
     const formItemLayout = {
@@ -251,7 +251,7 @@ export default class extends React.PureComponent {
     return (
       <div style={{ width, margin: '0 auto' }}>
         <OAForm
-          onSubmit={onSubmit(this.handleSubmit)}
+          onSubmit={validateFields(this.handleSubmit)}
           style={{ padding: 10, width }}
         >
           <FormItem label="事件" {...formItemLayout}>

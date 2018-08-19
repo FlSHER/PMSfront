@@ -21,7 +21,7 @@ export default class Test extends React.PureComponent {
   }
 
   render() {
-    const { form: { getFieldDecorator }, onSubmit } = this.props;
+    const { form: { getFieldDecorator }, validateFields } = this.props;
     const style = {};
     const formItemLayout = {
       labelCol: { span: 3 },
@@ -33,7 +33,7 @@ export default class Test extends React.PureComponent {
         <OAModal
           {...this.bindModalAutoSave}
           visible={this.state.visible}
-          onSubmit={onSubmit(this.handleSubmit)}
+          onSubmit={validateFields(this.handleSubmit)}
           style={{ padding: 10, width: 670 }}
         >
           <FormItem label="描述" {...formItemLayout}>

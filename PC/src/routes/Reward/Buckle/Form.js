@@ -237,7 +237,12 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { form: { getFieldDecorator }, buckleInfo, onSubmit, validatorRequired } = this.props;
+    const {
+      form: { getFieldDecorator },
+      buckleInfo,
+      validateFields,
+      validatorRequired,
+    } = this.props;
     const { listFormValue, eventsError, current } = this.state;
     const userInfo = window.user || {};
     const formItemLayout = {
@@ -275,7 +280,7 @@ export default class extends React.PureComponent {
         </div>
         <OAForm
           hideRequiredMark
-          onSubmit={onSubmit(this.handleSubmit)}
+          onSubmit={validateFields(this.handleSubmit)}
           style={{ padding: 10, width, display: current === 1 ? 'block' : 'none' }}
         >
           <FormItem label="主题" {...formItemLayout}>

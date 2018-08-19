@@ -336,7 +336,7 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { form, buckle, fetching, type, visible, onClose, onSubmit } = this.props;
+    const { form, buckle, fetching, type, visible, onClose, validateFields } = this.props;
     const { getFieldDecorator } = form;
     const { editInfo } = this.state;
     const reuslt = buckle[type];
@@ -351,7 +351,7 @@ export default class extends React.PureComponent {
           width={550}
           visible={this.state.visible}
           title="撤回"
-          onSubmit={onSubmit(this.handleSubmit)}
+          onSubmit={validateFields(this.handleSubmit)}
           onCancel={() => {
             this.setState({ visible: false });
           }}

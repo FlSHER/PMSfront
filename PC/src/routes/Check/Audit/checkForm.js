@@ -63,7 +63,7 @@ export default class extends React.PureComponent {
       title,
       editInfo,
       loading,
-      onSubmit,
+      validateFields,
       form: { getFieldDecorator },
     } = this.props;
     const formItemLayout = {
@@ -78,7 +78,7 @@ export default class extends React.PureComponent {
         loading={loading}
         visible={visible}
         title={`${newTitle}`}
-        onSubmit={onSubmit(this.handleSubmit)}
+        onSubmit={validateFields(this.handleSubmit)}
         onCancel={() => onCancel(false)}
       >
         <FormItem label="审批意见" {...formItemLayout}>

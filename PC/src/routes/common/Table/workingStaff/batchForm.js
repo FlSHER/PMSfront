@@ -8,12 +8,12 @@ const FormItem = OAForm.Item;
 @OAForm.create()
 export default class BatchForm extends React.PureComponent {
   makeModalProps = () => {
-    const { visible, onCancel, handleChange, onSubmit } = this.props;
+    const { visible, onCancel, handleChange, validateFields } = this.props;
     const response = {
       visible,
       width: 550,
       title: '批量修改',
-      onSubmit: onSubmit(handleChange),
+      onSubmit: validateFields(handleChange),
       onCancel: () => onCancel(false),
     };
     return response;
