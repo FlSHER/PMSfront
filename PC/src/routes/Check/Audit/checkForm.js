@@ -2,13 +2,13 @@ import React from 'react';
 import { InputNumber, Input } from 'antd';
 import { connect } from 'dva';
 import Ellipsis from 'ant-design-pro/lib/Ellipsis';
-import OAForm, { create, OAModal } from '../../../components/OAForm';
+import OAForm, { OAModal } from '../../../components/OAForm';
 import styles from './index.less';
 import { getBuckleTitle } from '../../../utils/utils';
 
 const FormItem = OAForm.Item;
 
-@create()
+@OAForm.create()
 @connect(({ loading }) => ({
   loading: (
     loading.effects['buckle/approve']

@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
+import moment from 'moment';
 import { connect } from 'dva';
 import { Table, Input, Icon, message, Button, Tooltip } from 'antd';
 import Ellipsis from '../Ellipsis';
@@ -93,13 +94,13 @@ class OATable extends PureComponent {
     let scrollY = true;
     if (autoScroll && this.table && this.tableElement) {
       const { contentTop } = this;
-      const { bodyHeight, contentHeigth } = this.props.table;
+      const { bodyHeight, contentHeight } = this.props.table;
       const table = this.tableElement;
       const tableTo = table.top;
       const tableToContetnTop = tableTo - contentTop;
       const { pagination } = this.props;
       const page = (bodyHeight || this.bodyHeight) > 660 ? 120 : 100;
-      scrollY = contentHeigth - tableToContetnTop - page;
+      scrollY = contentHeight - tableToContetnTop - page;
       if (pagination === false) {
         scrollY += (page / 2) - 20;
       }
@@ -185,16 +186,17 @@ class OATable extends PureComponent {
       }
       if (column.dataIndex !== undefined && !column.render) {
         const { tooltip } = column;
-        let render = (text) => {
+        const render = (text) => {
+          let viewText = text;
+          if (column.searcher) {
+            viewText = this.makeDefaultSearchRender(key)(text);
+          }
           return (
             <Ellipsis tooltip={tooltip || false} lines={1}>
-              {text}
+              {viewText}
             </Ellipsis>
           );
         };
-        if (column.searcher) {
-          render = this.makeTooltipSearchRender(key, tooltip);
-        }
         response.render = render;
       }
       return response;
@@ -442,9 +444,14 @@ class OATable extends PureComponent {
 
   makeDefaultSorter = (key) => {
     return () => {
-      const a = eval(`arguments[0].${key}`);
-      const b = eval(`arguments[1].${key}`);
-      return a - b;
+      let a = eval(`arguments[0].${key}`);
+      let b = eval(`arguments[1].${key}`);
+
+      if (moment(a).isValid() && moment(b).isValid()) {
+        a = moment(a).valueOf();
+        b = moment(b).valueOf();
+      }
+      return parseFloat(a) - parseFloat(b);
     };
   }
 
@@ -469,27 +476,6 @@ class OATable extends PureComponent {
     };
   }
 
-  makeTooltipSearchRender = (key, tooltip) => {
-    const { filters } = this.state;
-    return (val) => {
-      if (filters[key]) {
-        const reg = new RegExp(filters[key][0], 'gi');
-        const match = `${val}`.match(reg);
-        return (
-          <Ellipsis tooltip={tooltip || false} lines={1}>
-            {`${val}`.split(reg).map(
-              (text, i) => (
-                i > 0 ? [<span key={key} className="ant-table-search-highlight">{match[0]}</span>, text] : text
-              )
-            )}
-          </Ellipsis>
-        );
-      } else {
-        return val;
-      }
-    };
-  }
-
   resetFilter = (key) => {
     const { serverSide } = this.props;
     const { filters, searchers, filtered } = this.state;
@@ -506,7 +492,7 @@ class OATable extends PureComponent {
       filters: key ? filters : {},
       searchers: key ? searchers : {},
       filtered: newFiltered,
-      sorter: {},
+      // sorter: {},
     }, () => {
       if (serverSide) {
         this.fetchTableDataSource();

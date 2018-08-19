@@ -4,7 +4,6 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
 import OAForm, {
-  create,
   DatePicker,
   SearchTable,
 } from '../../../components/OAForm';
@@ -14,12 +13,12 @@ import WorkingStaff from '../../common/Table/workingStaff';
 
 const FormItem = OAForm.Item;
 const { TextArea } = Input;
+@OAForm.create()
 @connect(({ event, loading }) => ({
   finalStaff: event.finalStaff,
   loading: loading.effects['buckle/addBuckle'],
   finalLoading: loading.effects['event/fetchFinalStaff'],
 }))
-@create()
 export default class extends React.PureComponent {
   constructor(props) {
     super(props);

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Icon } from 'antd';
+import { Layout } from 'antd';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import { Route, Redirect, Switch, routerRedux } from 'dva/router';
@@ -9,14 +9,13 @@ import classNames from 'classnames';
 // import { enquireScreen } from 'enquire-js';
 import GlobalHeader from '../components/PMSGlobalHeader';
 import SiderMenu from '../components/PMSSiderMenu';
-import GlobalFooter from '../components/GlobalFooter';
 import NotFound from '../routes/Exception/404';
 import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
 import logo from '../assets/logo.svg';
 import styles from './BasiclLayout.less';
-import PageHeader from '../components/PMSPageHeader';
+// import PageHeader from '../components/PMSPageHeader';
 
 const { Content } = Layout;
 const { AuthorizedRoute } = Authorized;
@@ -109,7 +108,7 @@ class BasicLayout extends React.PureComponent {
       type: 'table/save',
       payload: {
         bodyHeight: document.body.clientHeight,
-        contentHeigth: rightContent.clientHeight,
+        contentHeight: rightContent.clientHeight,
       },
     });
   }
@@ -166,7 +165,6 @@ class BasicLayout extends React.PureComponent {
           menuData={getMenuData()}
         />
         <Content className={styles.container}>
-          <PageHeader />
           <Layout className={styles.content}>
             {
               pathname !== '/index' && (
@@ -206,7 +204,6 @@ class BasicLayout extends React.PureComponent {
             </Content>
           </Layout>
         </Content>
-        <GlobalFooter copyright={<React.Fragment> Copyright <Icon type="copyright" /> 2018 喜歌实业IT部出品</React.Fragment>} />
       </Layout>
     );
 

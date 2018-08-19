@@ -4,7 +4,7 @@ export default {
   namespace: 'table',
   state: {
     bodyHeight: null,
-    contentHeigth: null,
+    contentHeight: null,
   },
   reducers: {
     save(_, { payload }) {

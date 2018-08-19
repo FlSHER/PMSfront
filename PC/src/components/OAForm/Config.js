@@ -7,7 +7,7 @@ import { unicodeFieldsError } from '../../utils/utils';
 import './message.less';
 import styles from './index.less';
 
-export default option => (Componet) => {
+export default formCreate => option => (Componet) => {
   const newOption = {
     ...option,
     onValuesChange(props, fieldValue, allValues) {
@@ -18,7 +18,7 @@ export default option => (Componet) => {
   };
   const { localBackUpKey } = option || {};
   delete newOption.localBackUpKey;
-  const FormComponent = Create(newOption)(Componet);
+  const FormComponent = Create(formCreate)(newOption)(Componet);
   class NewFormComponent extends React.PureComponent {
     state = {
       autoSave: false,

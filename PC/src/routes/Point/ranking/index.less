@@ -2,11 +2,26 @@
 .container {
   width: 700px;
   .myRangking {
-    margin-bottom: 10px;
-    margin-left: 10px;
+    margin: 0 0 10px;
     color: #323232;
   }
   .myRangking>span {
     margin-right: 54px;
   }
+  .filters {
+    margin-bottom: 20px;
+  }
+}
+
+.disclander {
+  display: none;
+  :global {
+    .ant-calendar-picker-icon {
+      display: none;
+    }
+  }
+}
+
+.hiddenPicker {
+  display: inline-block;
 }

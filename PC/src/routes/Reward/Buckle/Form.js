@@ -6,13 +6,12 @@ import moment from 'moment';
 import OAForm, {
   DatePicker,
   SearchTable,
-  create,
 } from '../../../components/OAForm';
 import ListForm from './listForm';
 // import { unicodeFieldsError } from '../../../utils/utils';
 const { Step } = Steps;
 const FormItem = OAForm.Item;
-@create()
+@OAForm.create()
 @connect(({ event, buckle, loading }) => ({
   finalStaff: event.finalStaff,
   buckleInfo: buckle.buckleGropusDetails,

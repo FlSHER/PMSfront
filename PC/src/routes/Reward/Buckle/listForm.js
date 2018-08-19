@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input } from 'antd';
-import OAForm, { FormList, create } from '../../../components/OAForm';
+import OAForm, { FormList } from '../../../components/OAForm';
 import { EventSearch } from '../../../components/SearchSelect';
 import WorkingStaff from '../../common/Table/workingStaff';
 
@@ -8,7 +8,7 @@ const { TextArea } = Input;
 const FormItem = OAForm.Item;
 
 @FormList
-@create()
+@OAForm.create()
 export default class extends React.PureComponent {
   constructor(props) {
     super(props);

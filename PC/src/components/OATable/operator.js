@@ -72,14 +72,6 @@ class Operator extends PureComponent {
 
   renderFiltersTag = () => {
     const { filterColumns, resetFilter, filters } = this.props;
-    // const filters = {
-    //   title: { like: '其他事项' },
-    //   event_count: {
-    //     min: 20,
-    //     max: 30,
-    //   },
-    //   status_id: [0],
-    // };
     const filtersTag = [];
     filterColumns.forEach((item) => {
       Object.keys(filters).forEach((name) => {
@@ -113,20 +105,18 @@ class Operator extends PureComponent {
   render() {
     const {
       selectedRows,
-      // sorter,
       filters,
       multiOperator,
       extraOperator,
       extraOperatorRight,
       fetchTableDataSource,
       resetFilter,
-      // clearSelectedRows,
       sync,
     } = this.props;
     const hasFilter = Object.keys(filters)
       .filter(key => filters[key] && filters[key].length)
       .length > 0;
-    // console.log(filters);
+    const style = extraOperator.length ? { marginLeft: 20 } : {};
     return (
       <div style={{ display: 'flex' }}>
         <div
@@ -137,7 +127,6 @@ class Operator extends PureComponent {
             flexGrow: 1,
           }}
         >
-          {extraOperator || null}
           {sync && (
             <Tooltip title="数据同步">
               <Button
@@ -148,10 +137,11 @@ class Operator extends PureComponent {
               />
             </Tooltip>
           )}
+          {extraOperator || null}
           {
             (hasFilter) &&
             (
-              <ButtonGroup>
+              <ButtonGroup style={style}>
                 <Button onClick={() => resetFilter()}>清空筛选</Button>
                 <Popover
                   content={this.renderFiltersTag()}

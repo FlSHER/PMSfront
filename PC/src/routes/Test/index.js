@@ -1,11 +1,11 @@
 import React from 'react';
-import { Input, Form, Button } from 'antd';
-import { OAModal, create } from '../../components/OAForm';
+import { Input, Button } from 'antd';
+import OAForm, { OAModal } from '../../components/OAForm';
 
 const { TextArea } = Input;
-const FormItem = Form.Item;
+const FormItem = OAForm.Item;
 
-@create()
+@OAForm.create()
 export default class Test extends React.PureComponent {
   state = {
     visible: false,

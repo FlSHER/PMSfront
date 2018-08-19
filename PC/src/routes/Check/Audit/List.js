@@ -4,7 +4,7 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
 import OATable from '../../../components/OATable';
-import OAForm, { OAModal, create } from '../../../components/OAForm';
+import OAForm, { OAModal } from '../../../components/OAForm';
 import BuckleInfo from './info';
 import { makerFilters, getBuckleStatus, statusData } from '../../../utils/utils';
 import styles from './index.less';
@@ -26,7 +26,7 @@ const cate = [
 
 const FormItem = OAForm.Item;
 
-@create()
+@OAForm.create()
 @connect(({ buckle, loading }) => ({
   buckle,
   fetching: loading.effects['buckle/fetchBuckleGroups'],

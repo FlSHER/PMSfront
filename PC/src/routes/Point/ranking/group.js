@@ -1,6 +1,7 @@
 import React from 'react';
 import { Progress, Radio, Select, Tooltip, Button } from 'antd';
 import moment from 'moment';
+import classNames from 'classnames';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { DatePicker } from '../../../components/OAForm';
@@ -190,6 +191,11 @@ export default class extends React.Component {
       },
     }, {
       title: '积分',
+      dataIndex: 'datetime',
+      sorter: true,
+      width: 100,
+    }, {
+      title: '积分',
       dataIndex: 'total',
       sorter: true,
       width: 370,
@@ -246,31 +252,44 @@ export default class extends React.Component {
         cell: TableCell,
       },
     };
+    const monthVisble = classNames(styles.disclander, {
+      [styles.hiddenPicker]: filters.stage === 'month',
+    });
+    const stageVisble = classNames(styles.disclander, {
+      [styles.hiddenPicker]: filters.stage === 'stage',
+    });
+
+    const dataSource = (rankValue.list || []).map((item, index) => {
+      return {
+        ...item,
+        datetime: `2018-0${index + 1}`,
+      };
+    });
+
     return (
       <div className={styles.container}>
-        <Tooltip title="刷新数据">
-          <Button
-            icon="sync"
-            onClick={() => this.fetch(true)}
-          />
-        </Tooltip>
-        <Select
-          showSearch
-          value={filters.group_id}
-          style={{ width: 200, marginLeft: 10 }}
-          placeholder="请选择分组"
-          optionFilterProp="children"
-          onChange={this.handleChange}
-          filterOption={(input, option) => {
-            return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-          }}
-        >
-          {groupData.map(item => (
-            <Option value={item.id} key={item.id}>{item.name}</Option>
-          ))}
-        </Select>
-
-        <div style={{ margin: '20px 0' }}>
+        <div className={styles.filters}>
+          <Tooltip title="刷新数据">
+            <Button
+              icon="sync"
+              onClick={() => this.fetch(true)}
+            />
+          </Tooltip>
+          <Select
+            showSearch
+            value={filters.group_id}
+            style={{ width: 160, marginLeft: 10, marginRight: 40 }}
+            placeholder="请选择分组"
+            optionFilterProp="children"
+            onChange={this.handleChange}
+            filterOption={(input, option) => {
+              return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+            }}
+          >
+            {groupData.map(item => (
+              <Option value={item.id} key={item.id}>{item.name}</Option>
+            ))}
+          </Select>
           <RadioGroup className={styles.header} onChange={this.onChange} value={filters.stage}>
             <Radio value="month">
               月度排名
@@ -280,8 +299,9 @@ export default class extends React.Component {
                 allowClear={false}
                 onChange={this.handlePanelChange}
                 disabledDate={disabledDate}
+                className={monthVisble}
                 onFocus={() => this.handleDatePickerVisible('month')}
-                style={{ width: '120px', marginLeft: '10px' }}
+                style={{ width: '80px', marginLeft: '10px' }}
               />
             </Radio>
             <Radio value="stage">
@@ -289,11 +309,13 @@ export default class extends React.Component {
               <RangePicker
                 format={format}
                 value={rangeValue}
+                allowClear={false}
                 mode={['month', 'month']}
                 disabledDate={disabledDate}
                 placeholder={['开始时间', '结束时间']}
                 onPanelChange={this.handleRangePickerChange}
-                style={{ width: '240px', marginLeft: '10px' }}
+                className={stageVisble}
+                style={{ width: '150px', marginLeft: '10px' }}
                 onFocus={() => this.handleDatePickerVisible('stage')}
               />
             </Radio>
@@ -310,7 +332,7 @@ export default class extends React.Component {
           autoScroll
           columns={columns}
           components={components}
-          dataSource={rankValue.list || []}
+          dataSource={dataSource || []}
           loading={loading}
           operatorVisble={false}
           pagination={false}

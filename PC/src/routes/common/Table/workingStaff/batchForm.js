@@ -1,11 +1,11 @@
 import React from 'react';
 import { Input, Icon } from 'antd';
-import OAForm, { OAModal, create } from '../../../../components/OAForm';
+import OAForm, { OAModal } from '../../../../components/OAForm';
 import styles from './index.less';
 
 const FormItem = OAForm.Item;
 
-@create()
+@OAForm.create()
 export default class BatchForm extends React.PureComponent {
   makeModalProps = () => {
     const { visible, onCancel, handleChange, onSubmit } = this.props;
