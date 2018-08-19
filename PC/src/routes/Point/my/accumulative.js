@@ -194,7 +194,7 @@ export default class extends React.PureComponent {
                 width={500}
                 style={{ marginBottom: 40 }}
               />
-              <div style={{ border: '1px solid #e8e8e8' }}>
+              <div >
                 <OATable
                   bordered
                   size="small"

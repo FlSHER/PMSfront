@@ -101,7 +101,7 @@ class OATable extends PureComponent {
       const page = (bodyHeight || this.bodyHeight) > 660 ? 120 : 100;
       scrollY = contentHeigth - tableToContetnTop - page;
       if (pagination === false) {
-        scrollY += (page / 2) - 15;
+        scrollY += (page / 2) - 20;
       }
       return scrollY;
     }
