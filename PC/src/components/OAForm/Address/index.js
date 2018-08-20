@@ -4,7 +4,7 @@ import {
   Select,
 } from 'antd';
 
-import districtData from '../../../../public/district';
+import districtData from '../../../assets/district';
 
 const { district } = districtData;
 const { Option } = Select;

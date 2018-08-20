@@ -520,17 +520,17 @@ export function getBuckleTitle(status) {
 export function getStatusImg(status) {
   switch (status) {
     case 0:
-      return '/public/checkin.png';
+      return '/checkin.png';
     case 1:
-      return '/public/checkin.png';
+      return '/checkin.png';
     case 2:
-      return '/public/pass.png';
+      return '/pass.png';
     case -1:
-      return '/public/reject.png';
+      return '/reject.png';
     case -2:
-      return '/public/rollback.png';
+      return '/rollback.png';
     case -3:
-      return '/public/cancel.png';
+      return '/cancel.png';
     default:
   }
 }
