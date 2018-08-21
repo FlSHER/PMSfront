@@ -62,20 +62,16 @@ export default class extends React.PureComponent {
     this.setState({ listFormValue: [...newListValue] });
   }
 
-  extraError = (name, error) => {
-    const { setFields } = this.props.form;
-    if (name === 'final_approver_name') {
-      setFields({ last: error });
-    } else if (name === 'first_approver_name') {
-      setFields({ first: error });
-    } else if (name === 'events') {
-      this.setState({ eventsError: error, current: 0 });
-    }
+  extraError = (error) => {
+    if (error.events) this.setState({ eventsError: error.events, current: 0 });
   }
 
   handleError = (error) => {
     const { onError } = this.props;
-    onError(error, this.extraError);
+    onError(error, {
+      final_approver_name: 'last',
+      first_approver_name: 'first',
+    }, this.extraError);
   }
 
   next = () => {
@@ -264,7 +260,6 @@ export default class extends React.PureComponent {
     }
     return (
       <div style={{ width, margin: '0 auto' }}>
-
         <Steps current={current} style={{ marginBottom: 20 }}>
           <Step title="添加事件" />
           <Step title="编辑主题" />
