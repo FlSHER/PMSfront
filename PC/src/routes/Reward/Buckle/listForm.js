@@ -36,7 +36,7 @@ export default class extends React.PureComponent {
   componentWillReceiveProps(nextProps) {
     const { errors, index, onError } = nextProps;
     if (errors[index] && JSON.stringify(nextProps.errors) !== JSON.stringify(this.props.errors)) {
-      onError(errors[index], false, false, false);
+      onError(errors[index]);
     }
   }
 

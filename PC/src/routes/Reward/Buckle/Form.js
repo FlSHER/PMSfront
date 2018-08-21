@@ -62,7 +62,7 @@ export default class extends React.PureComponent {
     this.setState({ listFormValue: [...newListValue] });
   }
 
-  extraError = (error) => {
+  extraError = (a, c, b, error) => {
     if (error.events) this.setState({ eventsError: error.events, current: 0 });
   }
 
@@ -84,10 +84,10 @@ export default class extends React.PureComponent {
     listFormValue.forEach((item, index) => {
       const temp = {};
       if (!item.event_id) {
-        temp.event_id = { errors: [new Error('请选择事件')] };
+        temp.event_id = ['请选择事件'];
       }
       if (!item.participants || !item.participants.length) {
-        temp.participants = { errors: [new Error('请选择参与人')] };
+        temp.participants = ['请选择参与人'];
       }
       if (Object.keys(temp).length) {
         eventsError[index] = temp;
