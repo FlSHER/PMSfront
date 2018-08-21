@@ -138,6 +138,7 @@ export default class Statistic extends React.Component {
             <div className={style.players}>
               <Flex className={style.time_sel}>
                 <MonthPicker
+                  range={{ min: '2018/7/1', max: new Date() }}
                   onChange={this.monthChange}
                 />
               </Flex>

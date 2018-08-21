@@ -61,7 +61,11 @@ export default class Ranking extends Component {
           borderBottom: '1px solid rgb(250,250,250)',
           background: '#fff',
         }}
-        onClick={() => handleClick(value)}
+        onClick={() => {
+          if (value.disable !== 1) {
+            handleClick(value);
+          }
+        }}
       >
         <Flex.Item
           style={{
