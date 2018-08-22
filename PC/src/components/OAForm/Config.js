@@ -76,7 +76,7 @@ export default formCreate => option => (Componet) => {
       const { setFields } = this.form;
       Object.keys(errResult).forEach((name) => {
         if (!Object.hasOwnProperty.call(errResult[name], 'value')) {
-          if (extraConfig[name] && values[extraConfig[name]]) {
+          if (extraConfig && extraConfigextraConfig[name] && values[extraConfig[name]]) {
             setFields({
               [extraConfig[name]]: {
                 ...errResult[name],

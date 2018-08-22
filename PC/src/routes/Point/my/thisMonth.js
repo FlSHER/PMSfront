@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, Spin } from 'antd';
+import { Icon, Spin, Tooltip, Button } from 'antd';
 import { connect } from 'dva';
 import classNames from 'classnames';
 import moment from 'moment';
@@ -41,12 +41,13 @@ export default class extends React.PureComponent {
     return params;
   }
 
-  fetch = () => {
+  fetch = (update) => {
     const { dispatch } = this.props;
     const params = this.makeParams();
     dispatch({
       type: 'point/fetchMyPoint',
       payload: params,
+      update,
     });
   }
 
@@ -130,26 +131,33 @@ export default class extends React.PureComponent {
     return (
       <Spin spinning={loading}>
         <div className={styles.viewContent}>
-          <div className={styles.monthSelect}>
-            <Icon
-              type="left"
-              className={preArrow}
-              onClick={() => {
-                if (!preAbled) this.handleArrowChange('prev');
-              }}
-            />
-            <span>{month}</span>
-            <Icon
-              type="right"
-              className={nextArrow}
-              onClick={() => {
-                if (!nextAbled) this.handleArrowChange('next');
-              }}
-            />
+          <div className={styles.monthHeaher}>
+            <Tooltip title="刷新数据" className={styles.tooltip}>
+              <Button
+                icon="sync"
+                onClick={() => this.fetch(true)}
+              />
+            </Tooltip>
+            <span className={styles.monthSelect}>
+              <Icon
+                type="left"
+                className={preArrow}
+                onClick={() => {
+                  if (!preAbled) this.handleArrowChange('prev');
+                }}
+              />
+              <span>{month}</span>
+              <Icon
+                type="right"
+                className={nextArrow}
+                onClick={() => {
+                  if (!nextAbled) this.handleArrowChange('next');
+                }}
+              />
+            </span>
           </div>
           <div className={styles.content}>
             <div className={styles.item}>
-
               <div className={styles.subItem}>
                 <p>当月A分<span>{monthly.point_a_monthly || 0}</span></p>
                 <Bar source={source} data={sourceAMonthly.totalPoint} />

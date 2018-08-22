@@ -11,7 +11,7 @@ const { TabPane } = Tabs;
 export default class extends React.PureComponent {
   render() {
     const { staffSn, contentHeight, datetime } = this.props;
-    const clientHeight = contentHeight || document.getElementById('rightContent').clientHeight;
+    const clientHeight = contentHeight || document.body.clientHeight;
     const viewHeight = clientHeight - 80;
     const style = { height: viewHeight, overflowY: 'scroll' };
     return (
