@@ -225,7 +225,7 @@ export default class extends React.Component {
           style.color = '#59c3c3';
         }
         let strokeColor = '#59c3c3';
-        if (point < 0) strokeColor = '#CF4252';
+        if (point < 0) strokeColor = '#F08796';
         return (
           <React.Fragment>
             <span style={{ display: 'inline-block', width: '300px', float: 'right', marginLeft: 20 }}>
