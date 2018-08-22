@@ -188,7 +188,7 @@ export default class extends React.Component {
     if (rankList[0]) {
       first = rankList[0].total;
       rankList.forEach((item) => {
-        if (parseFloat(item.total) > parseFloat(first)) {
+        if (parseFloat(Math.abs(item.total)) > parseFloat(Math.abs(first))) {
           first = item.total;
         }
       });
@@ -205,7 +205,7 @@ export default class extends React.Component {
       },
     }, {
       title: '姓名',
-      width: 150,
+      width: 130,
       dataIndex: 'staff_name',
       searcher: true,
       onCell: (record) => {
@@ -217,23 +217,25 @@ export default class extends React.Component {
       title: '积分',
       dataIndex: 'total',
       sorter: true,
-      width: 370,
+      width: 400,
       render: (point, record) => {
-        const percent = first ? (point / first).toFixed(2) * 100 : 0;
+        const percent = first ? Math.abs((point / first).toFixed(2)) * 100 : 0;
         const style = {};
         if (userInfo.staff_sn === record.staff_sn) {
           style.color = '#59c3c3';
         }
+        let strokeColor = '#59c3c3';
+        if (point < 0) strokeColor = '#CF4252';
         return (
           <React.Fragment>
-            <span style={style}>{point}</span>
-            <span style={{ display: 'inline-block', width: '300px', float: 'right' }}>
+            <span style={{ display: 'inline-block', width: '300px', float: 'right', marginLeft: 20 }}>
               <Progress
                 percent={percent}
-                strokeColor="#59c3c3"
+                strokeColor={strokeColor}
                 showInfo={false}
               />
             </span>
+            <span style={{ ...style, float: 'right' }}>{point}</span>
           </React.Fragment>
         );
       },
