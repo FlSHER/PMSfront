@@ -19,8 +19,13 @@ const thisMonth = moment().format(format);
   ),
 }))
 export default class extends React.PureComponent {
-  state = {
-    month: thisMonth,
+  constructor(props) {
+    super(props);
+    const { datetime } = props;
+    const month = datetime ? moment(datetime).format(format) : thisMonth;
+    this.state = {
+      month,
+    };
   }
 
   componentWillMount() {
@@ -113,8 +118,12 @@ export default class extends React.PureComponent {
     const { month } = this.state;
     const { loading, source } = this.props;
     const nextAbled = thisMonth === month;
+    const preAbled = month === '2018-07';
     const nextArrow = classNames(styles.arrowRight, {
       [styles.disabled]: nextAbled,
+    });
+    const preArrow = classNames(styles.arrowLeft, {
+      [styles.disabled]: preAbled,
     });
     const { monthly, sourceAMonthly, sourceBMonthly } = this.makePieDataSource();
 
@@ -124,8 +133,10 @@ export default class extends React.PureComponent {
           <div className={styles.monthSelect}>
             <Icon
               type="left"
-              className={styles.arrowLeft}
-              onClick={() => this.handleArrowChange('prev')}
+              className={preArrow}
+              onClick={() => {
+                if (!preAbled) this.handleArrowChange('prev');
+              }}
             />
             <span>{month}</span>
             <Icon
