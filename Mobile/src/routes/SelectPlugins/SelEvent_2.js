@@ -177,6 +177,7 @@ export default class SelEvent extends Component {
       // }
     }
   }
+
   searchChange = (v) => {
     if (this.timer) {
       clearInterval(this.timer);
