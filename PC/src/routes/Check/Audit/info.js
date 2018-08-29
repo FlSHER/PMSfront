@@ -44,11 +44,11 @@ export default class extends React.Component {
     const reject = editInfo.first_approved_at && statusId === 1 ? -2 : statusId === 1 ? -1 : null;
     return (
       <div className={styles.footer}>
-        <div onClick={() => this.handelVisible(true, actionId)}>
-          <span>通过</span>
-        </div>
         <div onClick={() => this.handelVisible(true, reject)}>
           <span>驳回</span>
+        </div>
+        <div onClick={() => this.handelVisible(true, actionId)}>
+          <span>通过</span>
         </div>
       </div>
     );
