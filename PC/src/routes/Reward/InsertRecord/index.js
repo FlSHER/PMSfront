@@ -13,12 +13,12 @@ import WorkingStaff from '../../common/Table/workingStaff';
 
 const FormItem = OAForm.Item;
 const { TextArea } = Input;
-@OAForm.create()
 @connect(({ event, loading }) => ({
   finalStaff: event.finalStaff,
   loading: loading.effects['buckle/addBuckle'],
   finalLoading: loading.effects['event/fetchFinalStaff'],
 }))
+@OAForm.create()
 export default class extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -86,23 +86,22 @@ export default class extends React.PureComponent {
   }
 
 
-  extraError = (name, error) => {
+  extraError = (error, values) => {
     const { setFields } = this.props.form;
-    if (name === 'final_approver_name') {
-      setFields({ last: error });
-    } else if (name === 'first_approver_name') {
-      setFields({ first: error });
-    } else if (name === 'events') {
-      const eventsErr = error[0];
-      Object.keys(eventsErr).forEach((key) => {
-        setFields({ [key]: eventsErr[key] });
+    if (error.events && error.events[0]) {
+      const eventError = error.events[0];
+      Object.keys(eventError).forEach((key) => {
+        setFields({ [key]: { ...eventError[key], value: values[key] } });
       });
     }
   }
 
   handleError = (error) => {
     const { onError } = this.props;
-    onError(error, this.extraError);
+    onError(error, {
+      final_approver_name: 'last',
+      first_approver_name: 'first',
+    }, this.extraError);
   }
 
   handleSubmit = (values) => {

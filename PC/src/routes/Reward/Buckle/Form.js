@@ -62,20 +62,16 @@ export default class extends React.PureComponent {
     this.setState({ listFormValue: [...newListValue] });
   }
 
-  extraError = (name, error) => {
-    const { setFields } = this.props.form;
-    if (name === 'final_approver_name') {
-      setFields({ last: error });
-    } else if (name === 'first_approver_name') {
-      setFields({ first: error });
-    } else if (name === 'events') {
-      this.setState({ eventsError: error, current: 0 });
-    }
+  extraError = (a, c, b, error) => {
+    if (error.events) this.setState({ eventsError: error.events, current: 0 });
   }
 
   handleError = (error) => {
     const { onError } = this.props;
-    onError(error, this.extraError);
+    onError(error, {
+      final_approver_name: 'last',
+      first_approver_name: 'first',
+    }, this.extraError);
   }
 
   next = () => {
@@ -88,10 +84,10 @@ export default class extends React.PureComponent {
     listFormValue.forEach((item, index) => {
       const temp = {};
       if (!item.event_id) {
-        temp.event_id = { errors: [new Error('请选择事件')] };
+        temp.event_id = ['请选择事件'];
       }
       if (!item.participants || !item.participants.length) {
-        temp.participants = { errors: [new Error('请选择参与人')] };
+        temp.participants = ['请选择参与人'];
       }
       if (Object.keys(temp).length) {
         eventsError[index] = temp;
@@ -264,7 +260,6 @@ export default class extends React.PureComponent {
     }
     return (
       <div style={{ width, margin: '0 auto' }}>
-
         <Steps current={current} style={{ marginBottom: 20 }}>
           <Step title="添加事件" />
           <Step title="编辑主题" />

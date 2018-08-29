@@ -201,7 +201,13 @@ export function makePositionData(brandId, brand) {
   return pushPosition;
 }
 
-export function unicodeFieldsError(temp, isUnicode = true) {
+
+/**
+ * 表单错误
+ * @param {错误异常} temp
+ * @param {是否生成错误} isUnicode
+ */
+export function unicodeFieldsError(temp, isUnicode = true, values) {
   if (!isUnicode) return temp;
   const fieldsValue = { ...temp };
   const params = {};
@@ -211,7 +217,11 @@ export function unicodeFieldsError(temp, isUnicode = true) {
     const keyGroup = key.split('.');
     keyGroup.forEach((item, index) => {
       if (index === keyGroup.length - 1) {
-        fieldsValueMd[item] = { errors: [new Error(value[0])] };
+        if (Object.hasOwnProperty.call(values, item)) {
+          fieldsValueMd[item] = { value: values[item], errors: [new Error(value[0])] };
+        } else {
+          fieldsValueMd[item] = { errors: [new Error(value[0])] };
+        }
       } else {
         fieldsValueMd[item] = fieldsValueMd[item] || {};
         fieldsValueMd = fieldsValueMd[item];
@@ -520,17 +530,17 @@ export function getBuckleTitle(status) {
 export function getStatusImg(status) {
   switch (status) {
     case 0:
-      return '/public/checkin.png';
+      return '/checkin.png';
     case 1:
-      return '/public/checkin.png';
+      return '/checkin.png';
     case 2:
-      return '/public/pass.png';
+      return '/pass.png';
     case -1:
-      return '/public/reject.png';
+      return '/reject.png';
     case -2:
-      return '/public/rollback.png';
+      return '/rollback.png';
     case -3:
-      return '/public/cancel.png';
+      return '/cancel.png';
     default:
   }
 }

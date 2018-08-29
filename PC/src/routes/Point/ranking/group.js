@@ -6,6 +6,7 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { DatePicker } from '../../../components/OAForm';
 import OATable from '../../../components/OATable';
+import { getUrlString } from '../../../utils/utils';
 import styles from './index.less';
 
 const RadioGroup = Radio.Group;
@@ -13,11 +14,11 @@ const { Option } = Select;
 
 const { RangePicker, MonthPicker } = DatePicker;
 const format = 'YYYY-MM';
-const thisMonth = moment();
+const thisMonth = moment().format(format);
 
 const stage = {
-  start_at: moment().subtract(7, 'month'),
-  end_at: moment().subtract(1, 'month'),
+  start_at: moment().subtract(7, 'month').format(format),
+  end_at: moment().subtract(1, 'month').format(format),
 };
 
 
@@ -45,15 +46,31 @@ function TableCell(props) {
   ),
 }))
 export default class extends React.Component {
-  state = {
-    rangeValue: [stage.start_at, stage.end_at],
-    filters: {
-      stage: 'month',
-      datetime: thisMonth,
-      group_id: null,
-      start_at: stage.start_at.format(format),
-      end_at: stage.end_at.format(format),
-    },
+  constructor(props) {
+    super(props);
+    const state = getUrlString('state');
+    const { staffAuthority } = props;
+    if (state) {
+      const obj = JSON.parse(state);
+      this.state = {
+        rangeValue: obj.rangeValue,
+        filters: {
+          ...obj.filters,
+          group_id: staffAuthority.statis_group ? obj.filters.group_id : null,
+        },
+      };
+    } else {
+      this.state = {
+        rangeValue: [stage.start_at, stage.end_at],
+        filters: {
+          stage: 'month',
+          datetime: thisMonth,
+          group_id: null,
+          start_at: stage.start_at,
+          end_at: stage.end_at,
+        },
+      };
+    }
   }
 
   componentDidMount() {
@@ -69,19 +86,8 @@ export default class extends React.Component {
           ...filters,
           group_id: staffAuthority.statis_group[0].id,
         },
-      }, this.fetch);
+      }, this.replaceUrl);
     }
-  }
-
-  onChange = (e) => {
-    const { value } = e.target;
-    const { filters } = this.state;
-    this.setState({
-      filters: {
-        ...filters,
-        stage: value,
-      },
-    }, this.fetch);
   }
 
   makeParams = () => {
@@ -91,7 +97,7 @@ export default class extends React.Component {
       group_id: filters.group_id,
     };
     if (filters.stage === 'month') {
-      params.datetime = filters.datetime.format(format);
+      params.datetime = filters.datetime;
     }
     if (filters.stage === 'stage') {
       params = {
@@ -113,26 +119,44 @@ export default class extends React.Component {
     });
   }
 
+  replaceUrl = () => {
+    const { activeKey } = this.props;
+    const state = JSON.stringify(this.state);
+    window.history.replaceState(null, null, `/point/ranking?activeKey=${activeKey}&state=${state}`);
+    this.fetch();
+  }
+
+  handleRadioChange = (e) => {
+    const { value } = e.target;
+    const { filters } = this.state;
+    this.setState({
+      filters: {
+        ...filters,
+        stage: value,
+      },
+    }, this.replaceUrl);
+  }
+
   handlePanelChange = (date) => {
     const { filters } = this.state;
     this.setState({
       filters: {
         ...filters,
-        datetime: date,
+        datetime: moment(date).format(format),
       },
-    }, this.fetch);
+    }, this.replaceUrl);
   }
 
   handleRangePickerChange = (value) => {
     const { filters } = this.state;
     this.setState({
-      rangeValue: value,
+      rangeValue: [value[0].format(format), value[1].format(format)],
       filters: {
         ...filters,
         start_at: value[0].format(format),
         end_at: value[1].format(format),
       },
-    }, this.fetch);
+    }, this.replaceUrl);
   }
 
   handleChange = (value) => {
@@ -142,7 +166,7 @@ export default class extends React.Component {
         ...filters,
         group_id: value,
       },
-    }, this.fetch);
+    }, this.replaceUrl);
   }
 
   handleDatePickerVisible = (store) => {
@@ -152,11 +176,11 @@ export default class extends React.Component {
         ...filters,
         stage: store,
       },
-    }, this.fetch);
+    }, this.replaceUrl);
   }
 
   makeColumns = () => {
-    const { ranking } = this.props;
+    const { ranking, activeKey } = this.props;
     const key = JSON.stringify(this.makeParams());
     const rankValue = ranking[key] || {};
     const rankList = rankValue.list || [];
@@ -164,7 +188,7 @@ export default class extends React.Component {
     if (rankList[0]) {
       first = rankList[0].total;
       rankList.forEach((item) => {
-        if (parseFloat(item.total) > parseFloat(first)) {
+        if (parseFloat(Math.abs(item.total)) > parseFloat(Math.abs(first))) {
           first = item.total;
         }
       });
@@ -181,7 +205,7 @@ export default class extends React.Component {
       },
     }, {
       title: '姓名',
-      width: 150,
+      width: 130,
       dataIndex: 'staff_name',
       searcher: true,
       onCell: (record) => {
@@ -191,30 +215,27 @@ export default class extends React.Component {
       },
     }, {
       title: '积分',
-      dataIndex: 'datetime',
-      sorter: true,
-      width: 100,
-    }, {
-      title: '积分',
       dataIndex: 'total',
       sorter: true,
-      width: 370,
+      width: 400,
       render: (point, record) => {
-        const percent = first ? (point / first).toFixed(2) * 100 : 0;
+        const percent = first ? Math.abs((point / first).toFixed(2)) * 100 : 0;
         const style = {};
         if (userInfo.staff_sn === record.staff_sn) {
           style.color = '#59c3c3';
         }
+        let strokeColor = '#59c3c3';
+        if (point < 0) strokeColor = '#F08796';
         return (
           <React.Fragment>
-            <span style={style}>{point}</span>
-            <span style={{ display: 'inline-block', width: '300px', float: 'right' }}>
+            <span style={{ display: 'inline-block', width: '300px', float: 'right', marginLeft: 20 }}>
               <Progress
                 percent={percent}
-                strokeColor="#59c3c3"
+                strokeColor={strokeColor}
                 showInfo={false}
               />
             </span>
+            <span style={{ ...style, float: 'right' }}>{point}</span>
           </React.Fragment>
         );
       },
@@ -222,13 +243,22 @@ export default class extends React.Component {
       title: '操作',
       width: 90,
       render: (_, record) => {
+        let color = '#59c3c3';
+        let onClick = () => {
+          const state = JSON.stringify(this.state);
+          this.props.dispatch(
+            routerRedux.push(`/point/ranking/count/${record.staff_sn}?activeKey=${activeKey}&state=${state}`)
+          );
+        };
+        if (record.disable) {
+          color = '#c8c8c8';
+          onClick = () => { };
+        }
         return (
           <React.Fragment>
             <a
-              style={{ color: '#59c3c3' }}
-              onClick={() => {
-                this.props.dispatch(routerRedux.push(`/point/ranking/count/${record.staff_sn}`));
-              }}
+              style={{ color }}
+              onClick={onClick}
             >查看
             </a>
           </React.Fragment>
@@ -259,13 +289,6 @@ export default class extends React.Component {
       [styles.hiddenPicker]: filters.stage === 'stage',
     });
 
-    const dataSource = (rankValue.list || []).map((item, index) => {
-      return {
-        ...item,
-        datetime: `2018-0${index + 1}`,
-      };
-    });
-
     return (
       <div className={styles.container}>
         <div className={styles.filters}>
@@ -290,35 +313,39 @@ export default class extends React.Component {
               <Option value={item.id} key={item.id}>{item.name}</Option>
             ))}
           </Select>
-          <RadioGroup className={styles.header} onChange={this.onChange} value={filters.stage}>
+          <RadioGroup
+            className={styles.header}
+            onChange={this.handleRadioChange}
+            value={filters.stage}
+          >
             <Radio value="month">
               月度排名
-              <MonthPicker
-                format={format}
-                defaultValue={datetime}
-                allowClear={false}
-                onChange={this.handlePanelChange}
-                disabledDate={disabledDate}
-                className={monthVisble}
-                onFocus={() => this.handleDatePickerVisible('month')}
-                style={{ width: '80px', marginLeft: '10px' }}
-              />
             </Radio>
+            <MonthPicker
+              format={format}
+              defaultValue={moment(datetime, format)}
+              allowClear={false}
+              onChange={this.handlePanelChange}
+              disabledDate={disabledDate}
+              className={monthVisble}
+              onFocus={() => this.handleDatePickerVisible('month')}
+              style={{ width: '80px', marginRight: '10px' }}
+            />
             <Radio value="stage">
               阶段排名
-              <RangePicker
-                format={format}
-                value={rangeValue}
-                allowClear={false}
-                mode={['month', 'month']}
-                disabledDate={disabledDate}
-                placeholder={['开始时间', '结束时间']}
-                onPanelChange={this.handleRangePickerChange}
-                className={stageVisble}
-                style={{ width: '150px', marginLeft: '10px' }}
-                onFocus={() => this.handleDatePickerVisible('stage')}
-              />
             </Radio>
+            <RangePicker
+              format={format}
+              value={[moment(rangeValue[0], format), moment(rangeValue[1], format)]}
+              allowClear={false}
+              mode={['month', 'month']}
+              disabledDate={disabledDate}
+              placeholder={['开始时间', '结束时间']}
+              onPanelChange={this.handleRangePickerChange}
+              className={stageVisble}
+              style={{ width: '150px', marginRight: '10px' }}
+              onFocus={() => this.handleDatePickerVisible('stage')}
+            />
             <Radio value="total">累计排名</Radio>
           </RadioGroup>
         </div>
@@ -332,7 +359,7 @@ export default class extends React.Component {
           autoScroll
           columns={columns}
           components={components}
-          dataSource={dataSource || []}
+          dataSource={rankValue.list || []}
           loading={loading}
           operatorVisble={false}
           pagination={false}

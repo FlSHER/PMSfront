@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, Spin } from 'antd';
+import { Icon, Spin, Tooltip, Button } from 'antd';
 import { connect } from 'dva';
 import classNames from 'classnames';
 import moment from 'moment';
@@ -19,8 +19,13 @@ const thisMonth = moment().format(format);
   ),
 }))
 export default class extends React.PureComponent {
-  state = {
-    month: thisMonth,
+  constructor(props) {
+    super(props);
+    const { datetime } = props;
+    const month = datetime ? moment(datetime).format(format) : thisMonth;
+    this.state = {
+      month,
+    };
   }
 
   componentWillMount() {
@@ -36,12 +41,13 @@ export default class extends React.PureComponent {
     return params;
   }
 
-  fetch = () => {
+  fetch = (update) => {
     const { dispatch } = this.props;
     const params = this.makeParams();
     dispatch({
       type: 'point/fetchMyPoint',
       payload: params,
+      update,
     });
   }
 
@@ -113,32 +119,45 @@ export default class extends React.PureComponent {
     const { month } = this.state;
     const { loading, source } = this.props;
     const nextAbled = thisMonth === month;
+    const preAbled = month === '2018-07';
     const nextArrow = classNames(styles.arrowRight, {
       [styles.disabled]: nextAbled,
+    });
+    const preArrow = classNames(styles.arrowLeft, {
+      [styles.disabled]: preAbled,
     });
     const { monthly, sourceAMonthly, sourceBMonthly } = this.makePieDataSource();
 
     return (
       <Spin spinning={loading}>
         <div className={styles.viewContent}>
-          <div className={styles.monthSelect}>
-            <Icon
-              type="left"
-              className={styles.arrowLeft}
-              onClick={() => this.handleArrowChange('prev')}
-            />
-            <span>{month}</span>
-            <Icon
-              type="right"
-              className={nextArrow}
-              onClick={() => {
-                if (!nextAbled) this.handleArrowChange('next');
-              }}
-            />
+          <div className={styles.monthHeaher}>
+            <Tooltip title="刷新数据" className={styles.tooltip}>
+              <Button
+                icon="sync"
+                onClick={() => this.fetch(true)}
+              />
+            </Tooltip>
+            <span className={styles.monthSelect}>
+              <Icon
+                type="left"
+                className={preArrow}
+                onClick={() => {
+                  if (!preAbled) this.handleArrowChange('prev');
+                }}
+              />
+              <span>{month}</span>
+              <Icon
+                type="right"
+                className={nextArrow}
+                onClick={() => {
+                  if (!nextAbled) this.handleArrowChange('next');
+                }}
+              />
+            </span>
           </div>
           <div className={styles.content}>
             <div className={styles.item}>
-
               <div className={styles.subItem}>
                 <p>当月A分<span>{monthly.point_a_monthly || 0}</span></p>
                 <Bar source={source} data={sourceAMonthly.totalPoint} />

@@ -27,11 +27,13 @@ export default formCreate => option => (Componet) => {
     }
 
     getlocalBackUp = (value) => {
+      if (!this.form) return;
       const { setFieldsValue } = this.form;
       setFieldsValue(value);
     }
 
     savelocalBackUp = () => {
+      if (!this.form) return;
       const { getFieldsValue } = this.form;
       return getFieldsValue();
     }
@@ -41,6 +43,7 @@ export default formCreate => option => (Componet) => {
     }
 
     handleFieldsError = (name) => {
+      if (!this.form) return;
       const { setFields, getFieldError } = this.form;
       if (getFieldError(name)) {
         setFields({ [name]: {} });
@@ -67,20 +70,46 @@ export default formCreate => option => (Componet) => {
       };
     }
 
-    handleOnError = (error, callback, isUnicode) => {
-      const errResult = unicodeFieldsError(error, isUnicode);
+    disposeErrorResult = (errResult, extraConfig, values) => {
+      const customErr = {};
+      const formError = {};
       const { setFields } = this.form;
-      setFields(errResult);
-      if (callback) {
-        Object.keys(errResult).forEach((name) => {
-          callback(name, errResult[name], error);
-        });
-      }
+      Object.keys(errResult).forEach((name) => {
+        if (!Object.hasOwnProperty.call(errResult[name], 'value')) {
+          if (extraConfig && extraConfigextraConfig[name] && values[extraConfig[name]]) {
+            setFields({
+              [extraConfig[name]]: {
+                ...errResult[name],
+                value: values[extraConfig[name]],
+              },
+            });
+          } else {
+            customErr[name] = errResult[name];
+          }
+        } else {
+          formError[name] = errResult[name];
+        }
+      });
+      return {
+        customErr,
+        formError,
+      };
+    }
+
+    handleOnError = (error, extraConfig = {}, callback, isUnicode) => {
+      if (!this.form) return;
+      const { setFields, getFieldsValue } = this.form;
+      const values = getFieldsValue();
+      const errResult = unicodeFieldsError(error, isUnicode, { ...values });
+      const { customErr, formError } = this.disposeErrorResult(errResult, extraConfig, values);
+      if (Object.keys(customErr).length && callback) callback(customErr, values, error);
+      if (Object.keys(formError).length) setFields(formError);
     }
 
     handleSubmit = (callback) => {
       return (e) => {
         if (e) e.preventDefault();
+        if (!this.form) return;
         this.form.validateFieldsAndScroll((err, values) => {
           if (!err) {
             callback(values);
@@ -98,15 +127,14 @@ export default formCreate => option => (Componet) => {
 
     makeNewFormComponetProps = () => {
       const respone = {
-        ...this.props,
         bindAutoSave: this.bindAutoSave,
         bindModalAutoSave: this.bindModalAutoSave,
         setFiedError: this.handleFieldsError,
         onChange: this.handleOnChange,
         validateFields: this.handleSubmit,
         onError: this.handleOnError,
+        ...this.props,
       };
-      delete respone.loading;
       respone.validatorRequired = { validator: this.validatorRequired };
       return respone;
     }
