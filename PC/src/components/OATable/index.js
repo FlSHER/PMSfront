@@ -430,8 +430,10 @@ class OATable extends PureComponent {
   }
 
   makeDefaultOnRangeFilter = (key) => {
-    const valueInfo = eval(`arguments[1].${key}`);
-    return ({ min, max }) => min <= valueInfo && max >= valueInfo;
+    return ({ min, max }) => {
+      const valueInfo = eval(`arguments[1].${key}`);
+      return min <= valueInfo && max >= valueInfo;
+    };
   }
 
 

@@ -16,7 +16,7 @@ export default class extends React.PureComponent {
     const style = { height: viewHeight, overflowY: 'scroll' };
     return (
       <div className={styles.tabs}>
-        <Tabs defaultActiveKey="1">
+        <Tabs defaultActiveKey="3">
           <TabPane key="1" tab="单月积分" forceRender style={style}>
             <ThisMonth staffSn={staffSn} datetime={datetime} />
           </TabPane>

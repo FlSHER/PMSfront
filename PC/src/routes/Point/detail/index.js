@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'dva';
 import EventInfo from '../../Reward/MyBuckle/info';
+import BasicsInfo from './info';
 import OATable from '../../../components/OATable';
+
 
 @connect(({ point, loading }) => ({
   list: point.pointDetails,
@@ -109,13 +111,17 @@ export default class extends React.PureComponent {
         width: 100,
         render: (_, record) => {
           let a = { style: { color: '#c8c8c8' } };
-          if (record.source_id === 2) {
+          if (record.source_id === 2 || record.source_id === 0) {
             a = {
               style: { color: '#59c3c3' },
               onClick: () => { this.setState({ editInfo: record, visible: true }); },
             };
           }
-          return (<a {...a}>查看事件</a>);
+          return (
+            <React.Fragment>
+              <a {...a}>查看事件</a>
+            </React.Fragment>
+          );
         },
       },
     ];
@@ -135,18 +141,39 @@ export default class extends React.PureComponent {
           loading={loading}
           scroll={{ x: 1400 }}
           columns={this.makeColums()}
-          data={list && list.data}
-          total={list && list.total}
+          data={list.data}
+          total={list.total}
           fetchDataSource={this.fetch}
         />
-        <EventInfo
+        <BasicsInfo
+          visible
           type="participant"
           id={editInfo.source_foreign_key || null}
-          visible={visible}
           onClose={() => {
             this.setState({ editInfo: {}, visible: false });
           }}
         />
+        {editInfo.source_id === 2 ? (
+          <BasicsInfo
+            visible={visible}
+            type="participant"
+            id={editInfo.source_foreign_key || null}
+            onClose={() => {
+              this.setState({ editInfo: {}, visible: false });
+            }}
+          />
+        ) :
+          (
+            <EventInfo
+              type="participant"
+              id={editInfo.source_foreign_key || null}
+              visible={visible}
+              onClose={() => {
+                this.setState({ editInfo: {}, visible: false });
+              }}
+            />
+          )}
+
       </div>
     );
   }
