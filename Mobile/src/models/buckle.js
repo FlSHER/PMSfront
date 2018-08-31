@@ -2,7 +2,7 @@ import { Toast } from 'antd-mobile';
 import {
   recordBuckle,
   buckleReject,
-  getBuckleDetail,
+  getBuckleDetail, getBaseDetail,
   withdrawBuckle,
   firstApprove,
   finalApprove,
@@ -183,6 +183,23 @@ export default {
     },
     *getBuckleDetail({ payload }, { call, put }) {
       const response = yield call(getBuckleDetail, payload.eventId);
+      if (response && !response.error) {
+        yield put({
+          type: 'save',
+          payload: {
+            store: 'buckle',
+            id: response.id,
+            data: response,
+          },
+        });
+        if (payload.cb) {
+          payload.cb(response);
+        }
+      }
+    },
+
+    *getBaseDetail({ payload }, { call, put }) {
+      const response = yield call(getBaseDetail, payload.foreignKey);
       if (response && !response.error) {
         yield put({
           type: 'save',

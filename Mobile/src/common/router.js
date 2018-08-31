@@ -112,6 +112,9 @@ export const getRouterData = (app) => {
     '/point_detail/:id': {
       component: dynamicWrapper(app, ['point'], () => import('../routes/Point/survey/pointDetail')),
     },
+    '/base_detail/:id': {
+      component: dynamicWrapper(app, ['point'], () => import('../routes/Point/survey/baseDetail')),
+    },
     '/point_survey': {
       component: dynamicWrapper(app, [], () => import('../routes/Point/survey/pointSurvey')),
     },

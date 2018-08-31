@@ -36,6 +36,10 @@ export async function getBuckleDetail(id) {
   return request(`/api/event-logs/${id}`);
 }
 
+export async function getBaseDetail(id) {
+  return request(`/api/points/base-point/logs/${id}`);
+}
+
 export async function getLogGroupDetail(id) {
   return request(`/api/event-logs/groups/${id}`);
 }
