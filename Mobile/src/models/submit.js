@@ -58,7 +58,6 @@ export default {
         const obj = { staff_sn: _.staff_sn, realname: _.realname, staff_name: _.staff_name };
         return obj;
       });
-      console.log('addressees', addressees);
       const final = {
         staff_sn: value.final_approver_sn,
         realname: value.final_approver_name,

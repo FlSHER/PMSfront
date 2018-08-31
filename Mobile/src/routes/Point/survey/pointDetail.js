@@ -15,6 +15,7 @@ export default class PointDetail extends React.Component {
   state = {
     pointLog: '',
   }
+
   componentWillMount() {
     const { dispatch, location } = this.props;
     const pointLog = analyzePath(location.pathname, 1);
@@ -27,15 +28,19 @@ export default class PointDetail extends React.Component {
       });
     });
   }
+
   toLookDetail = () => {
     const { history, pointDetails } = this.props;
     const { pointLog } = this.state;
     const detail = pointDetails[pointLog];
     const sourceId = detail.source_id;
-    if (sourceId === 2) {
-      const sourceForeignKey = detail.source_foreign_key;
-      history.push(`/audit_detail/${sourceForeignKey}`);
+    const sourceForeignKey = detail.source_foreign_key;
+    let path = '/audit_detail';
+    if (`${sourceId}` === '0') {
+      path = '/base_detail';
     }
+    const url = `${path}/${sourceForeignKey}`;
+    history.push(url);
   }
   render() {
     const { pointDetails } = this.props;
@@ -45,7 +50,7 @@ export default class PointDetail extends React.Component {
       return null;
     }
     const sourceId = detail.source_id;
-    const hasDetail = sourceId === 2;
+    const hasDetail = `${sourceId}` === '2' || `${sourceId}` === '0';
     return (
       <div
         className={styles.con}
