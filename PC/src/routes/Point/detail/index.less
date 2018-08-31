@@ -1,10 +1,13 @@
+@import "~antd/lib/style/themes/default.less";
 .title {
+  padding: 0 10px;
   font-size: 16px;
   line-height: 24px;
   color: #4a4a4a;
 }
 
 .staffInfo {
+  padding: 0 10px;
   color: #646464;
   font-size: 12px;
   line-height: 20px;
@@ -14,5 +17,49 @@
 }
 
 .point {
+  padding: 0 10px;
   margin: 60px 0;
+}
+
+.categries {
+  font-size: 14px;
+  line-height: 22px;
+  color: #323232;
+  padding: 10px;
+  margin: 0;
+}
+
+.compose {
+  background-color: #e6f5f3;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  .title {
+    border-bottom: solid 1px #cccccc;
+    padding: 0;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    .point {
+      color: @primary-color;
+      margin: 0;
+      padding: 0;
+    }
+  }
+  .content {
+    line-height: 22px;
+    p {
+      margin: 0;
+      color: #323232;
+    }
+    .time {
+      color: #969696;
+    }
+    .proved {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
 }

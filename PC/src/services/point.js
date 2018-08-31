@@ -79,3 +79,12 @@ export async function fetchStaffAuthority() {
     method: 'GET',
   });
 }
+
+/** points/base-point/logs  基础分统计详情 */
+
+export async function fetchBasePoint(id) {
+  return request(`/api/PMS/points/base-point/logs/${id}`, {
+    method: 'GET',
+  });
+}
+

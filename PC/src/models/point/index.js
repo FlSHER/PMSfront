@@ -5,6 +5,7 @@ import meEffects from './me';
 import rankEffects from './rank';
 import accumulativeEffects from './all';
 import staffAuthGroupEffects from './staffAuthGroup';
+import basePointEffects from './basePoint';
 import defaultReducers from '../reducers/default';
 
 export default {
@@ -18,6 +19,7 @@ export default {
     staffAuthority: {},
     me: {},
     rankDetails: {},
+    basePointDetails: {},
   },
   effects: {
     ...staffAuthGroupEffects,
@@ -27,6 +29,7 @@ export default {
     ...detailEffects,
     ...sourceEffects,
     ...rankEffects,
+    ...basePointEffects,
   },
   reducers: {
     ...defaultReducers,

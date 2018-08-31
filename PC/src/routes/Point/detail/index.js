@@ -145,15 +145,7 @@ export default class extends React.PureComponent {
           total={list.total}
           fetchDataSource={this.fetch}
         />
-        <BasicsInfo
-          visible
-          type="participant"
-          id={editInfo.source_foreign_key || null}
-          onClose={() => {
-            this.setState({ editInfo: {}, visible: false });
-          }}
-        />
-        {editInfo.source_id === 2 ? (
+        {editInfo.source_id === 0 ? (
           <BasicsInfo
             visible={visible}
             type="participant"
