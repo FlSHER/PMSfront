@@ -111,7 +111,7 @@ export default class extends React.PureComponent {
         width: 100,
         render: (_, record) => {
           let a = { style: { color: '#c8c8c8' } };
-          if (record.source_id === 2 || record.source_id === 0) {
+          if (record.source_id === 2 || record.source_id === 1) {
             a = {
               style: { color: '#59c3c3' },
               onClick: () => { this.setState({ editInfo: record, visible: true }); },
@@ -145,7 +145,7 @@ export default class extends React.PureComponent {
           total={list.total}
           fetchDataSource={this.fetch}
         />
-        {editInfo.source_id === 0 ? (
+        {editInfo.source_id === 1 ? (
           <BasicsInfo
             visible={visible}
             type="participant"
