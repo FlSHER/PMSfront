@@ -134,7 +134,6 @@ export default {
       }
     },
 
-
     *getLogsList({ payload }, { call, put }) {
       const newPayload = makerFilters(payload);
       const response = yield call(getLogsList, newPayload);
@@ -181,6 +180,7 @@ export default {
         }
       }
     },
+
     *getBuckleDetail({ payload }, { call, put }) {
       const response = yield call(getBuckleDetail, payload.eventId);
       if (response && !response.error) {

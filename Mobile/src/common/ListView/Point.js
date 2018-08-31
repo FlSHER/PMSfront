@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 // import { Flex } from 'antd-mobile';
 import ListView from '../../components/ListView';
-import { convertPointSource } from '../../utils/convert.js';
+import { convertPointType } from '../../utils/convert.js';
 import style from './index.less';
 // const { Item } = List;
 @ListView
@@ -33,7 +33,7 @@ export default class Point extends Component {
             <span className={[style.point_value, value.point_b < 0 ? style.error : style.success].join(' ')}>{value.point_b}</span>
           </div>
           <div className={style.time}>
-            <span style={{ marginRight: '1.6rem' }}>来源：{convertPointSource(value.source_id)} </span>
+            <span style={{ marginRight: '1.6rem' }}>分类：{convertPointType(value.source_id)} </span>
             <span>生效时间：{value.changed_at}</span>
           </div>
         </div>
