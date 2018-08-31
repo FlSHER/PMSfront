@@ -7,10 +7,11 @@ import OATable from '../../../components/OATable';
 
 @connect(({ point, loading }) => ({
   list: point.pointDetails,
-  source: point.type,
+  type: point.type,
+  source: point.source,
   loading: (
-    loading.effects['point/fetchDetail']
-    ||
+    loading.effects['point/fetchDetail'] ||
+    loading.effects['point/fetchSource'] ||
     loading.effects['point/fetchType']
   ),
 }))
@@ -23,6 +24,7 @@ export default class extends React.PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({ type: 'point/fetchType' });
+    dispatch({ type: 'point/fetchSource' });
   }
 
   makeParams = (params) => {
@@ -47,8 +49,9 @@ export default class extends React.PureComponent {
       if (value < 0) return `${value}`;
       return value;
     };
-    const data = this.props.source;
-    const source = data.map(item => ({ text: item.name, value: item.id }));
+    const { source } = this.props;
+    const data = this.props.type;
+    const type = data.map(item => ({ text: item.name, value: item.id }));
     const columns = [
       {
         title: '名称',
@@ -78,12 +81,22 @@ export default class extends React.PureComponent {
       },
       {
         width: 150,
+        title: '积分类型',
+        dataIndex: 'type_id',
+        filters: type,
+        render: (key) => {
+          const value = type.find(item => item.value === key) || {};
+          return value.text || '';
+        },
+      },
+      {
+        width: 150,
         title: '积分来源',
         dataIndex: 'source_id',
-        filters: source,
-        render: (value) => {
-          const sourceText = source.find(item => item.value === value) || {};
-          return sourceText.text || '';
+        filters: source.map(item => ({ value: item.id, text: item.name })),
+        render: (key) => {
+          const value = source.find(item => item.id === key) || {};
+          return value.name || '';
         },
       },
       {
@@ -111,7 +124,7 @@ export default class extends React.PureComponent {
         width: 100,
         render: (_, record) => {
           let a = { style: { color: '#c8c8c8' } };
-          if (record.source_id === 2 || record.source_id === 0) {
+          if (record.source_id === 2 || record.source_id === 1) {
             a = {
               style: { color: '#59c3c3' },
               onClick: () => { this.setState({ editInfo: record, visible: true }); },
@@ -145,7 +158,7 @@ export default class extends React.PureComponent {
           total={list.total}
           fetchDataSource={this.fetch}
         />
-        {editInfo.source_id === 0 ? (
+        {editInfo.source_id === 1 ? (
           <BasicsInfo
             visible={visible}
             type="participant"
