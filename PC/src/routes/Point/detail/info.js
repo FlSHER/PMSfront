@@ -8,6 +8,10 @@ import styles from './index.less';
   loading: loading.effects['point/fetchBasePoint'],
 }))
 export default class extends React.Component {
+  componentWillMount() {
+    this.fetch(this.props.id);
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.id !== this.props.id) {
       this.fetch(nextProps.id);
@@ -44,7 +48,7 @@ export default class extends React.Component {
     return (
       <React.Fragment>
         <Drawer
-          title="事件详情"
+          title="基础分详情"
           visible={visible}
           onClose={() => { onClose(false); }}
           loading={loading}
@@ -61,45 +65,53 @@ export default class extends React.Component {
           </p>
 
           <p className={styles.categries}>积分构成</p>
-          <div className={styles.compose}>
-            <div className={styles.title}>
-              <span>工龄分</span>
-              <span className={styles.point}>+{pointDetails.max_point.point}</span>
+          {
+            pointDetails.max_point.point !== 0 && (
+              <div className={styles.compose}>
+                <div className={styles.title}>
+                  <span>工龄分</span>
+                  <span className={styles.point}>+{pointDetails.max_point.point}</span>
+                </div>
+                <div className={styles.content}>
+                  <p>工龄：{basicsData['工龄'] || 0} 年</p>
+                  <p className={styles.time}>入职时间：{basicsData['入职时间'] || ''}</p>
+                </div>
+              </div>
+            )
+          }
+          {position.point !== 0 && (
+            <div className={styles.compose}>
+              <div className={styles.title}>
+                <span>职位分</span>
+                <span className={styles.point}>+{position.point}</span>
+              </div>
+              <div className={styles.content}>
+                <p>职位：{positionData['职位'] || ''} </p>
+              </div>
             </div>
-            <div className={styles.content}>
-              <p>工龄：{basicsData['工龄'] || 0} 年</p>
-              <p className={styles.time}>入职时间：{basicsData['入职时间'] || ''}</p>
+          )}
+          {(certificateData.length !== 0) && (
+            <div className={styles.compose}>
+              <div className={styles.title}>
+                <span>证书分</span>
+                <span className={styles.point}>+{certificate.point}</span>
+              </div>
+              <div className={styles.content}>
+                {certificateData.map((item, index) => {
+                  const key = index;
+                  return (
+                    <React.Fragment {...{ key }}>
+                      <p className={styles.proved}>
+                        <span>{item.name} </span>
+                        <span className={styles.time}>+ {item.point || 0}</span>
+                      </p>
+                      <p className={styles.time}>{item.point.description}</p>
+                    </React.Fragment>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-          <div className={styles.compose}>
-            <div className={styles.title}>
-              <span>职位分</span>
-              <span className={styles.point}>+{position.point}</span>
-            </div>
-            <div className={styles.content}>
-              <p>职位：{positionData['职位'] || ''} </p>
-            </div>
-          </div>
-          <div className={styles.compose}>
-            <div className={styles.title}>
-              <span>证书分</span>
-              <span className={styles.point}>+{certificate.point}</span>
-            </div>
-            <div className={styles.content}>
-              {certificateData.map((item, index) => {
-                const key = index;
-                return (
-                  <React.Fragment {...{ key }}>
-                    <p className={styles.proved}>
-                      <span>{item.name} </span>
-                      <span className={styles.time}>+ {item.point || 0}</span>
-                    </p>
-                    <p className={styles.time}>{item.point.description}</p>
-                  </React.Fragment>
-                );
-              })}
-            </div>
-          </div>
+          )}
         </Drawer>
       </React.Fragment>
     );
