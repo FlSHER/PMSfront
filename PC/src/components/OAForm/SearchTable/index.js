@@ -6,7 +6,6 @@ import CheckBoxCustomer from './staff';
 import RadioCustomer from './radioStaff';
 import Staff from './Model/Staff';
 import Shop from './Model/Shop';
-import Customer from './Model/customer';
 
 import './index.less';
 
@@ -149,4 +148,3 @@ SearchTable.defaultProps = {
 };
 SearchTable.Staff = Staff;
 SearchTable.Shop = Shop;
-SearchTable.Customer = Customer;
