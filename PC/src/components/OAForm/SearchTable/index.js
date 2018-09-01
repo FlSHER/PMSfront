@@ -1,12 +1,13 @@
 import React, { PureComponent } from 'react';
 import { ModalSelect } from '../../OAModal';
-// import SelectTable from './selectTable';
 import RadioInput from './input';
 import CheckBoxTag from './tag';
 import CheckBoxCustomer from './staff';
 import RadioCustomer from './radioStaff';
 import Staff from './Model/Staff';
 import Shop from './Model/Shop';
+import Customer from './Model/customer';
+
 import './index.less';
 
 /**
@@ -44,18 +45,6 @@ export default class SearchTable extends PureComponent {
     }
   }
 
-  setTableValue = (changeValue) => {
-    const { multiple } = this.props;
-    if (!multiple) {
-      this.setState({ value: changeValue[0] || [] }, () => {
-        this.handleOk();
-      });
-      return;
-    }
-    this.pushValue = changeValue;
-  };
-
-
   handleModelVisble = (flag) => {
     const { modalVisible } = this.props;
     this.setState({ visible: flag }, () => {
@@ -65,21 +54,8 @@ export default class SearchTable extends PureComponent {
     });
   };
 
-  handleOk = () => {
-    const { onChange, multiple } = this.props;
-    const { value } = this.state;
-    this.handleModelVisble(false);
-    let result = value;
-    if (multiple) {
-      result = this.pushValue;
-      this.setState({ value: result });
-    }
-    onChange(result);
-  };
-
-
   makeSearchView = () => {
-    const { multiple, placeholder, disabled, showName, tableProps } = this.props;
+    const { multiple, placeholder, disabled, showName, tableProps, onChange } = this.props;
     const { visible, value } = this.state;
     const commonProps = {
       value,
@@ -89,29 +65,27 @@ export default class SearchTable extends PureComponent {
       valueName: tableProps.index,
       handleModelVisble: this.handleModelVisble,
     };
-    return multiple ? (
-      <CheckBoxTag
-        {...commonProps}
-        setTagSelectedValue={(removeIndex) => {
-          const newValue = value.filter((_, index) => index !== removeIndex);
-          this.setTableValue(newValue);
-          this.handleOk();
-        }}
-      />
-    ) :
+    return multiple ?
+      (
+        <CheckBoxTag
+          {...commonProps}
+          setTagSelectedValue={(removeIndex) => {
+            const newValue = value.filter((_, index) => index !== removeIndex);
+            onChange(newValue);
+          }}
+        />
+      ) :
       (
         <RadioInput
           {...commonProps}
           modalVisible={visible}
-          clearValue={() => {
-            this.setTableValue([]);
-          }}
+          clearValue={() => onChange([])}
         />
       );
   };
 
   makeUserView = () => {
-    const { multiple, placeholder, disabled, showName, tableProps, style } = this.props;
+    const { multiple, placeholder, disabled, showName, tableProps, style, onChange } = this.props;
     const { visible, value } = this.state;
     const commonProps = {
       value,
@@ -122,32 +96,29 @@ export default class SearchTable extends PureComponent {
       valueName: tableProps.index,
       handleModelVisble: this.handleModelVisble,
     };
-    return multiple ? (
-      <CheckBoxCustomer
-        {...commonProps}
-        setTagSelectedValue={(removeIndex) => {
-          const newValue = value.filter((_, index) => index !== removeIndex);
-          this.setTableValue(newValue);
-          this.handleOk();
-        }}
-      />
-    ) :
+    return multiple ?
+      (
+        <CheckBoxCustomer
+          {...commonProps}
+          setTagSelectedValue={(removeIndex) => {
+            const newValue = value.filter((_, index) => index !== removeIndex);
+            onChange(newValue);
+          }}
+        />
+      ) :
       (
         <RadioCustomer
           {...commonProps}
           modalVisible={visible}
-          clearValue={() => {
-            this.setTableValue({});
-          }}
+          clearValue={() => onChange({})}
         />
       );
   }
 
 
   render() {
-    const { mode, multiple, name, title, tableProps, width } = this.props;
+    const { mode, multiple, name, title, tableProps, width, onChange } = this.props;
     const { visible, value } = this.state;
-
     return (
       <div>
         {mode === 'default' && this.makeSearchView()}
@@ -158,10 +129,7 @@ export default class SearchTable extends PureComponent {
             title,
             visible,
           }}
-          onChange={(values) => {
-            this.setTableValue(values);
-            this.handleOk();
-          }}
+          onChange={onChange}
           onCancel={this.handleModelVisble}
           name={name}
           value={value}
@@ -176,7 +144,9 @@ SearchTable.defaultProps = {
   title: '列表',
   mode: 'default',
   tableProps: { index: 'id' },
-  onChange: () => { },
+  onChange: () => {
+  },
 };
 SearchTable.Staff = Staff;
 SearchTable.Shop = Shop;
+SearchTable.Customer = Customer;
