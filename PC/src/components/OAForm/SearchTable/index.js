@@ -145,14 +145,9 @@ export default class SearchTable extends PureComponent {
 
 
   render() {
-    const { mode, multiple, name, title, tableProps, onChange, width } = this.props;
+    const { mode, multiple, name, title, tableProps, width } = this.props;
     const { visible, value } = this.state;
-    // let selectValue = [];
-    // if (multiple) {
-    //   selectValue = [...value];
-    // } else {
-    //   selectValue = [value[tableProps.index]] || [];
-    // }
+
     return (
       <div>
         {mode === 'default' && this.makeSearchView()}
@@ -163,7 +158,7 @@ export default class SearchTable extends PureComponent {
             title,
             visible,
           }}
-          onChange={onChange}
+          onChange={this.setTableValue}
           onCancel={this.handleModelVisble}
           name={name}
           value={value}
