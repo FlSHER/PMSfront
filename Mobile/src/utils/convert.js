@@ -180,7 +180,7 @@ export function reAgainImg(url, str) {
   return newImg;
 }
 
-export const pointSource = [
+export const pointType = [
   {
     name: '基础', value: '0', label: '基础',
   },
@@ -207,7 +207,7 @@ export const pointStyle = (id) => {
     default: return '#000';
   }
 };
-export const convertPointSource = (id) => {
+export const convertPointType = (id) => {
   switch (id) {
     case 0: return '基础';
     case 1: return '工作';

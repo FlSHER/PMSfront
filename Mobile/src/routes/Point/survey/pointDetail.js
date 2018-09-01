@@ -36,12 +36,13 @@ export default class PointDetail extends React.Component {
     const sourceId = detail.source_id;
     const sourceForeignKey = detail.source_foreign_key;
     let path = '/audit_detail';
-    if (`${sourceId}` === '0') {
+    if (`${sourceId}` === '1') {
       path = '/base_detail';
     }
     const url = `${path}/${sourceForeignKey}`;
     history.push(url);
   }
+
   render() {
     const { pointDetails } = this.props;
     const { pointLog } = this.state;
@@ -50,7 +51,7 @@ export default class PointDetail extends React.Component {
       return null;
     }
     const sourceId = detail.source_id;
-    const hasDetail = `${sourceId}` === '2' || `${sourceId}` === '0';
+    const hasDetail = `${sourceId}` === '2' || `${sourceId}` === '1';
     return (
       <div
         className={styles.con}
@@ -90,16 +91,16 @@ export default class PointDetail extends React.Component {
               <Flex className={style.title} id="participants">
                 <Flex.Item >积分变化</Flex.Item>
                 {hasDetail && (
-                <Flex.Item
-                  style={{
-                    textAlign: 'right',
-                    fontSize: '12px',
-                    color: 'rgb(24, 116, 208)',
-                  }}
-                  onClick={this.toLookDetail}
-                >
-                查看详情
-                </Flex.Item>
+                  <Flex.Item
+                    style={{
+                      textAlign: 'right',
+                      fontSize: '12px',
+                      color: 'rgb(24, 116, 208)',
+                    }}
+                    onClick={this.toLookDetail}
+                  >
+                    查看详情
+                  </Flex.Item>
                 )}
               </Flex>
               <Flex style={{ padding: '0.53rem 0 1.06667rem 0' }}>
@@ -135,37 +136,46 @@ export default class PointDetail extends React.Component {
               </div>
             </div>
           </WingBlank>
-          <WhiteSpace size="md" />
-          <WingBlank className={style.parcel}>
-            <div className={style.players}>
-              <Flex className={style.title}> 初审人</Flex>
-              <Flex
-                className={style.person_list}
-                wrap="wrap"
-              >
-                <PersonIcon
-                  value={detail}
-                  nameKey="first_approver_name"
-                />
+          {detail.first_approver_name && (
+            <React.Fragment>
+              <WhiteSpace size="md" />
+              <WingBlank className={style.parcel}>
+                <div className={style.players}>
+                  <Flex className={style.title}> 初审人</Flex>
+                  <Flex
+                    className={style.person_list}
+                    wrap="wrap"
+                  >
+                    <PersonIcon
+                      value={detail}
+                      nameKey="first_approver_name"
+                    />
 
-              </Flex>
-            </div>
-          </WingBlank>
-          <WhiteSpace size="md" />
-          <WingBlank className={style.parcel}>
-            <div className={style.players}>
-              <Flex className={style.title}> 终审人</Flex>
-              <Flex
-                className={style.person_list}
-                wrap="wrap"
-              >
-                <PersonIcon
-                  value={detail}
-                  nameKey="final_approver_name"
-                />
-              </Flex>
-            </div>
-          </WingBlank>
+                  </Flex>
+                </div>
+              </WingBlank>
+            </React.Fragment>
+          )}
+          {detail.final_approver_name && (
+            <React.Fragment>
+              <WhiteSpace size="md" />
+              <WingBlank className={style.parcel}>
+                <div className={style.players}>
+                  <Flex className={style.title}> 终审人</Flex>
+                  <Flex
+                    className={style.person_list}
+                    wrap="wrap"
+                  >
+                    <PersonIcon
+                      value={detail}
+                      nameKey="final_approver_name"
+                    />
+
+                  </Flex>
+                </div>
+              </WingBlank>
+            </React.Fragment>
+          )}
           <WhiteSpace size="md" />
         </div>
       </div>

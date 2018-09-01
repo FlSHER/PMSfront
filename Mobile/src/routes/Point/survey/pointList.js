@@ -8,7 +8,7 @@ import { Point } from '../../../common/ListView/index';
 import { CheckBoxs, PersonIcon } from '../../../components/index';
 
 import ModalFilters from '../../../components/ModalFilters';
-import { pointSource } from '../../../utils/convert';
+import { pointType } from '../../../utils/convert';
 import { getUrlParams, getUrlString, parseParamsToUrl, doConditionValue, parseParams } from '../../../utils/util';
 import style from '../index.less';
 
@@ -56,7 +56,7 @@ const filterColumns = [
     type: 'checkBox',
     title: '类别',
     multiple: true,
-    options: pointSource,
+    options: pointType,
   },
   {
     title: '记录时间',
