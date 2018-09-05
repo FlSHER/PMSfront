@@ -63,8 +63,6 @@ export default class extends React.Component {
             <span>基础分</span>
             <span style={{ fontSize: '24px', lineHeight: '22px', float: 'right' }}>{data.point_b}</span>
           </p>
-
-          <p className={styles.categries}>积分构成</p>
           {
             pointDetails.max_point.point !== 0 && (
               <div className={styles.compose}>
