@@ -121,7 +121,7 @@ export default class extends React.PureComponent {
       {
         title: '操作',
         fixed: 'right',
-        width: 100,
+        width: 110,
         render: (_, record) => {
           let a = { style: { color: '#c8c8c8' } };
           if (record.source_id === 2 || record.source_id === 1) {
@@ -132,7 +132,7 @@ export default class extends React.PureComponent {
           }
           return (
             <React.Fragment>
-              <a {...a}>查看事件</a>
+              <a {...a}>查看{record.source_id === 1 ? '详情' : '事件'}</a>
             </React.Fragment>
           );
         },
@@ -145,7 +145,6 @@ export default class extends React.PureComponent {
   render() {
     const { list, loading } = this.props;
     const { editInfo, visible } = this.state;
-
     return (
       <div style={{ margin: '0px 10px 0' }}>
         <OATable
@@ -161,7 +160,6 @@ export default class extends React.PureComponent {
         {editInfo.source_id === 1 ? (
           <BasicsInfo
             visible={visible}
-            type="participant"
             id={editInfo.source_foreign_key || null}
             onClose={() => {
               this.setState({ editInfo: {}, visible: false });
