@@ -21,3 +21,4 @@ yarn.lock
 /.history
 /.idea
 /.vscode
+/.webpackrc
