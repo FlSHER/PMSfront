@@ -171,11 +171,11 @@ export default class ModalStaff extends React.PureComponent {
         width: 110,
       }, {
         title: '姓名',
-        align: 'center',
         dataIndex: 'realname',
-        searcher: true,
         fixed: true,
         tooltip: true,
+        searcher: true,
+        width: 110,
       }, {
         title: '品牌',
         align: 'center',
