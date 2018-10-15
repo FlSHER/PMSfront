@@ -64,7 +64,7 @@ export default class extends React.PureComponent {
     const { total } = this.props;
     const legendLabel = data.find(item => key === item.name) || {};
     let percent = 0;
-    if (total) percent = Math.abs((legendLabel.value / total).toFixed(2) * 100);
+    if (total) percent = Math.abs((legendLabel.value / total) * 100).toFixed(1);
     return { legendLabel, percent };
   }
 
