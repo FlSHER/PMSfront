@@ -207,7 +207,7 @@ export default class Statistic extends React.Component {
     let desc = '';
     newData.forEach((item) => {
       if (item.name === name) {
-        const percent = Math.abs((item[key] / total).toFixed(2)) * 100;
+        const percent = (Math.abs((item[key] / total)) * 100).toFixed(0);
         const des = `${item.name}:${percent}%`;
         desc = des;
       }
