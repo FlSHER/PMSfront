@@ -1,9 +1,9 @@
 import React from 'react';
-import { InputNumber, Input } from 'antd';
+import { Input } from 'antd';
 import { connect } from 'dva';
-import Ellipsis from 'ant-design-pro/lib/Ellipsis';
+// import Ellipsis from 'ant-design-pro/lib/Ellipsis';
 import OAForm, { OAModal } from '../../../components/OAForm';
-import styles from './index.less';
+// import styles from './index.less';
 import { getBuckleTitle } from '../../../utils/utils';
 
 const FormItem = OAForm.Item;
@@ -61,7 +61,7 @@ export default class extends React.PureComponent {
       onCancel,
       form,
       title,
-      editInfo,
+      // editInfo,
       loading,
       validateFields,
       form: { getFieldDecorator },
@@ -88,30 +88,6 @@ export default class extends React.PureComponent {
             <Input.TextArea style={{ height: 90 }} placeholder="请输入审批意见" />
           )}
         </FormItem>
-        {title === 2 && (
-          <FormItem label="配置分值" {...formItemLayout}>
-            <FormItem style={{ width: 210, float: 'left' }}>
-              <span className={styles.customerPoint}>
-                <span><Ellipsis length={5}>{editInfo.recorder_name}</Ellipsis>（记录人）</span>
-                {getFieldDecorator('recorder_point', {
-                  initialValue: '',
-                })(
-                  <InputNumber placeholder="请输入" style={{ width: 90 }} />
-                )}
-              </span>
-            </FormItem>
-            <FormItem style={{ width: 210, float: 'left' }}>
-              <span className={styles.customerPoint}>
-                <span><Ellipsis length={5}>{editInfo.first_approver_name}</Ellipsis>（初审人）</span>
-                {getFieldDecorator('first_approver_point', {
-                  initialValue: '',
-                })(
-                  <InputNumber placeholder="请输入" style={{ width: 90 }} />
-                )}
-              </span>
-            </FormItem>
-          </FormItem>
-        )}
       </OAModal>
     );
   }
