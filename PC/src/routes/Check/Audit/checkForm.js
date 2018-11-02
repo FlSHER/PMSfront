@@ -29,7 +29,16 @@ export default class extends React.PureComponent {
       onSuccess: () => {
         const { onCancel, onClose } = this.props;
         onCancel(false);
-        onClose(false, update);
+        onClose(false, type);
+        dispatch({
+          type: 'buckle/fetchBuckleGroups',
+          payload: {
+            type: 'approved',
+            pagesize: 10,
+            page: 1,
+            sort: 'created_at-desc',
+          },
+        });
       },
     });
   }

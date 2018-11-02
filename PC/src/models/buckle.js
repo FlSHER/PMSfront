@@ -149,7 +149,7 @@ export default {
             payload: {
               id,
               store: type,
-              // data: response,
+              data: response,
             },
           });
           onSuccess(response);
