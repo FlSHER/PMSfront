@@ -259,6 +259,7 @@ export default class BuckleRecord extends React.Component {
     const newPoint = point;
     this.savePointData(newPoint, kind, el);
   }
+
   stateChange = (v, key) => {
     const { info } = this.state;
     if (key === 'description') {
@@ -631,6 +632,8 @@ export default class BuckleRecord extends React.Component {
                         value={tmpCount}
                         style={{ background: '#badcff', ...(optAll.count_error ? { color: 'red' } : null) }}
                         onChange={v => this.pointChange(v, 'count')}
+                        floatNumber={0}
+
                       />
                     </Flex.Item>
                   </Flex>
@@ -643,7 +646,6 @@ export default class BuckleRecord extends React.Component {
                           <Input
                             value={`${item.point_a}`}
                             range={rangeA}
-
                             style={{ ...(item.point_a_error ? { color: 'red' } : null) }}
                             onChange={v => this.pointChange(v, 'point_a', item)}
                             floatNumber={2}
@@ -663,7 +665,7 @@ export default class BuckleRecord extends React.Component {
                             value={item.count}
                             style={{ ...(item.count_error ? { color: 'red' } : null) }}
                             onChange={v => this.pointChange(v, 'count', item)}
-                            floatNumber={2}
+                            floatNumber={0}
                           />
                         </Flex.Item>
                       </Flex>);
