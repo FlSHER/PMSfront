@@ -38,18 +38,12 @@ export default class extends React.PureComponent {
     const actionId = this.props.title;
     const newParams = { ...params };
     if (actionId === 1) {
-      delete newParams.remark;
       newParams.type = true;
-      newParams.first_approve_remark = params.remark;
       this.fetch(newParams, 'buckle/approve');
     } else if (actionId === 2) {
-      delete newParams.remark;
       newParams.type = false;
-      newParams.final_approve_remark = params.remark;
       this.fetch(newParams, 'buckle/approve');
     } else {
-      delete newParams.remark;
-      newParams.remark = params.remark;
       this.fetch(newParams, 'buckle/reject');
     }
   }

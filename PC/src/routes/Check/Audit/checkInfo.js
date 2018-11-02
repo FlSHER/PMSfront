@@ -18,7 +18,7 @@ function EventInfo({ data }) {
       col={1}
     >
       <Description term="编号">
-        {data.event_id}
+        {data.id}
       </Description>
       <Description term="标题">
         {data.event_name}
