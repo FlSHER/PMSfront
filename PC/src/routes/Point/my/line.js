@@ -79,7 +79,7 @@ const option = {
     type: 'inside',
     zoomLock: true,
     start: 0,
-    end: 50,
+    end: 90,
   }],
   series: [],
 };
