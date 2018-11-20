@@ -303,7 +303,9 @@ export default class EventPreview extends React.Component {
             </div>
           </WingBlank>
           {approvers.filter(_ => _.name).map(item => this.makeApprover(item))}
-          {detail.status_id === 2 && (
+          {
+            /*
+            detail.status_id === 2 && (
             <React.Fragment>
               <WhiteSpace size="md" />
               <WingBlank className={style.parcel}>
@@ -314,9 +316,11 @@ export default class EventPreview extends React.Component {
                     align="center"
                     justify="center"
                   >
-                    <Flex.Item className={style.table_item} style={{ borderLeft: 'none' }}>名称</Flex.Item>
+                    <Flex.Item className={style.table_item}
+                    style={{ borderLeft: 'none' }}>名称</Flex.Item>
                     <Flex.Item className={style.table_item}>姓名</Flex.Item>
-                    <Flex.Item className={style.table_item} style={{ borderRight: 'none' }}>B分</Flex.Item>
+                    <Flex.Item className={style.table_item}
+                    style={{ borderRight: 'none' }}>B分</Flex.Item>
                   </Flex>
                   <div className={style.table_body}>
                     {person.map((item, i) => {
@@ -334,7 +338,8 @@ export default class EventPreview extends React.Component {
                 </div>
               </WingBlank>
             </React.Fragment>
-          )}
+          ) */
+        }
           {addressees && addressees.length ? (
             <React.Fragment>
               <WhiteSpace size="md" />

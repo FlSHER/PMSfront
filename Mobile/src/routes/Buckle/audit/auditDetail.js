@@ -299,7 +299,8 @@ export default class AuditDetail extends React.Component {
             </div>
           </WingBlank>
           {approvers.filter(_ => _.name).map(item => this.makeApprover(item))}
-          {newDetail.status_id === 2 && (
+          {
+           /* newDetail.status_id === 2 && (
             <React.Fragment>
               <WhiteSpace size="md" />
               <WingBlank className={style.parcel}>
@@ -330,8 +331,9 @@ export default class AuditDetail extends React.Component {
                 </div>
               </WingBlank>
             </React.Fragment>
-
-          ) }
+          )
+          */
+        }
           {addresseess && addresseess.length ? (
             <React.Fragment>
               <WhiteSpace size="md" />
