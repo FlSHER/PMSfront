@@ -78,8 +78,8 @@ const option = {
   dataZoom: [{
     type: 'inside',
     zoomLock: true,
-    start: 0,
-    end: 50,
+    start: 100,
+    end: 10,
   }],
   series: [],
 };

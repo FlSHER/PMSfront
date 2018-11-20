@@ -41,7 +41,7 @@ export default class extends React.Component {
     const { editInfo } = this.props;
     const statusId = editInfo.status_id;
     const actionId = statusId === 0 ? 1 : statusId === 1 ? 2 : null;
-    const reject = editInfo.first_approved_at && statusId === 1 ? -2 : statusId === 1 ? -1 : null;
+    const reject = editInfo.first_approved_at && statusId === 1 ? -2 : statusId === 0 ? -1 : null;
     return (
       <div className={styles.footer}>
         <div onClick={() => this.handelVisible(true, reject)}>
