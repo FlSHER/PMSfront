@@ -10,20 +10,20 @@ import { userStorage } from '../../../utils/util';
 import style from '../index.less';
 import styles from '../../common.less';
 
-const person = [
-  {
-    key: 'recorder_point',
-    id: 0,
-    value: 'recorder_name',
-    name: '记录人',
-  },
-  {
-    key: 'first_approver_point',
-    id: 1,
-    value: 'first_approver_name',
-    name: '初审人',
-  },
-];
+// const person = [
+//   {
+//     key: 'recorder_point',
+//     id: 0,
+//     value: 'recorder_name',
+//     name: '记录人',
+//   },
+//   {
+//     key: 'first_approver_point',
+//     id: 1,
+//     value: 'first_approver_name',
+//     name: '初审人',
+//   },
+// ];
 @connect(({ buckle }) => ({
   buckleDetail: buckle.buckleDetails,
   groupDetail: buckle.groupDetail,

@@ -42,7 +42,6 @@ class Input extends React.Component {
   formatIntValue = (v, scale, min, max) => {
     // const { scale, min } = field;
     // const value = (v !== '' && min !== '' && (min - v > 0)) ? min : (v - max > 0 ? max : v);
-    console.log(scale);
     let value = v;
     if (v !== '') {
       if (min !== '' && min - v > 0) {
@@ -68,7 +67,6 @@ class Input extends React.Component {
   render() {
     const { onChange, type, style, floatNumber, range } = this.props;
     const { value } = this.state;
-    console.log(floatNumber);
     return (
       <input
         value={`${value}`}
