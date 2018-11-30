@@ -10,6 +10,7 @@ export default class EditableCell extends React.PureComponent {
     this.state = {
       value: props.value || ' ',
       editable: false,
+      error: false,
     };
   }
 
@@ -22,12 +23,15 @@ export default class EditableCell extends React.PureComponent {
   makeInputValue = (newValue) => {
     let value = newValue;
     const { range, type } = this.props;
+    this.state.error = false;
     if (type === 'number' && range) {
       if (parseFloat(value) < range.min) {
-        value = range.min;
+        this.state.error = true;
+        // value = range.min;
       }
       if (parseFloat(value) > range.max) {
-        value = range.max;
+        this.state.error = true;
+        // value = range.max;
       }
     }
     const numberValue = parseFloat(value);
@@ -58,7 +62,7 @@ export default class EditableCell extends React.PureComponent {
   }
 
   render() {
-    const { value, editable } = this.state;
+    const { value, editable, error } = this.state;
     const { type, style, range } = this.props;
     let content = value;
     if (type === 'number' && range) {
@@ -70,16 +74,18 @@ export default class EditableCell extends React.PureComponent {
       <div className="editable-cell" onClick={this.edit}>
         {
           editable ? (
-            <Input
-              {...{ type } || null}
-              ref={(e) => { this.input = e; }}
-              value={value}
-              onChange={this.handleChange}
-              onPressEnter={this.check}
-              onBlur={this.check}
-              style={{ ...style }}
-            />
-          ) :
+              <Input
+                {...{ type } || null}
+                ref={(e) => {
+                  this.input = e;
+                }}
+                value={value}
+                onChange={this.handleChange}
+                onPressEnter={this.check}
+                onBlur={this.check}
+                style={{ ...style, color: error ? 'red' : 'rgba(0,0,0,.65)' }}
+              />
+            ) :
             (
               <Ellipsis lines={1}>
                 {content}
